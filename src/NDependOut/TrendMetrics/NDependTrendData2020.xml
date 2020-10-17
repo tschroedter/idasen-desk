@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Root>
+  <MetricIndex >
+    <Metric Name="# New Issues since Baseline" Unit="issues" />
+    <Metric Name="# Issues Fixed since Baseline" Unit="issues" />
+    <Metric Name="# Issues Worsened since Baseline" Unit="issues" />
+    <Metric Name="# Issues with severity Blocker" Unit="issues" />
+    <Metric Name="# Issues with severity Critical" Unit="issues" />
+    <Metric Name="# Issues with severity High" Unit="issues" />
+    <Metric Name="# Issues with severity Medium" Unit="issues" />
+    <Metric Name="# Issues with severity Low" Unit="issues" />
+    <Metric Name="# Blocker/Critical/High Issues" Unit="issues" />
+    <Metric Name="# Issues" Unit="issues" />
+    <Metric Name="# Suppressed Issues" Unit="issues" />
+    <Metric Name="# Rules" Unit="rules" />
+    <Metric Name="# Rules Violated" Unit="rules" />
+    <Metric Name="# Critical Rules Violated" Unit="rules" />
+    <Metric Name="# Quality Gates" Unit="quality gates" />
+    <Metric Name="# Quality Gates Warn" Unit="quality gates" />
+    <Metric Name="# Quality Gates Fail" Unit="quality gates" />
+    <Metric Name="Percentage Debt (Metric)" Unit="%" />
+    <Metric Name="Debt (Metric)" Unit="man-days" />
+    <Metric Name="New Debt since Baseline (Metric)" Unit="man-days" />
+    <Metric Name="Annual Interest (Metric)" Unit="man-days" />
+    <Metric Name="New Annual Interest since Baseline (Metric)" Unit="man-days" />
+    <Metric Name="Breaking Point" Unit="years" />
+    <Metric Name="Breaking Point of Blocker / Critical / High Issues" Unit="years" />
+    <Metric Name="# Lines of Code" Unit="LoC" />
+    <Metric Name="# Lines of Code (JustMyCode)" Unit="LoC" />
+    <Metric Name="# Lines of Code (NotMyCode)" Unit="LoC" />
+    <Metric Name="# Lines of Code Added since the Baseline" Unit="LoC" />
+    <Metric Name="# Source Files" Unit="Source Files" />
+    <Metric Name="# IL Instructions" Unit="IL Instructions" />
+    <Metric Name="# IL Instructions (NotMyCode)" Unit="IL Instructions" />
+    <Metric Name="# Lines of Comments" Unit="Lines" />
+    <Metric Name="Percentage of Comments" Unit="%" />
+    <Metric Name="# Assemblies" Unit="Assemblies" />
+    <Metric Name="# Namespaces" Unit="Namespaces" />
+    <Metric Name="# Types" Unit="Types" />
+    <Metric Name="# Public Types" Unit="Types" />
+    <Metric Name="# Classes" Unit="Types" />
+    <Metric Name="# Abstract Classes" Unit="Types" />
+    <Metric Name="# Interfaces" Unit="Types" />
+    <Metric Name="# Structures" Unit="Types" />
+    <Metric Name="# Methods" Unit="Methods" />
+    <Metric Name="# Abstract Methods" Unit="Methods" />
+    <Metric Name="# Concrete Methods" Unit="Methods" />
+    <Metric Name="# Fields" Unit="Fields" />
+    <Metric Name="Max # Lines of Code for Methods (JustMyCode)" Unit="LoC" />
+    <Metric Name="Average # Lines of Code for Methods" Unit="LoC" />
+    <Metric Name="Average # Lines of Code for Methods with at least 3 Lines of Code" Unit="LoC" />
+    <Metric Name="Max # Lines of Code for Types (JustMyCode)" Unit="LoC" />
+    <Metric Name="Average # Lines of Code for Types" Unit="LoC" />
+    <Metric Name="Max Cyclomatic Complexity for Methods" Unit="Paths" />
+    <Metric Name="Average Cyclomatic Complexity for Methods" Unit="Paths" />
+    <Metric Name="Max IL Cyclomatic Complexity for Methods" Unit="Paths" />
+    <Metric Name="Average IL Cyclomatic Complexity for Methods" Unit="Paths" />
+    <Metric Name="Max IL Nesting Depth for Methods" Unit="Scopes" />
+    <Metric Name="Average IL Nesting Depth for Methods" Unit="Scopes" />
+    <Metric Name="Max # of Methods for Types" Unit="Methods" />
+    <Metric Name="Average # Methods for Types" Unit="Methods" />
+    <Metric Name="Max # of Methods for Interfaces" Unit="Methods" />
+    <Metric Name="Average # Methods for Interfaces" Unit="Methods" />
+    <Metric Name="# Lines of Code Uncoverable" Unit="LoC" />
+    <Metric Name="# Third-Party Assemblies Used" Unit="Assemblies" />
+    <Metric Name="# Third-Party Namespaces Used" Unit="Namespaces" />
+    <Metric Name="# Third-Party Types Used" Unit="Types" />
+    <Metric Name="# Third-Party Methods Used" Unit="Methods" />
+    <Metric Name="# Third-Party Fields Used" Unit="Fields" />
+    <Metric Name="# Rules Violations" Unit="Violations" />
+    <Metric Name="# Critical Rules" Unit="Rules" />
+    <Metric Name="# Critical Rules Violations" Unit="Violations" />
+  </MetricIndex>
+  <M N="0|1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25|26|27|28|29|30|31|32|33|34|35|36|37|38|39|40|41|42|43|44|45|46|47|48|49|50|51|52|53|54|55|56|57|58|59|60|61|62|63|64|65|66|67|68" >
+    <R D="8/4/2020 8:06:59 PM" L="v1.0" V="119|0|1|0|0|103|35|0|103|138|0|153|22|9|11|1|4|14.37|5.17|1.27|5.23|2.59|0.98678|0.83126|1139|1139|0|3|63|9239|44|158|12.18|3|18|126|125|78|1|47|0|458|132|326|111|225|3.64|9.05|227|18.08|7|1.26|25|2.11|3|0.24233|17|4.11|11|2.77|0|21|47|178|217|4|138|21|100" />
+    <R D="8/3/2020 8:58:48 PM" L="v1.0" V="119|0|1|0|0|103|35|0|103|138|0|153|22|9|11|1|4|14.37|5.17|1.27|5.23|2.59|0.98678|0.83126|1139|1139|0|3|63|9239|44|158|12.18|3|18|126|125|78|1|47|0|458|132|326|111|225|3.64|9.05|227|18.08|7|1.26|25|2.11|3|0.24233|17|4.11|11|2.77|0|21|47|178|217|4|138|21|100" />
+    <R D="8/2/2020 7:29:47 AM" L="v1.0" V="134|0|1|0|0|105|55|4|105|164|0|153|30|8|11|1|4|15.83|5.69|1.8|5.51|2.87|1.03|0.86945|1139|1139|0|3|63|9218|44|157|12.11|3|19|126|124|78|1|47|0|458|132|326|111|225|3.63|9.04|227|18.08|7|1.26|25|2.11|3|0.24233|17|4.11|11|2.77|0|21|47|180|218|4|164|21|104" />
+    <R D="8/1/2020 6:53:04 AM" L="v1.0" V="127|0|5|0|0|115|69|11|115|195|0|153|33|9|11|1|4|16.34|5.9|2|6.43|3.79|0.91694|0.76394|1150|1150|0|2|62|9308|40|154|11.81|2|18|125|121|77|1|47|0|456|132|324|112|225|3.67|9.08|227|18.55|7|1.27|25|2.14|3|0.25617|17|4.13|11|2.77|0|21|47|180|218|4|195|21|125" />
+    <R D="7/31/2020 7:41:32 PM" L="v1.0" V="0|0|4|0|0|25|113|12|25|150|0|153|33|6|11|0|2|9.58|3.9|0|2.64|0|1.48|0.78257|1303|1303|0|2|70|11240|40|158|10.81|2|12|141|137|85|2|55|0|508|137|371|124|225|3.58|8.94|227|18.61|9|1.31|30|2.32|3|0.26133|17|4.06|11|2.44|0|20|46|180|225|4|150|21|55" />
+  </M>
+</Root>

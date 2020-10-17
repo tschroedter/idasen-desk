@@ -1,0 +1,59 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Reactive.Subjects;
+using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery;
+
+namespace Idasen.BluetoothLE.Characteristics.Interfaces.Characteristics
+{
+    public interface IGenericAccess
+        : ICharacteristicBase
+    {
+        // todo get description from website
+        /// <summary>
+        ///     Raw Central Address Resolution
+        /// </summary>
+        public IEnumerable<byte> RawResolution { get; }
+
+        /// <summary>
+        ///     Raw Peripheral Preferred Connection Parameters
+        /// </summary>
+        public IEnumerable<byte> RawParameters { get; }
+
+        /// <summary>
+        ///     Raw Appearance
+        /// </summary>
+        public IEnumerable<byte> RawAppearance { get; }
+
+        /// <summary>
+        ///     Raw Device Name
+        /// </summary>
+        public IEnumerable<byte> RawDeviceName { get; }
+
+        /// <summary>
+        ///     Raised when the Appearance changes.
+        /// </summary>
+        ISubject<IEnumerable<byte>> AppearanceChanged { get; }
+
+        /// <summary>
+        ///     Raised when the Parameters changes.
+        /// </summary>
+        ISubject<IEnumerable<byte>> ParametersChanged { get; }
+
+        /// <summary>
+        ///     Raised when the Resolution changes.
+        /// </summary>
+        ISubject<IEnumerable<byte>> ResolutionChanged { get; }
+
+        /// <summary>
+        ///     Raised when the DeviceName changes.
+        /// </summary>
+        ISubject<IEnumerable<byte>> DeviceNameChanged { get; }
+
+        /// <summary>
+        ///     The UUID of the Gatt Service.
+        /// </summary>
+        Guid GattServiceUuid { get; }
+
+        delegate IGenericAccess Factory(IDevice device);
+    }
+}

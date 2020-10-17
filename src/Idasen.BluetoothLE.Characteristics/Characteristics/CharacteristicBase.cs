@@ -1,0 +1,160 @@
+﻿using System ;
+using System.Collections.Generic ;
+using System.Linq ;
+using System.Reactive.Concurrency ;
+using System.Runtime.CompilerServices ;
+using System.Runtime.InteropServices.WindowsRuntime ;
+using System.Threading.Tasks ;
+using Idasen.BluetoothLE.Characteristics.Interfaces.Characteristics ;
+using Idasen.BluetoothLE.Characteristics.Interfaces.Characteristics.Customs ;
+using Idasen.BluetoothLE.Characteristics.Interfaces.Common ;
+using Idasen.BluetoothLE.Core ;
+using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery ;
+using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers ;
+using JetBrains.Annotations ;
+using Serilog ;
+
+[ assembly : InternalsVisibleTo ( "Idasen.BluetoothLE.Characteristics.Tests" ) ]
+
+namespace Idasen.BluetoothLE.Characteristics.Characteristics
+{
+    public abstract class CharacteristicBase
+        : ICharacteristicBase
+    {
+        protected CharacteristicBase (
+            [ NotNull ] ILogger                              logger ,
+            [ NotNull ] IScheduler                           scheduler ,
+            [ NotNull ] IDevice                              device ,
+            [ NotNull ] IGattCharacteristicsProviderFactory  providerFactory ,
+            [ NotNull ] IRawValueReader                      rawValueReader ,
+            [ NotNull ] IRawValueWriter                      rawValueWriter,
+            [ NotNull ] ICharacteristicBaseToStringConverter toStringConverter)
+        {
+            Guard.ArgumentNotNull ( logger ,
+                                    nameof ( logger ) ) ;
+            Guard.ArgumentNotNull ( scheduler ,
+                                    nameof ( scheduler ) ) ;
+            Guard.ArgumentNotNull ( device ,
+                                    nameof ( device ) ) ;
+            Guard.ArgumentNotNull ( providerFactory ,
+                                    nameof ( providerFactory ) ) ;
+            Guard.ArgumentNotNull ( rawValueReader ,
+                                    nameof ( rawValueReader ) ) ;
+            Guard.ArgumentNotNull ( rawValueWriter ,
+                                    nameof ( rawValueWriter ) ) ;
+            Guard.ArgumentNotNull(toStringConverter,
+                                  nameof(toStringConverter));
+
+            Device = device ;
+            Logger                  = logger ;
+            Scheduler               = scheduler ;
+            ProviderFactory         = providerFactory ;
+            RawValueReader          = rawValueReader ;
+            RawValueWriter          = rawValueWriter ;
+            _toStringConverter = toStringConverter ;
+        }
+
+        public virtual T Initialize < T > ( )
+            where T : class
+        {
+            Guard.ArgumentNotNull ( GattServiceUuid , // todo log error/warning
+                                    nameof ( GattServiceUuid ) ) ;
+
+            var (service , characteristicsResultWrapper) = Device.GattServices
+                                                                 .FirstOrDefault ( x => x.Key.Uuid ==
+                                                                                        GattServiceUuid ) ;
+
+            if ( service == null )
+                throw new ArgumentException ( "Failed, can't find GattDeviceService for " +
+                                              $"UUID {GattServiceUuid}" ,
+                                              nameof ( GattServiceUuid ) ) ;
+
+            Logger.Debug ( $"Found GattDeviceService with UUID {GattServiceUuid}" ) ;
+
+            Characteristics = ProviderFactory.Create ( characteristicsResultWrapper ) ;
+
+            WithMapping < T > ( ) ;
+
+            return this as T ;
+        }
+
+        public virtual async Task Refresh ( )
+        {
+            Characteristics.Refresh ( DescriptionToUuid ) ;
+
+            foreach ( var keyValuePair in Characteristics.Characteristics )
+            {
+                Logger.Information ( $"Reading raw value for {keyValuePair.Key} " +
+                                     $"and and characteristic {keyValuePair.Value}" ) ;
+
+                (bool success , byte [ ] value) result =
+                    await RawValueReader.TryReadValueAsync ( keyValuePair.Value ) ;
+
+                RawValues [ keyValuePair.Key ] = result.success
+                                                     ? result.value
+                                                     : RawArrayEmpty ;
+            }
+        }
+
+        internal static readonly IEnumerable < byte > RawArrayEmpty = Enumerable.Empty < byte > ( )
+                                                                                .ToArray ( ) ;
+
+        public abstract Guid GattServiceUuid { get ; }
+
+        protected abstract T WithMapping < T > ( ) // todo maybe, no T and different name
+            where T : class ;                      // todo thread/race condition issue, corrupted exception
+
+        protected async Task < bool > TryWriteValueAsync ( string               key ,
+                                                           IEnumerable < byte > bytes )
+        {
+            if ( ! Characteristics.Characteristics.TryGetValue ( key ,
+                                                                 out IGattCharacteristicWrapper characteristic ) )
+            {
+                Logger.Error($"Unknown characteristic with key '{key}'");
+
+                return false ;
+            }
+
+            if ( characteristic != null )
+                return await RawValueWriter.TryWriteValueAsync ( characteristic ,
+                                                                 bytes.ToArray ( )
+                                                                      .AsBuffer ( ) ) ;
+
+            Logger.Error($"Characteristic for key '{key}' is null");
+
+            return false ;
+        }
+
+        [ NotNull ]
+        protected IEnumerable < byte > TryGetValueOrEmpty ( string key )
+        {
+            return RawValues.TryGetValue ( key ,
+                                           out var values )
+                       ? values
+                       : RawArrayEmpty ;
+        }
+
+        public override string ToString ( )
+        {
+            return _toStringConverter.ToString ( this ) ;
+        }
+
+        internal readonly Dictionary < string , Guid > DescriptionToUuid =
+            new Dictionary < string , Guid > ( ) ;
+
+        protected readonly IDevice                             Device ;
+        protected readonly ILogger                             Logger ;
+        protected readonly IGattCharacteristicsProviderFactory ProviderFactory ;
+        protected readonly IRawValueReader                     RawValueReader ;
+
+        internal readonly Dictionary < string , IEnumerable < byte > >
+            RawValues = new Dictionary < string , IEnumerable < byte > > ( ) ;
+
+        protected readonly IRawValueWriter                      RawValueWriter ;
+        private readonly   ICharacteristicBaseToStringConverter _toStringConverter ;
+
+        protected readonly IScheduler Scheduler ;
+
+        internal IGattCharacteristicProvider Characteristics ; // todo rename to ICustomGattCharacteristic(s)Provider
+    }
+}
