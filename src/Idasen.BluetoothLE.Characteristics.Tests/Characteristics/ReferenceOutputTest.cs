@@ -355,6 +355,12 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Characteristics
                                .OnNext(Arg.Is<RawValueChangedDetails>( x => x.Description == ReferenceOutput.HeightSpeed));
         }
 
+        [TestMethod]
+        public void Dispose_ForInvoked_DisposesSubscriber()
+        {
+            // todo
+        }
+
         protected override ReferenceOutput CreateSut()
         {
             return new ReferenceOutput(Logger,
