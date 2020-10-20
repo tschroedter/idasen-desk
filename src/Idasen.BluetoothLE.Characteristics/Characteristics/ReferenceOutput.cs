@@ -34,7 +34,7 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
         internal const string Mask        = "MASK";
         internal const string DetectMask  = "DETECT MASK";
 
-        private readonly ISubject<RawValueChangedDetails> _subjectHeightSpeed;
+        private readonly ISubject<RawValueChangedDetails>   _subjectHeightSpeed;
 
         private IDisposable                 _subscriber;
 
@@ -46,7 +46,7 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
             IRawValueReader                                 rawValueReader ,
             IRawValueWriter                                 rawValueWriter ,
             ICharacteristicBaseToStringConverter            toStringConverter ,
-            [ NotNull ] ISubject < RawValueChangedDetails > subjectHeightSpeed )
+            [ NotNull ] ISubject < RawValueChangedDetails > subjectHeightSpeed)
             : base ( logger ,
                      scheduler ,
                      device ,
@@ -111,39 +111,6 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
                                                           GattServiceUuid);
 
             _subjectHeightSpeed.OnNext(valueChanged);
-        }
-
-
-        public bool TryConvert(IEnumerable<byte> bytes,
-                               out uint          height,
-                               out int           speed)
-        {
-            var array = bytes as byte[] ?? bytes.ToArray();
-
-            try
-            {
-                var rawHeight = array.Take(2)
-                                     .ToArray();
-
-                var rawSpeed = array.Skip(2)
-                                    .Take(2)
-                                    .ToArray();
-
-                height = 6200u + BitConverter.ToUInt16(rawHeight);
-                speed  = BitConverter.ToInt16(rawSpeed);
-
-                return true;
-            }
-            catch (Exception e)
-            {
-                Logger.Warning($"Failed to convert raw value '{array.ToHex()}' " +
-                                $"to height and speed! ({e.Message})");
-
-                height = 0;
-                speed  = 0;
-
-                return false;
-            }
         }
 
         public void Dispose()
