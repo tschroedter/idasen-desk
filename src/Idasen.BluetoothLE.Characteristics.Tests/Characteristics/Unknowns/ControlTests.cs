@@ -10,7 +10,7 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Characteristics.Unknowns
     public class ControlTests
     {
         [ TestMethod ]
-        public void Constructor_ForInvoked_SetsRawControl2 ( )
+        public void RawControl2_ForInvoked_Empty( )
         {
             CreateSut ( ).RawControl2
                          .Should ( )
@@ -18,7 +18,7 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Characteristics.Unknowns
         }
 
         [ TestMethod ]
-        public void Constructor_ForInvoked_SetsRawControl3 ( )
+        public void RawControl3_ForInvoked_Empty( )
         {
             CreateSut ( ).RawControl3
                          .Should ( )
