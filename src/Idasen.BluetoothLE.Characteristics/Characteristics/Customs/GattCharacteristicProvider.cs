@@ -5,6 +5,7 @@ using Windows.Devices.Bluetooth.GenericAttributeProfile;
 using Idasen.BluetoothLE.Characteristics.Interfaces.Characteristics.Customs;
 using Idasen.BluetoothLE.Core;
 using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers;
+using JetBrains.Annotations ;
 using Serilog;
 
 namespace Idasen.BluetoothLE.Characteristics.Characteristics.Customs
@@ -27,9 +28,14 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics.Customs
         private readonly List<string> _unavailable = new List<string>();
 
         public GattCharacteristicProvider(
-            ILogger                           logger,
-            IGattCharacteristicsResultWrapper gattCharacteristics)
+            [ NotNull ] ILogger                           logger,
+            [ NotNull ] IGattCharacteristicsResultWrapper gattCharacteristics)
         {
+            Guard.ArgumentNotNull ( logger ,
+                                    nameof ( logger ) ) ;
+            Guard.ArgumentNotNull ( gattCharacteristics ,
+                                    nameof ( gattCharacteristics ) ) ;
+
             _logger              = logger;
             _gattCharacteristics = gattCharacteristics;
         }
