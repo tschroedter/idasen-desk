@@ -8,7 +8,7 @@ using Serilog ;
 
 namespace Idasen.BluetoothLE.Characteristics.Characteristics
 {
-    public class RawBytesToHeightAndSpeedConverter  // todo testing
+    public class RawBytesToHeightAndSpeedConverter
         : IRawBytesToHeightAndSpeedConverter
     {
         private readonly ILogger _logger ;
