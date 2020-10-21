@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reactive.Subjects;
+using Idasen.BluetoothLE.Characteristics.Common ;
 using Idasen.BluetoothLE.Characteristics.Interfaces.Characteristics;
 
 namespace Idasen.BluetoothLE.Characteristics.Characteristics.Unknowns
@@ -20,10 +20,13 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics.Unknowns
         public IEnumerable<byte> RawMask         { get; } = RawArrayEmpty;
         public IEnumerable<byte> RawDetectMask   { get; } = RawArrayEmpty;
 
-        public IObservable<RawValueChangedDetails> HeightSpeedChanged => new Subject<RawValueChangedDetails>();
+        public IObservable<RawValueChangedDetails> HeightSpeedChanged =>
+            throw new NotInitializeException(Message);
 
         public void Dispose()
         {
         }
+
+        internal const string Message = "Can't use a anknown Instance";
     }
 }
