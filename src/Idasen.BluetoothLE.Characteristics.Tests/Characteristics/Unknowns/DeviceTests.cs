@@ -32,7 +32,7 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Characteristics.Unknowns
         }
 
         [ TestMethod ]
-        public void Constructor_ForInvoked_SetsGattCommunicationStatus ( )
+        public void GattCommunicationStatus_ForInvoked_Unreachable( )
         {
             CreateSut ( ).GattCommunicationStatus
                          .Should ( )
@@ -40,7 +40,7 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Characteristics.Unknowns
         }
 
         [ TestMethod ]
-        public void Constructor_ForInvoked_SetsName ( )
+        public void Name_ForInvoked_UnknownDeviceName( )
         {
             CreateSut ( ).Name
                          .Should ( )
@@ -48,15 +48,15 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Characteristics.Unknowns
         }
 
         [ TestMethod ]
-        public void Constructor_ForInvoked_SetsDeviceId ( )
+        public void DeviceId_ForInvoked_UnknownDeviceId( )
         {
             CreateSut ( ).DeviceId
                          .Should ( )
-                         .Be ( Device.UnknownDeviceId ) ;
+                         .Be ( Device.UnknownDeviceId) ;
         }
 
         [ TestMethod ]
-        public void Constructor_ForInvoked_SetsIsPaired ( )
+        public void Constructor_ForInvoked_False ( )
         {
             CreateSut ( ).IsPaired
                          .Should ( )
@@ -64,7 +64,7 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Characteristics.Unknowns
         }
 
         [ TestMethod ]
-        public void Constructor_ForInvoked_SetsGattServices ( )
+        public void GattServices_ForInvoked_Empty( )
         {
             CreateSut ( ).GattServices
                          .Should ( )
@@ -72,7 +72,7 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Characteristics.Unknowns
         }
 
         [ TestMethod ]
-        public void Constructor_ForInvoked_SetsConnectionStatus ( )
+        public void ConnectionStatus_ForInvoked_Disconnected( )
         {
             CreateSut ( ).ConnectionStatus
                          .Should ( )
