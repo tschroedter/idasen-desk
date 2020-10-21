@@ -3,6 +3,7 @@ using Windows.Devices.Bluetooth ;
 using Windows.Devices.Bluetooth.GenericAttributeProfile ;
 using FluentAssertions ;
 using Idasen.BluetoothLE.Characteristics.Characteristics.Unknowns ;
+using Idasen.BluetoothLE.Characteristics.Common ;
 using Microsoft.VisualStudio.TestTools.UnitTesting ;
 
 namespace Idasen.BluetoothLE.Characteristics.Tests.Characteristics.Unknowns
@@ -11,19 +12,23 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Characteristics.Unknowns
     public class DeviceTests
     {
         [ TestMethod ]
-        public void Constructor_ForInvoked_SetsConnectionStatusChanged ( )
+        public void ConnectionStatusChanged_ForInvoked_Throws ( )
         {
-            CreateSut ( ).ConnectionStatusChanged
-                         .Should ( )
-                         .BeNull ( ) ;
+            Action action = ( ) => CreateSut ( ).ConnectionStatusChanged
+                                                .Subscribe ( ) ;
+
+            action.Should ( )
+                  .Throw < NotInitializeException > ( ) ;
         }
 
         [ TestMethod ]
-        public void Constructor_ForInvoked_SetsGattServicesRefreshed ( )
+        public void GattServicesRefreshed_ForInvoked_Throws ( )
         {
-            CreateSut ( ).GattServicesRefreshed
-                         .Should ( )
-                         .BeNull ( ) ;
+            Action action = ( ) => CreateSut ( ).GattServicesRefreshed
+                                                .Subscribe ( ) ;
+
+            action.Should ( )
+                  .Throw < NotInitializeException > ( ) ;
         }
 
         [ TestMethod ]
@@ -83,13 +88,13 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Characteristics.Unknowns
                   .NotThrow < Exception > ( ) ;
         }
 
-        [TestMethod]
-        public void Dispose_ForInvoked_DoesNothing()
+        [ TestMethod ]
+        public void Dispose_ForInvoked_DoesNothing ( )
         {
-            Action action = () => CreateSut().Dispose (  );
+            Action action = ( ) => CreateSut ( ).Dispose ( ) ;
 
-            action.Should()
-                  .NotThrow<Exception>();
+            action.Should ( )
+                  .NotThrow < Exception > ( ) ;
         }
 
         private Device CreateSut ( )

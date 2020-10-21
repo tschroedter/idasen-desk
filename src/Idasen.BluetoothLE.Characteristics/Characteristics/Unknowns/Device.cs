@@ -3,6 +3,7 @@ using System.Collections.Generic ;
 using System.Collections.Immutable ;
 using Windows.Devices.Bluetooth ;
 using Windows.Devices.Bluetooth.GenericAttributeProfile ;
+using Idasen.BluetoothLE.Characteristics.Common ;
 using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery ;
 using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers ;
 
@@ -15,7 +16,7 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics.Unknowns
         {
         }
 
-        public IObservable < BluetoothConnectionStatus > ConnectionStatusChanged { get ; } = null ;
+        public IObservable < BluetoothConnectionStatus > ConnectionStatusChanged => throw new NotInitializeException(Message);
         public GattCommunicationStatus GattCommunicationStatus { get ; } = GattCommunicationStatus.Unreachable ;
         public string Name { get ; } = UnknownDeviceName ;
         public string DeviceId { get ; } = UnknownDeviceId ; // todo maybe rename to just Id
@@ -27,7 +28,7 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics.Unknowns
             get ;
         } = new Dictionary < IGattDeviceServiceWrapper , IGattCharacteristicsResultWrapper > ( ).ToImmutableDictionary ( ) ;
 
-        public IObservable < GattCommunicationStatus > GattServicesRefreshed { get ; } = null ;
+        public IObservable < GattCommunicationStatus > GattServicesRefreshed => throw new NotInitializeException(Message);
 
         public void Connect ( )
         {
@@ -36,5 +37,6 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics.Unknowns
 
         internal const string UnknownDeviceName = "Unknown Device" ;
         internal const string UnknownDeviceId   = "Unknown Device Id" ;
+        internal const string Message           = "Can't use a anknown Instance";
     }
 }
