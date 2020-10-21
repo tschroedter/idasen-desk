@@ -10,7 +10,7 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Characteristics.Unknowns
     public class GenericAccessTests
     {
         [ TestMethod ]
-        public void Constructor_ForInvoked_SetsGattServiceUuid ( )
+        public void GattServiceUuid_ForInvoked_Empty( )
         {
             CreateSut ( ).GattServiceUuid
                          .Should ( )
@@ -18,7 +18,7 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Characteristics.Unknowns
         }
 
         [ TestMethod ]
-        public void Constructor_ForInvoked_SetsRawResolution ( )
+        public void RawResolution_ForInvoked_Empty( )
         {
             CreateSut ( ).RawResolution
                          .Should ( )
@@ -26,7 +26,7 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Characteristics.Unknowns
         }
 
         [ TestMethod ]
-        public void Constructor_ForInvoked_SetsRawParameters ( )
+        public void RawParameters_ForInvoked_Empty( )
         {
             CreateSut ( ).RawParameters
                          .Should ( )
@@ -34,7 +34,7 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Characteristics.Unknowns
         }
 
         [ TestMethod ]
-        public void Constructor_ForInvoked_SetsRawAppearance ( )
+        public void RawAppearance_ForInvoked_Empty( )
         {
             CreateSut ( ).RawAppearance
                          .Should ( )
@@ -42,7 +42,7 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Characteristics.Unknowns
         }
 
         [ TestMethod ]
-        public void Constructor_ForInvoked_SetsRawDeviceName ( )
+        public void RawDeviceName_ForInvoked_Empty( )
         {
             CreateSut ( ).RawDeviceName
                          .Should ( )
