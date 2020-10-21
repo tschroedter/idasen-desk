@@ -5,7 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting ;
 namespace Idasen.BluetoothLE.Characteristics.Tests.Characteristics.Factories.ConstructorNullTester
 {
     [ TestClass ]
-    public class ReferenceOutputFactoryFactoryConstructorNullTester
+    public class ReferenceOutputFactoryConstructorNullTester
         : BaseConstructorNullTester < ReferenceOutputFactory >
     {
         public override int NumberOfConstructorsPassed { get ; } = 1 ;
