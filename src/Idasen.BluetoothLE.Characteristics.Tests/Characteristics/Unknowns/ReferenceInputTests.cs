@@ -8,7 +8,7 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Characteristics.Unknowns
     public class ReferenceInputTests
     {
         [TestMethod]
-        public void Constructor_ForInvoked_SetsCtrl1()
+        public void Ctrl1_ForInvoked_Empty()
         {
             CreateSut().Ctrl1
                        .Should()
