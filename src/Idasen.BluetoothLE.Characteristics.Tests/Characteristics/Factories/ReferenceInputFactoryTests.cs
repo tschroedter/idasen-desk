@@ -5,17 +5,17 @@ using Selkie.AutoMocking ;
 
 namespace Idasen.BluetoothLE.Characteristics.Tests.Characteristics.Factories
 {
-    [AutoDataTestClass]
+    [ AutoDataTestClass ]
     public class ReferenceInputFactoryTests
     {
-        [AutoDataTestMethod]
-        public void Create_ForInvoked_Instance(
-            ReferenceInputFactory sut,
-            IDevice               wrapper)
+        [ AutoDataTestMethod ]
+        public void Create_ForInvoked_Instance (
+            ReferenceInputFactory sut ,
+            IDevice               device )
         {
-            sut.Create(wrapper)
-               .Should()
-               .NotBeNull();
+            sut.Create ( device )
+               .Should ( )
+               .NotBeNull ( ) ;
         }
     }
 }

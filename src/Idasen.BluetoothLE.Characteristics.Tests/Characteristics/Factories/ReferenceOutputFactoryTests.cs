@@ -11,9 +11,9 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Characteristics.Factories
         [ AutoDataTestMethod ]
         public void Create_ForInvoked_Instance (
             ReferenceOutputFactory sut ,
-            IDevice                wrapper )
+            IDevice                device )
         {
-            sut.Create ( wrapper )
+            sut.Create ( device )
                .Should ( )
                .NotBeNull ( ) ;
         }
