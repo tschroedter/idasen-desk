@@ -7,31 +7,32 @@ using Idasen.BluetoothLE.Linak.Interfaces;
 using Idasen.BluetoothLE.Core;
 using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery;
 using Serilog;
+using NotNullAttribute = JetBrains.Annotations.NotNullAttribute;
 
 namespace Idasen.BluetoothLE.Linak
 {
     public class DeskCharacteristics
         : IDeskCharacteristics
     {
-        [JetBrains.Annotations.NotNull] private readonly IControlFactory          _controlFactory;
-        [JetBrains.Annotations.NotNull] private readonly IDpgFactory              _dpgFactory;
-        [JetBrains.Annotations.NotNull] private readonly IGenericAccessFactory    _genericAccessFactory;
-        [JetBrains.Annotations.NotNull] private readonly IGenericAttributeFactory _genericAttributeFactory;
-        [JetBrains.Annotations.NotNull] private readonly ILogger                  _logger;
-        [JetBrains.Annotations.NotNull] private readonly IReferenceInputFactory   _referenceInputFactory;
-        [JetBrains.Annotations.NotNull] private readonly IReferenceOutputFactory  _referenceOutputFactory;
+        [NotNull] private readonly IControlFactory          _controlFactory;
+        [NotNull] private readonly IDpgFactory              _dpgFactory;
+        [NotNull] private readonly IGenericAccessFactory    _genericAccessFactory;
+        [NotNull] private readonly IGenericAttributeFactory _genericAttributeFactory;
+        [NotNull] private readonly ILogger                  _logger;
+        [NotNull] private readonly IReferenceInputFactory   _referenceInputFactory;
+        [NotNull] private readonly IReferenceOutputFactory  _referenceOutputFactory;
 
         [SuppressMessage("NDepend",
                          "ND1004:AvoidMethodsWithTooManyParameters",
                          Justification = "The real desk contains all the GATT characteristics.")]
         public DeskCharacteristics(
-            [JetBrains.Annotations.NotNull] ILogger                  logger,
-            [JetBrains.Annotations.NotNull] IGenericAccessFactory    genericAccessFactory,
-            [JetBrains.Annotations.NotNull] IGenericAttributeFactory genericAttributeFactory,
-            [JetBrains.Annotations.NotNull] IReferenceInputFactory   referenceInputFactory,
-            [JetBrains.Annotations.NotNull] IReferenceOutputFactory  referenceOutputFactory,
-            [JetBrains.Annotations.NotNull] IDpgFactory              dpgFactory,
-            [JetBrains.Annotations.NotNull] IControlFactory          controlFactory)
+            [NotNull] ILogger                  logger,
+            [NotNull] IGenericAccessFactory    genericAccessFactory,
+            [NotNull] IGenericAttributeFactory genericAttributeFactory,
+            [NotNull] IReferenceInputFactory   referenceInputFactory,
+            [NotNull] IReferenceOutputFactory  referenceOutputFactory,
+            [NotNull] IDpgFactory              dpgFactory,
+            [NotNull] IControlFactory          controlFactory)
         {
             Guard.ArgumentNotNull(logger,
                                   nameof(logger));
