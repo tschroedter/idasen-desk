@@ -89,6 +89,16 @@ namespace Idasen.BluetoothLE.Core
                    .As<IGattCharacteristicsResultWrapper>();
             builder.RegisterType<GattCharacteristicsResultWrapperFactory>()
                    .As<IGattCharacteristicsResultWrapperFactory>();
+
+            builder.RegisterType<GattReadResultWrapper>()
+                   .As<IGattReadResult>();  // todo rename
+            builder.RegisterType<GattReadResultWrapperFactory>()
+                   .As<IGatReadResultWrapperFactory>();
+
+            builder.RegisterType<GattWriteResultWrapper>()
+                   .As<IGattWriteResult>(); // todo rename
+            builder.RegisterType<GattWriteResultWrapperFactory>()
+                   .As<IGattWriteResultWrapperFactory>();
         }
     }
 }
