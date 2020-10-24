@@ -34,14 +34,17 @@ namespace Idasen.BluetoothLE.Characteristics.Common
             Guard.ArgumentNotNull ( characteristic ,
                                     nameof ( characteristic ) ) ;
 
-            if ( ! SupportsRead ( characteristic ) )
+            if ( SupportsNotify ( characteristic )) // todo testing
+                return(false, ArrayEmpty);  // need to subscribe to value change
+
+            if ( SupportsRead ( characteristic ) )
                 return await ReadValue ( characteristic ) ;
 
             _logger.Information ( $"GattCharacteristic '{characteristic.Uuid}' " +
                                   "doesn't support 'Read'" ) ;
 
             return ( false , ArrayEmpty ) ;
-        }
+        } // todo do not move desk if height speed stays 0
 
         private static readonly byte [ ] ArrayEmpty = Enumerable.Empty < byte > ( )
                                                                 .ToArray ( ) ;
@@ -51,8 +54,14 @@ namespace Idasen.BluetoothLE.Characteristics.Common
 
         private static bool SupportsRead ( IGattCharacteristicWrapper characteristic )
         {
-            return ( characteristic.CharacteristicProperties & GattCharacteristicProperties.Read ) !=
+            return ( characteristic.CharacteristicProperties & GattCharacteristicProperties.Read ) ==
                    GattCharacteristicProperties.Read ;
+        }
+
+        private static bool SupportsNotify(IGattCharacteristicWrapper characteristic)
+        {
+            return (characteristic.CharacteristicProperties & GattCharacteristicProperties.Notify) ==
+                   GattCharacteristicProperties.Notify;
         }
 
         private async Task < (bool , byte [ ]) > ReadValue (
