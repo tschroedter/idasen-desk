@@ -10,7 +10,6 @@ using Idasen.BluetoothLE.Characteristics.Interfaces.Characteristics.Customs ;
 using Idasen.BluetoothLE.Characteristics.Interfaces.Common ;
 using Idasen.BluetoothLE.Core ;
 using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery ;
-using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers ;
 using JetBrains.Annotations ;
 using Serilog ;
 
@@ -27,8 +26,8 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
             [ NotNull ] IDevice                              device ,
             [ NotNull ] IGattCharacteristicsProviderFactory  providerFactory ,
             [ NotNull ] IRawValueReader                      rawValueReader ,
-            [ NotNull ] IRawValueWriter                      rawValueWriter,
-            [ NotNull ] ICharacteristicBaseToStringConverter toStringConverter)
+            [ NotNull ] IRawValueWriter                      rawValueWriter ,
+            [ NotNull ] ICharacteristicBaseToStringConverter toStringConverter )
         {
             Guard.ArgumentNotNull ( logger ,
                                     nameof ( logger ) ) ;
@@ -42,15 +41,15 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
                                     nameof ( rawValueReader ) ) ;
             Guard.ArgumentNotNull ( rawValueWriter ,
                                     nameof ( rawValueWriter ) ) ;
-            Guard.ArgumentNotNull(toStringConverter,
-                                  nameof(toStringConverter));
+            Guard.ArgumentNotNull ( toStringConverter ,
+                                    nameof ( toStringConverter ) ) ;
 
-            Device = device ;
-            Logger                  = logger ;
-            Scheduler               = scheduler ;
-            ProviderFactory         = providerFactory ;
-            RawValueReader          = rawValueReader ;
-            RawValueWriter          = rawValueWriter ;
+            Device             = device ;
+            Logger             = logger ;
+            Scheduler          = scheduler ;
+            ProviderFactory    = providerFactory ;
+            RawValueReader     = rawValueReader ;
+            RawValueWriter     = rawValueWriter ;
             _toStringConverter = toStringConverter ;
         }
 
@@ -82,17 +81,23 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
         {
             Characteristics.Refresh ( DescriptionToUuid ) ;
 
-            foreach ( var keyValuePair in Characteristics.Characteristics )
+            var keys = Characteristics.Characteristics.Keys.ToArray ( ) ;
+
+            foreach ( var key in keys )
             {
-                Logger.Information ( $"Reading raw value for {keyValuePair.Key} " +
-                                     $"and and characteristic {keyValuePair.Value}" ) ;
+                if ( ! Characteristics.Characteristics.TryGetValue ( key ,
+                                                                     out var characteristic ) )
+                    continue ;
+
+                Logger.Debug ( $"Reading raw value for {key} " +
+                               $"and and characteristic {characteristic.Uuid}" ) ;
 
                 (bool success , byte [ ] value) result =
-                    await RawValueReader.TryReadValueAsync ( keyValuePair.Value ) ;
+                    await RawValueReader.TryReadValueAsync ( characteristic ) ;
 
-                RawValues [ keyValuePair.Key ] = result.success
-                                                     ? result.value
-                                                     : RawArrayEmpty ;
+                RawValues [ key ] = result.success
+                                        ? result.value
+                                        : RawArrayEmpty ;
             }
         }
 
@@ -108,9 +113,9 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
                                                            IEnumerable < byte > bytes )
         {
             if ( ! Characteristics.Characteristics.TryGetValue ( key ,
-                                                                 out IGattCharacteristicWrapper characteristic ) )
+                                                                 out var characteristic ) )
             {
-                Logger.Error($"Unknown characteristic with key '{key}'");
+                Logger.Error ( $"Unknown characteristic with key '{key}'" ) ;
 
                 return false ;
             }
@@ -120,7 +125,7 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
                                                                  bytes.ToArray ( )
                                                                       .AsBuffer ( ) ) ;
 
-            Logger.Error($"Characteristic for key '{key}' is null");
+            Logger.Error ( $"Characteristic for key '{key}' is null" ) ;
 
             return false ;
         }
@@ -139,6 +144,8 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
             return _toStringConverter.ToString ( this ) ;
         }
 
+        private readonly ICharacteristicBaseToStringConverter _toStringConverter ;
+
         internal readonly Dictionary < string , Guid > DescriptionToUuid =
             new Dictionary < string , Guid > ( ) ;
 
@@ -150,8 +157,7 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
         internal readonly Dictionary < string , IEnumerable < byte > >
             RawValues = new Dictionary < string , IEnumerable < byte > > ( ) ;
 
-        protected readonly IRawValueWriter                      RawValueWriter ;
-        private readonly   ICharacteristicBaseToStringConverter _toStringConverter ;
+        protected readonly IRawValueWriter RawValueWriter ;
 
         protected readonly IScheduler Scheduler ;
 
