@@ -74,6 +74,9 @@ namespace Idasen.BluetoothLE.Characteristics
 
             builder.RegisterType<CharacteristicBaseToStringConverter>()
                    .As<ICharacteristicBaseToStringConverter>();
+
+            builder.RegisterType<BufferReader>()
+                   .As<IBufferReader>();
         }
     }
 }
