@@ -61,7 +61,7 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
             _subjectHeightSpeed = subjectHeightSpeed ;
         }
 
-        public IObservable<RawValueChangedDetails> HeightSpeedChanged => _subjectHeightSpeed;
+        public IObservable < RawValueChangedDetails > HeightSpeedChanged => _subjectHeightSpeed ;
 
         public override Guid GattServiceUuid { get; } = Guid.Parse("99FA0020-338A-1024-8A49-009C0215F78A");
 
@@ -98,6 +98,8 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
 
                 return;
             }
+
+            _subscriber?.Dispose (  ); // todo testing
 
             _subscriber = heightAndSpeed.ValueChanged
                                         .SubscribeOn(Scheduler)
