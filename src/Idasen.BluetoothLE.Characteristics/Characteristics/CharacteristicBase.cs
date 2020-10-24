@@ -87,7 +87,10 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
             {
                 if ( ! Characteristics.Characteristics.TryGetValue ( key ,
                                                                      out var characteristic ) )
-                    continue ;
+                    continue ;  // todo log warning
+
+                if ( characteristic == null )
+                    continue;  // todo log warning
 
                 Logger.Debug ( $"Reading raw value for {key} " +
                                $"and and characteristic {characteristic.Uuid}" ) ;
