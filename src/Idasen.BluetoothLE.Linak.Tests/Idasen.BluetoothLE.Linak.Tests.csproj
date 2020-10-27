@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Idasen.BluetoothLE.Core.Tests\Idasen.BluetoothLE.Core.Tests.csproj" />
     <ProjectReference Include="..\Idasen.BluetoothLE.Linak\Idasen.BluetoothLE.Linak.csproj" />
   </ItemGroup>
 
