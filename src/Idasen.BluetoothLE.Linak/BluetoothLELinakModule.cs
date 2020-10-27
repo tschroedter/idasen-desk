@@ -61,6 +61,12 @@ namespace Idasen.BluetoothLE.Linak
 
             builder.RegisterType<HasReachedTargetHeightCalculator>()
                    .As<IHasReachedTargetHeightCalculator>();
+
+            builder.RegisterType<InitialHeightProvider>()
+                   .As<IInitialHeightProvider>();
+
+            builder.RegisterType<InitialHeightAndSpeedProviderFactory>()
+                   .As<IInitialHeightAndSpeedProviderFactory>();
         }
     }
 }
