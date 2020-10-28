@@ -42,10 +42,10 @@ namespace Idasen.BluetoothLE.Linak.Control
         /// <inheritdoc />
         public void Initialize ( )
         {
-            _disposalHeightAndSpeed?.Dispose ( ) ;
+            _disposalHeightAndSpeed?.Dispose ( ) ; // todo testing
 
             _disposalHeightAndSpeed = _heightAndSpeed.HeightAndSpeedChanged
-                                                     .SubscribeOn ( _scheduler )
+                                                     .ObserveOn ( _scheduler )
                                                      .Subscribe ( OnHeightAndSpeedChanged ) ;
 
             Height = _heightAndSpeed.Height ;
@@ -61,14 +61,14 @@ namespace Idasen.BluetoothLE.Linak.Control
             {
                 _logger.Information ( $"Current height is {_heightAndSpeed.Height}" ) ;
 
-                _isReceivedHeightAndSpeed = true ;
+                HasReceivedHeightAndSpeed = true ;
 
                 return ;
             }
 
             _logger.Information ( "Trying to determine current height by moving the desk" ) ;
 
-            _isReceivedHeightAndSpeed = false ;
+            HasReceivedHeightAndSpeed = false ;
 
             await _executor.Up ( ) ;
             await _executor.Stop ( ) ;
@@ -80,11 +80,14 @@ namespace Idasen.BluetoothLE.Linak.Control
         /// <inheritdoc />
         public void Dispose ( )
         {
-            _disposalHeightAndSpeed?.Dispose ( ) ;
+            _disposalHeightAndSpeed?.Dispose ( ) ; // todo testing
         }
 
         /// <inheritdoc />
         public uint Height { get ; private set ; }
+
+        /// <inheritdoc />
+        public bool HasReceivedHeightAndSpeed { get ; private set ; }
 
         public delegate IInitialHeightProvider Factory ( IDeskCommandExecutor executor ,
                                                          IDeskHeightAndSpeed  heightAndSpeed ) ;
@@ -93,7 +96,7 @@ namespace Idasen.BluetoothLE.Linak.Control
         {
             Height = details.Height ;
 
-            if ( _isReceivedHeightAndSpeed )
+            if ( HasReceivedHeightAndSpeed )
                 return ;
 
             if ( details.Height <= 0 )
@@ -106,7 +109,7 @@ namespace Idasen.BluetoothLE.Linak.Control
             }
 
             _subjectFinished.OnNext ( Height ) ;
-            _isReceivedHeightAndSpeed = true ;
+            HasReceivedHeightAndSpeed = true ;
 
             _logger.Information ( "Received valid " +
                                   $"height {details.Height}." ) ;
@@ -120,6 +123,5 @@ namespace Idasen.BluetoothLE.Linak.Control
         private readonly ISubject < uint > _subjectFinished ;
 
         private IDisposable _disposalHeightAndSpeed ;
-        private bool        _isReceivedHeightAndSpeed ;
     }
 }

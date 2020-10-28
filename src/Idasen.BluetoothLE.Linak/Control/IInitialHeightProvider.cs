@@ -10,17 +10,6 @@ namespace Idasen.BluetoothLE.Linak.Control
     public interface IInitialHeightProvider
         : IDisposable
     {
-        void                 Initialize ( ) ;
-
-        /// <summary>
-        ///     Start the process of checking and getting the current height
-        ///     of the desk.
-        /// </summary>
-        /// <returns>
-        ///     A Task.
-        /// </returns>
-        Task                 Start ( ) ;
-
         /// <summary>
         ///     Notifies listeners when the provider was able to determine the
         ///     height of the desk.
@@ -31,5 +20,21 @@ namespace Idasen.BluetoothLE.Linak.Control
         ///     The current height of the desk.
         /// </summary>
         uint Height { get ; }
+
+        /// <summary>
+        ///     Indicates if the current desk height is available or not.
+        /// </summary>
+        bool HasReceivedHeightAndSpeed { get ; }
+
+        void Initialize ( ) ;
+
+        /// <summary>
+        ///     Start the process of checking and getting the current height
+        ///     of the desk.
+        /// </summary>
+        /// <returns>
+        ///     A Task.
+        /// </returns>
+        Task Start ( ) ;
     }
 }
