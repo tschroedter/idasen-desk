@@ -13,7 +13,7 @@ namespace Idasen.BluetoothLE.Linak
         : IRawValueToHeightAndSpeedConverter
     {
         // Height of the desk at it's lowest 620 mm and max. is 1270mm.
-        private const uint HeightBaseInMicroMeter = 6200; // = 6200 / 10 = 620mm
+        internal const uint HeightBaseInMicroMeter = 6200; // = 6200 / 10 = 620mm
 
         private readonly ILogger _logger;
 
