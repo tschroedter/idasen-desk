@@ -1,72 +1,62 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reactive.Concurrency;
-using System.Reactive.Linq;
-using System.Text;
-using Idasen.BluetoothLE.Core;
-using Idasen.BluetoothLE.Linak.Interfaces;
-using JetBrains.Annotations;
-using Serilog;
+﻿using System ;
+using System.Collections.Generic ;
+using System.Reactive.Concurrency ;
+using System.Reactive.Linq ;
+using Idasen.BluetoothLE.Core ;
+using Idasen.BluetoothLE.Linak.Interfaces ;
+using JetBrains.Annotations ;
+using Serilog ;
 
 namespace Idasen.BluetoothLE.Linak.Control
 {
     public class RawValueChangedDetailsCollector
         : IRawValueChangedDetailsCollector
     {
-        private const int MaxItems = 100;
-
-        private readonly IList<HeightSpeedDetails> _details = new List<HeightSpeedDetails>();
-        private readonly ILogger                   _logger;
-        private readonly IDesk                     _desk;
-        private readonly IDisposable               _disposableHeight;
-
-        public RawValueChangedDetailsCollector([NotNull] ILogger          logger,
-                                               [NotNull] IScheduler       scheduler,
-                                               [NotNull] IDesk desk)
+        public RawValueChangedDetailsCollector ( [ NotNull ] ILogger    logger ,
+                                                 [ NotNull ] IScheduler scheduler ,
+                                                 [ NotNull ] IDesk      desk )
         {
-            Guard.ArgumentNotNull(logger,
-                                  nameof(logger));
-            Guard.ArgumentNotNull(scheduler,
-                                  nameof(scheduler));
-            Guard.ArgumentNotNull(desk,
-                                  nameof(desk));
+            Guard.ArgumentNotNull ( logger ,
+                                    nameof ( logger ) ) ;
+            Guard.ArgumentNotNull ( scheduler ,
+                                    nameof ( scheduler ) ) ;
+            Guard.ArgumentNotNull ( desk ,
+                                    nameof ( desk ) ) ;
 
-            _logger = logger;
-            _desk       = desk;
+            _logger = logger ;
 
-            _disposableHeight = _desk.HeightAndSpeedChanged
-                                     .SubscribeOn(scheduler)
-                                     .Subscribe(OnHeightAndSpeedChanged);
+            _disposableHeight = desk.HeightAndSpeedChanged
+                                    .ObserveOn ( scheduler )
+                                    .Subscribe ( OnHeightAndSpeedChanged ) ;
         }
 
-        public IEnumerable<HeightSpeedDetails> Details => _details;
+        public IEnumerable < HeightSpeedDetails > Details => _details ;
 
-        public void Dispose()
+        public void Dispose ( )
         {
-            _disposableHeight?.Dispose();
+            _disposableHeight?.Dispose ( ) ; // todo testing
         }
 
-        private void OnHeightAndSpeedChanged(HeightSpeedDetails details)
+        internal const int MaxItems = 100 ;
+
+        private void OnHeightAndSpeedChanged ( HeightSpeedDetails details )
         {
-            _logger.Debug($"{details}");
+            _logger.Debug ( $"{details}" ) ;
 
-            if (_details.Count > MaxItems)
-                _details.RemoveAt(0);
+            if ( _details.Count >= MaxItems )
+                _details.RemoveAt ( 0 ) ;
 
-            _details.Add(details);
+            _details.Add ( details ) ;
         }
 
-        public override string ToString()
+        public override string ToString ( )
         {
-            var builder = new StringBuilder();
-
-            foreach (var item in Details)
-            {
-                builder.AppendLine(item.ToString());
-                // todo avoid blank line at the end
-            }
-
-            return builder.ToString();
+            return string.Join ( '|' ,
+                                 Details ) ;
         }
+
+        private readonly IList < HeightSpeedDetails > _details = new List < HeightSpeedDetails > ( ) ;
+        private readonly IDisposable                  _disposableHeight ;
+        private readonly ILogger                      _logger ;
     }
 }
