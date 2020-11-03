@@ -65,7 +65,7 @@ namespace Idasen.BluetoothLE.Linak.Control
 
             _logger.Information($"Height = {Height}," +
                                 $"Speed = {Speed},"   +
-                                $"StartMovingIntoDirection = {StartMovingIntoDirection}" +
+                                $"StartMovingIntoDirection = {StartMovingIntoDirection} " +
                                 $"MoveIntoDirection = {MoveIntoDirection}");
 
             if (Speed == 0)
