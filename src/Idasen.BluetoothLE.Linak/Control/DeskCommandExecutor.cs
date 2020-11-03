@@ -45,6 +45,8 @@ namespace Idasen.BluetoothLE.Linak.Control
 
         private async Task<bool> Execute(DeskCommands deskCommand)
         {
+            _logger.Debug ( $"Executing command {deskCommand}" );
+
             if (!_provider.TryGetValue(deskCommand, out var bytes))
             {
                 _logger.Error($"Failed for unknown command '{deskCommand}'");
