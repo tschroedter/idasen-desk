@@ -14,5 +14,6 @@ namespace Idasen.BluetoothLE.Linak.Control
         Task<bool>        Down();
         Task<bool>        Stop();
         void              Start();
+        void              Initialize ( ) ;
     }
 }
