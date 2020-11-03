@@ -116,9 +116,13 @@ namespace Idasen.BluetoothLE.Linak.Tests
 
         private RawValueChangedDetailsCollector CreateSut ( )
         {
-            return new RawValueChangedDetailsCollector ( _logger ,
-                                                         _scheduler ,
-                                                         _desk ) ;
+            var sut = new RawValueChangedDetailsCollector ( _logger ,
+                                                            _scheduler ,
+                                                            _desk ) ;
+
+            sut.Initialize ( ) ;
+
+            return sut ;
         }
 
         private IDesk              _desk ;

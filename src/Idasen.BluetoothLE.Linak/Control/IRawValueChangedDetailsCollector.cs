@@ -6,6 +6,7 @@ namespace Idasen.BluetoothLE.Linak.Control
     public interface IRawValueChangedDetailsCollector
         : IDisposable
     {
-        IEnumerable<HeightSpeedDetails> Details { get; }
+        IEnumerable<HeightSpeedDetails>  Details { get; }
+        IRawValueChangedDetailsCollector Initialize () ;
     }
 }

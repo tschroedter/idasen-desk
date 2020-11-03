@@ -10,7 +10,7 @@ using Serilog ;
 namespace Idasen.BluetoothLE.Linak.Control
 {
     public class RawValueChangedDetailsCollector
-        : IRawValueChangedDetailsCollector
+        : IRawValueChangedDetailsCollector  // todo maybe this class is not used
     {
         public RawValueChangedDetailsCollector ( [ NotNull ] ILogger    logger ,
                                                  [ NotNull ] IScheduler scheduler ,
@@ -23,11 +23,20 @@ namespace Idasen.BluetoothLE.Linak.Control
             Guard.ArgumentNotNull ( desk ,
                                     nameof ( desk ) ) ;
 
-            _logger = logger ;
+            _logger    = logger ;
+            _scheduler = scheduler ;
+            _desk      = desk ;
+        }
 
-            _disposableHeight = desk.HeightAndSpeedChanged
-                                    .ObserveOn ( scheduler )
-                                    .Subscribe ( OnHeightAndSpeedChanged ) ;
+        public IRawValueChangedDetailsCollector Initialize ( )
+        {
+            _disposableHeight?.Dispose ( ) ;
+
+            _disposableHeight = _desk.HeightAndSpeedChanged
+                                     .ObserveOn ( _scheduler )
+                                     .Subscribe ( OnHeightAndSpeedChanged ) ;
+
+            return this ;
         }
 
         public IEnumerable < HeightSpeedDetails > Details => _details ;
@@ -55,8 +64,11 @@ namespace Idasen.BluetoothLE.Linak.Control
                                  Details ) ;
         }
 
-        private readonly IList < HeightSpeedDetails > _details = new List < HeightSpeedDetails > ( ) ;
-        private readonly IDisposable                  _disposableHeight ;
-        private readonly ILogger                      _logger ;
+        [ NotNull ] private readonly IDesk _desk ;
+
+        private readonly             IList < HeightSpeedDetails > _details = new List < HeightSpeedDetails > ( ) ;
+        private readonly             ILogger                      _logger ;
+        [ NotNull ] private readonly IScheduler                   _scheduler ;
+        private                      IDisposable                  _disposableHeight ;
     }
 }
