@@ -38,6 +38,8 @@ namespace Idasen.BluetoothLE.Linak
                                   nameof(subjectFactory));
             Guard.ArgumentNotNull(subjectHeight,
                                   nameof(subjectHeight));
+            Guard.ArgumentNotNull(subjectRefreshed,
+                                  nameof(subjectRefreshed));
             Guard.ArgumentNotNull(subjectSpeed,
                                   nameof(subjectSpeed));
             Guard.ArgumentNotNull(subjectHeightAndSpeed,
@@ -136,6 +138,7 @@ namespace Idasen.BluetoothLE.Linak
 
             _heightAndSpeed?.Dispose();
             _heightAndSpeed = _heightAndSpeedFactory.Create(_deskCharacteristics.ReferenceOutput);
+            _heightAndSpeed.Initialize ( ) ;
 
             _disposableHeight = _heightAndSpeed.HeightChanged
                                                .SubscribeOn(_scheduler)
@@ -150,6 +153,7 @@ namespace Idasen.BluetoothLE.Linak
             _executer = _commandExecutorFactory.Create(_deskCharacteristics.Control);
             _mover = _moverFactory.Create(_executer,
                                           _heightAndSpeed);
+            _mover.Initialize (  );
 
             _subjectRefreshed.OnNext(true);
         }
