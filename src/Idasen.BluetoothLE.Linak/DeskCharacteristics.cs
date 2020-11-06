@@ -76,10 +76,12 @@ namespace Idasen.BluetoothLE.Linak
             characteristic.Initialize < ICharacteristicBase > ( ) ;
 
             _logger.Debug ( $"Adding characteristic {characteristic} for key {key}" ) ;
-            _available [ key ] = characteristic ;
+            _available [ key ] = characteristic ; // todo not sure if I should dispose old characteristic here
 
             return this ;
         }
+
+        public IReadOnlyDictionary < DeskCharacteristicKey , ICharacteristicBase > Characteristics => _available ;
 
         public override string ToString ( )
         {
