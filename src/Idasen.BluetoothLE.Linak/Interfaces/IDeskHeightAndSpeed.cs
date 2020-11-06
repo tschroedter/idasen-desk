@@ -12,5 +12,6 @@ namespace Idasen.BluetoothLE.Linak.Interfaces
         int                             Speed                 { get; }
         IObservable<HeightSpeedDetails> HeightAndSpeedChanged { get; }
         Task                            Refresh();
+        IDeskHeightAndSpeed             Initialize ( ) ;
     }
 }
