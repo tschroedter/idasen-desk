@@ -67,6 +67,9 @@ namespace Idasen.BluetoothLE.Linak
 
             builder.RegisterType<InitialHeightAndSpeedProviderFactory>()
                    .As<IInitialHeightAndSpeedProviderFactory>();
+
+            builder.RegisterType<DeskCharacteristicsCreator>()
+                   .As<IDeskCharacteristicsCreator>();
         }
     }
 }

@@ -1,122 +1,104 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Text;
-using System.Threading.Tasks;
-using Idasen.BluetoothLE.Characteristics.Interfaces.Characteristics;
-using Idasen.BluetoothLE.Characteristics.Interfaces.Characteristics.Factories;
-using Idasen.BluetoothLE.Linak.Interfaces;
-using Idasen.BluetoothLE.Core;
-using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery;
-using Serilog;
-using NotNullAttribute = JetBrains.Annotations.NotNullAttribute;
+﻿using System.Collections.Generic ;
+using System.Text ;
+using System.Threading.Tasks ;
+using Idasen.BluetoothLE.Characteristics.Interfaces.Characteristics ;
+using Idasen.BluetoothLE.Core ;
+using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery ;
+using Idasen.BluetoothLE.Linak.Interfaces ;
+using JetBrains.Annotations ;
+using Serilog ;
 
 namespace Idasen.BluetoothLE.Linak
 {
     public class DeskCharacteristics
         : IDeskCharacteristics
     {
-        [NotNull] private readonly IControlFactory          _controlFactory;
-        [NotNull] private readonly IDpgFactory              _dpgFactory;
-        [NotNull] private readonly IGenericAccessFactory    _genericAccessFactory;
-        [NotNull] private readonly IGenericAttributeFactory _genericAttributeFactory;
-        [NotNull] private readonly ILogger                  _logger;
-        [NotNull] private readonly IReferenceInputFactory   _referenceInputFactory;
-        [NotNull] private readonly IReferenceOutputFactory  _referenceOutputFactory;
-
-        [SuppressMessage("NDepend",
-                         "ND1004:AvoidMethodsWithTooManyParameters",
-                         Justification = "The real desk contains all the GATT characteristics.")]
-        public DeskCharacteristics(
-            [NotNull] ILogger                  logger,
-            [NotNull] IGenericAccessFactory    genericAccessFactory,
-            [NotNull] IGenericAttributeFactory genericAttributeFactory,
-            [NotNull] IReferenceInputFactory   referenceInputFactory,
-            [NotNull] IReferenceOutputFactory  referenceOutputFactory,
-            [NotNull] IDpgFactory              dpgFactory,
-            [NotNull] IControlFactory          controlFactory)
+        public DeskCharacteristics (
+            [ NotNull ] ILogger                     logger ,
+            [ NotNull ] IDeskCharacteristicsCreator creator )
         {
-            Guard.ArgumentNotNull(logger,
-                                  nameof(logger));
-            Guard.ArgumentNotNull(genericAccessFactory,
-                                  nameof(genericAccessFactory));
-            Guard.ArgumentNotNull(genericAttributeFactory,
-                                  nameof(genericAttributeFactory));
-            Guard.ArgumentNotNull(referenceInputFactory,
-                                  nameof(referenceInputFactory));
-            Guard.ArgumentNotNull(referenceOutputFactory,
-                                  nameof(referenceOutputFactory));
-            Guard.ArgumentNotNull(dpgFactory,
-                                  nameof(dpgFactory));
-            Guard.ArgumentNotNull(controlFactory,
-                                  nameof(controlFactory));
+            Guard.ArgumentNotNull ( creator ,
+                                    nameof ( creator ) ) ;
+            Guard.ArgumentNotNull ( logger ,
+                                    nameof ( logger ) ) ;
 
-            _logger                  = logger;
-            _genericAccessFactory    = genericAccessFactory;
-            _genericAttributeFactory = genericAttributeFactory;
-            _referenceInputFactory   = referenceInputFactory;
-            _referenceOutputFactory  = referenceOutputFactory;
-            _dpgFactory              = dpgFactory;
-            _controlFactory          = controlFactory;
+            _logger  = logger ;
+            _creator = creator ;
         }
 
-        public IDevice Device { get; } = new Characteristics.Characteristics.Unknowns.Device();
-
-        public IGenericAccess    GenericAccess    { get; private set; } = new Characteristics.Characteristics.Unknowns.GenericAccess();
-        public IGenericAttribute GenericAttribute { get; private set; } = new Characteristics.Characteristics.Unknowns.GenericAttribute();
-        public IReferenceInput   ReferenceInput   { get; private set; } = new Characteristics.Characteristics.Unknowns.ReferenceInput();
-        public IReferenceOutput  ReferenceOutput  { get; private set; } = new Characteristics.Characteristics.Unknowns.ReferenceOutput();
-        public IDpg              Dpg              { get; private set; } = new Characteristics.Characteristics.Unknowns.Dpg();
-        public IControl          Control          { get; private set; } = new Characteristics.Characteristics.Unknowns.Control();
-
-        public async Task Refresh()
+        public async Task Refresh ( )
         {
-            _logger.Debug($"[{Device}] Refreshing characteristics...");
+            _logger.Debug ( "Refreshing characteristics..." ) ;
 
-            await GenericAccess.Refresh();
-            await GenericAttribute.Refresh();
-            await ReferenceInput.Refresh();
-            await ReferenceOutput.Refresh();
-            await Dpg.Refresh();
-            await Control.Refresh();
+            foreach ( var characteristicBase in _available.Values )
+            {
+                await characteristicBase.Refresh ( ) ;
+            }
         }
 
-        public override string ToString()
+        public IDeskCharacteristics Initialize ( IDevice device )
         {
-            var builder = new StringBuilder();
+            Guard.ArgumentNotNull ( device ,
+                                    nameof ( device ) ) ;
 
-            builder.AppendLine(GenericAccess.ToString());
-            builder.AppendLine(GenericAttribute.ToString());
-            builder.AppendLine(ReferenceInput.ToString());
-            builder.AppendLine(ReferenceOutput.ToString());
-            builder.AppendLine(Dpg.ToString());
-            builder.AppendLine(Control.ToString());
+            _logger.Debug ( $"Initialize characteristics from device {device}..." ) ;
 
-            return builder.ToString();
+            _creator.Create ( this ,
+                              device ) ;
+
+            return this ;
         }
 
-        public IDeskCharacteristics Initialize(IDevice device)
+        public IGenericAccess GenericAccess =>
+            _available.As < IGenericAccess > ( DeskCharacteristicKey.GenericAccess ) ;
+
+        public IGenericAttribute GenericAttribute =>
+            _available.As < IGenericAttribute > ( DeskCharacteristicKey.GenericAttribute ) ;
+
+        public IReferenceInput ReferenceInput =>
+            _available.As < IReferenceInput > ( DeskCharacteristicKey.ReferenceInput ) ;
+
+        public IReferenceOutput ReferenceOutput =>
+            _available.As < IReferenceOutput > ( DeskCharacteristicKey.ReferenceOutput ) ;
+
+        public IDpg Dpg => _available.As < IDpg > ( DeskCharacteristicKey.Dpg ) ;
+
+        public IControl Control => _available.As < IControl > ( DeskCharacteristicKey.Control ) ;
+
+        public IDeskCharacteristics WithCharacteristics (
+            DeskCharacteristicKey           key ,
+            [ NotNull ] ICharacteristicBase characteristic )
         {
-            Guard.ArgumentNotNull(device,
-                                  nameof(device));
+            Guard.ArgumentNotNull ( characteristic ,
+                                    nameof ( characteristic ) ) ;
 
-            GenericAccess = _genericAccessFactory.Create(device);
-            GenericAccess.Initialize<Characteristics.Characteristics.GenericAccess>();
+            _logger.Debug ( $"Initialize characteristic {characteristic} for key {key}" ) ;
+            characteristic.Initialize < ICharacteristicBase > ( ) ;
 
-            GenericAttribute = _genericAttributeFactory.Create(device);
-            GenericAttribute.Initialize<Characteristics.Characteristics.GenericAttribute>();
+            _logger.Debug ( $"Adding characteristic {characteristic} for key {key}" ) ;
+            _available [ key ] = characteristic ;
 
-            ReferenceInput = _referenceInputFactory.Create(device);
-            ReferenceInput.Initialize<Characteristics.Characteristics.GenericAttribute>();
-
-            ReferenceOutput = _referenceOutputFactory.Create(device);
-            ReferenceOutput.Initialize<Characteristics.Characteristics.ReferenceOutput>();
-
-            Dpg = _dpgFactory.Create(device);
-            Dpg.Initialize<Characteristics.Characteristics.Dpg>();
-
-            Control = _controlFactory.Create(device);
-            Control.Initialize<Characteristics.Characteristics.Control>();
-
-            return this;
+            return this ;
         }
+
+        public override string ToString ( )
+        {
+            var builder = new StringBuilder ( ) ;
+
+            builder.AppendLine ( GenericAccess.ToString ( ) ) ;
+            builder.AppendLine ( GenericAttribute.ToString ( ) ) ;
+            builder.AppendLine ( ReferenceInput.ToString ( ) ) ;
+            builder.AppendLine ( ReferenceOutput.ToString ( ) ) ;
+            builder.AppendLine ( Dpg.ToString ( ) ) ;
+            builder.AppendLine ( Control.ToString ( ) ) ;
+
+            return builder.ToString ( ) ;
+        }
+
+        private readonly Dictionary < DeskCharacteristicKey , ICharacteristicBase > _available =
+            new Dictionary < DeskCharacteristicKey , ICharacteristicBase > ( ) ;
+
+        private readonly IDeskCharacteristicsCreator _creator ;
+        private readonly ILogger                     _logger ;
     }
 }

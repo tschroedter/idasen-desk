@@ -15,5 +15,9 @@ namespace Idasen.BluetoothLE.Linak.Interfaces
         IControl             Control          { get; }
         IDeskCharacteristics Initialize([NotNull] IDevice device);
         Task                 Refresh();
+
+        IDeskCharacteristics WithCharacteristics (
+            DeskCharacteristicKey key ,
+            ICharacteristicBase   characteristic ) ;
     }
 }
