@@ -70,6 +70,9 @@ namespace Idasen.BluetoothLE.Linak
 
             builder.RegisterType<DeskCharacteristicsCreator>()
                    .As<IDeskCharacteristicsCreator>();
+
+            builder.RegisterType<DeskConnector>()
+                   .As<IDeskConnector>();
         }
     }
 }

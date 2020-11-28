@@ -14,8 +14,9 @@ namespace Idasen.BluetoothLE.Linak.Tests
         [ TestInitialize ]
         public void Initialize ( )
         {
-            _deviceFactory = Substitute.For < IDeviceFactory > ( ) ;
-            _deskFactory   = Substitute.For < Func < IDevice , IDesk > > ( ) ;
+            _deviceFactory        = Substitute.For < IDeviceFactory > ( ) ;
+            _deskConnectorFactory = Substitute.For < Func < IDevice , IDeskConnector > > ( ) ;
+            _deskFactory          = Substitute.For < Func < IDeskConnector , IDesk > > ( ) ;
         }
 
         [ TestMethod ]
@@ -30,10 +31,12 @@ namespace Idasen.BluetoothLE.Linak.Tests
         private DeskFactory CreateSut ( )
         {
             return new DeskFactory ( _deviceFactory ,
+                                     _deskConnectorFactory ,
                                      _deskFactory ) ;
         }
 
-        private Func < IDevice , IDesk > _deskFactory ;
-        private IDeviceFactory           _deviceFactory ;
+        private Func < IDevice , IDeskConnector > _deskConnectorFactory ;
+        private Func < IDeskConnector , IDesk >   _deskFactory ;
+        private IDeviceFactory                    _deviceFactory ;
     }
 }

@@ -2,16 +2,11 @@
 using System.Collections.Generic ;
 using System.Reactive.Subjects ;
 
-namespace Idasen.BluetoothLE.Linak.Interfaces
+namespace Idasen.BluetoothLE.Linak
 {
-    public interface IDesk
+    public interface IDeskConnector
         : IDisposable
     {
-        /// <summary>
-        ///     Notifies when the desk's name changed.
-        /// </summary>
-        ISubject < IEnumerable < byte > > DeviceNameChanged { get ; }
-
         /// <summary>
         ///     Notifies when the desk's height changed.
         /// </summary>
@@ -38,6 +33,11 @@ namespace Idasen.BluetoothLE.Linak.Interfaces
         IObservable < bool > RefreshedChanged { get ; }
 
         /// <summary>
+        ///     Notifies when the desk's name changed.
+        /// </summary>
+        ISubject < IEnumerable < byte > > DeviceNameChanged { get ; }
+
+        /// <summary>
         ///     Connect to a desk.
         /// </summary>
         void Connect ( ) ;
@@ -48,7 +48,7 @@ namespace Idasen.BluetoothLE.Linak.Interfaces
         /// <param name="targetHeight">
         ///     The target height.
         /// </param>
-        void MoveTo ( uint targetHeight ) ;
+        void MoveTo ( in uint targetHeight ) ;
 
         /// <summary>
         ///     Move the desk up.

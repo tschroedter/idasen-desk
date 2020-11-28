@@ -40,7 +40,8 @@ namespace Idasen.ConsoleApp
             Log.Logger = new LoggerConfiguration()
                         .Enrich.WithCaller()
                         .MinimumLevel.Information()
-                        .WriteTo.ColoredConsole(LogEventLevel.Debug, template)
+                        .WriteTo
+                        .ColoredConsole(LogEventLevel.Debug, template)
                         .CreateLogger();
 
             var builder = new ContainerBuilder();
@@ -134,7 +135,7 @@ namespace Idasen.ConsoleApp
 
         private void OnRefreshedChanged(bool status)
         {
-            _desk.MoveTo(7500);
+            _desk.MoveTo(7200u);
         }
     }
 }

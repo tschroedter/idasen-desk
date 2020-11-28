@@ -18,7 +18,6 @@ namespace Idasen.BluetoothLE.Linak
                 { DeskCharacteristicKey.Control , new Characteristics.Characteristics.Unknowns.Control ( ) }
             } ;
 
-
         public static T As < T > (
             this Dictionary < DeskCharacteristicKey , ICharacteristicBase > dictionary ,
             DeskCharacteristicKey                                           key )
