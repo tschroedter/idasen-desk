@@ -3,10 +3,10 @@ using Microsoft.VisualStudio.TestTools.UnitTesting ;
 
 namespace Idasen.BluetoothLE.Core.Tests.ServicesDiscovery.ConstructorNullTesters
 {
-    [TestClass]
+    [ TestClass ]
     public class ResourceNotFoundExceptionConstructorNullTests
-        : BaseConstructorNullTester<ResourceNotFoundException>
+        : BaseConstructorNullTester < ResourceNotFoundException >
     {
-        public override int NumberOfConstructorsPassed { get; } = 1;
+        public override int NumberOfConstructorsPassed { get ; } = 1 ;
     }
 }

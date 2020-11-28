@@ -20,13 +20,13 @@ namespace Idasen.BluetoothLE.Linak
             Guard.ArgumentNotNull ( connector ,
                                     nameof ( connector ) ) ;
 
-            _logger        = logger ;
+            _logger    = logger ;
             _connector = connector ;
         }
 
         public void Connect ( )
         {
-            _logger.Debug ( "Connecting to desk..." );
+            _logger.Debug ( "Connecting to desk..." ) ;
 
             _connector.Connect ( ) ;
         }
@@ -53,33 +53,33 @@ namespace Idasen.BluetoothLE.Linak
         /// <inheritdoc />
         public void MoveTo ( uint targetHeight )
         {
-            _logger.Debug($"Move desk to target height {targetHeight}");
+            _logger.Debug ( $"Move desk to target height {targetHeight}" ) ;
 
             _connector.MoveTo ( targetHeight ) ;
         }
 
         /// <inheritdoc />
-        public void MoveUp()
+        public void MoveUp ( )
         {
-            _logger.Debug("Move desk up");
+            _logger.Debug ( "Move desk up" ) ;
 
-            _connector.MoveUp();
+            _connector.MoveUp ( ) ;
         }
 
         /// <inheritdoc />
-        public void MoveDown()
+        public void MoveDown ( )
         {
-            _logger.Debug("Move desk down");
+            _logger.Debug ( "Move desk down" ) ;
 
-            _connector.MoveDown();
+            _connector.MoveDown ( ) ;
         }
 
         /// <inheritdoc />
-        public void MoveStop()
+        public void MoveStop ( )
         {
-            _logger.Debug("Stop moving desk");
+            _logger.Debug ( "Stop moving desk" ) ;
 
-            _connector.MoveStop();
+            _connector.MoveStop ( ) ;
         }
 
         /// <inheritdoc />
@@ -89,6 +89,6 @@ namespace Idasen.BluetoothLE.Linak
         }
 
         private readonly IDeskConnector _connector ;
-        private readonly ILogger _logger ;
+        private readonly ILogger        _logger ;
     }
 }

@@ -5,27 +5,27 @@ using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers ;
 
 namespace Idasen.BluetoothLE.Core.ServicesDiscovery.Wrappers
 {
-    [ExcludeFromCodeCoverage]
+    [ ExcludeFromCodeCoverage ]
     public class GattReadResultWrapper
         : IGattReadResult
     {
-        public static readonly IGattReadResult NotSupported = new GattReadResultNotSupported();
-
-        public GattReadResultWrapper([JetBrains.Annotations.NotNull] GattReadResult result)
+        public GattReadResultWrapper ( [ JetBrains.Annotations.NotNull ] GattReadResult result )
         {
-            Guard.ArgumentNotNull(result,
-                                  nameof(result));
+            Guard.ArgumentNotNull ( result ,
+                                    nameof ( result ) ) ;
 
-            _result = result;
+            _result = result ;
         }
 
-        public GattCommunicationStatus Status => _result.Status;
+        public GattCommunicationStatus Status => _result.Status ;
 
-        public byte?   ProtocolError => _result.ProtocolError;
+        public byte?   ProtocolError => _result.ProtocolError ;
         public IBuffer Value         => _result.Value ;
 
-        public delegate IGattReadResult Factory(GattReadResult result);
+        public delegate IGattReadResult Factory ( GattReadResult result ) ;
 
-        private readonly GattReadResult _result;
+        public static readonly IGattReadResult NotSupported = new GattReadResultNotSupported ( ) ;
+
+        private readonly GattReadResult _result ;
     }
 }

@@ -9,7 +9,7 @@ using Idasen.BluetoothLE.Linak.Interfaces ;
 using JetBrains.Annotations ;
 using Serilog ;
 
-[assembly: InternalsVisibleTo("Idasen.BluetoothLE.Linak.Tests")]
+[ assembly : InternalsVisibleTo ( "Idasen.BluetoothLE.Linak.Tests" ) ]
 
 namespace Idasen.BluetoothLE.Linak.Control
 {
@@ -52,7 +52,7 @@ namespace Idasen.BluetoothLE.Linak.Control
         public int  Speed        { get ; private set ; }
         public uint TargetHeight { get ; set ; }
 
-        public IObservable < uint > Finished => _subjectFinished;
+        public IObservable < uint > Finished => _subjectFinished ;
 
         public void Initialize ( )
         {
@@ -97,7 +97,7 @@ namespace Idasen.BluetoothLE.Linak.Control
         {
             _logger.Debug ( "Stopping..." ) ;
 
-            IsAllowedToMove              = false ;
+            IsAllowedToMove               = false ;
             _calculator.MoveIntoDirection = Direction.None ;
 
             _disposalHeightAndSpeed?.Dispose ( ) ;
@@ -122,6 +122,8 @@ namespace Idasen.BluetoothLE.Linak.Control
 
         public Direction StartMovingIntoDirection { get ; set ; }
 
+        public bool IsAllowedToMove { get ; private set ; }
+
         private void StartAfterRefreshed ( )
         {
             Height = _heightAndSpeed.Height ;
@@ -140,10 +142,10 @@ namespace Idasen.BluetoothLE.Linak.Control
                                                      .ObserveOn ( _scheduler )
                                                      .Subscribe ( OnHeightAndSpeedChanged ) ;
 
-            _disposableTimer?.Dispose (  );
+            _disposableTimer?.Dispose ( ) ;
             _disposableTimer = Observable.Interval ( TimerInterval )
                                          .SubscribeOn ( _scheduler )
-                                         .SubscribeOn( _scheduler )
+                                         .SubscribeOn ( _scheduler )
                                          .Subscribe ( OnTimerElapsed ) ;
 
             IsAllowedToMove = true ;
@@ -225,7 +227,5 @@ namespace Idasen.BluetoothLE.Linak.Control
 
         private IDisposable            _disposalHeightAndSpeed ;
         private IInitialHeightProvider _initialProvider ;
-
-        public bool IsAllowedToMove { get ; private set ; }
     }
 }

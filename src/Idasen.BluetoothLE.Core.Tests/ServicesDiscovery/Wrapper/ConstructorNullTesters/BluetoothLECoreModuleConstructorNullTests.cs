@@ -3,11 +3,11 @@ using Microsoft.VisualStudio.TestTools.UnitTesting ;
 
 namespace Idasen.BluetoothLE.Core.Tests.ServicesDiscovery.ConstructorNullTesters
 {
-    [TestClass]
+    [ TestClass ]
     // ReSharper disable once InconsistentNaming
     public class BluetoothLECoreModuleConstructorNullTests
-        : BaseConstructorNullTester<BluetoothLECoreModule>
+        : BaseConstructorNullTester < BluetoothLECoreModule >
     {
-        public override int NumberOfConstructorsPassed { get; } = 0;
+        public override int NumberOfConstructorsPassed { get ; } = 0 ;
     }
 }

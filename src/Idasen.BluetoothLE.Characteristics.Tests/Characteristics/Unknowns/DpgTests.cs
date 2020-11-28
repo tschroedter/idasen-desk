@@ -8,7 +8,7 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Characteristics.Unknowns
     public class DpgTests
     {
         [ TestMethod ]
-        public void RawDpg_ForInvoked_Empty( )
+        public void RawDpg_ForInvoked_Empty ( )
         {
             CreateSut ( ).RawDpg
                          .Should ( )

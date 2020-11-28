@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
-using Idasen.BluetoothLE.Characteristics.Interfaces.Characteristics;
+﻿using System.Collections.Generic ;
+using Idasen.BluetoothLE.Characteristics.Interfaces.Characteristics ;
 
 namespace Idasen.BluetoothLE.Characteristics.Characteristics.Unknowns
 {
     public class GenericAttribute
-        : UnknownBase, IGenericAttribute
+        : UnknownBase , IGenericAttribute
     {
-        public IEnumerable<byte> RawServiceChanged { get; } = RawArrayEmpty;
+        public IEnumerable < byte > RawServiceChanged { get ; } = RawArrayEmpty ;
     }
 }

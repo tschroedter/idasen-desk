@@ -14,42 +14,43 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Characteristics
     public class TestCharacteristicBase
         : CharacteristicBase
     {
-        public delegate ITestCharacteristicBase Factory(IDevice device);
-
-        public const string RawValueKey = "RawValueKey";
-
-        public TestCharacteristicBase(
-            ILogger                              logger,
-            IScheduler                           scheduler,
-            IDevice                              device,
-            IGattCharacteristicsProviderFactory  providerFactory,
-            IRawValueReader                      rawValueReader,
-            IRawValueWriter                      rawValueWriter,
-            ICharacteristicBaseToStringConverter toStringConverter)
-            : base(logger,
-                   scheduler,
-                   device,
-                   providerFactory,
-                   rawValueReader,
-                   rawValueWriter,
-                   toStringConverter)
+        public TestCharacteristicBase (
+            ILogger                              logger ,
+            IScheduler                           scheduler ,
+            IDevice                              device ,
+            IGattCharacteristicsProviderFactory  providerFactory ,
+            IRawValueReader                      rawValueReader ,
+            IRawValueWriter                      rawValueWriter ,
+            ICharacteristicBaseToStringConverter toStringConverter )
+            : base ( logger ,
+                     scheduler ,
+                     device ,
+                     providerFactory ,
+                     rawValueReader ,
+                     rawValueWriter ,
+                     toStringConverter )
         {
         }
 
-        public override Guid GattServiceUuid { get; } = Guid.Parse("11111111-1111-1111-1111-111111111111");
+        public delegate ITestCharacteristicBase Factory ( IDevice device ) ;
 
-        public IEnumerable<byte> RawValue => TryGetValueOrEmpty(RawValueKey);
+        public const string RawValueKey = "RawValueKey" ;
 
-        public async Task<bool> TryWriteRawValue(IEnumerable<byte> bytes)
+        public override Guid GattServiceUuid { get ; } = Guid.Parse ( "11111111-1111-1111-1111-111111111111" ) ;
+
+        public IEnumerable < byte > RawValue => TryGetValueOrEmpty ( RawValueKey ) ;
+
+        public async Task < bool > TryWriteRawValue ( IEnumerable < byte > bytes )
         {
-            return await TryWriteValueAsync(RawValueKey, bytes);
+            return await TryWriteValueAsync ( RawValueKey ,
+                                              bytes ) ;
         }
 
-        protected override T WithMapping<T>() where T : class
+        protected override T WithMapping < T > ( ) where T : class
         {
-            DescriptionToUuid[RawValueKey] = Guid.Parse("22222222-2222-2222-2222-222222222222");
+            DescriptionToUuid [ RawValueKey ] = Guid.Parse ( "22222222-2222-2222-2222-222222222222" ) ;
 
-            return this as T;
+            return this as T ;
         }
     }
 }

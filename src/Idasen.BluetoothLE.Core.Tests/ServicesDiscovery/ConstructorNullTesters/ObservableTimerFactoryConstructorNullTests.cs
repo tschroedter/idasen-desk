@@ -3,10 +3,10 @@ using Microsoft.VisualStudio.TestTools.UnitTesting ;
 
 namespace Idasen.BluetoothLE.Core.Tests.ServicesDiscovery.ConstructorNullTesters
 {
-    [TestClass]
+    [ TestClass ]
     public class ObservableTimerFactoryConstructorNullTests
-        : BaseConstructorNullTester<ObservableTimerFactory>
+        : BaseConstructorNullTester < ObservableTimerFactory >
     {
-        public override int NumberOfConstructorsPassed { get; } = 0;
+        public override int NumberOfConstructorsPassed { get ; } = 0 ;
     }
 }

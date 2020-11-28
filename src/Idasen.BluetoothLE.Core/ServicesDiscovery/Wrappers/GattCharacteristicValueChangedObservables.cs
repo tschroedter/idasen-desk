@@ -17,8 +17,8 @@ namespace Idasen.BluetoothLE.Core.ServicesDiscovery.Wrappers
     {
         public GattCharacteristicValueChangedObservables (
             [ JetBrains.Annotations.NotNull ] ILogger                                            logger ,
-            [ JetBrains.Annotations.NotNull ]           IScheduler                                         scheduler ,
-            [ JetBrains.Annotations.NotNull ]                       ISubject < GattCharacteristicValueChangedDetails > subject )
+            [ JetBrains.Annotations.NotNull ] IScheduler                                         scheduler ,
+            [ JetBrains.Annotations.NotNull ] ISubject < GattCharacteristicValueChangedDetails > subject )
         {
             Guard.ArgumentNotNull ( logger ,
                                     nameof ( logger ) ) ;
@@ -34,7 +34,7 @@ namespace Idasen.BluetoothLE.Core.ServicesDiscovery.Wrappers
 
         public IObservable < GattCharacteristicValueChangedDetails > ValueChanged => _subject ;
 
-        [ExcludeFromCodeCoverage]
+        [ ExcludeFromCodeCoverage ]
         public async Task Initialise ( GattCharacteristic characteristic )
         {
             var properties = characteristic.CharacteristicProperties ;
@@ -97,19 +97,19 @@ namespace Idasen.BluetoothLE.Core.ServicesDiscovery.Wrappers
             }
         }
 
-        [ExcludeFromCodeCoverage]
+        [ ExcludeFromCodeCoverage ]
         public void Dispose ( )
         {
             DisposeSubscription ( ) ;
         }
 
-        [ExcludeFromCodeCoverage]
+        [ ExcludeFromCodeCoverage ]
         private void OnValueChanged (
             GattCharacteristic                                 sender ,
             GattValueChangedEventArgs                          args ,
             ISubject < GattCharacteristicValueChangedDetails > subject )
         {
-            var bytes = args.CharacteristicValue?.ToArray ( ) ?? Array.Empty<byte> (  ); // todo test for ?? Array...
+            var bytes = args.CharacteristicValue?.ToArray ( ) ?? Array.Empty < byte > ( ) ; // todo test for ?? Array...
 
             var details = new GattCharacteristicValueChangedDetails ( sender.Uuid ,
                                                                       bytes ,
@@ -118,7 +118,7 @@ namespace Idasen.BluetoothLE.Core.ServicesDiscovery.Wrappers
             subject.OnNext ( details ) ;
         }
 
-        [ExcludeFromCodeCoverage]
+        [ ExcludeFromCodeCoverage ]
         private void DisposeSubscription ( )
         {
             _observable?.Dispose ( ) ;

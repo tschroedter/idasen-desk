@@ -1,7 +1,7 @@
-﻿using System;
-using FluentAssertions;
-using FluentAssertions.Primitives;
-using FluentAssertions.Specialized;
+﻿using System ;
+using FluentAssertions ;
+using FluentAssertions.Primitives ;
+using FluentAssertions.Specialized ;
 
 namespace Idasen.BluetoothLE.Linak.Tests
 {
@@ -15,14 +15,14 @@ namespace Idasen.BluetoothLE.Linak.Tests
         /// <param name="assertions">The assertions.</param>
         /// <param name="parameter">The expected parameter name.</param>
         /// <returns></returns>
-        public static AndConstraint<StringAssertions> WithParameter(
-            this ExceptionAssertions<ArgumentNullException> assertions,
-            string                                          parameter)
+        public static AndConstraint < StringAssertions > WithParameter (
+            this ExceptionAssertions < ArgumentNullException > assertions ,
+            string                                             parameter )
         {
             return assertions.And
                              .ParamName
-                             .Should()
-                             .Be(parameter);
+                             .Should ( )
+                             .Be ( parameter ) ;
         }
     }
 }

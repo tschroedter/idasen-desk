@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading.Tasks ;
 
 namespace Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery
 {
@@ -16,6 +16,6 @@ namespace Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery
         /// <returns>
         ///     The device belonging to the address.
         /// </returns>
-        Task<IDevice> FromBluetoothAddressAsync(ulong address);
+        Task < IDevice > FromBluetoothAddressAsync ( ulong address ) ;
     }
 }

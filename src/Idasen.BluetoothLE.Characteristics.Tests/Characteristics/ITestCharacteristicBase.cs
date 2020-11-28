@@ -7,8 +7,8 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Characteristics
     public interface ITestCharacteristicBase
         : ICharacteristicBase
     {
-        delegate ITestCharacteristicBase Factory(IDevice device);
+        delegate ITestCharacteristicBase Factory ( IDevice device ) ;
 
-        IEnumerable<byte> RawValue { get; }
+        IEnumerable < byte > RawValue { get ; }
     }
 }

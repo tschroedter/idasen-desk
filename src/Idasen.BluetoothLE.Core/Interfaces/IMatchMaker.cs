@@ -1,5 +1,5 @@
-﻿using System.Threading.Tasks;
-using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery;
+﻿using System.Threading.Tasks ;
+using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery ;
 
 namespace Idasen.BluetoothLE.Core.Interfaces
 {
@@ -10,6 +10,6 @@ namespace Idasen.BluetoothLE.Core.Interfaces
         /// </summary>
         /// <param name="address">The BLE device address.</param>
         /// <returns></returns>
-        Task<IDevice> PairToDeviceAsync(ulong address);
+        Task < IDevice > PairToDeviceAsync ( ulong address ) ;
     }
 }

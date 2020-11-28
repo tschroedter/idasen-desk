@@ -7,8 +7,8 @@ namespace Idasen.BluetoothLE.Characteristics.Common
     public class NotInitializeException
         : Exception
     {
-        public NotInitializeException( [ NotNull ] string message)
-            : base(message)
+        public NotInitializeException ( [ NotNull ] string message )
+            : base ( message )
         {
             Guard.ArgumentNotNull ( message ,
                                     nameof ( message ) ) ;

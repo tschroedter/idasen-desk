@@ -4,20 +4,20 @@ using Microsoft.VisualStudio.TestTools.UnitTesting ;
 
 namespace Idasen.BluetoothLE.Characteristics.Tests.Characteristics.Unknowns
 {
-    [TestClass]
+    [ TestClass ]
     public class ReferenceInputTests
     {
-        [TestMethod]
-        public void Ctrl1_ForInvoked_Empty()
+        [ TestMethod ]
+        public void Ctrl1_ForInvoked_Empty ( )
         {
-            CreateSut().Ctrl1
-                       .Should()
-                       .BeEmpty();
+            CreateSut ( ).Ctrl1
+                         .Should ( )
+                         .BeEmpty ( ) ;
         }
 
-        private ReferenceInput CreateSut()
+        private ReferenceInput CreateSut ( )
         {
-            return new ReferenceInput();
+            return new ReferenceInput ( ) ;
         }
     }
 }

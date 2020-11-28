@@ -8,7 +8,7 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Characteristics.Unknowns
     public class GenericAttributeTests
     {
         [ TestMethod ]
-        public void RawServiceChanged_ForInvoked_Empty( )
+        public void RawServiceChanged_ForInvoked_Empty ( )
         {
             CreateSut ( ).RawServiceChanged
                          .Should ( )

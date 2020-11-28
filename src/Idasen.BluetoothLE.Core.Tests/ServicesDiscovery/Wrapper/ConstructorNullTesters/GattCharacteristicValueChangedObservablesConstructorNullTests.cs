@@ -4,10 +4,10 @@ using Microsoft.VisualStudio.TestTools.UnitTesting ;
 
 namespace Idasen.BluetoothLE.Core.Tests.ServicesDiscovery.Wrapper.ConstructorNullTesters
 {
-    [TestClass]
+    [ TestClass ]
     public class GattCharacteristicValueChangedObservablesConstructorNullTests
-        : BaseConstructorNullTester<GattCharacteristicValueChangedObservables>
+        : BaseConstructorNullTester < GattCharacteristicValueChangedObservables >
     {
-        public override int NumberOfConstructorsPassed { get; } = 1;
+        public override int NumberOfConstructorsPassed { get ; } = 1 ;
     }
 }

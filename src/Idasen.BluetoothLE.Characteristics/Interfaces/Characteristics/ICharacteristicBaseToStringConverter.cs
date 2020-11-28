@@ -4,13 +4,14 @@ using JetBrains.Annotations ;
 namespace Idasen.BluetoothLE.Characteristics.Interfaces.Characteristics
 {
     /// <summary>
-    /// todo
+    ///     todo
     /// </summary>
     public interface ICharacteristicBaseToStringConverter
     {
         /// <summary>
-        /// todo
+        ///     todo
         /// </summary>
-        [NotNull] string ToString(CharacteristicBase characteristic) ;
+        [ NotNull ]
+        string ToString ( CharacteristicBase characteristic ) ;
     }
 }

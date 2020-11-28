@@ -2,8 +2,8 @@
 {
     public enum DeskCommands
     {
-        MoveUp,
-        MoveDown,
+        MoveUp ,
+        MoveDown ,
         MoveStop
     }
 }

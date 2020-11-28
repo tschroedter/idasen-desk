@@ -1,43 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reactive.Concurrency;
-using System.Reactive.Linq;
-using System.Reactive.Subjects;
-using System.Threading.Tasks;
-using Idasen.BluetoothLE.Characteristics.Common;
-using Idasen.BluetoothLE.Characteristics.Interfaces.Characteristics;
-using Idasen.BluetoothLE.Characteristics.Interfaces.Characteristics.Customs;
-using Idasen.BluetoothLE.Characteristics.Interfaces.Common;
-using Idasen.BluetoothLE.Core;
-using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery;
-using Idasen.BluetoothLE.Core.ServicesDiscovery.Wrappers;
-using JetBrains.Annotations;
-using Serilog;
+﻿using System ;
+using System.Collections.Generic ;
+using System.Linq ;
+using System.Reactive.Concurrency ;
+using System.Reactive.Linq ;
+using System.Reactive.Subjects ;
+using System.Threading.Tasks ;
+using Idasen.BluetoothLE.Characteristics.Common ;
+using Idasen.BluetoothLE.Characteristics.Interfaces.Characteristics ;
+using Idasen.BluetoothLE.Characteristics.Interfaces.Characteristics.Customs ;
+using Idasen.BluetoothLE.Characteristics.Interfaces.Common ;
+using Idasen.BluetoothLE.Core ;
+using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery ;
+using Idasen.BluetoothLE.Core.ServicesDiscovery.Wrappers ;
+using JetBrains.Annotations ;
+using Serilog ;
 
 namespace Idasen.BluetoothLE.Characteristics.Characteristics
 {
     public class ReferenceOutput
-        : CharacteristicBase,
+        : CharacteristicBase ,
           IReferenceOutput
     {
-        public delegate IReferenceOutput Factory(IDevice device);
-
-        internal const string HeightSpeed = "Height Speed";
-        internal const string Two         = "TWO";
-        internal const string Three       = "THREE";
-        internal const string Four        = "FOUR";
-        internal const string Five        = "FIVE";
-        internal const string Six         = "SIX";
-        internal const string Seven       = "SEVEN";
-        internal const string Eight       = "EIGHT";
-        internal const string Mask        = "MASK";
-        internal const string DetectMask  = "DETECT MASK";
-
-        private readonly ISubject<RawValueChangedDetails>   _subjectHeightSpeed;
-
-        private IDisposable                 _subscriber;
-
         public ReferenceOutput (
             ILogger                                         logger ,
             IScheduler                                      scheduler ,
@@ -46,7 +29,7 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
             IRawValueReader                                 rawValueReader ,
             IRawValueWriter                                 rawValueWriter ,
             ICharacteristicBaseToStringConverter            toStringConverter ,
-            [ NotNull ] ISubject < RawValueChangedDetails > subjectHeightSpeed)
+            [ NotNull ] ISubject < RawValueChangedDetails > subjectHeightSpeed )
             : base ( logger ,
                      scheduler ,
                      device ,
@@ -63,90 +46,107 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
 
         public IObservable < RawValueChangedDetails > HeightSpeedChanged => _subjectHeightSpeed ;
 
-        public override Guid GattServiceUuid { get; } = Guid.Parse("99FA0020-338A-1024-8A49-009C0215F78A");
+        public override Guid GattServiceUuid { get ; } = Guid.Parse ( "99FA0020-338A-1024-8A49-009C0215F78A" ) ;
 
-        public IEnumerable<byte> RawHeightSpeed => TryGetValueOrEmpty(HeightSpeed);
-        public IEnumerable<byte> RawTwo         => TryGetValueOrEmpty(Two);
-        public IEnumerable<byte> RawThree       => TryGetValueOrEmpty(Three);
-        public IEnumerable<byte> RawFour        => TryGetValueOrEmpty(Four);
-        public IEnumerable<byte> RawFive        => TryGetValueOrEmpty(Five);
-        public IEnumerable<byte> RawSix         => TryGetValueOrEmpty(Six);
-        public IEnumerable<byte> RawSeven       => TryGetValueOrEmpty(Seven);
-        public IEnumerable<byte> RawEight       => TryGetValueOrEmpty(Eight);
-        public IEnumerable<byte> RawMask        => TryGetValueOrEmpty(Mask);
-        public IEnumerable<byte> RawDetectMask  => TryGetValueOrEmpty(DetectMask);
+        public IEnumerable < byte > RawHeightSpeed => TryGetValueOrEmpty ( HeightSpeed ) ;
+        public IEnumerable < byte > RawTwo         => TryGetValueOrEmpty ( Two ) ;
+        public IEnumerable < byte > RawThree       => TryGetValueOrEmpty ( Three ) ;
+        public IEnumerable < byte > RawFour        => TryGetValueOrEmpty ( Four ) ;
+        public IEnumerable < byte > RawFive        => TryGetValueOrEmpty ( Five ) ;
+        public IEnumerable < byte > RawSix         => TryGetValueOrEmpty ( Six ) ;
+        public IEnumerable < byte > RawSeven       => TryGetValueOrEmpty ( Seven ) ;
+        public IEnumerable < byte > RawEight       => TryGetValueOrEmpty ( Eight ) ;
+        public IEnumerable < byte > RawMask        => TryGetValueOrEmpty ( Mask ) ;
+        public IEnumerable < byte > RawDetectMask  => TryGetValueOrEmpty ( DetectMask ) ;
 
-        public override T Initialize<T>()
+        public override T Initialize < T > ( )
         {
-            base.Initialize<T>();
+            base.Initialize < T > ( ) ;
 
-            return this as T;
+            return this as T ;
         }
 
-        public override async Task Refresh()
+        public override async Task Refresh ( )
         {
-            await base.Refresh();
+            await base.Refresh ( ) ;
 
-            _subscriber?.Dispose(); // todo this line needs testing
+            _subscriber?.Dispose ( ) ; // todo this line needs testing
 
-            if( !Characteristics.Characteristics.TryGetValue(HeightSpeed,
-                                                             out var heightAndSpeed) ||
-                heightAndSpeed == null)
+            if ( ! Characteristics.Characteristics.TryGetValue ( HeightSpeed ,
+                                                                 out var heightAndSpeed ) ||
+                 heightAndSpeed == null )
             {
-                Logger.Error("Failed to find characteristic for Height and Speed " +
-                             $"with UUID '{HeightSpeed}'");
+                Logger.Error ( "Failed to find characteristic for Height and Speed " +
+                               $"with UUID '{HeightSpeed}'" ) ;
 
-                return;
+                return ;
             }
 
-            _subscriber?.Dispose (  ); // todo testing
+            _subscriber?.Dispose ( ) ; // todo testing
 
             _subscriber = heightAndSpeed.ValueChanged
-                                        .SubscribeOn(Scheduler)
-                                        .Subscribe(OnValueChanged); // todo this line needs testing
+                                        .SubscribeOn ( Scheduler )
+                                        .Subscribe ( OnValueChanged ) ; // todo this line needs testing
 
-            var rawValue = TryGetValueOrEmpty(HeightSpeed).ToArray();
+            var rawValue = TryGetValueOrEmpty ( HeightSpeed ).ToArray ( ) ;
 
-            var valueChanged = new RawValueChangedDetails(HeightSpeed,
-                                                          rawValue,
-                                                          DateTimeOffset.Now,
-                                                          GattServiceUuid);
+            var valueChanged = new RawValueChangedDetails ( HeightSpeed ,
+                                                            rawValue ,
+                                                            DateTimeOffset.Now ,
+                                                            GattServiceUuid ) ;
 
-            _subjectHeightSpeed.OnNext(valueChanged);
+            _subjectHeightSpeed.OnNext ( valueChanged ) ;
         }
 
-        public void Dispose()
+        public void Dispose ( )
         {
-            _subscriber?.Dispose();
+            _subscriber?.Dispose ( ) ;
         }
 
-        protected override T WithMapping<T>() where T : class
-        {
-            DescriptionToUuid[HeightSpeed] = Guid.Parse("99FA0021-338A-1024-8A49-009C0215F78A");
-            DescriptionToUuid[Mask]        = Guid.Parse("99FA0029-338A-1024-8A49-009C0215F78A");
-            DescriptionToUuid[DetectMask]  = Guid.Parse("99FA002A-338A-1024-8A49-009C0215F78A");
+        public delegate IReferenceOutput Factory ( IDevice device ) ;
 
-            return this as T;
+        internal const string HeightSpeed = "Height Speed" ;
+        internal const string Two         = "TWO" ;
+        internal const string Three       = "THREE" ;
+        internal const string Four        = "FOUR" ;
+        internal const string Five        = "FIVE" ;
+        internal const string Six         = "SIX" ;
+        internal const string Seven       = "SEVEN" ;
+        internal const string Eight       = "EIGHT" ;
+        internal const string Mask        = "MASK" ;
+        internal const string DetectMask  = "DETECT MASK" ;
+
+        protected override T WithMapping < T > ( ) where T : class
+        {
+            DescriptionToUuid [ HeightSpeed ] = Guid.Parse ( "99FA0021-338A-1024-8A49-009C0215F78A" ) ;
+            DescriptionToUuid [ Mask ]        = Guid.Parse ( "99FA0029-338A-1024-8A49-009C0215F78A" ) ;
+            DescriptionToUuid [ DetectMask ]  = Guid.Parse ( "99FA002A-338A-1024-8A49-009C0215F78A" ) ;
+
+            return this as T ;
         }
 
-        private void OnValueChanged(GattCharacteristicValueChangedDetails details)
+        private void OnValueChanged ( GattCharacteristicValueChangedDetails details )
         {
-            Logger.Debug($"Value = {details.Value.ToHex()}, " +
-                         $"Timestamp = {details.Timestamp}, " +
-                         $"Uuid = {details.Uuid}");
+            Logger.Debug ( $"Value = {details.Value.ToHex ( )}, " +
+                           $"Timestamp = {details.Timestamp}, "   +
+                           $"Uuid = {details.Uuid}" ) ;
 
-            if (details.Value.Count() != 4)
+            if ( details.Value.Count ( ) != 4 )
             {
-                Logger.Error($"Failed, expected 4 bytes but received {details.Value.Count()}");
-                return;
+                Logger.Error ( $"Failed, expected 4 bytes but received {details.Value.Count ( )}" ) ;
+                return ;
             }
 
-            var valueChanged = new RawValueChangedDetails(HeightSpeed,
-                                                          details.Value,
-                                                          details.Timestamp,
-                                                          details.Uuid);
+            var valueChanged = new RawValueChangedDetails ( HeightSpeed ,
+                                                            details.Value ,
+                                                            details.Timestamp ,
+                                                            details.Uuid ) ;
 
-            _subjectHeightSpeed.OnNext(valueChanged);
+            _subjectHeightSpeed.OnNext ( valueChanged ) ;
         }
+
+        private readonly ISubject < RawValueChangedDetails > _subjectHeightSpeed ;
+
+        private IDisposable _subscriber ;
     }
 }

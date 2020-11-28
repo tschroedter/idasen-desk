@@ -3,10 +3,10 @@ using Microsoft.VisualStudio.TestTools.UnitTesting ;
 
 namespace Idasen.BluetoothLE.Core.Tests.DevicesDiscovery.ConstructorNullTesters
 {
-    [TestClass]
+    [ TestClass ]
     public class DeviceConstructorTests
-        : BaseConstructorNullTester<AssertionScope>
+        : BaseConstructorNullTester < AssertionScope >
     {
-        public override int NumberOfConstructorsPassed { get; } = 2;
+        public override int NumberOfConstructorsPassed { get ; } = 2 ;
     }
 }

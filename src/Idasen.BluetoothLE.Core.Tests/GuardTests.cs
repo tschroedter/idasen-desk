@@ -42,7 +42,7 @@ namespace Idasen.BluetoothLE.Core.Tests
         public void ArgumentNotEmptyOrWhitespace_ForValues_DoesNotThrows ( object value )
         {
             var action = new Action ( ( ) => Guard.ArgumentNotEmptyOrWhitespace ( value ,
-                                          "parameter" ) ) ;
+                                                                                  "parameter" ) ) ;
 
             action.Should ( )
                   .NotThrow ( ) ;

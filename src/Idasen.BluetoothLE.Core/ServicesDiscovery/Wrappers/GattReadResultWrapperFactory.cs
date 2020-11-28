@@ -8,23 +8,23 @@ namespace Idasen.BluetoothLE.Core.ServicesDiscovery.Wrappers
     public class GattReadResultWrapperFactory
         : IGatReadResultWrapperFactory
     {
-        public GattReadResultWrapperFactory([NotNull] GattReadResultWrapper.Factory factory)
+        public GattReadResultWrapperFactory ( [ NotNull ] GattReadResultWrapper.Factory factory )
         {
-            Guard.ArgumentNotNull(factory,
-                                  nameof(factory));
+            Guard.ArgumentNotNull ( factory ,
+                                    nameof ( factory ) ) ;
 
-            _factory = factory;
+            _factory = factory ;
         }
 
         /// <inheritdoc />
-        public IGattReadResult Create(GattReadResult result)
+        public IGattReadResult Create ( GattReadResult result )
         {
-            Guard.ArgumentNotNull(result,
-                                  nameof(result));
+            Guard.ArgumentNotNull ( result ,
+                                    nameof ( result ) ) ;
 
-            return _factory.Invoke(result);
+            return _factory.Invoke ( result ) ;
         }
 
-        private readonly GattReadResultWrapper.Factory _factory;
+        private readonly GattReadResultWrapper.Factory _factory ;
     }
 }

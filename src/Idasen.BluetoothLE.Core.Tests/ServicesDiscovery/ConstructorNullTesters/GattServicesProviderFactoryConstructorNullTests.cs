@@ -4,9 +4,9 @@ using Microsoft.VisualStudio.TestTools.UnitTesting ;
 
 namespace Idasen.BluetoothLE.Core.Tests.ServicesDiscovery.ConstructorNullTesters
 {
-    [TestClass]
+    [ TestClass ]
     public class GattServicesProviderFactoryConstructorNullTests
-        : BaseConstructorNullTester<GattServicesProviderFactory>
+        : BaseConstructorNullTester < GattServicesProviderFactory >
     {
     }
 }

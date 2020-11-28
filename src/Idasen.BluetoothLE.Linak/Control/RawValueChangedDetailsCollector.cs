@@ -10,7 +10,7 @@ using Serilog ;
 namespace Idasen.BluetoothLE.Linak.Control
 {
     public class RawValueChangedDetailsCollector
-        : IRawValueChangedDetailsCollector  // todo maybe this class is not used
+        : IRawValueChangedDetailsCollector // todo maybe this class is not used
     {
         public RawValueChangedDetailsCollector ( [ NotNull ] ILogger    logger ,
                                                  [ NotNull ] IScheduler scheduler ,

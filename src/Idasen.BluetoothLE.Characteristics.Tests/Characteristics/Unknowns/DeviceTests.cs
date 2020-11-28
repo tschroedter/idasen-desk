@@ -32,7 +32,7 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Characteristics.Unknowns
         }
 
         [ TestMethod ]
-        public void GattCommunicationStatus_ForInvoked_Unreachable( )
+        public void GattCommunicationStatus_ForInvoked_Unreachable ( )
         {
             CreateSut ( ).GattCommunicationStatus
                          .Should ( )
@@ -40,7 +40,7 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Characteristics.Unknowns
         }
 
         [ TestMethod ]
-        public void Name_ForInvoked_UnknownDeviceName( )
+        public void Name_ForInvoked_UnknownDeviceName ( )
         {
             CreateSut ( ).Name
                          .Should ( )
@@ -48,11 +48,11 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Characteristics.Unknowns
         }
 
         [ TestMethod ]
-        public void DeviceId_ForInvoked_UnknownDeviceId( )
+        public void DeviceId_ForInvoked_UnknownDeviceId ( )
         {
             CreateSut ( ).DeviceId
                          .Should ( )
-                         .Be ( Device.UnknownDeviceId) ;
+                         .Be ( Device.UnknownDeviceId ) ;
         }
 
         [ TestMethod ]
@@ -64,7 +64,7 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Characteristics.Unknowns
         }
 
         [ TestMethod ]
-        public void GattServices_ForInvoked_Empty( )
+        public void GattServices_ForInvoked_Empty ( )
         {
             CreateSut ( ).GattServices
                          .Should ( )
@@ -72,7 +72,7 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Characteristics.Unknowns
         }
 
         [ TestMethod ]
-        public void ConnectionStatus_ForInvoked_Disconnected( )
+        public void ConnectionStatus_ForInvoked_Disconnected ( )
         {
             CreateSut ( ).ConnectionStatus
                          .Should ( )

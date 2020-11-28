@@ -5,8 +5,8 @@ namespace Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers
 {
     public interface IGattReadResult
     {
-        GattCommunicationStatus Status        { get; }
-        byte?                   ProtocolError { get; }
+        GattCommunicationStatus Status        { get ; }
+        byte?                   ProtocolError { get ; }
         IBuffer                 Value         { get ; }
     }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System ;
 
 namespace Idasen.BluetoothLE.Core.Interfaces
 {
@@ -13,13 +13,13 @@ namespace Idasen.BluetoothLE.Core.Interfaces
         ///     time on the current computer, with the offset set to the local
         ///     time's offset from Coordinated Universal Time (UTC).
         /// </summary>
-        IDateTimeOffset Now { get; }
+        IDateTimeOffset Now { get ; }
 
         /// <summary>
         ///     Gets the number of ticks that represents the date and time of
         ///     the current DateTimeOffset object in clock time.
         /// </summary>
-        long Ticks { get; }
+        long Ticks { get ; }
 
         /// <summary>
         ///     Converts the value of the current DateTimeOffset object to its
@@ -36,6 +36,7 @@ namespace Idasen.BluetoothLE.Core.Interfaces
         ///     A string representation of the value of the current DateTimeOffset
         ///     object, as specified by format and provider.
         /// </returns>
-        string ToString(string format, IFormatProvider formatProvider);
+        string ToString ( string          format ,
+                          IFormatProvider formatProvider ) ;
     }
 }

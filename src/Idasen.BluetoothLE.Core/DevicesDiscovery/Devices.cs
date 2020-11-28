@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Idasen.BluetoothLE.Core.Interfaces.DevicesDiscovery;
-using JetBrains.Annotations;
-using Serilog;
+﻿using System.Collections.Generic ;
+using System.Linq ;
+using Idasen.BluetoothLE.Core.Interfaces.DevicesDiscovery ;
+using JetBrains.Annotations ;
+using Serilog ;
 
 namespace Idasen.BluetoothLE.Core.DevicesDiscovery
 {
@@ -10,112 +10,113 @@ namespace Idasen.BluetoothLE.Core.DevicesDiscovery
     public class Devices
         : IDevices
     {
-        private readonly Dictionary<ulong, Device> _discoveredDevices = new Dictionary<ulong, Device>();
-        private readonly ILogger                   _logger;
-        private readonly object                    _padLock = new object();
-
-        public Devices([NotNull] ILogger logger)
+        public Devices ( [ NotNull ] ILogger logger )
         {
-            Guard.ArgumentNotNull(logger,
-                                  nameof(logger));
+            Guard.ArgumentNotNull ( logger ,
+                                    nameof ( logger ) ) ;
 
-            _logger = logger;
+            _logger = logger ;
         }
 
         /// <inheritdoc />
-        public IReadOnlyCollection<IDevice> DiscoveredDevices
+        public IReadOnlyCollection < IDevice > DiscoveredDevices
         {
             get
             {
-                lock (_padLock)
+                lock ( _padLock )
                 {
                     return _discoveredDevices.Values
-                                             .ToList()
-                                             .AsReadOnly();
+                                             .ToList ( )
+                                             .AsReadOnly ( ) ;
                 }
             }
         }
 
         /// <inheritdoc />
-        public void AddOrUpdateDevice(IDevice device)
+        public void AddOrUpdateDevice ( IDevice device )
         {
-            Guard.ArgumentNotNull(device,
-                                  nameof(device));
+            Guard.ArgumentNotNull ( device ,
+                                    nameof ( device ) ) ;
 
-            lock (_padLock)
+            lock ( _padLock )
             {
-                if (_discoveredDevices.TryGetValue(device.Address,
-                                                   out var storedDevice))
-                    UpdateDevice(device, storedDevice);
+                if ( _discoveredDevices.TryGetValue ( device.Address ,
+                                                      out var storedDevice ) )
+                    UpdateDevice ( device ,
+                                   storedDevice ) ;
                 else
-                    AddDevice(device);
+                    AddDevice ( device ) ;
             }
         }
 
         /// <inheritdoc />
-        public void RemoveDevice(IDevice device)
+        public void RemoveDevice ( IDevice device )
         {
-            Guard.ArgumentNotNull(device,
-                                  nameof(device));
+            Guard.ArgumentNotNull ( device ,
+                                    nameof ( device ) ) ;
 
-            lock (_padLock)
+            lock ( _padLock )
             {
-                _discoveredDevices.Remove(device.Address);
+                _discoveredDevices.Remove ( device.Address ) ;
 
-                _logger.Debug($"Device {device.Address} removed");
+                _logger.Debug ( $"Device {device.Address} removed" ) ;
             }
         }
 
         /// <inheritdoc />
-        public bool ContainsDevice(IDevice device)
+        public bool ContainsDevice ( IDevice device )
         {
-            Guard.ArgumentNotNull(device,
-                                  nameof(device));
+            Guard.ArgumentNotNull ( device ,
+                                    nameof ( device ) ) ;
 
-            lock (_padLock)
+            lock ( _padLock )
             {
-                return _discoveredDevices.ContainsKey(device.Address);
+                return _discoveredDevices.ContainsKey ( device.Address ) ;
             }
         }
 
         /// <inheritdoc />
-        public bool TryGetDevice(ulong       address,
-                                 out IDevice device)
+        public bool TryGetDevice ( ulong       address ,
+                                   out IDevice device )
         {
-            lock (_padLock)
+            lock ( _padLock )
             {
-                var result = _discoveredDevices.TryGetValue(address,
-                                                            out var storedDevice);
+                var result = _discoveredDevices.TryGetValue ( address ,
+                                                              out var storedDevice ) ;
 
-                device = storedDevice;
+                device = storedDevice ;
 
-                return result;
+                return result ;
             }
         }
 
-        private void AddDevice(IDevice device)
+        private void AddDevice ( IDevice device )
         {
-            var newDevice = new Device(device.BroadcastTime,
-                                       device.Address,
-                                       device.Name,
-                                       device.RawSignalStrengthInDBm);
+            var newDevice = new Device ( device.BroadcastTime ,
+                                         device.Address ,
+                                         device.Name ,
+                                         device.RawSignalStrengthInDBm ) ;
 
-            _discoveredDevices[device.Address] = newDevice;
+            _discoveredDevices [ device.Address ] = newDevice ;
 
-            _logger.Debug($"Device {device.Address} added");
+            _logger.Debug ( $"Device {device.Address} added" ) ;
         }
 
-        private void UpdateDevice(IDevice device,
-                                  Device  storedDevice)
+        private void UpdateDevice ( IDevice device ,
+                                    Device  storedDevice )
         {
-            if (string.IsNullOrWhiteSpace(storedDevice.Name) &&
-                !string.IsNullOrWhiteSpace(device.Name))
-                storedDevice.Name = device.Name;
+            if ( string.IsNullOrWhiteSpace ( storedDevice.Name ) &&
+                 ! string.IsNullOrWhiteSpace ( device.Name ) )
+                storedDevice.Name = device.Name ;
 
-            storedDevice.RawSignalStrengthInDBm = device.RawSignalStrengthInDBm;
-            storedDevice.BroadcastTime = device.BroadcastTime;
+            storedDevice.RawSignalStrengthInDBm = device.RawSignalStrengthInDBm ;
+            storedDevice.BroadcastTime          = device.BroadcastTime ;
 
-            _logger.Debug($"Device {device.Address} updated");
+            _logger.Debug ( $"Device {device.Address} updated" ) ;
         }
+
+        private readonly Dictionary < ulong , Device > _discoveredDevices = new Dictionary < ulong , Device > ( ) ;
+        private readonly ILogger                       _logger ;
+        private readonly object                        _padLock = new object ( ) ;
     }
 }

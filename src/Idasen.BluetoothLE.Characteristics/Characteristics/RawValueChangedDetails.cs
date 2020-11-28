@@ -15,10 +15,10 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
         {
             Guard.ArgumentNotNull ( description ,
                                     nameof ( description ) ) ;
-            Guard.ArgumentNotNull(value,
-                                  nameof(value));
+            Guard.ArgumentNotNull ( value ,
+                                    nameof ( value ) ) ;
 
-            Value = value ;
+            Value       = value ;
             Timestamp   = timestamp ;
             Uuid        = uuid ;
             Description = description ;
@@ -32,8 +32,8 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
         public override string ToString ( )
         {
             return $"Description = {Description}, " +
-                   $"Value =  {Value.ToHex ( )}, "   +
-                   $"Timestamp = {Timestamp}, "      +
+                   $"Value =  {Value.ToHex ( )}, "  +
+                   $"Timestamp = {Timestamp}, "     +
                    $"Uuid = {Uuid}" ;
         }
     }

@@ -1,4 +1,4 @@
-﻿using Idasen.BluetoothLE.Core.Interfaces.DevicesDiscovery;
+﻿using Idasen.BluetoothLE.Core.Interfaces.DevicesDiscovery ;
 
 namespace Idasen.BluetoothLE.Core.DevicesDiscovery
 {
@@ -6,26 +6,28 @@ namespace Idasen.BluetoothLE.Core.DevicesDiscovery
         : IDeviceComparer
     {
         /// <inheritdoc />
-        public bool Equals(IDevice deviceA,
-                           IDevice deviceB)
+        public bool Equals ( IDevice deviceA ,
+                             IDevice deviceB )
         {
-            if (deviceA == null || deviceB == null)
-                return false;
+            if ( deviceA == null ||
+                 deviceB == null )
+                return false ;
 
             return deviceA.BroadcastTime          == deviceB.BroadcastTime &&
                    deviceA.Address                == deviceB.Address       &&
                    deviceA.Name                   == deviceB.Name          &&
-                   deviceA.RawSignalStrengthInDBm == deviceB.RawSignalStrengthInDBm;
+                   deviceA.RawSignalStrengthInDBm == deviceB.RawSignalStrengthInDBm ;
         }
 
         /// <inheritdoc />
-        public bool IsEquivalentTo(IDevice deviceA,
-                                   IDevice deviceB)
+        public bool IsEquivalentTo ( IDevice deviceA ,
+                                     IDevice deviceB )
         {
-            if (deviceA == null || deviceB == null)
-                return false;
+            if ( deviceA == null ||
+                 deviceB == null )
+                return false ;
 
-            return deviceA.Address == deviceB.Address;
+            return deviceA.Address == deviceB.Address ;
         }
     }
 }

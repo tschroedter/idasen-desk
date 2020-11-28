@@ -1,12 +1,11 @@
-﻿using System.Collections.Generic;
-using Idasen.BluetoothLE.Linak.Control;
+﻿using System.Collections.Generic ;
+using Idasen.BluetoothLE.Linak.Control ;
 
 namespace Idasen.BluetoothLE.Linak.Interfaces
 {
     public interface IDeskCommandsProvider
     {
-        bool TryGetValue(DeskCommands          command,
-                         out IEnumerable<byte> bytes);
-
+        bool TryGetValue ( DeskCommands             command ,
+                           out IEnumerable < byte > bytes ) ;
     }
 }

@@ -1,6 +1,6 @@
-﻿using System;
-using System.Threading.Tasks;
-using Windows.Devices.Bluetooth.GenericAttributeProfile;
+﻿using System ;
+using System.Threading.Tasks ;
+using Windows.Devices.Bluetooth.GenericAttributeProfile ;
 
 namespace Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers
 {
@@ -13,17 +13,17 @@ namespace Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers
         /// <summary>
         ///     The Gatt Device Service UUID.
         /// </summary>
-        Guid Uuid { get; }
+        Guid Uuid { get ; }
 
         /// <summary>
         ///     The device id the Gatt Service belongs to.
         /// </summary>
-        string DeviceId { get; }
+        string DeviceId { get ; }
 
         /// <summary>
         ///     Get all the Gatt Characteristics of the Gatt Service,
         /// </summary>
         /// <returns></returns>
-        Task<IGattCharacteristicsResultWrapper> GetCharacteristicsAsync();
+        Task < IGattCharacteristicsResultWrapper > GetCharacteristicsAsync ( ) ;
     }
 }

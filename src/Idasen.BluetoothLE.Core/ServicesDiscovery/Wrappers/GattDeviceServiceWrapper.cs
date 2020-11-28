@@ -1,54 +1,53 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Threading.Tasks;
-using Windows.Devices.Bluetooth.GenericAttributeProfile;
-using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers;
-using NotNullAttribute = JetBrains.Annotations.NotNullAttribute;
+﻿using System ;
+using System.Diagnostics.CodeAnalysis ;
+using System.Threading.Tasks ;
+using Windows.Devices.Bluetooth.GenericAttributeProfile ;
+using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers ;
 
 namespace Idasen.BluetoothLE.Core.ServicesDiscovery.Wrappers
 {
     /// <inheritdoc />
-    [ExcludeFromCodeCoverage]
+    [ ExcludeFromCodeCoverage ]
     public class GattDeviceServiceWrapper
         : IGattDeviceServiceWrapper
     {
-        private readonly IGattCharacteristicsResultWrapperFactory _characteristicsFactory;
-        private readonly GattDeviceService                        _gattDeviceService;
-
-        public GattDeviceServiceWrapper(
-            [NotNull] IGattCharacteristicsResultWrapperFactory characteristicsFactory,
-            [NotNull] GattDeviceService                        gattDeviceService)
+        public GattDeviceServiceWrapper (
+            [ JetBrains.Annotations.NotNull ] IGattCharacteristicsResultWrapperFactory characteristicsFactory ,
+            [ JetBrains.Annotations.NotNull ] GattDeviceService                        gattDeviceService )
         {
-            Guard.ArgumentNotNull(characteristicsFactory,
-                                  nameof(characteristicsFactory));
-            Guard.ArgumentNotNull(gattDeviceService,
-                                  nameof(gattDeviceService));
+            Guard.ArgumentNotNull ( characteristicsFactory ,
+                                    nameof ( characteristicsFactory ) ) ;
+            Guard.ArgumentNotNull ( gattDeviceService ,
+                                    nameof ( gattDeviceService ) ) ;
 
-            _characteristicsFactory = characteristicsFactory;
-            _gattDeviceService      = gattDeviceService;
+            _characteristicsFactory = characteristicsFactory ;
+            _gattDeviceService      = gattDeviceService ;
         }
 
         /// <inheritdoc />
-        public void Dispose()
+        public void Dispose ( )
         {
-            _gattDeviceService.Dispose();
+            _gattDeviceService.Dispose ( ) ;
         }
 
         /// <inheritdoc />
-        public Guid   Uuid     => _gattDeviceService.Uuid;
+        public Guid Uuid => _gattDeviceService.Uuid ;
 
         /// <inheritdoc />
-        public string DeviceId => _gattDeviceService.DeviceId;
+        public string DeviceId => _gattDeviceService.DeviceId ;
 
         /// <inheritdoc />
-        public Task<IGattCharacteristicsResultWrapper> GetCharacteristicsAsync()
+        public Task < IGattCharacteristicsResultWrapper > GetCharacteristicsAsync ( )
         {
-            var characteristics = _gattDeviceService.GetCharacteristicsAsync().AsTask();
+            var characteristics = _gattDeviceService.GetCharacteristicsAsync ( ).AsTask ( ) ;
 
-            var result = _characteristicsFactory.Create(characteristics.Result)
-                                                .Initialize();
+            var result = _characteristicsFactory.Create ( characteristics.Result )
+                                                .Initialize ( ) ;
 
-            return result;
+            return result ;
         }
+
+        private readonly IGattCharacteristicsResultWrapperFactory _characteristicsFactory ;
+        private readonly GattDeviceService                        _gattDeviceService ;
     }
 }

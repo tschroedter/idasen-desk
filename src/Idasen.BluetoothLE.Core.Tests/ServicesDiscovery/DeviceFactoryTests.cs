@@ -9,18 +9,15 @@ namespace Idasen.BluetoothLE.Core.Tests.ServicesDiscovery
     [ TestClass ]
     public class DeviceFactoryTests
     {
-        private Device.Factory                   _deviceFactory ;
-        private IBluetoothLeDeviceWrapperFactory _wrapperFactory ;
-
-        [TestInitialize]
-        public void Initialize()
+        [ TestInitialize ]
+        public void Initialize ( )
         {
             _deviceFactory  = Substitute.For < Device.Factory > ( ) ;
-            _wrapperFactory = Substitute.For<IBluetoothLeDeviceWrapperFactory> (  );
+            _wrapperFactory = Substitute.For < IBluetoothLeDeviceWrapperFactory > ( ) ;
         }
 
         [ TestMethod ]
-        public void Constructor_ForInvoked_Instance ()
+        public void Constructor_ForInvoked_Instance ( )
         {
             CreateSut ( ).Should ( )
                          .NotBeNull ( ) ;
@@ -31,5 +28,8 @@ namespace Idasen.BluetoothLE.Core.Tests.ServicesDiscovery
             return new DeviceFactory ( _deviceFactory ,
                                        _wrapperFactory ) ;
         }
+
+        private Device.Factory                   _deviceFactory ;
+        private IBluetoothLeDeviceWrapperFactory _wrapperFactory ;
     }
 }

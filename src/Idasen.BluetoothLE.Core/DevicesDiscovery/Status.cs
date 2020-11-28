@@ -2,10 +2,10 @@
 {
     public enum Status
     {
-        Created,
-        Started,
-        Stopping,
-        Stopped,
+        Created ,
+        Started ,
+        Stopping ,
+        Stopped ,
         Aborted
     }
 }

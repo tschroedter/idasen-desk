@@ -3,26 +3,26 @@
     public interface IHasReachedTargetHeightCalculator
     {
         /// todo
-        int MovementUntilStop { get; set; }
+        int MovementUntilStop { get ; set ; }
 
         /// todo
-        Direction MoveIntoDirection { get; set; }
+        Direction MoveIntoDirection { get ; set ; }
 
         /// todo
-        uint StoppingHeight { get; set; }
+        uint StoppingHeight { get ; set ; }
 
         /// todo
-        uint TargetHeight { get; set; }
+        uint TargetHeight { get ; set ; }
 
         /// todo
-        bool HasReachedTargetHeight { get; }
+        bool HasReachedTargetHeight { get ; }
 
         /// <inheritdoc />
-        uint Delta { get; }
+        uint Delta { get ; }
 
-        Direction StartMovingIntoDirection { get; set; }
+        Direction StartMovingIntoDirection { get ; set ; }
 
         /// todo
-        IHasReachedTargetHeightCalculator Calculate();
+        IHasReachedTargetHeightCalculator Calculate ( ) ;
     }
 }

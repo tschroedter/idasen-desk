@@ -1,33 +1,21 @@
-﻿using System;
-using System.Reactive.Concurrency;
-using System.Reactive.Linq;
-using System.Reactive.Subjects;
-using System.Threading.Tasks;
-using Idasen.BluetoothLE.Characteristics.Characteristics;
-using Idasen.BluetoothLE.Characteristics.Characteristics.Unknowns;
-using Idasen.BluetoothLE.Characteristics.Interfaces.Characteristics;
-using Idasen.BluetoothLE.Core;
-using Idasen.BluetoothLE.Linak.Interfaces;
-using JetBrains.Annotations;
-using Serilog;
+﻿using System ;
+using System.Reactive.Concurrency ;
+using System.Reactive.Linq ;
+using System.Reactive.Subjects ;
+using System.Threading.Tasks ;
+using Idasen.BluetoothLE.Characteristics.Characteristics ;
+using Idasen.BluetoothLE.Characteristics.Characteristics.Unknowns ;
+using Idasen.BluetoothLE.Characteristics.Interfaces.Characteristics ;
+using Idasen.BluetoothLE.Core ;
+using Idasen.BluetoothLE.Linak.Interfaces ;
+using JetBrains.Annotations ;
+using Serilog ;
 
 namespace Idasen.BluetoothLE.Linak
 {
     public class DeskHeightAndSpeed
         : IDeskHeightAndSpeed
     {
-        public delegate IDeskHeightAndSpeed Factory ( IReferenceOutput referenceOutput ) ;
-
-        private readonly ILogger                            _logger ;
-        private readonly IScheduler                         _scheduler ;
-        private readonly IReferenceOutput                   _referenceOutput ;
-        private readonly IRawValueToHeightAndSpeedConverter _converter ;
-        private readonly ISubject < uint >                  _subjectHeight ;
-        private readonly ISubject < int >                   _subjectSpeed ;
-        private readonly ISubject < HeightSpeedDetails >    _subjectHeightAndSpeed ;
-
-        private IDisposable _subscriber ;
-
         public DeskHeightAndSpeed ( [ NotNull ] ILogger                            logger ,
                                     [ NotNull ] IScheduler                         scheduler ,
                                     [ NotNull ] IReferenceOutput                   referenceOutput ,
@@ -64,7 +52,8 @@ namespace Idasen.BluetoothLE.Linak
 
         public IObservable < int > SpeedChanged => _subjectSpeed ;
 
-        public IObservable < HeightSpeedDetails > HeightAndSpeedChanged => _subjectHeightAndSpeed ; // todo looks like duplicate of Height And Speed
+        public IObservable < HeightSpeedDetails > HeightAndSpeedChanged =>
+            _subjectHeightAndSpeed ; // todo looks like duplicate of Height And Speed
 
         public uint Height { get ; private set ; }
 
@@ -97,14 +86,15 @@ namespace Idasen.BluetoothLE.Linak
             Speed  = speed ;
 
             return this ;
-
         }
 
         public void Dispose ( )
         {
-            _referenceOutput?.Dispose ( ); // todo testing
+            _referenceOutput?.Dispose ( ) ; // todo testing
             _subscriber?.Dispose ( ) ;
         }
+
+        public delegate IDeskHeightAndSpeed Factory ( IReferenceOutput referenceOutput ) ;
 
         private void OnHeightSpeedChanged ( RawValueChangedDetails details )
         {
@@ -130,5 +120,16 @@ namespace Idasen.BluetoothLE.Linak
 
             _logger.Debug ( $"Height = {Height} (10ths of a millimeter), Speed = {Speed} (100/RPM)" ) ;
         }
+
+        private readonly IRawValueToHeightAndSpeedConverter _converter ;
+
+        private readonly ILogger                         _logger ;
+        private readonly IReferenceOutput                _referenceOutput ;
+        private readonly IScheduler                      _scheduler ;
+        private readonly ISubject < uint >               _subjectHeight ;
+        private readonly ISubject < HeightSpeedDetails > _subjectHeightAndSpeed ;
+        private readonly ISubject < int >                _subjectSpeed ;
+
+        private IDisposable _subscriber ;
     }
 }

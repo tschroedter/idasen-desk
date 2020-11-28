@@ -12,11 +12,8 @@ namespace Idasen.BluetoothLE.Characteristics.Common
     public class RawValueReader
         : IRawValueReader
     {
-        private readonly ILogger       _logger ;
-        private readonly IBufferReader _reader ;
-
         public RawValueReader (
-            [ NotNull ] ILogger       logger,
+            [ NotNull ] ILogger       logger ,
             [ NotNull ] IBufferReader reader )
         {
             Guard.ArgumentNotNull ( logger ,
@@ -25,7 +22,7 @@ namespace Idasen.BluetoothLE.Characteristics.Common
                                     nameof ( reader ) ) ;
 
             _logger = logger ;
-            _reader      = reader ;
+            _reader = reader ;
         }
 
         public async Task < (bool , byte [ ]) > TryReadValueAsync (
@@ -34,8 +31,8 @@ namespace Idasen.BluetoothLE.Characteristics.Common
             Guard.ArgumentNotNull ( characteristic ,
                                     nameof ( characteristic ) ) ;
 
-            if ( SupportsNotify ( characteristic )) // todo testing
-                return(false, ArrayEmpty);  // need to subscribe to value change
+            if ( SupportsNotify ( characteristic ) ) // todo testing
+                return ( false , ArrayEmpty ) ;      // need to subscribe to value change
 
             if ( SupportsRead ( characteristic ) )
                 return await ReadValue ( characteristic ) ;
@@ -58,10 +55,10 @@ namespace Idasen.BluetoothLE.Characteristics.Common
                    GattCharacteristicProperties.Read ;
         }
 
-        private static bool SupportsNotify(IGattCharacteristicWrapper characteristic)
+        private static bool SupportsNotify ( IGattCharacteristicWrapper characteristic )
         {
-            return (characteristic.CharacteristicProperties & GattCharacteristicProperties.Notify) ==
-                   GattCharacteristicProperties.Notify;
+            return ( characteristic.CharacteristicProperties & GattCharacteristicProperties.Notify ) ==
+                   GattCharacteristicProperties.Notify ;
         }
 
         private async Task < (bool , byte [ ]) > ReadValue (
@@ -78,9 +75,13 @@ namespace Idasen.BluetoothLE.Characteristics.Common
             if ( GattCommunicationStatus.Success != Status )
                 return ( false , ArrayEmpty ) ;
 
-            return _reader.TryReadValue ( readValue.Value, out byte[] bytes )
-                       ? (true, bytes)
+            return _reader.TryReadValue ( readValue.Value ,
+                                          out var bytes )
+                       ? ( true , bytes )
                        : ( false , ArrayEmpty ) ;
         }
+
+        private readonly ILogger       _logger ;
+        private readonly IBufferReader _reader ;
     }
 }

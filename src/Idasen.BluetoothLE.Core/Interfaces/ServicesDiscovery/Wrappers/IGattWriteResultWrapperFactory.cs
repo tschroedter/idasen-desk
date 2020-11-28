@@ -5,7 +5,6 @@ namespace Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers
     public interface IGattWriteResultWrapperFactory
     {
         /// <summary>
-        ///
         /// </summary>
         /// <param name="result"></param>
         /// <returns></returns>

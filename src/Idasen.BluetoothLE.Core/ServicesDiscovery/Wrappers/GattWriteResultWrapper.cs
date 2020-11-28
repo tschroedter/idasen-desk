@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis ;
 using Windows.Devices.Bluetooth.GenericAttributeProfile ;
 using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers ;
-using NotNullAttribute = JetBrains.Annotations.NotNullAttribute;
 
 namespace Idasen.BluetoothLE.Core.ServicesDiscovery.Wrappers
 {
@@ -9,9 +8,7 @@ namespace Idasen.BluetoothLE.Core.ServicesDiscovery.Wrappers
     public class GattWriteResultWrapper
         : IGattWriteResult
     {
-        public static readonly IGattWriteResult NotSupported = new GattWriteResultNotSupported (  );
-
-        public GattWriteResultWrapper ( [ NotNull ] GattWriteResult result )
+        public GattWriteResultWrapper ( [ JetBrains.Annotations.NotNull ] GattWriteResult result )
         {
             Guard.ArgumentNotNull ( result ,
                                     nameof ( result ) ) ;
@@ -24,6 +21,8 @@ namespace Idasen.BluetoothLE.Core.ServicesDiscovery.Wrappers
         public byte? ProtocolError => _result.ProtocolError ;
 
         public delegate IGattWriteResult Factory ( GattWriteResult result ) ;
+
+        public static readonly IGattWriteResult NotSupported = new GattWriteResultNotSupported ( ) ;
 
         private readonly GattWriteResult _result ;
     }

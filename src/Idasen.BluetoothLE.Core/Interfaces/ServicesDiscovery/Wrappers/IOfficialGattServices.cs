@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using Idasen.BluetoothLE.Core.ServicesDiscovery;
+﻿using System ;
+using System.Collections.Generic ;
+using Idasen.BluetoothLE.Core.ServicesDiscovery ;
 
 namespace Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers
 {
@@ -15,7 +15,7 @@ namespace Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers
     ///     (see https://www.bluetooth.com/specifications/gatt/services/)
     /// </summary>
     public interface IOfficialGattServices
-        : IReadOnlyCollection<OfficialGattService>
+        : IReadOnlyCollection < OfficialGattService >
     {
         /// <summary>
         ///     Try to find a known Gatt service by Uuid.
@@ -29,6 +29,7 @@ namespace Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers
         /// <returns>
         ///     'true' if a matching Gatt service exists, otherwise 'false'.
         /// </returns>
-        bool TryFindByUuid(Guid guid, out OfficialGattService gattService);
+        bool TryFindByUuid ( Guid                    guid ,
+                             out OfficialGattService gattService ) ;
     }
 }

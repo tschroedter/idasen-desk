@@ -1,44 +1,45 @@
-﻿using System.Collections.Generic;
-using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers;
-using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery;
+﻿using System.Collections.Generic ;
+using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery ;
+using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers ;
 
 namespace Idasen.BluetoothLE.Core.ServicesDiscovery
 {
     public class GattServicesDictionary
         : IGattServicesDictionary
     {
-        private readonly Dictionary<IGattDeviceServiceWrapper, IGattCharacteristicsResultWrapper> _dictionary =
-            new Dictionary<IGattDeviceServiceWrapper, IGattCharacteristicsResultWrapper>();
-
-        public int Count => _dictionary.Count;
-
-        public IGattCharacteristicsResultWrapper this[IGattDeviceServiceWrapper service]
+        public IGattCharacteristicsResultWrapper this [ IGattDeviceServiceWrapper service ]
         {
-            get => _dictionary[service];
-            set => _dictionary[service] = value; // todo can be null, add check?
+            get => _dictionary [ service ] ;
+            set => _dictionary [ service ] = value ; // todo can be null, add check?
         }
 
-        public void Clear()
+        public void Clear ( )
         {
-            DisposeServices();
+            DisposeServices ( ) ;
 
-            _dictionary.Clear();
+            _dictionary.Clear ( ) ;
         }
 
-        public void Dispose()
+        public void Dispose ( )
         {
-            DisposeServices();
+            DisposeServices ( ) ;
         }
 
-        public IReadOnlyDictionary<IGattDeviceServiceWrapper, IGattCharacteristicsResultWrapper> ReadOnlyDictionary =>
-            _dictionary; // todo might not be thread safe
+        public IReadOnlyDictionary < IGattDeviceServiceWrapper , IGattCharacteristicsResultWrapper >
+            ReadOnlyDictionary =>
+            _dictionary ; // todo might not be thread safe
 
-        private void DisposeServices()
+        public int Count => _dictionary.Count ;
+
+        private void DisposeServices ( )
         {
-            foreach (var service in _dictionary.Keys)
+            foreach ( var service in _dictionary.Keys )
             {
-                service.Dispose();
+                service.Dispose ( ) ;
             }
         }
+
+        private readonly Dictionary < IGattDeviceServiceWrapper , IGattCharacteristicsResultWrapper > _dictionary =
+            new Dictionary < IGattDeviceServiceWrapper , IGattCharacteristicsResultWrapper > ( ) ;
     }
 }

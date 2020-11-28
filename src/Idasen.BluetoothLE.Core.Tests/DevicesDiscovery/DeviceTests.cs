@@ -6,118 +6,118 @@ using Microsoft.VisualStudio.TestTools.UnitTesting ;
 
 namespace Idasen.BluetoothLE.Core.Tests.DevicesDiscovery
 {
-    [TestClass]
+    [ TestClass ]
     public class DeviceTests
     {
-        private const ulong  Address                = 1234;
-        private const string Name                   = "Name";
-        private const short  RawSignalStrengthInDBm = -50;
+        private const ulong  Address                = 1234 ;
+        private const string Name                   = "Name" ;
+        private const short  RawSignalStrengthInDBm = - 50 ;
 
-        private IDateTimeOffset _broadcastTime;
-        private DeviceComparer  _comparer;
-
-        [TestInitialize]
-        public void Initialize()
+        [ TestInitialize ]
+        public void Initialize ( )
         {
-            var dateTimeOffset = DateTimeOffset.Parse("2/10/2007 1:02:03 PM -7:30");
-            _broadcastTime = new DateTimeOffsetWrapper(dateTimeOffset);
+            var dateTimeOffset = DateTimeOffset.Parse ( "2/10/2007 1:02:03 PM -7:30" ) ;
+            _broadcastTime = new DateTimeOffsetWrapper ( dateTimeOffset ) ;
 
-            _comparer = new DeviceComparer();
+            _comparer = new DeviceComparer ( ) ;
         }
 
-        [TestMethod]
-        public void Constructor_ForDeviceIsNull_Throws()
+        [ TestMethod ]
+        public void Constructor_ForDeviceIsNull_Throws ( )
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Action action = () => { new Device(null!); };
+            Action action = ( ) => { new Device ( null! ) ; } ;
 
-            action.Should()
-                  .Throw<ArgumentNullException>()
-                  .WithParameter("device");
+            action.Should ( )
+                  .Throw < ArgumentNullException > ( )
+                  .WithParameter ( "device" ) ;
         }
 
-        [TestMethod]
-        public void Constructor_ForBroadcastTimeNull_Throws()
+        [ TestMethod ]
+        public void Constructor_ForBroadcastTimeNull_Throws ( )
         {
-            _broadcastTime = null;
+            _broadcastTime = null ;
 
             // ReSharper disable once ObjectCreationAsStatement
-            Action action = () => { CreateSut(); };
+            Action action = ( ) => { CreateSut ( ) ; } ;
 
-            action.Should()
-                  .Throw<ArgumentNullException>()
-                  .WithParameter("broadcastTime");
+            action.Should ( )
+                  .Throw < ArgumentNullException > ( )
+                  .WithParameter ( "broadcastTime" ) ;
         }
 
-        [TestMethod]
-        public void Constructor_ForInvoked_SetsBroadcastTime()
+        [ TestMethod ]
+        public void Constructor_ForInvoked_SetsBroadcastTime ( )
         {
-            var sut = CreateSut();
+            var sut = CreateSut ( ) ;
 
             sut.BroadcastTime
-               .Should()
-               .Be(_broadcastTime);
+               .Should ( )
+               .Be ( _broadcastTime ) ;
         }
 
-        [TestMethod]
-        public void Constructor_ForInvoked_SetsAddress()
+        [ TestMethod ]
+        public void Constructor_ForInvoked_SetsAddress ( )
         {
-            var sut = CreateSut();
+            var sut = CreateSut ( ) ;
 
             sut.Address
-               .Should()
-               .Be(Address);
+               .Should ( )
+               .Be ( Address ) ;
         }
 
-        [TestMethod]
-        public void Constructor_ForInvoked_SetsName()
+        [ TestMethod ]
+        public void Constructor_ForInvoked_SetsName ( )
         {
-            var sut = CreateSut();
+            var sut = CreateSut ( ) ;
 
             sut.Name
-               .Should()
-               .Be(Name);
+               .Should ( )
+               .Be ( Name ) ;
         }
 
-        [TestMethod]
-        public void Constructor_ForInvoked_SetsRawSignalStrengthInDBm()
+        [ TestMethod ]
+        public void Constructor_ForInvoked_SetsRawSignalStrengthInDBm ( )
         {
-            var sut = CreateSut();
+            var sut = CreateSut ( ) ;
 
             sut.RawSignalStrengthInDBm
-               .Should()
-               .Be(RawSignalStrengthInDBm);
+               .Should ( )
+               .Be ( RawSignalStrengthInDBm ) ;
         }
 
-        [TestMethod]
-        public void ToString_ForInvoked_ReturnsInstance()
+        [ TestMethod ]
+        public void ToString_ForInvoked_ReturnsInstance ( )
         {
-            var sut = CreateSut();
+            var sut = CreateSut ( ) ;
 
-            sut.ToString()
-               .Should()
-               .Be("Name 1234 (2007-10-02T13:02:03.0000000-07:30, -50dB)");
+            sut.ToString ( )
+               .Should ( )
+               .Be ( "Name 1234 (2007-10-02T13:02:03.0000000-07:30, -50dB)" ) ;
         }
 
-        [TestMethod]
-        public void Constructor_ForIDevice_ReturnsInstance()
+        [ TestMethod ]
+        public void Constructor_ForIDevice_ReturnsInstance ( )
         {
-            var device = CreateSut();
+            var device = CreateSut ( ) ;
 
-            var sut = new Device(device);
+            var sut = new Device ( device ) ;
 
-            _comparer.Equals(sut,
-                             device)
-                     .Should()
-                     .BeTrue();
+            _comparer.Equals ( sut ,
+                               device )
+                     .Should ( )
+                     .BeTrue ( ) ;
         }
 
-        private Device CreateSut()
+        private Device CreateSut ( )
         {
-            return new Device(_broadcastTime,
-                              Address,
-                              Name,
-                              RawSignalStrengthInDBm);
+            return new Device ( _broadcastTime ,
+                                Address ,
+                                Name ,
+                                RawSignalStrengthInDBm ) ;
         }
+
+        private IDateTimeOffset _broadcastTime ;
+        private DeviceComparer  _comparer ;
     }
 }

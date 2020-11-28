@@ -6,7 +6,6 @@ using FluentAssertions ;
 using Idasen.BluetoothLE.Characteristics.Common ;
 using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers ;
 using Idasen.BluetoothLE.Core.ServicesDiscovery.Wrappers ;
-using Idasen.BluetoothLE.Core.Tests ;
 using NSubstitute ;
 using Selkie.AutoMocking ;
 

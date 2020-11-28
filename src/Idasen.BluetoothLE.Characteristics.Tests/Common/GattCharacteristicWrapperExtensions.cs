@@ -38,14 +38,14 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Common
             return characteristic ;
         }
 
-        public static IGattCharacteristicWrapper WithReadValueAsyncResult(
-            this IGattCharacteristicWrapper characteristic,
-            IGattReadResult                 result)
+        public static IGattCharacteristicWrapper WithReadValueAsyncResult (
+            this IGattCharacteristicWrapper characteristic ,
+            IGattReadResult                 result )
         {
-            _ = characteristic.ReadValueAsync()
-                              .Returns(Task.FromResult(result));
+            _ = characteristic.ReadValueAsync ( )
+                              .Returns ( Task.FromResult ( result ) ) ;
 
-            return characteristic;
+            return characteristic ;
         }
     }
 }

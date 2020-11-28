@@ -1,33 +1,32 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Windows.Devices.Bluetooth.GenericAttributeProfile;
-using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers;
-using NotNullAttribute = JetBrains.Annotations.NotNullAttribute;
+﻿using System.Diagnostics.CodeAnalysis ;
+using Windows.Devices.Bluetooth.GenericAttributeProfile ;
+using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers ;
 
 namespace Idasen.BluetoothLE.Core.ServicesDiscovery.Wrappers
 {
     /// <inheritdoc />
-    [ExcludeFromCodeCoverage]
+    [ ExcludeFromCodeCoverage ]
     public class GattDeviceServicesResultWrapperFactory
         : IGattDeviceServicesResultWrapperFactory
     {
-        private readonly GattDeviceServicesResultWrapper.Factory _servicesFactory;
-
-        public GattDeviceServicesResultWrapperFactory(
-            [NotNull] GattDeviceServicesResultWrapper.Factory servicesFactory)
+        public GattDeviceServicesResultWrapperFactory (
+            [ JetBrains.Annotations.NotNull ] GattDeviceServicesResultWrapper.Factory servicesFactory )
         {
-            Guard.ArgumentNotNull(servicesFactory,
-                                  nameof(servicesFactory));
+            Guard.ArgumentNotNull ( servicesFactory ,
+                                    nameof ( servicesFactory ) ) ;
 
-            _servicesFactory = servicesFactory;
+            _servicesFactory = servicesFactory ;
         }
 
         /// <inheritdoc />
-        public IGattDeviceServicesResultWrapper Create(GattDeviceServicesResult result)
+        public IGattDeviceServicesResultWrapper Create ( GattDeviceServicesResult result )
         {
-            Guard.ArgumentNotNull(result,
-                                  nameof(result));
+            Guard.ArgumentNotNull ( result ,
+                                    nameof ( result ) ) ;
 
-            return _servicesFactory.Invoke(result);
+            return _servicesFactory.Invoke ( result ) ;
         }
+
+        private readonly GattDeviceServicesResultWrapper.Factory _servicesFactory ;
     }
 }

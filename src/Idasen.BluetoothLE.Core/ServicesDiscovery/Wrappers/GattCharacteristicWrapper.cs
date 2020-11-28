@@ -85,7 +85,7 @@ namespace Idasen.BluetoothLE.Core.ServicesDiscovery.Wrappers
             var result = _characteristic.ReadValueAsync ( )
                                         .AsTask ( ) ;
 
-            GattReadResultWrapper wrapper = new GattReadResultWrapper ( result.Result ) ; // todo use existing factory
+            var wrapper = new GattReadResultWrapper ( result.Result ) ; // todo use existing factory
 
             return Task.FromResult ( ( IGattReadResult ) wrapper ) ;
         }

@@ -3,9 +3,9 @@ using Microsoft.VisualStudio.TestTools.UnitTesting ;
 
 namespace Idasen.BluetoothLE.Core.Tests.DevicesDiscovery.ConstructorNullTesters
 {
-    [TestClass]
+    [ TestClass ]
     public class DeviceMonitorWithExpiryConstructorTests
-        : BaseConstructorNullTester<DeviceMonitorWithExpiry>
+        : BaseConstructorNullTester < DeviceMonitorWithExpiry >
     {
     }
 }

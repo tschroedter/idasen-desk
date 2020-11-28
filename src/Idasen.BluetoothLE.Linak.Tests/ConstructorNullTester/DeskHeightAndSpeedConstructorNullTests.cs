@@ -3,10 +3,10 @@ using Microsoft.VisualStudio.TestTools.UnitTesting ;
 
 namespace Idasen.BluetoothLE.Linak.Tests.ConstructorNullTester
 {
-    [TestClass]
+    [ TestClass ]
     public class DeskHeightAndSpeedConstructorNullTests
-        : BaseConstructorNullTester<DeskHeightAndSpeed>
+        : BaseConstructorNullTester < DeskHeightAndSpeed >
     {
-        public override int NumberOfConstructorsPassed { get; } = 1;
+        public override int NumberOfConstructorsPassed { get ; } = 1 ;
     }
 }

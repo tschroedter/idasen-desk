@@ -1,5 +1,5 @@
-﻿using System;
-using System.Reactive.Concurrency;
+﻿using System ;
+using System.Reactive.Concurrency ;
 
 namespace Idasen.BluetoothLE.Core.Interfaces.DevicesDiscovery
 {
@@ -19,6 +19,7 @@ namespace Idasen.BluetoothLE.Core.Interfaces.DevicesDiscovery
         /// <returns>
         ///     An observable sequence that produces a value after each period.
         /// </returns>
-        IObservable<long> Create(TimeSpan period, IScheduler scheduler);
+        IObservable < long > Create ( TimeSpan   period ,
+                                      IScheduler scheduler ) ;
     }
 }

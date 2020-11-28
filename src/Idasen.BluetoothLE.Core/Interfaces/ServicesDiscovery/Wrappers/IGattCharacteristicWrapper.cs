@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Windows.Devices.Bluetooth.GenericAttributeProfile;
-using Windows.Storage.Streams;
-using Idasen.BluetoothLE.Core.ServicesDiscovery.Wrappers;
+﻿using System ;
+using System.Collections.Generic ;
+using System.Threading.Tasks ;
+using Windows.Devices.Bluetooth.GenericAttributeProfile ;
+using Windows.Storage.Streams ;
+using Idasen.BluetoothLE.Core.ServicesDiscovery.Wrappers ;
 
 namespace Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers
 {
@@ -16,41 +16,41 @@ namespace Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers
         /// <summary>
         ///     The Gatt Characteristic's UUID.
         /// </summary>
-        Guid Uuid { get; }
+        Guid Uuid { get ; }
 
         /// <summary>
         ///     Get the Gatt Characteristic properties.
         /// </summary>
-        GattCharacteristicProperties CharacteristicProperties { get; }
+        GattCharacteristicProperties CharacteristicProperties { get ; }
 
-        IReadOnlyList<GattPresentationFormat> PresentationFormats { get;}
+        IReadOnlyList < GattPresentationFormat > PresentationFormats { get ; }
 
-        Guid ServiceUuid { get; }
+        Guid ServiceUuid { get ; }
 
-        string UserDescription { get; }
+        string UserDescription { get ; }
 
-        GattProtectionLevel ProtectionLevel { get; }
+        GattProtectionLevel ProtectionLevel { get ; }
 
-        ushort AttributeHandle { get; }
-
-        /// <summary>
-        ///     todo
-        /// </summary>
-        IObservable<GattCharacteristicValueChangedDetails> ValueChanged { get; }
+        ushort AttributeHandle { get ; }
 
         /// <summary>
         ///     todo
         /// </summary>
-        /// <param name="buffer"></param>
-        /// <returns></returns>
-        Task<IGattWriteResult> WriteValueWithResultAsync(IBuffer buffer);
+        IObservable < GattCharacteristicValueChangedDetails > ValueChanged { get ; }
 
         /// <summary>
         ///     todo
         /// </summary>
         /// <param name="buffer"></param>
         /// <returns></returns>
-        Task<GattCommunicationStatus> WriteValueAsync(IBuffer buffer);
+        Task < IGattWriteResult > WriteValueWithResultAsync ( IBuffer buffer ) ;
+
+        /// <summary>
+        ///     todo
+        /// </summary>
+        /// <param name="buffer"></param>
+        /// <returns></returns>
+        Task < GattCommunicationStatus > WriteValueAsync ( IBuffer buffer ) ;
 
         /// <summary>
         ///     Performs a Characteristic Value read from the value cache
@@ -62,8 +62,8 @@ namespace Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers
         ///     in turn contains the completion status of the asynchronous
         ///     operation and, if successful, the data read from the device.
         /// </returns>
-        Task<IGattReadResult> ReadValueAsync();
+        Task < IGattReadResult > ReadValueAsync ( ) ;
 
-        Task<IGattCharacteristicWrapper> Initialize();
+        Task < IGattCharacteristicWrapper > Initialize ( ) ;
     }
 }

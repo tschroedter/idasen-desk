@@ -4,11 +4,11 @@ using Microsoft.VisualStudio.TestTools.UnitTesting ;
 
 namespace Idasen.BluetoothLE.Core.Tests.ServicesDiscovery.Wrapper.ConstructorNullTesters
 {
-    [TestClass]
+    [ TestClass ]
     // ReSharper disable once InconsistentNaming
     public class GattCharacteristicWrapperFactoryConstructorNullTests
-        : BaseConstructorNullTester<GattCharacteristicWrapperFactory>
+        : BaseConstructorNullTester < GattCharacteristicWrapperFactory >
     {
-        public override int NumberOfConstructorsPassed { get; } = 1;
+        public override int NumberOfConstructorsPassed { get ; } = 1 ;
     }
 }

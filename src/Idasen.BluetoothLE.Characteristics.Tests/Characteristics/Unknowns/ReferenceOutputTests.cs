@@ -6,119 +6,119 @@ using Microsoft.VisualStudio.TestTools.UnitTesting ;
 
 namespace Idasen.BluetoothLE.Characteristics.Tests.Characteristics.Unknowns
 {
-    [TestClass]
+    [ TestClass ]
     public class ReferenceOutputTests
     {
-        [TestMethod]
-        public void GattServiceUuid_ForInvoked_Empty()
+        [ TestMethod ]
+        public void GattServiceUuid_ForInvoked_Empty ( )
         {
-            CreateSut().GattServiceUuid
-                       .Should()
-                       .Be(Guid.Empty);
+            CreateSut ( ).GattServiceUuid
+                         .Should ( )
+                         .Be ( Guid.Empty ) ;
         }
 
-        [TestMethod]
-        public void RawHeightSpeed_ForInvoked_Empty()
+        [ TestMethod ]
+        public void RawHeightSpeed_ForInvoked_Empty ( )
         {
-            CreateSut().RawHeightSpeed
-                       .Should()
-                       .BeEmpty();
+            CreateSut ( ).RawHeightSpeed
+                         .Should ( )
+                         .BeEmpty ( ) ;
         }
 
-        [TestMethod]
-        public void RawTwo_ForInvoked_Empty()
+        [ TestMethod ]
+        public void RawTwo_ForInvoked_Empty ( )
         {
-            CreateSut().RawTwo
-                       .Should()
-                       .BeEmpty();
+            CreateSut ( ).RawTwo
+                         .Should ( )
+                         .BeEmpty ( ) ;
         }
 
-        [TestMethod]
-        public void RawThree_ForInvoked_Empty()
+        [ TestMethod ]
+        public void RawThree_ForInvoked_Empty ( )
         {
-            CreateSut().RawThree
-                       .Should()
-                       .BeEmpty();
+            CreateSut ( ).RawThree
+                         .Should ( )
+                         .BeEmpty ( ) ;
         }
 
-        [TestMethod]
-        public void RawFour_ForInvoked_Empty()
+        [ TestMethod ]
+        public void RawFour_ForInvoked_Empty ( )
         {
-            CreateSut().RawFour
-                       .Should()
-                       .BeEmpty();
+            CreateSut ( ).RawFour
+                         .Should ( )
+                         .BeEmpty ( ) ;
         }
 
-        [TestMethod]
-        public void RawFive_ForInvoked_Empty()
+        [ TestMethod ]
+        public void RawFive_ForInvoked_Empty ( )
         {
-            CreateSut().RawFive
-                       .Should()
-                       .BeEmpty();
+            CreateSut ( ).RawFive
+                         .Should ( )
+                         .BeEmpty ( ) ;
         }
 
-        [TestMethod]
-        public void RawSix_ForInvoked_Empty()
+        [ TestMethod ]
+        public void RawSix_ForInvoked_Empty ( )
         {
-            CreateSut().RawSix
-                       .Should()
-                       .BeEmpty();
+            CreateSut ( ).RawSix
+                         .Should ( )
+                         .BeEmpty ( ) ;
         }
 
-        [TestMethod]
-        public void RawSeven_ForInvoked_Empty()
+        [ TestMethod ]
+        public void RawSeven_ForInvoked_Empty ( )
         {
-            CreateSut().RawSeven
-                       .Should()
-                       .BeEmpty();
+            CreateSut ( ).RawSeven
+                         .Should ( )
+                         .BeEmpty ( ) ;
         }
 
-        [TestMethod]
-        public void RawEight_ForInvoked_Empty()
+        [ TestMethod ]
+        public void RawEight_ForInvoked_Empty ( )
         {
-            CreateSut().RawEight
-                       .Should()
-                       .BeEmpty();
+            CreateSut ( ).RawEight
+                         .Should ( )
+                         .BeEmpty ( ) ;
         }
 
-        [TestMethod]
-        public void RawMask_ForInvoked_Empty()
+        [ TestMethod ]
+        public void RawMask_ForInvoked_Empty ( )
         {
-            CreateSut().RawMask
-                       .Should()
-                       .BeEmpty();
+            CreateSut ( ).RawMask
+                         .Should ( )
+                         .BeEmpty ( ) ;
         }
 
-        [TestMethod]
-        public void RawDetectMask_ForInvoked_Empty()
+        [ TestMethod ]
+        public void RawDetectMask_ForInvoked_Empty ( )
         {
-            CreateSut().RawDetectMask
-                       .Should()
-                       .BeEmpty();
+            CreateSut ( ).RawDetectMask
+                         .Should ( )
+                         .BeEmpty ( ) ;
         }
 
-        [TestMethod]
-        public void HeightSpeedChanged_ForInvoked_Throws()
+        [ TestMethod ]
+        public void HeightSpeedChanged_ForInvoked_Throws ( )
         {
-            Action action = () => CreateSut().HeightSpeedChanged
-                                             .Subscribe();
+            Action action = ( ) => CreateSut ( ).HeightSpeedChanged
+                                                .Subscribe ( ) ;
 
-            action.Should()
-                  .Throw<NotInitializeException>();
+            action.Should ( )
+                  .Throw < NotInitializeException > ( ) ;
         }
 
-        [TestMethod]
-        public void Dispose_ForInvoked_DoesNothing()
+        [ TestMethod ]
+        public void Dispose_ForInvoked_DoesNothing ( )
         {
-            Action action = () => CreateSut().Dispose ( );
+            Action action = ( ) => CreateSut ( ).Dispose ( ) ;
 
             action.Should ( )
                   .NotThrow < Exception > ( ) ;
         }
 
-        private ReferenceOutput CreateSut()
+        private ReferenceOutput CreateSut ( )
         {
-            return new ReferenceOutput();
+            return new ReferenceOutput ( ) ;
         }
     }
 }

@@ -1,5 +1,5 @@
-﻿using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers;
-using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery;
+﻿using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery ;
+using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers ;
 using JetBrains.Annotations ;
 
 namespace Idasen.BluetoothLE.Core.ServicesDiscovery
@@ -8,23 +8,23 @@ namespace Idasen.BluetoothLE.Core.ServicesDiscovery
     public class GattServicesProviderFactory
         : IGattServicesProviderFactory
     {
-        private readonly GattServicesProvider.Factory _factory;
-
-        public GattServicesProviderFactory( [ NotNull ] GattServicesProvider.Factory factory)
+        public GattServicesProviderFactory ( [ NotNull ] GattServicesProvider.Factory factory )
         {
             Guard.ArgumentNotNull ( factory ,
                                     nameof ( factory ) ) ;
 
-            _factory = factory;
+            _factory = factory ;
         }
 
         /// <inheritdoc />
-        public IGattServicesProvider Create(IBluetoothLeDeviceWrapper wrapper)
+        public IGattServicesProvider Create ( IBluetoothLeDeviceWrapper wrapper )
         {
-            Guard.ArgumentNotNull(wrapper,
-                                  nameof(wrapper));
+            Guard.ArgumentNotNull ( wrapper ,
+                                    nameof ( wrapper ) ) ;
 
-            return _factory.Invoke(wrapper);
+            return _factory.Invoke ( wrapper ) ;
         }
+
+        private readonly GattServicesProvider.Factory _factory ;
     }
 }

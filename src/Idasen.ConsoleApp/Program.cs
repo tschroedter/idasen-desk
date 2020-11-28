@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System ;
 
 namespace Idasen.ConsoleApp
 {
@@ -7,15 +7,15 @@ namespace Idasen.ConsoleApp
         /// <summary>
         ///     Test Application
         /// </summary>
-        private static void Main()
+        private static void Main ( )
         {
-            var demo = new Demo();
+            var demo = new Demo ( ) ;
 
-            demo.Start();
+            demo.Start ( ) ;
 
-            Console.ReadLine();
+            Console.ReadLine ( ) ;
 
-            demo.Stop();
+            demo.Stop ( ) ;
         }
     }
 }
