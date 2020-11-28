@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using Idasen.BluetoothLE.Characteristics.Characteristics;
 using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery;
 
+// ReSharper disable UnusedMemberInSuper.Global
+
 namespace Idasen.BluetoothLE.Characteristics.Interfaces.Characteristics
 {
     public interface IReferenceOutput // todo rename to Ch...Ref...

@@ -4,6 +4,8 @@ using Windows.Devices.Bluetooth.GenericAttributeProfile;
 using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers;
 using JetBrains.Annotations;
 
+// ReSharper disable UnusedMemberInSuper.Global
+
 namespace Idasen.BluetoothLE.Characteristics.Interfaces.Characteristics.Customs
 {
     public interface IGattCharacteristicProvider

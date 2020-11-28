@@ -1,7 +1,8 @@
 ﻿using System.Threading.Tasks;
-using Windows.Devices.Bluetooth.GenericAttributeProfile;
 using Windows.Storage.Streams;
 using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers;
+
+// ReSharper disable UnusedMemberInSuper.Global
 
 namespace Idasen.BluetoothLE.Characteristics.Interfaces.Common
 {
