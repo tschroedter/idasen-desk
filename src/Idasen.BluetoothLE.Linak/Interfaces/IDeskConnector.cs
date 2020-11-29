@@ -2,7 +2,7 @@
 using System.Collections.Generic ;
 using System.Reactive.Subjects ;
 
-namespace Idasen.BluetoothLE.Linak
+namespace Idasen.BluetoothLE.Linak.Interfaces
 {
     public interface IDeskConnector
         : IDisposable

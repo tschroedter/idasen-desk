@@ -1,4 +1,5 @@
-﻿using NSubstitute ;
+﻿using Idasen.BluetoothLE.Linak.Interfaces ;
+using NSubstitute ;
 using Selkie.AutoMocking ;
 
 namespace Idasen.BluetoothLE.Linak.Tests
