@@ -11,11 +11,10 @@ namespace Idasen.ConsoleApp
         {
             var demo = new Demo ( ) ;
 
-            demo.Start ( ) ;
+            demo.Initialize ( )
+                .Detect ( ) ;
 
             Console.ReadLine ( ) ;
-
-            demo.Stop ( ) ;
         }
     }
 }
