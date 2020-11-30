@@ -1,13 +1,9 @@
 ﻿using System ;
-using System.Collections.Generic ;
-using System.Linq ;
+using System.Reactive.Concurrency ;
 using System.Reactive.Linq ;
-using System.Text ;
 using Autofac ;
 using AutofacSerilogIntegration ;
-using Idasen.BluetoothLE.Characteristics.Common ;
 using Idasen.BluetoothLE.Core ;
-using Idasen.BluetoothLE.Core.Interfaces.DevicesDiscovery ;
 using Idasen.BluetoothLE.Linak ;
 using Idasen.BluetoothLE.Linak.Interfaces ;
 using Serilog ;
@@ -16,7 +12,7 @@ using Serilog.Events ;
 namespace Idasen.ConsoleApp
 {
     public class Demo
-        : IDisposable
+        : IDemo
     {
         public Demo ( )
         {
@@ -40,103 +36,68 @@ namespace Idasen.ConsoleApp
 
             _container = builder.Build ( ) ;
 
-            _logger      = _container.Resolve < ILogger > ( ) ;
-            _deskFactory = _container.Resolve < IDeskFactory > ( ) ;
-            _monitor     = _container.Resolve < IDeviceMonitorWithExpiry > ( ) ;
-
-            _updated     = _monitor.DeviceUpdated.Subscribe ( OnDeviceUpdated ) ;
-            _discovered  = _monitor.DeviceDiscovered.Subscribe ( OnDeviceDiscovered ) ;
-            _nameChanged = _monitor.DeviceNameUpdated.Subscribe ( OnDeviceNameChanged ) ;
-            _deskFound = _monitor.DeviceNameUpdated
-                                 .Where ( device => device.Name.StartsWith ( "Desk" ) ||
-                                                    device.Address == 250635178951455 )
-                                 .Subscribe ( OnDeskDiscovered ) ;
+            _logger       = _container.Resolve < ILogger > ( ) ;
+            _deskDetector = _container.Resolve < IDeskDetector > ( ) ;
         }
 
+        /// <inheritdoc />
+        public IDemo Initialize ( )
+        {
+            _logger.Information ("Initialize...");
+
+            _deskDetector.Initialize (  );
+
+            _deskDetected = _deskDetector.DeskDetected
+                                         .ObserveOn ( _container.Resolve < IScheduler > ( ) )
+                                         .Subscribe ( OnDeskDetected ) ;
+
+            return this ;
+        }
+
+        /// <inheritdoc />
+        public IDemo Detect ( )
+        {
+            _logger.Information("Trying to detect desk...");
+
+            _deskDetector.Start (  );
+
+            return this ;
+        }
+
+        /// <inheritdoc />
         public void Dispose ( )
         {
-            _refreshedChanged?.Dispose ( ) ;
-            _subscriberDeskDeviceNameChanged?.Dispose ( ) ;
-            _deskFound?.Dispose ( ) ; // todo list
-            _nameChanged?.Dispose ( ) ;
-            _discovered?.Dispose ( ) ;
-            _updated?.Dispose ( ) ;
-            _monitor?.Dispose ( ) ;
+            _deskDetected?.Dispose ( ) ;
+            _deskDetector?.Dispose ( ) ;
             _container?.Dispose ( ) ;
         }
 
-        public void Start ( )
+        /// <inheritdoc />
+        public void OnDeskDetected ( IDesk desk )
         {
-            _monitor.Start ( ) ;
-        }
+            _logger.Debug ( "Detected desk " ) ; // todo '{desk.Name}' with address {desk.Address} " );
+            _desk = desk ;
 
-        public void Stop ( )
-        {
-            _monitor.Stop ( ) ;
-        }
+            _deskDetector.Stop();
 
-        private async void OnDeskDiscovered ( IDevice device )
-        {
-            if ( _desk != null )
-                return ;
-
-            try
-            {
-                _desk = await _deskFactory.CreateAsync ( device.Address ) ;
-                _subscriberDeskDeviceNameChanged =
-                    _desk.DeviceNameChanged.Subscribe ( OnDeskDeviceNameChanged ) ;
-                _desk.Connect ( ) ;
-
-                _refreshedChanged = _desk.RefreshedChanged.Subscribe ( OnRefreshedChanged ) ; // todo rename On...
-            }
-            catch ( Exception e )
-            {
-                Console.WriteLine ( e ) ;
-                throw ;
-            }
-        }
-
-        private void OnDeskDeviceNameChanged ( IEnumerable < byte > value )
-        {
-            var array = value.ToArray ( ) ;
-
-            var text = Encoding.UTF8.GetString ( array ) ;
-
-            _logger.Information ( $"Received: {array.ToHex ( )} - '{text}'" ) ;
-        }
-
-        private void OnDeviceUpdated ( IDevice device )
-        {
-            _logger.Information ( $"Device Updated: {device}" ) ;
-            //Logger.Information($"{DevicesToString(_monitor.DiscoveredDevices)}");
-        }
-
-        private void OnDeviceDiscovered ( IDevice device )
-        {
-            _logger.Information ( $"Device Discovered: {device}" ) ;
-        }
-
-        private void OnDeviceNameChanged ( IDevice device )
-        {
-            _logger.Information ( $"Device Name Changed: {device}" ) ;
-        }
-
-        private void OnRefreshedChanged ( bool status )
-        {
             _desk.MoveTo ( 7200u ) ;
         }
 
-        private readonly IContainer               _container ;
-        private readonly IDeskFactory             _deskFactory ;
-        private readonly IDisposable              _deskFound ;
-        private readonly IDisposable              _discovered ;
-        private readonly ILogger                  _logger ;
-        private readonly IDeviceMonitorWithExpiry _monitor ;
-        private readonly IDisposable              _nameChanged ;
-        private readonly IDisposable              _updated ;
+        private readonly IContainer    _container ;
+        private          IDisposable   _deskDetected ;
+        private readonly IDeskDetector _deskDetector ;
+        private readonly ILogger       _logger ;
 
-        private IDesk       _desk ;
-        private IDisposable _refreshedChanged ;
-        private IDisposable _subscriberDeskDeviceNameChanged ;
+        private IDesk _desk ;
+    }
+
+    public interface IDemo
+    : IDisposable
+    {
+        /// <inheritdoc />
+        IDemo Detect ( ) ;
+
+        /// <inheritdoc />
+        IDemo Initialize ( ) ;
     }
 }
