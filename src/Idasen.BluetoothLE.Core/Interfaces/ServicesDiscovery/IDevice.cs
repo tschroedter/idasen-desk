@@ -56,6 +56,14 @@ namespace Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery
         IObservable < GattCommunicationStatus > GattServicesRefreshed { get ; }
 
         /// <summary>
+        ///     The device's address.
+        /// </summary>
+        ulong BluetoothAddress { get ; }
+
+        /// <inheritdoc />
+        string BluetoothAddressType { get ; }
+
+        /// <summary>
         ///     Connects to the device if the device is disconnected.
         /// </summary>
         void Connect ( ) ;

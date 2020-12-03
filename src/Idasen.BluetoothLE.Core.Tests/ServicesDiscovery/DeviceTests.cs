@@ -149,5 +149,25 @@ namespace Idasen.BluetoothLE.Core.Tests.ServicesDiscovery
             subscriber.Received ( )
                       .Dispose ( ) ;
         }
+
+        [ AutoDataTestMethod ]
+        public void BluetoothAddress_ForInvoked_BluetoothAddress (
+            Device           sut ,
+            [ Freeze ] ulong bluetoothAddress )
+        {
+            sut.BluetoothAddress
+               .Should ( )
+               .Be ( bluetoothAddress ) ;
+        }
+
+        [ AutoDataTestMethod ]
+        public void BluetoothAddressType_ForInvoked_BluetoothAddressType (
+            Device            sut ,
+            [ Freeze ] string bluetoothAddressType )
+        {
+            sut.BluetoothAddressType
+               .Should ( )
+               .Be ( bluetoothAddressType ) ;
+        }
     }
 }
