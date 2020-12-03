@@ -38,6 +38,21 @@ namespace Idasen.BluetoothLE.Linak.Interfaces
         IObservable < bool > RefreshedChanged { get ; }
 
         /// <summary>
+        ///     The name of the desk.
+        /// </summary>
+        string Name { get ; }
+
+        /// <summary>
+        ///     The address of the desk.
+        /// </summary>
+        ulong BluetoothAddress { get ; }
+
+        /// <summary>
+        ///     The address type.
+        /// </summary>
+        string BluetoothAddressType { get ; }
+
+        /// <summary>
         ///     Connect to a desk.
         /// </summary>
         void Connect ( ) ;
