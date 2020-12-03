@@ -106,6 +106,15 @@ namespace Idasen.BluetoothLE.Linak
         public ISubject < IEnumerable < byte > > DeviceNameChanged { get ; }
 
         /// <inheritdoc />
+        public ulong BluetoothAddress => _device.BluetoothAddress ;
+
+        /// <inheritdoc />
+        public string BluetoothAddressType => _device.BluetoothAddressType;
+
+        /// <inheritdoc />
+        public string DeviceName => _device.Name ;
+
+        /// <inheritdoc />
         public void Connect ( )
         {
             _device.Connect ( ) ;
