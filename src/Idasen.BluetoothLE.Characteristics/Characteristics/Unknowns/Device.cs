@@ -34,13 +34,20 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics.Unknowns
         public IObservable < GattCommunicationStatus > GattServicesRefreshed =>
             throw new NotInitializeException ( Message ) ;
 
+        public ulong  BluetoothAddress     => UnknownBluetoothAddress;
+
+        public string BluetoothAddressType => UnknownBluetoothAddressType ;
+
         public void Connect ( )
         {
             // do nothing
         }
 
-        internal const string UnknownDeviceName = "Unknown Device" ;
-        internal const string UnknownDeviceId   = "Unknown Device Id" ;
-        internal const string Message           = "Can't use a anknown Instance" ;
+        internal const ulong UnknownBluetoothAddress = 0u;
+
+        internal const string UnknownBluetoothAddressType = "Unknown Address Type";
+        internal const string UnknownDeviceName           = "Unknown Device" ;
+        internal const string UnknownDeviceId             = "Unknown Device Id" ;
+        internal const string Message                     = "Can't use a anknown Instance" ;
     }
 }
