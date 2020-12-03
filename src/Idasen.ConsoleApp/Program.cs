@@ -1,45 +1,43 @@
 ﻿using System;
 using System.Reactive.Concurrency ;
-using System.Reactive.Linq;
+using System.Threading ;
+using System.Threading.Tasks;
 using Autofac;
 using Idasen.BluetoothLE.Linak.Interfaces;
+using Serilog ;
 using static System.Console;
 
 namespace Idasen.ConsoleApp
 {
     internal sealed class Program
     {
-        private static IDesk Desk ;
-
         /// <summary>
         ///     Test Application
         /// </summary>
-        private static void Main ( )
+        private static async Task Main ( )
         {
-            var container = ContainerProvider.Create( ) ;
+            var tokenSource = new CancellationTokenSource (TimeSpan.FromSeconds ( 60 )) ;
+            var token       = tokenSource.Token ;
 
-            var scheduler = container.Resolve < IScheduler > ( ) ;
-            var provider  = container.Resolve < IDeskProvider > ( ) ;
+            var container   = ContainerProvider.Create( ) ;
+
+            var logger   = container.Resolve < ILogger > ( ) ;
+            var provider = container.Resolve < IDeskProvider > ( ) ;
 
             provider.Initialize ( );
 
-            using var _ = provider.DeskDetected
-                                  .ObserveOn(scheduler)
-                                  .Subscribe(OnDeskDetected) ;
+            var (isSuccess , desk) = await provider.TryGetDesk (token ) ;
 
-            provider.StartDetecting (  );
+            if ( isSuccess )
+            {
+                desk.MoveTo ( 7200u ) ;
+            }
+            else
+            {
+                logger.Error ( "Failed to detect desk" ) ;
+            }
 
             ReadLine ( ) ;
-
-            provider.Initialize()
-                    .StopDetecting();
-        }
-
-        private static void OnDeskDetected ( IDesk desk )
-        {
-            Desk = desk ;
-
-            Desk.MoveTo ( 7200u );
         }
     }
 }
