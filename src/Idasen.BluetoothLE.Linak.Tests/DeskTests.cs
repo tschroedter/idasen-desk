@@ -1,4 +1,5 @@
-﻿using Idasen.BluetoothLE.Linak.Interfaces ;
+﻿using FluentAssertions ;
+using Idasen.BluetoothLE.Linak.Interfaces ;
 using NSubstitute ;
 using Selkie.AutoMocking ;
 
@@ -73,6 +74,26 @@ namespace Idasen.BluetoothLE.Linak.Tests
 
             connector.Received ( )
                      .Dispose ( ) ;
+        }
+
+        [AutoDataTestMethod]
+        public void BluetoothAddress_ForInvoked_BluetoothAddress(
+            Desk           sut,
+            [Freeze] ulong bluetoothAddress)
+        {
+            sut.BluetoothAddress
+               .Should()
+               .Be(bluetoothAddress);
+        }
+
+        [AutoDataTestMethod]
+        public void BluetoothAddressType_ForInvoked_BluetoothAddressType(
+            Desk            sut,
+            [Freeze] string bluetoothAddressType)
+        {
+            sut.BluetoothAddressType
+               .Should()
+               .Be(bluetoothAddressType);
         }
     }
 }

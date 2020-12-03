@@ -24,6 +24,13 @@ namespace Idasen.BluetoothLE.Linak
             _connector = connector ;
         }
 
+        /// <inheritdoc />
+        public ulong BluetoothAddress => _connector.BluetoothAddress;
+
+        /// <inheritdoc />
+        public string BluetoothAddressType => _connector.BluetoothAddressType;
+
+        /// <inheritdoc />
         public void Connect ( )
         {
             _logger.Debug ( "Connecting to desk..." ) ;
@@ -49,6 +56,9 @@ namespace Idasen.BluetoothLE.Linak
 
         /// <inheritdoc />
         public IObservable < bool > RefreshedChanged => _connector.RefreshedChanged ;
+
+        /// <inheritdoc />
+        public string Name => _connector.DeviceName ;
 
         /// <inheritdoc />
         public void MoveTo ( uint targetHeight )
