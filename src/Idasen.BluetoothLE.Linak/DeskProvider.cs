@@ -118,7 +118,8 @@ namespace Idasen.BluetoothLE.Linak
         /// <inheritdoc />
         private void OnDeskDetected ( IDesk desk )
         {
-            _logger.Debug ( "Detected desk " ) ; // todo '{desk.Name}' with address {desk.Address} " );
+            _logger.Debug ( $"Detected desk {desk.Name} with " +
+                            $"Bluetooth address {desk.BluetoothAddress}" ) ;
 
             _detector.Stop ( ) ;
 

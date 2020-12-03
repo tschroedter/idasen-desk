@@ -19,7 +19,7 @@ namespace Idasen.BluetoothLE.Linak.Interfaces
         /// todo
         IDeskProvider StopDetecting() ;
 
-        /// <inheritdoc />
+        /// todo
         Task<(bool, IDesk)> TryGetDesk(CancellationToken token) ;
     }
 }
