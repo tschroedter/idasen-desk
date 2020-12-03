@@ -67,6 +67,13 @@ namespace Idasen.BluetoothLE.Core.ServicesDiscovery.Wrappers
         public GattCommunicationStatus GattCommunicationStatus => _provider.GattCommunicationStatus ;
 
         /// <inheritdoc />
+        public ulong BluetoothAddress => _device.BluetoothAddress ;
+
+        /// <inheritdoc />
+        public string BluetoothAddressType => _device.BluetoothAddressType.ToString();
+
+
+        /// <inheritdoc />
         public async void Connect ( )
         {
             if ( ConnectionStatus == BluetoothConnectionStatus.Connected )
