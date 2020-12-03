@@ -38,6 +38,22 @@ namespace Idasen.BluetoothLE.Linak.Interfaces
         ISubject < IEnumerable < byte > > DeviceNameChanged { get ; }
 
         /// <summary>
+        ///     The address of the device.
+        /// </summary>
+        ulong BluetoothAddress { get ; }
+
+        /// <summary>
+        ///     The address type.
+        /// </summary>
+        string BluetoothAddressType { get; }
+
+
+        /// <summary>
+        ///     The device name.
+        /// </summary>
+        string DeviceName { get ; }
+
+        /// <summary>
         ///     Connect to a desk.
         /// </summary>
         void Connect ( ) ;
