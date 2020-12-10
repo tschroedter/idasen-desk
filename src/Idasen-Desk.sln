@@ -19,6 +19,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Idasen.BluetoothLE.Core.Tes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Idasen.BluetoothLE.Characteristics.Tests", "Idasen.BluetoothLE.Characteristics.Tests\Idasen.BluetoothLE.Characteristics.Tests.csproj", "{85B26C7D-41AB-45BD-BACF-81B02EED2078}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Idasen.Launcher", "Idasen.Launcher\Idasen.Launcher.csproj", "{055A79E3-56CB-46A9-8882-7F2500D80DFF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,10 @@ Global
 		{85B26C7D-41AB-45BD-BACF-81B02EED2078}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{85B26C7D-41AB-45BD-BACF-81B02EED2078}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{85B26C7D-41AB-45BD-BACF-81B02EED2078}.Release|Any CPU.Build.0 = Release|Any CPU
+		{055A79E3-56CB-46A9-8882-7F2500D80DFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{055A79E3-56CB-46A9-8882-7F2500D80DFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{055A79E3-56CB-46A9-8882-7F2500D80DFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{055A79E3-56CB-46A9-8882-7F2500D80DFF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
