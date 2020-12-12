@@ -10,11 +10,12 @@
         WindowStyle="None"
         WindowStartupLocation="CenterScreen"
         AllowsTransparency="True"
-        Background="Transparent">
+        Background="Transparent"
+        Closed="SettingsWindow_OnClosed">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Styles/SettingsWindowResources.xaml" />
+                <ResourceDictionary Source="Resources/SettingsWindowResources.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
