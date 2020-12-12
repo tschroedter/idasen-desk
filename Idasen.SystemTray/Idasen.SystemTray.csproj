@@ -8,14 +8,19 @@
 
   <ItemGroup>
     <None Remove="Images\close-window-xxl.png" />
+    <None Remove="Images\cup-xl.ico" />
+    <None Remove="Images\cup-xl.png" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Hardcodet.Wpf.TaskbarNotification.Core" Version="2.0.0" />
     <PackageReference Include="JetBrains.Annotations" Version="2020.3.0" />
   </ItemGroup>
 
   <ItemGroup>
     <Resource Include="Images\close-window-xxl.png" />
+    <Resource Include="Images\cup-xl.ico" />
+    <Resource Include="Images\cup-xl.png" />
   </ItemGroup>
 
 </Project>

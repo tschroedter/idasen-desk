@@ -2,7 +2,7 @@
 {
     public interface ISettingsWindow
     {
-        uint StandingHeightInCm { get ; }
-        uint SeatingHeightInCm  { get ; }
+        void Show ( ) ;
+        void Close ( ) ;
     }
 }
