@@ -4,6 +4,7 @@ using System.Text.Json ;
 using System.Threading.Tasks ;
 using Idasen.BluetoothLE.Core ;
 using Idasen.SystemTray.Interfaces ;
+using Idasen.SystemTray.Utils ;
 using JetBrains.Annotations ;
 using Serilog ;
 

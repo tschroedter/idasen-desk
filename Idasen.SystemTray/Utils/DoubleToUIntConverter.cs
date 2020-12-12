@@ -1,7 +1,7 @@
 ﻿using System ;
 using Idasen.SystemTray.Interfaces ;
 
-namespace Idasen.SystemTray.Converters
+namespace Idasen.SystemTray.Utils
 {
     public class DoubleToUIntConverter
         : IDoubleToUIntConverter

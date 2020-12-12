@@ -1,7 +1,7 @@
 ﻿using System ;
 using System.Windows.Input ;
 
-namespace Idasen.SystemTray
+namespace Idasen.SystemTray.Utils
 {
     /// <summary>
     ///     Simplistic delegate command for the demo.
