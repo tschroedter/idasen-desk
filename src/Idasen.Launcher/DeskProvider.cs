@@ -2,7 +2,7 @@
 
 namespace Idasen.Launcher
 {
-    public class Class1
+    public class DeskProvider
     {
     }
 }
