@@ -6,21 +6,13 @@
              Height="120"
              Width="240">
     <UserControl.Resources>
-        <Color x:Key="ColorYellow">#FFFFDB00</Color>
         <Color x:Key="ColorDarkYellow">#FFAF8B00</Color>
-        <Color x:Key="ColorLightYellow">#FFFFDB77</Color>
 
-        <Color x:Key="ColorBlue">#FF0058A3</Color>
         <Color x:Key="ColorDarkBlue">#FF0048A3</Color>
         <Color x:Key="ColorLightBlue">#FF0098F3</Color>
 
         <SolidColorBrush x:Key="BrushYellow">#FFFFDB00</SolidColorBrush>
         <SolidColorBrush x:Key="BrushDarkYellow">#FFAF8B00</SolidColorBrush>
-        <SolidColorBrush x:Key="BrushLightYellow">#FFFFDB77</SolidColorBrush>
-
-        <SolidColorBrush x:Key="BrushBlue">#FF0058A3</SolidColorBrush>
-        <SolidColorBrush x:Key="BrushDarkBlue">#FF0048A3</SolidColorBrush>
-        <SolidColorBrush x:Key="BrushLightBlue">#FF0098F3</SolidColorBrush>
 
         <Storyboard x:Key="FadeIn">
             <DoubleAnimationUsingKeyFrames BeginTime="00:00:00"
@@ -127,24 +119,24 @@
                Source="/Images/bulb-green.png"
                Stretch="Fill"
                Height="100"
-               VerticalAlignment="Top" 
-               Visibility="{Binding VisibilityBulbGreen, Mode=Default}"/>
+               VerticalAlignment="Top"
+               Visibility="{Binding ElementName=me,Path=VisibilityBulbGreen, Mode=OneWay}" />
         <Image HorizontalAlignment="Left"
                Margin="10,10,10,10"
                Width="50"
                Source="/Images/bulb-yellow.png"
                Stretch="Fill"
                Height="100"
-               VerticalAlignment="Top" 
-               Visibility="{Binding VisibilityBulbYellow, Mode=Default}"/>
+               VerticalAlignment="Top"
+               Visibility="{Binding ElementName=me,Path=VisibilityBulbYellow, Mode=OneWay}" />
         <Image HorizontalAlignment="Left"
                Margin="10,10,10,10"
                Width="50"
                Source="/Images/bulb-red.png"
                Stretch="Fill"
                Height="100"
-               VerticalAlignment="Top" 
-               Visibility="{Binding VisibilityBulbRed, Mode=Default}"/>
+               VerticalAlignment="Top"
+               Visibility="{Binding ElementName=me,Path=VisibilityBulbRed, Mode=OneWay}" />
         <TextBlock Margin="72,49.2,10,0"
                    VerticalAlignment="Top"
                    Foreground="{StaticResource BrushYellow}"
@@ -175,7 +167,7 @@
                    Foreground="{StaticResource BrushYellow}"
                    FontWeight="Bold"
                    FontFamily="Verdana"
-                  Text="{Binding Path=BalloonTitle, ElementName=me, Mode=Default}" />
+                   Text="{Binding Path=BalloonTitle, ElementName=me, Mode=Default}" />
         <Image HorizontalAlignment="Right"
                Margin="0,10,10,0"
                VerticalAlignment="Top"
