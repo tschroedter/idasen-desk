@@ -4,7 +4,13 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="MainWindow" Height="130" Width="300">
+        Title="MainWindow"
+        Height="100"
+        Width="300"
+        WindowStyle="None"
+        WindowStartupLocation="CenterScreen"
+        AllowsTransparency="True"
+        Background="Transparent">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -12,7 +18,7 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
-    <Grid>
+    <Grid Style="{StaticResource GridGradientBlue}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
@@ -20,66 +26,72 @@
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="1.25*"/>
+            <RowDefinition />
             <RowDefinition />
             <RowDefinition />
         </Grid.RowDefinitions>
         <!-- Row 0 -->
-        <StackPanel
-            Grid.Row="0"
-            Grid.Column="0"
-            Grid.ColumnSpan="4">
-            <Label
-                Style="{StaticResource LabelHeader}"
-                Content="Idasen Desk Settings" />
-        </StackPanel>
+        <DockPanel Grid.Row="0"
+                   Grid.Column="0"
+                   Grid.ColumnSpan="4"
+                   LastChildFill="True">
+            <Image DockPanel.Dock="Right"
+                   HorizontalAlignment="Right"
+                   Margin="0,4,4,0"
+                   VerticalAlignment="Top"
+                   Width="24"
+                   Height="24"
+                   Source="/Images/close-window-xxl.png"
+                   Stretch="Fill"
+                   Opacity="0.4"
+                   ToolTip="Close Settings"
+                   x:Name="ImageClose"
+                   MouseDown="ImageClose_MouseDown" />
+            <Label DockPanel.Dock="Left"
+                   Style="{StaticResource LabelHeader}"
+                   Content="Idasen Desk Settings" />
+        </DockPanel>
         <!-- Row 1 -->
-        <Label
-            Grid.Row="1"
-            Grid.Column="0"
-            Style="{StaticResource LabelParagraph}"
-            Content="Standing" />
-        <Slider
-            Grid.Row="1"
-            Grid.Column="1"
-            Name="Standing"
-            Minimum="65"
-            Maximum="120"
-            Value="120"
-            Width="Auto"/>
-        <TextBlock
-            Grid.Row="1"
-            Grid.Column="2"
-            Style="{StaticResource TextBlockHeightValue}"
-            Text="{Binding ElementName=Standing, Path=Value, StringFormat='0', UpdateSourceTrigger=LostFocus}" />
-        <Label
-            Grid.Row="1"
-            Grid.Column="3"
-            Style="{StaticResource LabelParagraph}"
-            Content="cm" />
+        <Label Grid.Row="1"
+               Grid.Column="0"
+               Style="{StaticResource LabelParagraphLeft}"
+               Content="Standing" />
+        <Slider Grid.Row="1"
+                Grid.Column="1"
+                Style="{StaticResource SliderHeightValue}"
+                Name="Standing"
+                Minimum="65"
+                Maximum="120"
+                Value="120"
+                Width="Auto" />
+        <TextBlock Grid.Row="1"
+                   Grid.Column="2"
+                   Style="{StaticResource TextBlockHeightValue}"
+                   Text="{Binding ElementName=Standing, Path=Value, StringFormat='0', UpdateSourceTrigger=LostFocus}" />
+        <Label Grid.Row="1"
+               Grid.Column="3"
+               Style="{StaticResource LabelParagraphLeft}"
+               Content="cm" />
         <!-- Row 2 -->
-        <Label
-            Grid.Row="2"
-            Grid.Column="0"
-            Style="{StaticResource LabelParagraph}"
-            Content="Seating" />
-        <Slider
-            Grid.Row="2"
-            Grid.Column="1"
-            Name="Seating"
-            Minimum="65"
-            Maximum="120"
-            Value="65"
-            Width="Auto"/>
-        <TextBlock
-            Grid.Row="2"
-            Grid.Column="2"
-            Style="{StaticResource TextBlockHeightValue}"
-            Text="{Binding ElementName=Seating, Path=Value, StringFormat='0',UpdateSourceTrigger=LostFocus}" />
-        <Label
-            Grid.Row="2"
-            Grid.Column="3"
-            Style="{StaticResource LabelParagraph}"
-            Content="cm" />
+        <Label Grid.Row="2"
+               Grid.Column="0"
+               Style="{StaticResource LabelParagraphLeft}"
+               Content="Seating" />
+        <Slider Grid.Row="2"
+                Grid.Column="1"
+                Style="{StaticResource SliderHeightValue}"
+                Name="Seating"
+                Minimum="65"
+                Maximum="120"
+                Value="65"
+                Width="Auto" />
+        <TextBlock Grid.Row="2"
+                   Grid.Column="2"
+                   Style="{StaticResource TextBlockHeightValue}"
+                   Text="{Binding ElementName=Seating, Path=Value, StringFormat='0',UpdateSourceTrigger=LostFocus}" />
+        <Label Grid.Row="2"
+               Grid.Column="3"
+               Style="{StaticResource LabelParagraphLeft}"
+               Content="cm" />
     </Grid>
 </Window>

@@ -1,31 +1,77 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Color x:Key="ColorYellow">#FFFFDB00</Color>
+    <Color x:Key="ColorDarkYellow">#FFAF8B00</Color>
+    <Color x:Key="ColorLightYellow">#FFFFDB77</Color>
+
+    <Color x:Key="ColorBlue">#FF0058A3</Color>
+    <Color x:Key="ColorDarkBlue">#FF0048A3</Color>
+    <Color x:Key="ColorLightBlue">#FF0098F3</Color>
+
+
+    <SolidColorBrush x:Key="BrushYellow">#FFFFDB00</SolidColorBrush>
+    <SolidColorBrush x:Key="BrushDarkYellow">#FFAF8B00</SolidColorBrush>
+    <SolidColorBrush x:Key="BrushLightYellow">#FFFFDB77</SolidColorBrush>
+
+    <SolidColorBrush x:Key="BrushBlue">#FF0058A3</SolidColorBrush>
+    <SolidColorBrush x:Key="BrushDarkBlue">#FF0048A3</SolidColorBrush>
+    <SolidColorBrush x:Key="BrushLightBlue">#FF0098F3</SolidColorBrush>
+
+    <Style x:Key="GridGradientBlue"
+           TargetType="{x:Type Grid}">
+        <Setter Property="Background">
+            <Setter.Value>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <GradientStop Color="{StaticResource ColorDarkBlue}" Offset="0" />
+                    <GradientStop Color="{StaticResource ColorLightBlue}" Offset="1" />
+                </LinearGradientBrush>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
     <Style x:Key="LabelHeader"
-           TargetType="{x:Type Label}" >
-        <Setter Property="Foreground" Value="#FFFFDB00" />
+           TargetType="{x:Type Label}">
+        <Setter Property="Foreground" Value="{StaticResource BrushYellow}" />
         <Setter Property="FontSize" Value="15" />
         <Setter Property="FontWeight" Value="Bold" />
-        <Setter Property="FontFamily" Value="Verdana"/>
+        <Setter Property="FontFamily" Value="Verdana" />
     </Style>
 
     <Style x:Key="LabelParagraph"
-           TargetType="{x:Type Label}" >
-        <Setter Property="Foreground" Value="#FFFFDB00" />
+           TargetType="{x:Type Label}">
+        <Setter Property="Foreground" Value="{StaticResource BrushYellow}" />
         <Setter Property="FontSize" Value="13" />
         <Setter Property="FontFamily" Value="Verdana" />
         <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
+    </Style>
+
+    <Style x:Key="LabelParagraphLeft"
+           TargetType="{x:Type Label}"
+           BasedOn="{StaticResource LabelParagraph}">
     </Style>
 
     <Style x:Key="TextBlockHeightValue"
            TargetType="{x:Type TextBlock}">
-        <!--           BasedOn="{StaticResource TextBlockParagraph}"> -->
-        <Setter Property="Foreground" Value="#FFFFDB00" />
+        <Setter Property="Foreground" Value="{StaticResource BrushYellow}" />
         <Setter Property="FontSize" Value="13" />
         <Setter Property="FontFamily" Value="Verdana" />
         <Setter Property="TextAlignment" Value="Right" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="Width" Value="40" />
+    </Style>
+
+    <Style x:Key="SliderHeightValue"
+           TargetType="{x:Type Slider}">
+        <Setter Property="Foreground" Value="{StaticResource BrushYellow}" />
+        <Setter Property="Margin" Value="5" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+
+        <Setter Property="TickPlacement" Value="BottomRight" />
+        <Setter Property="TickFrequency" Value="1" />
+        <Setter Property="IsSnapToTickEnabled" Value="True" />
+
     </Style>
 
 </ResourceDictionary>
