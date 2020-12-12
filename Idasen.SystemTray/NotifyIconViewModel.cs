@@ -35,6 +35,11 @@ namespace Idasen.SystemTray
             _provider.Initialize ( ) ;
 
             _manager = new SettingsManager ( _logger ) ; // todo move into container
+
+            _tokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(60));
+            _token = _tokenSource.Token;
+
+            Task.Run ( AutoConnect ) ;
         }
 
         /// <summary>
@@ -100,14 +105,14 @@ namespace Idasen.SystemTray
             {
                 return new DelegateCommand
                        {
-                           CommandAction  = async ( ) =>
-                                            {
-                                                await _manager.Load(); // todo loading on UI thread
+                           CommandAction = async ( ) =>
+                                           {
+                                               await _manager.Load ( ) ; // todo loading on UI thread
 
-                                                _desk?.MoveTo ( _manager.CurrentSettings.StandingHeightInCm * 100 );
-                                            },
-                           CanExecuteFunc = () => _desk != null
-                       };
+                                               _desk?.MoveTo ( _manager.CurrentSettings.StandingHeightInCm * 100 ) ;
+                                           } ,
+                           CanExecuteFunc = ( ) => _desk != null
+                       } ;
             }
         }
 
@@ -120,14 +125,14 @@ namespace Idasen.SystemTray
             {
                 return new DelegateCommand
                        {
-                           CommandAction  = async ( ) =>
-                                            {
-                                                await _manager.Load(); // todo loading on UI thread
+                           CommandAction = async ( ) =>
+                                           {
+                                               await _manager.Load ( ) ; // todo loading on UI thread
 
-                                                _desk?.MoveTo(_manager.CurrentSettings.SeatingHeightInCm * 100);
-                                            },
-                           CanExecuteFunc = () => _desk != null
-                       };
+                                               _desk?.MoveTo ( _manager.CurrentSettings.SeatingHeightInCm * 100 ) ;
+                                           } ,
+                           CanExecuteFunc = ( ) => _desk != null
+                       } ;
             }
         }
 
@@ -136,7 +141,12 @@ namespace Idasen.SystemTray
         /// </summary>
         public ICommand ExitApplicationCommand
         {
-            get { return new DelegateCommand { CommandAction = ( ) => Application.Current.Shutdown ( ) } ; }
+            get { return new DelegateCommand { CommandAction = ( ) =>
+                                                               {
+                                                                   _tokenSource.Cancel();
+                                                                   Application.Current.Shutdown ( ) ;
+                                                               }
+                                             } ; }
         }
 
         [ CanBeNull ]
@@ -146,26 +156,54 @@ namespace Idasen.SystemTray
             set => Application.Current.MainWindow = value as Window ;
         }
 
+        private async void AutoConnect ( )
+        {
+            try
+            {
+                _logger.Debug ( "Trying to auto connect to Idasen Desk..." ) ;
+
+                await Task.Delay ( TimeSpan.FromSeconds ( 5 ) ,
+                                   _token ) ;
+
+                ShowFancyBalloon ( "Auto Connect" ,
+                                   "Trying to connected to a desk" ,
+                                   visibilityBulbYellow : Visibility.Visible ) ;
+
+                await Connect ( ) ;
+            }
+            catch ( TaskCanceledException )
+            {
+                _logger.Information ( "Auto connect was canceled" );
+            }
+            catch ( Exception e )
+            {
+                _logger.Error ( e ,
+                                "Failed to auto connect to desk" ) ;
+            }
+        }
+
         private async Task Connect ( )
         {
-            _logger.Debug ( "Trying yo connect to Idasen Desk..." ) ;
+            _logger.Debug ( "Trying to connect to Idasen Desk..." ) ;
 
             _desk?.Dispose ( ) ;
 
-            var tokenSource = new CancellationTokenSource ( TimeSpan.FromSeconds ( 60 ) ) ;
-            _token = tokenSource.Token ;
+            _tokenSource?.Cancel(false);
+
+            _tokenSource = new CancellationTokenSource ( TimeSpan.FromSeconds ( 60 ) ) ;
+            _token = _tokenSource.Token ;
 
             var (isSuccess , desk) = await _provider.TryGetDesk ( _token ) ;
 
             if ( isSuccess )
             {
-                _logger.Information ( $"Connected to desk {desk}" ) ;
+                _logger.Information ( $"Connected to {desk}" ) ;
 
                 _desk = desk ;
 
                 ShowFancyBalloon ( "Success" ,
                                    $"Connected to desk {desk.Name}" ,
-                                   visibilityBulbGreen: Visibility.Visible ) ;
+                                   Visibility.Visible ) ;
             }
             else
             {
@@ -217,10 +255,11 @@ namespace Idasen.SystemTray
 
         private readonly ILogger _logger ;
 
-        private readonly      ISettingsManager  _manager ;
-        private readonly      IDeskProvider     _provider ;
-        [ CanBeNull ] private IDesk             _desk ;
-        private               TaskbarIcon       _notifyIcon ;
-        private               CancellationToken _token ;
+        private readonly      ISettingsManager        _manager ;
+        private readonly      IDeskProvider           _provider ;
+        [ CanBeNull ] private IDesk                   _desk ;
+        private               TaskbarIcon             _notifyIcon ;
+        private               CancellationToken       _token ;
+        private               CancellationTokenSource _tokenSource ;
     }
 }
