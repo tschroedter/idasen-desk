@@ -1,7 +1,16 @@
-﻿using System.Windows ;
+﻿using System ;
+using System.Threading ;
+using System.Threading.Tasks ;
+using System.Windows ;
 using System.Windows.Input ;
+using Autofac ;
+using Idasen.BluetoothLE.Linak.Interfaces ;
+using Idasen.Launcher ;
 using Idasen.SystemTray.Interfaces ;
+using Idasen.SystemTray.Settings ;
 using JetBrains.Annotations ;
+using Serilog ;
+// ReSharper disable UnusedMember.Global
 
 namespace Idasen.SystemTray
 {
@@ -12,21 +21,33 @@ namespace Idasen.SystemTray
     /// </summary>
     public class NotifyIconViewModel
     {
+        public NotifyIconViewModel ( )
+        {
+            var container = ContainerProvider.Create ( "Idasen.SystemTray" ,
+                                                        "Idasen.SystemTray.log" ) ;
+
+            _logger   = container.Resolve < ILogger > ( ) ;
+            _provider = container.Resolve < IDeskProvider > ( ) ;
+
+            _provider.Initialize ( ) ;
+
+            _manager = new SettingsManager ( _logger ) ; // todo move into container
+        }
+
         /// <summary>
         ///     Shows a window, if none is already open.
         /// </summary>
-        public ICommand ShowWindowCommand
+        public ICommand ShowSettingsCommand
         {
             get
             {
                 return new DelegateCommand
                        {
                            CanExecuteFunc = ( ) => SettingsWindow == null ,
-                           CommandAction = async ( ) =>
+                           CommandAction = ( ) =>
                                            {
-                                               var manager = new SettingsManager ( ) ;
-                                               await manager.Load (  ) ;
-                                               SettingsWindow = new SettingsWindow ( manager ) ;
+                                               SettingsWindow = new SettingsWindow ( _logger ,
+                                                                                     _manager ) ;
                                                SettingsWindow?.Show ( ) ;
                                            }
                        } ;
@@ -36,7 +57,7 @@ namespace Idasen.SystemTray
         /// <summary>
         ///     Hides the main window. This command is only enabled if a window is open.
         /// </summary>
-        public ICommand HideWindowCommand
+        public ICommand HideSettingsCommand
         {
             get
             {
@@ -49,6 +70,46 @@ namespace Idasen.SystemTray
                                            } ,
                            CanExecuteFunc = ( ) => SettingsWindow != null
                        } ;
+            }
+        }
+
+        /// <summary>
+        ///     Connects to the Idasen Desk.
+        /// </summary>
+        public ICommand ConnectCommand
+        {
+            get
+            {
+                return new DelegateCommand
+                       {
+                           CommandAction  = () => Task.Run(Connect) ,
+                           CanExecuteFunc = ( ) => _desk == null
+                       } ;
+            }
+        }
+
+        private async void Connect ( )
+        {
+            _logger.Debug ( "Trying yo connect to Idasen Desk..." );
+
+            _desk?.Dispose (  );
+
+            var tokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(60));
+            _token       = tokenSource.Token;
+
+            var (isSuccess, desk) = await _provider.TryGetDesk(_token);
+
+            if (isSuccess)
+            {
+                _logger.Information ( $"Connected to desk {desk}" );
+
+                _desk = desk ;
+            }
+            else
+            {
+                _logger.Error("Failed to detect desk");
+
+                _desk = null ;
             }
         }
 
@@ -68,6 +129,11 @@ namespace Idasen.SystemTray
             set => Application.Current.MainWindow = value as Window ;
         }
 
-        private readonly ISettingsManager _manager ;
+        private readonly ILogger    _logger ;
+
+        private readonly ISettingsManager  _manager ;
+        private readonly IDeskProvider     _provider ;
+        [CanBeNull] private          IDesk             _desk ;
+        private          CancellationToken _token ;
     }
 }

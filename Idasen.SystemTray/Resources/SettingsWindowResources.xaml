@@ -48,8 +48,7 @@
 
     <Style x:Key="LabelParagraphLeft"
            TargetType="{x:Type Label}"
-           BasedOn="{StaticResource LabelParagraph}">
-    </Style>
+           BasedOn="{StaticResource LabelParagraph}" />
 
     <Style x:Key="TextBlockHeightValue"
            TargetType="{x:Type TextBlock}">

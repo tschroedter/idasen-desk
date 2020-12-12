@@ -9,8 +9,10 @@
         reuse the same context menu (which is a resource) again (which will have its DataContext set to the old TaskbarIcon)
   -->
     <ContextMenu x:Shared="false" x:Key="SysTrayMenu">
-        <MenuItem Header="Show Window" Command="{Binding ShowWindowCommand}" />
-        <MenuItem Header="Hide Window" Command="{Binding HideWindowCommand}" />
+        <MenuItem Header="Connect" Command="{Binding ConnectCommand}" />
+        <Separator />
+        <MenuItem Header="Show Settings" Command="{Binding ShowSettingsCommand}" />
+        <MenuItem Header="Hide Settings" Command="{Binding HideSettingsCommand}" />
         <Separator />
         <MenuItem Header="Exit" Command="{Binding ExitApplicationCommand}" />
     </ContextMenu>
@@ -20,7 +22,7 @@
     <tb:TaskbarIcon x:Key="NotifyIcon"
                     IconSource="/Images/cup-xl.ico"
                     ToolTipText="Double-click for window, right-click for menu"
-                    DoubleClickCommand="{Binding ShowWindowCommand}"
+                    DoubleClickCommand="{Binding ShowSettingsCommand}"
                     ContextMenu="{StaticResource SysTrayMenu}">
 
         <!-- self-assign a data context (could also be done programmatically) -->
