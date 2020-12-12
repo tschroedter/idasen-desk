@@ -18,6 +18,71 @@ namespace Idasen.SystemTray
                                                    OnBalloonClosing ) ;
         }
 
+        public static readonly DependencyProperty BalloonTitleProperty =
+            DependencyProperty.Register ( "BalloonTitle" ,
+                                          typeof ( string ) ,
+                                          typeof ( FancyBalloon ) ,
+                                          new FrameworkPropertyMetadata ( "" ) ) ;
+
+        public static readonly DependencyProperty BalloonTextProperty =
+            DependencyProperty.Register ( "BalloonText" ,
+                                          typeof ( string ) ,
+                                          typeof ( FancyBalloon ) ,
+                                          new FrameworkPropertyMetadata ( "" ) ) ;
+
+        public static readonly DependencyProperty VisibilityBulbGreenProperty =
+            DependencyProperty.Register ( "VisibilityBulbGreen" ,
+                                          typeof ( Visibility ) ,
+                                          typeof ( FancyBalloon ) ,
+                                          new FrameworkPropertyMetadata ( Visibility.Hidden ) ) ;
+
+        public static readonly DependencyProperty VisibilityBulbYellowProperty =
+            DependencyProperty.Register ( "VisibilityBulbYellow" ,
+                                          typeof ( Visibility ) ,
+                                          typeof ( FancyBalloon ) ,
+                                          new FrameworkPropertyMetadata ( Visibility.Hidden ) ) ;
+
+        public static readonly DependencyProperty VisibilityBulbRedProperty =
+            DependencyProperty.Register ( "VisibilityBulbRed" ,
+                                          typeof ( Visibility ) ,
+                                          typeof ( FancyBalloon ) ,
+                                          new FrameworkPropertyMetadata ( Visibility.Hidden ) ) ;
+
+        public string BalloonTitle
+        {
+            get => ( string ) GetValue ( BalloonTitleProperty ) ;
+            set => SetValue ( BalloonTitleProperty ,
+                              value ) ;
+        }
+
+        public string BalloonText
+        {
+            get => ( string ) GetValue ( BalloonTextProperty ) ;
+            set => SetValue ( BalloonTextProperty ,
+                              value ) ;
+        }
+
+        public Visibility VisibilityBulbGreen
+        {
+            get => ( Visibility ) GetValue ( VisibilityBulbGreenProperty ) ;
+            set => SetValue ( VisibilityBulbGreenProperty ,
+                              value ) ;
+        }
+
+        public Visibility VisibilityBulbYellow
+        {
+            get => ( Visibility ) GetValue ( VisibilityBulbYellowProperty ) ;
+            set => SetValue ( VisibilityBulbYellowProperty ,
+                              value ) ;
+        }
+
+        public Visibility VisibilityBulbRed
+        {
+            get => ( Visibility ) GetValue ( VisibilityBulbRedProperty ) ;
+            set => SetValue ( VisibilityBulbRedProperty ,
+                              value ) ;
+        }
+
 
         /// <summary>
         ///     By subscribing to the <see cref="TaskbarIcon.BalloonClosingEvent" />
@@ -73,131 +138,5 @@ namespace Idasen.SystemTray
         }
 
         private bool _isClosing ;
-
-        #region BalloonTitle dependency property
-
-        /// <summary>
-        ///     Description
-        /// </summary>
-        public static readonly DependencyProperty BalloonTitleProperty =
-            DependencyProperty.Register ( "BalloonTitle" ,
-                                          typeof ( string ) ,
-                                          typeof ( FancyBalloon ) ,
-                                          new FrameworkPropertyMetadata ( "" ) ) ;
-
-        /// <summary>
-        ///     A property wrapper for the <see cref="BalloonTitleProperty" />
-        ///     dependency property:<br />
-        ///     Description
-        /// </summary>
-        public string BalloonTitle
-        {
-            get => ( string ) GetValue ( BalloonTitleProperty ) ;
-            set => SetValue ( BalloonTitleProperty ,
-                              value ) ;
-        }
-
-        #endregion
-
-        #region BalloonText dependency property
-
-        /// <summary>
-        ///     Description
-        /// </summary>
-        public static readonly DependencyProperty BalloonTextProperty =
-            DependencyProperty.Register ( "BalloonText" ,
-                                          typeof ( string ) ,
-                                          typeof ( FancyBalloon ) ,
-                                          new FrameworkPropertyMetadata ( "" ) ) ;
-
-        /// <summary>
-        ///     A property wrapper for the <see cref="BalloonTextProperty" />
-        ///     dependency property:<br />
-        ///     Description
-        /// </summary>
-        public string BalloonText
-        {
-            get => ( string ) GetValue ( BalloonTextProperty ) ;
-            set => SetValue ( BalloonTextProperty ,
-                              value ) ;
-        }
-
-        #endregion
-
-        #region VisibilityBulbGreen dependency property
-
-        /// <summary>
-        ///     Description
-        /// </summary>
-        public static readonly DependencyProperty VisibilityBulbGreenProperty =
-            DependencyProperty.Register ( "VisibilityBulbGreen" ,
-                                          typeof ( Visibility ) ,
-                                          typeof ( FancyBalloon ) ,
-                                          new FrameworkPropertyMetadata ( Visibility.Hidden ) ) ;
-
-        /// <summary>
-        ///     A property wrapper for the <see cref="VisibilityBulbGreenProperty" />
-        ///     dependency property:<br />
-        ///     Description
-        /// </summary>
-        public Visibility VisibilityBulbGreen
-        {
-            get => ( Visibility ) GetValue ( VisibilityBulbGreenProperty ) ;
-            set => SetValue ( VisibilityBulbGreenProperty ,
-                              value ) ;
-        }
-
-        #endregion
-
-
-        #region VisibilityBulbYellow dependency property
-
-        /// <summary>
-        ///     Description
-        /// </summary>
-        public static readonly DependencyProperty VisibilityBulbYellowProperty =
-            DependencyProperty.Register ( "VisibilityBulbYellow" ,
-                                          typeof ( Visibility ) ,
-                                          typeof ( FancyBalloon ) ,
-                                          new FrameworkPropertyMetadata ( Visibility.Hidden ) ) ;
-
-        /// <summary>
-        ///     A property wrapper for the <see cref="VisibilityBulbYellowProperty" />
-        ///     dependency property:<br />
-        ///     Description
-        /// </summary>
-        public Visibility VisibilityBulbYellow
-        {
-            get => ( Visibility ) GetValue ( VisibilityBulbYellowProperty ) ;
-            set => SetValue ( VisibilityBulbYellowProperty ,
-                              value ) ;
-        }
-
-        #endregion
-
-        #region VisibilityBulbRed dependency property
-
-        /// <summary>
-        ///     Description
-        /// </summary>
-        public static readonly DependencyProperty VisibilityBulbRedProperty =
-            DependencyProperty.Register ( "VisibilityBulbRed" ,
-                                          typeof ( Visibility ) ,
-                                          typeof ( FancyBalloon ) ,
-                                          new FrameworkPropertyMetadata ( Visibility.Hidden ) ) ;
-
-        /// <summary>
-        ///     A property wrapper for the <see cref="VisibilityBulbRedProperty" />
-        ///     dependency property:<br />
-        ///     Description
-        /// </summary>
-        public Visibility VisibilityBulbRed
-        {
-            get => ( Visibility ) GetValue ( VisibilityBulbRedProperty ) ;
-            set => SetValue ( VisibilityBulbRedProperty ,
-                              value ) ;
-        }
-
-        #endregion
     }
 }
