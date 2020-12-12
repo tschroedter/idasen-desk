@@ -6,6 +6,22 @@
              Height="120"
              Width="240">
     <UserControl.Resources>
+        <Color x:Key="ColorYellow">#FFFFDB00</Color>
+        <Color x:Key="ColorDarkYellow">#FFAF8B00</Color>
+        <Color x:Key="ColorLightYellow">#FFFFDB77</Color>
+
+        <Color x:Key="ColorBlue">#FF0058A3</Color>
+        <Color x:Key="ColorDarkBlue">#FF0048A3</Color>
+        <Color x:Key="ColorLightBlue">#FF0098F3</Color>
+
+        <SolidColorBrush x:Key="BrushYellow">#FFFFDB00</SolidColorBrush>
+        <SolidColorBrush x:Key="BrushDarkYellow">#FFAF8B00</SolidColorBrush>
+        <SolidColorBrush x:Key="BrushLightYellow">#FFFFDB77</SolidColorBrush>
+
+        <SolidColorBrush x:Key="BrushBlue">#FF0058A3</SolidColorBrush>
+        <SolidColorBrush x:Key="BrushDarkBlue">#FF0048A3</SolidColorBrush>
+        <SolidColorBrush x:Key="BrushLightBlue">#FF0098F3</SolidColorBrush>
+
         <Storyboard x:Key="FadeIn">
             <DoubleAnimationUsingKeyFrames BeginTime="00:00:00"
                                            Storyboard.TargetName="grid"
@@ -91,37 +107,50 @@
         <Border HorizontalAlignment="Stretch"
                 Margin="5,5,5,5"
                 BorderThickness="1,1,1,1"
-                BorderBrush="#FF997137">
+                BorderBrush="{StaticResource BrushDarkYellow}">
             <Border.Effect>
                 <DropShadowEffect Color="#FF747474" />
             </Border.Effect>
             <Border.Background>
                 <LinearGradientBrush EndPoint="0.5,1"
                                      StartPoint="0.5,0">
-                    <GradientStop Color="#FF4B4B4B"
+                    <GradientStop Color="{StaticResource ColorDarkBlue}"
                                   Offset="0" />
-                    <GradientStop Color="#FF8F8F8F"
+                    <GradientStop Color="{StaticResource ColorLightBlue}"
                                   Offset="1" />
                 </LinearGradientBrush>
             </Border.Background>
         </Border>
         <Image HorizontalAlignment="Left"
-               Margin="0,10,0,0"
-               Width="72"
-               Source="/Images/Info.png"
+               Margin="10,10,10,10"
+               Width="50"
+               Source="/Images/bulb-green.png"
                Stretch="Fill"
-               Height="72"
-               VerticalAlignment="Top" />
+               Height="100"
+               VerticalAlignment="Top" 
+               Visibility="{Binding VisibilityBulbGreen, Mode=Default}"/>
+        <Image HorizontalAlignment="Left"
+               Margin="10,10,10,10"
+               Width="50"
+               Source="/Images/bulb-yellow.png"
+               Stretch="Fill"
+               Height="100"
+               VerticalAlignment="Top" 
+               Visibility="{Binding VisibilityBulbYellow, Mode=Default}"/>
+        <Image HorizontalAlignment="Left"
+               Margin="10,10,10,10"
+               Width="50"
+               Source="/Images/bulb-red.png"
+               Stretch="Fill"
+               Height="100"
+               VerticalAlignment="Top" 
+               Visibility="{Binding VisibilityBulbRed, Mode=Default}"/>
         <TextBlock Margin="72,49.2,10,0"
                    VerticalAlignment="Top"
-                   Foreground="#FFECAD25"
-                   TextWrapping="Wrap">
-            <Run Text="This is a user control. The animation uses the attached " />
-            <Run FontStyle="Italic"
-                 FontWeight="Bold"
-                 Text="BalloonShowing " />
-            <Run Text="event." />
-        </TextBlock>
+                   Foreground="{StaticResource BrushYellow}"
+                   TextWrapping="Wrap"
+                   FontFamily="Verdana"
+                   Text="{Binding Path=BalloonText, ElementName=me, Mode=Default}" />
         <Path Fill="#FFFFFFFF"
               Stretch="Fill"
               Margin="72,38.2,34,0"
@@ -134,7 +163,7 @@
                                      StartPoint="0.005,0.5">
                     <GradientStop Color="#00ECAD25"
                                   Offset="1" />
-                    <GradientStop Color="#87ECAD25"
+                    <GradientStop Color="{StaticResource ColorDarkYellow}"
                                   Offset="0" />
                 </LinearGradientBrush>
             </Path.Stroke>
@@ -142,16 +171,17 @@
         <TextBlock Margin="72,10,10,0"
                    VerticalAlignment="Top"
                    Height="23.2"
-                   Text="{Binding Path=BalloonText, ElementName=me, Mode=Default}"
                    TextWrapping="Wrap"
-                   Foreground="#FFECAD25"
-                   FontWeight="Bold" />
+                   Foreground="{StaticResource BrushYellow}"
+                   FontWeight="Bold"
+                   FontFamily="Verdana"
+                  Text="{Binding Path=BalloonTitle, ElementName=me, Mode=Default}" />
         <Image HorizontalAlignment="Right"
                Margin="0,10,10,0"
                VerticalAlignment="Top"
                Width="16"
                Height="16"
-               Source="/Images/Close.png"
+               Source="/Images/close-window-xxl.png"
                Stretch="Fill"
                Opacity="0.4"
                ToolTip="Close Balloon"

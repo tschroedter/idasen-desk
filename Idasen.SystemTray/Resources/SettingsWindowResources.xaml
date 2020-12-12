@@ -8,7 +8,6 @@
     <Color x:Key="ColorDarkBlue">#FF0048A3</Color>
     <Color x:Key="ColorLightBlue">#FF0098F3</Color>
 
-
     <SolidColorBrush x:Key="BrushYellow">#FFFFDB00</SolidColorBrush>
     <SolidColorBrush x:Key="BrushDarkYellow">#FFAF8B00</SolidColorBrush>
     <SolidColorBrush x:Key="BrushLightYellow">#FFFFDB77</SolidColorBrush>

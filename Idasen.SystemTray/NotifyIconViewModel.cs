@@ -2,14 +2,17 @@
 using System.Threading ;
 using System.Threading.Tasks ;
 using System.Windows ;
+using System.Windows.Controls.Primitives ;
 using System.Windows.Input ;
 using Autofac ;
+using Hardcodet.Wpf.TaskbarNotification ;
 using Idasen.BluetoothLE.Linak.Interfaces ;
 using Idasen.Launcher ;
 using Idasen.SystemTray.Interfaces ;
 using Idasen.SystemTray.Settings ;
 using JetBrains.Annotations ;
 using Serilog ;
+
 // ReSharper disable UnusedMember.Global
 
 namespace Idasen.SystemTray
@@ -24,7 +27,7 @@ namespace Idasen.SystemTray
         public NotifyIconViewModel ( )
         {
             var container = ContainerProvider.Create ( "Idasen.SystemTray" ,
-                                                        "Idasen.SystemTray.log" ) ;
+                                                       "Idasen.SystemTray.log" ) ;
 
             _logger   = container.Resolve < ILogger > ( ) ;
             _provider = container.Resolve < IDeskProvider > ( ) ;
@@ -82,37 +85,51 @@ namespace Idasen.SystemTray
             {
                 return new DelegateCommand
                        {
-                           CommandAction  = () => Task.Run(Connect) ,
+                           CommandAction  = async ( ) => { await Connect ( ) ; } ,
                            CanExecuteFunc = ( ) => _desk == null
                        } ;
             }
         }
 
-        private async void Connect ( )
+        /// <summary>
+        ///     Moves the desk to the standing height.
+        /// </summary>
+        public ICommand StandingCommand
         {
-            _logger.Debug ( "Trying yo connect to Idasen Desk..." );
-
-            _desk?.Dispose (  );
-
-            var tokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(60));
-            _token       = tokenSource.Token;
-
-            var (isSuccess, desk) = await _provider.TryGetDesk(_token);
-
-            if (isSuccess)
+            get
             {
-                _logger.Information ( $"Connected to desk {desk}" );
+                return new DelegateCommand
+                       {
+                           CommandAction  = async ( ) =>
+                                            {
+                                                await _manager.Load(); // todo loading on UI thread
 
-                _desk = desk ;
-            }
-            else
-            {
-                _logger.Error("Failed to detect desk");
-
-                _desk = null ;
+                                                _desk?.MoveTo ( _manager.CurrentSettings.StandingHeightInCm * 100 );
+                                            },
+                           CanExecuteFunc = () => _desk != null
+                       };
             }
         }
 
+        /// <summary>
+        ///     Moves the desk to the seating height.
+        /// </summary>
+        public ICommand SeatingCommand
+        {
+            get
+            {
+                return new DelegateCommand
+                       {
+                           CommandAction  = async ( ) =>
+                                            {
+                                                await _manager.Load(); // todo loading on UI thread
+
+                                                _desk?.MoveTo(_manager.CurrentSettings.SeatingHeightInCm * 100);
+                                            },
+                           CanExecuteFunc = () => _desk != null
+                       };
+            }
+        }
 
         /// <summary>
         ///     Shuts down the application.
@@ -129,11 +146,81 @@ namespace Idasen.SystemTray
             set => Application.Current.MainWindow = value as Window ;
         }
 
-        private readonly ILogger    _logger ;
+        private async Task Connect ( )
+        {
+            _logger.Debug ( "Trying yo connect to Idasen Desk..." ) ;
 
-        private readonly ISettingsManager  _manager ;
-        private readonly IDeskProvider     _provider ;
-        [CanBeNull] private          IDesk             _desk ;
-        private          CancellationToken _token ;
+            _desk?.Dispose ( ) ;
+
+            var tokenSource = new CancellationTokenSource ( TimeSpan.FromSeconds ( 60 ) ) ;
+            _token = tokenSource.Token ;
+
+            var (isSuccess , desk) = await _provider.TryGetDesk ( _token ) ;
+
+            if ( isSuccess )
+            {
+                _logger.Information ( $"Connected to desk {desk}" ) ;
+
+                _desk = desk ;
+
+                ShowFancyBalloon ( "Success" ,
+                                   $"Connected to desk {desk.Name}" ,
+                                   visibilityBulbGreen: Visibility.Visible ) ;
+            }
+            else
+            {
+                _logger.Error ( "Failed to detect desk" ) ;
+
+                _desk = null ;
+
+                ShowFancyBalloon ( "Failed" ,
+                                   "Connection to desk failed" ,
+                                   visibilityBulbRed : Visibility.Visible ) ;
+            }
+        }
+
+        private void ShowFancyBalloon ( string     title ,
+                                        string     text ,
+                                        Visibility visibilityBulbGreen  = Visibility.Hidden ,
+                                        Visibility visibilityBulbYellow = Visibility.Hidden ,
+                                        Visibility visibilityBulbRed    = Visibility.Hidden )
+        {
+            _notifyIcon ??= ( TaskbarIcon ) Application.Current.FindResource ( "NotifyIcon" ) ;
+
+            if ( _notifyIcon == null )
+                return ;
+
+            if ( ! _notifyIcon.Dispatcher.CheckAccess ( ) )
+            {
+                _notifyIcon.Dispatcher.BeginInvoke ( new Action ( ( ) => ShowFancyBalloon ( title ,
+                                                                                            text ,
+                                                                                            visibilityBulbGreen ,
+                                                                                            visibilityBulbYellow ,
+                                                                                            visibilityBulbRed ) ) ) ;
+
+                return ;
+            }
+
+            var balloon = new FancyBalloon
+                          {
+                              BalloonTitle         = title ,
+                              BalloonText          = text ,
+                              VisibilityBulbGreen  = visibilityBulbGreen ,
+                              VisibilityBulbYellow = visibilityBulbYellow ,
+                              VisibilityBulbRed    = visibilityBulbRed
+                          } ;
+
+            _notifyIcon.ShowCustomBalloon ( balloon ,
+                                            PopupAnimation.Slide ,
+                                            4000 ) ;
+        }
+
+        private readonly ILogger _logger ;
+
+        private readonly      ISettingsManager  _manager ;
+        private readonly      IDeskProvider     _provider ;
+        [ CanBeNull ] private IDesk             _desk ;
+        private               TaskbarIcon       _notifyIcon ;
+        private               CancellationToken _token ;
     }
 }
