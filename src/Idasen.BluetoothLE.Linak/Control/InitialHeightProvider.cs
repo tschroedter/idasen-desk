@@ -63,6 +63,8 @@ namespace Idasen.BluetoothLE.Linak.Control
 
                 HasReceivedHeightAndSpeed = true ;
 
+                _subjectFinished.OnNext ( _heightAndSpeed.Height ) ;
+
                 return ;
             }
 

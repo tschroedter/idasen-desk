@@ -243,6 +243,31 @@ namespace Idasen.BluetoothLE.Linak.Tests
                .BeTrue ( ) ;
         }
 
+        [TestMethod]
+        public async Task Start_ForInitializedAndHeightGreaterZero_NotifiesFinished()
+        {
+            _heightAndSpeed.Height
+                           .Returns(1u);
+
+            var sut = CreateSut();
+
+            sut.Initialize();
+
+            var finished = false;
+
+            sut.Finished
+               .ObserveOn(_scheduler)
+               .Subscribe(x => finished = true);
+
+            await sut.Start();
+
+            _scheduler.Start ( ) ;
+
+            finished
+               .Should()
+               .BeTrue();
+        }
+
         [ TestMethod ]
         public async Task Start_ForInitializedAndHeightIsZero_SetsHasReceivedHeightAndSpeedToFalse ( )
         {
