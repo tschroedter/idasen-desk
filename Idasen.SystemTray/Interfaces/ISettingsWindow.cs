@@ -1,4 +1,4 @@
-﻿namespace Idasen.SystemTray
+﻿namespace Idasen.SystemTray.Interfaces
 {
     public interface ISettingsWindow
     {

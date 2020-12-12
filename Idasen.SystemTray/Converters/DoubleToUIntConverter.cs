@@ -1,6 +1,7 @@
 ﻿using System ;
+using Idasen.SystemTray.Interfaces ;
 
-namespace Idasen.SystemTray
+namespace Idasen.SystemTray.Converters
 {
     public class DoubleToUIntConverter
         : IDoubleToUIntConverter
@@ -14,7 +15,7 @@ namespace Idasen.SystemTray
 
                 return true ;
             }
-            catch ( Exception _ )
+            catch ( Exception )
             {
                 uintValue = 0 ;
 

@@ -1,4 +1,6 @@
 ﻿using System.Windows.Input ;
+using Idasen.SystemTray.Converters ;
+using Idasen.SystemTray.Interfaces ;
 
 namespace Idasen.SystemTray
 {
