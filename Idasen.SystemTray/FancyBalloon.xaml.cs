@@ -101,8 +101,8 @@ namespace Idasen.SystemTray
         ///     Resolves the <see cref="TaskbarIcon" /> that displayed
         ///     the balloon and requests a close action.
         /// </summary>
-        private void imgClose_MouseDown ( object               sender ,
-                                          MouseButtonEventArgs e )
+        private void ImageClose_MouseDown ( object               sender ,
+                                            MouseButtonEventArgs e )
         {
             //the tray icon assigned this attached property to simplify access
             var taskbarIcon = TaskbarIcon.GetParentTaskbarIcon ( this ) ;

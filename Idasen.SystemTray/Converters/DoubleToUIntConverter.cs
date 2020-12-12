@@ -6,6 +6,15 @@ namespace Idasen.SystemTray.Converters
     public class DoubleToUIntConverter
         : IDoubleToUIntConverter
     {
+        public uint ConvertToUInt ( double value ,
+                                    uint   defaultValue )
+        {
+            return ! TryConvertToUInt ( value ,
+                                        out var uintValue )
+                       ? defaultValue
+                       : uintValue ;
+        }
+
         public bool TryConvertToUInt ( double   value ,
                                        out uint uintValue )
         {
@@ -21,15 +30,6 @@ namespace Idasen.SystemTray.Converters
 
                 return false ;
             }
-        }
-
-        public uint ConvertToUInt ( double value ,
-                                       uint   defaultValue )
-        {
-            return ! TryConvertToUInt ( value ,
-                                        out var uintValue )
-                       ? defaultValue
-                       : uintValue ;
         }
     }
 }

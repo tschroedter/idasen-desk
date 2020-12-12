@@ -29,12 +29,12 @@ namespace Idasen.SystemTray
 
             InitializeComponent ( ) ;
 
-            Task.Run(new Action(async () =>
-                                {
-                                    await _manager.Load();
+            Task.Run ( new Action ( async ( ) =>
+                                    {
+                                        await _manager.Load ( ) ;
 
-                                    Update(_manager.CurrentSettings);
-                                }));
+                                        Update ( _manager.CurrentSettings ) ;
+                                    } ) ) ;
         }
 
         private void ImageClose_MouseDown ( object               sender ,
@@ -52,18 +52,18 @@ namespace Idasen.SystemTray
             _logger.Debug ( $"Storing new settings: {settings}" ) ;
 
             settings.StandingHeightInCm = _converter.ConvertToUInt ( Standing.Value ,
-                                                                        Constants.DefaultHeightStandingInCm ) ;
+                                                                     Constants.DefaultHeightStandingInCm ) ;
             settings.SeatingHeightInCm = _converter.ConvertToUInt ( Seating.Value ,
-                                                                       Constants.DefaultHeightSeatingInCm ) ;
-            Task.Run(async () => await _manager.Save ( )) ;
+                                                                    Constants.DefaultHeightSeatingInCm ) ;
+            Task.Run ( async ( ) => await _manager.Save ( ) ) ;
         }
 
-        private void SettingsWindow_OnClosed ( object   sender ,
+        private void SettingsWindow_OnClosed ( object    sender ,
                                                EventArgs e )
         {
             _logger.Debug ( "Handling 'Closed' event" ) ;
 
-            StoreSettings (  );
+            StoreSettings ( ) ;
         }
 
         private void Update ( ISettings settings )
