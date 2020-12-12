@@ -36,8 +36,8 @@ namespace Idasen.SystemTray
 
             _manager = new SettingsManager ( _logger ) ; // todo move into container
 
-            _tokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(60));
-            _token = _tokenSource.Token;
+            _tokenSource = new CancellationTokenSource ( TimeSpan.FromSeconds ( 60 ) ) ;
+            _token       = _tokenSource.Token ;
 
             Task.Run ( AutoConnect ) ;
         }
@@ -141,12 +141,17 @@ namespace Idasen.SystemTray
         /// </summary>
         public ICommand ExitApplicationCommand
         {
-            get { return new DelegateCommand { CommandAction = ( ) =>
-                                                               {
-                                                                   _tokenSource.Cancel();
-                                                                   Application.Current.Shutdown ( ) ;
-                                                               }
-                                             } ; }
+            get
+            {
+                return new DelegateCommand
+                       {
+                           CommandAction = ( ) =>
+                                           {
+                                               _tokenSource.Cancel ( ) ;
+                                               Application.Current.Shutdown ( ) ;
+                                           }
+                       } ;
+            }
         }
 
         [ CanBeNull ]
@@ -173,7 +178,7 @@ namespace Idasen.SystemTray
             }
             catch ( TaskCanceledException )
             {
-                _logger.Information ( "Auto connect was canceled" );
+                _logger.Information ( "Auto connect was canceled" ) ;
             }
             catch ( Exception e )
             {
@@ -188,10 +193,10 @@ namespace Idasen.SystemTray
 
             _desk?.Dispose ( ) ;
 
-            _tokenSource?.Cancel(false);
+            _tokenSource?.Cancel ( false ) ;
 
             _tokenSource = new CancellationTokenSource ( TimeSpan.FromSeconds ( 60 ) ) ;
-            _token = _tokenSource.Token ;
+            _token       = _tokenSource.Token ;
 
             var (isSuccess , desk) = await _provider.TryGetDesk ( _token ) ;
 

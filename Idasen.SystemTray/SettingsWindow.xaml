@@ -30,7 +30,7 @@
             <RowDefinition />
             <RowDefinition />
             <RowDefinition />
-            <RowDefinition Height="2"/>
+            <RowDefinition Height="2" />
         </Grid.RowDefinitions>
         <!-- Row 0 -->
         <DockPanel Grid.Row="0"
