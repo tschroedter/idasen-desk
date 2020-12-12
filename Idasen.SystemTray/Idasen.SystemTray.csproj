@@ -7,6 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Images\bulb-green.png" />
+    <None Remove="Images\bulb-red.png" />
+    <None Remove="Images\bulb-yellow.png" />
     <None Remove="Images\close-window-xxl.png" />
     <None Remove="Images\cup-xl-16x16.ico" />
     <None Remove="Images\cup-xl.ico" />
@@ -23,6 +26,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Images\bulb-green.png" />
+    <Resource Include="Images\bulb-red.png" />
+    <Resource Include="Images\bulb-yellow.png" />
     <Resource Include="Images\close-window-xxl.png" />
     <Resource Include="Images\cup-xl.ico" />
   </ItemGroup>
