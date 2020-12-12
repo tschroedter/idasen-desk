@@ -23,8 +23,8 @@ namespace Idasen.SystemTray.Converters
             }
         }
 
-        public uint TryConvertToUInt(double value,
-                                     uint   defaultValue)
+        public uint ConvertToUInt ( double value ,
+                                       uint   defaultValue )
         {
             return ! TryConvertToUInt ( value ,
                                         out var uintValue )

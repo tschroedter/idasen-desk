@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <None Remove="Images\close-window-xxl.png" />
+    <None Remove="Images\cup-xl-16x16.ico" />
     <None Remove="Images\cup-xl.ico" />
     <None Remove="Images\cup-xl.png" />
   </ItemGroup>
@@ -18,9 +19,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\src\Idasen.Launcher\Idasen.Launcher.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="Images\close-window-xxl.png" />
     <Resource Include="Images\cup-xl.ico" />
-    <Resource Include="Images\cup-xl.png" />
   </ItemGroup>
 
 </Project>
