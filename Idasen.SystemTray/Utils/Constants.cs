@@ -1,4 +1,4 @@
-﻿namespace Idasen.SystemTray
+﻿namespace Idasen.SystemTray.Utils
 {
     public class Constants
     {

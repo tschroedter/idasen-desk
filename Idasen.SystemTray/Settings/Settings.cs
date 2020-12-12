@@ -1,4 +1,5 @@
 ﻿using Idasen.SystemTray.Interfaces ;
+using Idasen.SystemTray.Utils ;
 
 namespace Idasen.SystemTray.Settings
 {

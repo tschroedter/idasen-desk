@@ -2,8 +2,8 @@
 using System.Threading.Tasks ;
 using System.Windows.Input ;
 using Idasen.BluetoothLE.Core ;
-using Idasen.SystemTray.Converters ;
 using Idasen.SystemTray.Interfaces ;
+using Idasen.SystemTray.Utils ;
 using JetBrains.Annotations ;
 using Serilog ;
 

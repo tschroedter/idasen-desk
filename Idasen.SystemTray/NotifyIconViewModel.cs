@@ -10,6 +10,7 @@ using Idasen.BluetoothLE.Linak.Interfaces ;
 using Idasen.Launcher ;
 using Idasen.SystemTray.Interfaces ;
 using Idasen.SystemTray.Settings ;
+using Idasen.SystemTray.Utils ;
 using JetBrains.Annotations ;
 using Serilog ;
 
