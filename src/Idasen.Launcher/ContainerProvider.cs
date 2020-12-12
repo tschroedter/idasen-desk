@@ -25,13 +25,17 @@ namespace Idasen.Launcher
                 "[{Timestamp:HH:mm:ss.ffff} {Level:u3}] {Message} (at {Caller}){NewLine}{Exception}";
 
             Log.Logger = new LoggerConfiguration ( )
-                        .Enrich.WithCaller ( )
-                        .MinimumLevel.Information ( )
+                        .MinimumLevel
+                        .Debug (  )
+                        .Enrich
+                        .WithCaller ( )
                         .WriteTo
                         .ColoredConsole ( LogEventLevel.Debug ,
                                           template )
                         .WriteTo
-                        .File ( logFile )
+                        .File(logFile,
+                              LogEventLevel.Debug,
+                              template)
                         .CreateLogger ( ) ;
 
             var builder = new ContainerBuilder ( ) ;
