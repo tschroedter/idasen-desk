@@ -33,7 +33,7 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
         {
             return $"Description = {Description}, " +
                    $"Value =  {Value.ToHex ( )}, "  +
-                   $"Timestamp = {Timestamp}, "     +
+                   $"Timestamp = {Timestamp:O}, "   +
                    $"Uuid = {Uuid}" ;
         }
     }

@@ -47,7 +47,7 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Characteristics
         {
             var expected = "Description = Description, "                +
                            "Value =  01-02-03, "                        +
-                           "Timestamp = 21/10/2020 8:54:17 AM +10:30, " +
+                           "Timestamp = 2007-10-02T13:02:03.0000000-07:30, " +
                            "Uuid = 11111111-1111-1111-1111-111111111111" ;
 
             CreateSut ( ).ToString ( )
@@ -63,7 +63,7 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Characteristics
                                                 _uuid ) ;
         }
 
-        private readonly DateTimeOffset _timestamp = DateTimeOffset.Parse ( "21/10/2020 8:54:17 AM +10:30" ) ;
+        private readonly DateTimeOffset _timestamp = DateTimeOffset.Parse ( "2007-10-02T13:02:03.0000000-07:30" ) ;
         private readonly Guid           _uuid      = Guid.Parse ( "11111111-1111-1111-1111-111111111111" ) ;
 
         private readonly byte [ ] _value = { 1 , 2 , 3 } ;
