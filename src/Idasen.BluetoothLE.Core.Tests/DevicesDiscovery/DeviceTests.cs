@@ -16,7 +16,7 @@ namespace Idasen.BluetoothLE.Core.Tests.DevicesDiscovery
         [ TestInitialize ]
         public void Initialize ( )
         {
-            var dateTimeOffset = DateTimeOffset.Parse ( "2/10/2007 1:02:03 PM -7:30" ) ;
+            var dateTimeOffset = DateTimeOffset.Parse ( "2007-10-02T13:02:03.0000000-07:30" ) ;
             _broadcastTime = new DateTimeOffsetWrapper ( dateTimeOffset ) ;
 
             _comparer = new DeviceComparer ( ) ;
