@@ -11,7 +11,8 @@
         WindowStartupLocation="CenterScreen"
         AllowsTransparency="True"
         Background="Transparent"
-        Closed="SettingsWindow_OnClosed">
+        Closed="SettingsWindow_OnClosed"
+        Icon="Images/cup-xl.ico">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
