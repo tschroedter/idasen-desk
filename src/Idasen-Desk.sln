@@ -19,9 +19,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Idasen.BluetoothLE.Core.Tes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Idasen.BluetoothLE.Characteristics.Tests", "Idasen.BluetoothLE.Characteristics.Tests\Idasen.BluetoothLE.Characteristics.Tests.csproj", "{85B26C7D-41AB-45BD-BACF-81B02EED2078}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Idasen.Launcher", "Idasen.Launcher\Idasen.Launcher.csproj", "{055A79E3-56CB-46A9-8882-7F2500D80DFF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Idasen.Launcher", "Idasen.Launcher\Idasen.Launcher.csproj", "{055A79E3-56CB-46A9-8882-7F2500D80DFF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Idasen.SystemTray", "..\Idasen.SystemTray\Idasen.SystemTray.csproj", "{B30E0EE5-C1B9-4DD1-85B4-72334520E2D9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Idasen.SystemTray", "Idasen.SystemTray\Idasen.SystemTray.csproj", "{44B3BFDF-A5FF-48CD-9C99-33928E660498}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -61,10 +61,10 @@ Global
 		{055A79E3-56CB-46A9-8882-7F2500D80DFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{055A79E3-56CB-46A9-8882-7F2500D80DFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{055A79E3-56CB-46A9-8882-7F2500D80DFF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B30E0EE5-C1B9-4DD1-85B4-72334520E2D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B30E0EE5-C1B9-4DD1-85B4-72334520E2D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B30E0EE5-C1B9-4DD1-85B4-72334520E2D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B30E0EE5-C1B9-4DD1-85B4-72334520E2D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44B3BFDF-A5FF-48CD-9C99-33928E660498}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44B3BFDF-A5FF-48CD-9C99-33928E660498}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44B3BFDF-A5FF-48CD-9C99-33928E660498}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44B3BFDF-A5FF-48CD-9C99-33928E660498}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

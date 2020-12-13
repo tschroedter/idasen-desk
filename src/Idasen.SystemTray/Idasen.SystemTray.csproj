@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\Idasen.Launcher\Idasen.Launcher.csproj" />
+    <ProjectReference Include="..\Idasen.Launcher\Idasen.Launcher.csproj" />
   </ItemGroup>
 
   <ItemGroup>
