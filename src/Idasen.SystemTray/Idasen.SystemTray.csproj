@@ -15,6 +15,13 @@
     <None Remove="Images\cup-xl-16x16.ico" />
     <None Remove="Images\cup-xl.ico" />
     <None Remove="Images\cup-xl.png" />
+    <None Remove="Images\install-cup-xl.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Images\install-cup-xl.ico">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>

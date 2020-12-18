@@ -23,6 +23,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Idasen.Launcher", "Idasen.L
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Idasen.SystemTray", "Idasen.SystemTray\Idasen.SystemTray.csproj", "{44B3BFDF-A5FF-48CD-9C99-33928E660498}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Idasen.SystemTray.Setup", "Idasen.SystemTray.Setup\Idasen.SystemTray.Setup.vdproj", "{255DDD87-2586-4461-A45C-FF062A4D66AB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -65,6 +67,8 @@ Global
 		{44B3BFDF-A5FF-48CD-9C99-33928E660498}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{44B3BFDF-A5FF-48CD-9C99-33928E660498}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{44B3BFDF-A5FF-48CD-9C99-33928E660498}.Release|Any CPU.Build.0 = Release|Any CPU
+		{255DDD87-2586-4461-A45C-FF062A4D66AB}.Debug|Any CPU.ActiveCfg = Debug
+		{255DDD87-2586-4461-A45C-FF062A4D66AB}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
