@@ -4,6 +4,8 @@ This repository is about controlling [Ikea's Idasen Desk](https://www.ikea.com/a
 ![taskbar](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/Taskbar.png)
 
 # Installation
+## Idasen.SystemTray.Setup.msi
+Download and run the installer from here: ![Idasen.SystemTray.Setup.msi](https://github.com/tschroedter/idasen-desk/releases/tag/0.0.29) 
 
 ### Pre-condition
 - .Net Core 3.1 runtime must already be installed (see https://dotnet.microsoft.com/download/dotnet-core/3.1)
