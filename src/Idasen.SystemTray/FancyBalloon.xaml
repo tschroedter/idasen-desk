@@ -85,7 +85,7 @@
                              x:Name="FadeCloseButtonBeginStoryboard" />
         </EventTrigger>
         <EventTrigger RoutedEvent="Mouse.MouseEnter">
-            <StopStoryboard BeginStoryboardName="FadeIn_BeginStoryboard" />
+            <StopStoryboard BeginStoryboardName="FadeInBeginStoryboard" />
             <BeginStoryboard x:Name="FadeBackBeginStoryboard1"
                              Storyboard="{StaticResource FadeBack}" />
         </EventTrigger>
