@@ -1,6 +1,8 @@
 ﻿using System ;
+using System.Collections.Generic ;
 using System.IO ;
 using Autofac ;
+using Autofac.Core ;
 using AutofacSerilogIntegration ;
 using Idasen.BluetoothLE.Core ;
 using Idasen.BluetoothLE.Linak ;
@@ -12,7 +14,8 @@ namespace Idasen.Launcher
     public static class ContainerProvider
     {
         public static IContainer Create ( string appName ,
-                                          string appLogFileName )
+                                          string appLogFileName,
+                                          IEnumerable <IModule> otherModules = null)
         {
             var logFolder = CreateFullPathSettingsFolderName ( appName ) ;
             var logFile   = CreateFullPathSettingsFileName(appName, appLogFileName);
@@ -43,6 +46,12 @@ namespace Idasen.Launcher
             builder.RegisterLogger ( ) ;
             builder.RegisterModule < BluetoothLECoreModule > ( ) ;
             builder.RegisterModule < BluetoothLELinakModule > ( ) ;
+
+            if (otherModules != null)
+                foreach ( var otherModule in otherModules )
+                {
+                    builder.RegisterModule ( otherModule ) ;
+                }
 
             return builder.Build ( ) ;
         }
