@@ -185,42 +185,58 @@ namespace Idasen.SystemTray
             {
                 _logger.Error ( e ,
                                 "Failed to auto connect to desk" ) ;
+
+                ConnectFailed ( ) ;
             }
         }
 
         private async Task Connect ( )
         {
-            _logger.Debug ( "Trying to connect to Idasen Desk..." ) ;
-
-            _desk?.Dispose ( ) ;
-
-            _tokenSource?.Cancel ( false ) ;
-
-            _tokenSource = new CancellationTokenSource ( TimeSpan.FromSeconds ( 60 ) ) ;
-            _token       = _tokenSource.Token ;
-
-            var (isSuccess , desk) = await _provider.TryGetDesk ( _token ) ;
-
-            if ( isSuccess )
+            try
             {
-                _logger.Information ( $"Connected to {desk}" ) ;
+                _logger.Debug ( "Trying to connect to Idasen Desk..." ) ;
 
-                _desk = desk ;
+                _desk?.Dispose ( ) ;
 
-                ShowFancyBalloon ( "Success" ,
-                                   $"Connected to desk {desk.Name}" ,
-                                   Visibility.Visible ) ;
+                _tokenSource?.Cancel ( false ) ;
+
+                _tokenSource = new CancellationTokenSource ( TimeSpan.FromSeconds ( 60 ) ) ;
+                _token       = _tokenSource.Token ;
+
+                var (isSuccess , desk) = await _provider.TryGetDesk ( _token ) ;
+
+                if ( isSuccess )
+                    ConnectSuccessful ( desk ) ;
+                else
+                    ConnectFailed ( ) ;
             }
-            else
+            catch ( Exception e )
             {
-                _logger.Error ( "Failed to detect desk" ) ;
+                _logger.Error ( e ,
+                                "Failed to connect" ) ;
 
-                _desk = null ;
-
-                ShowFancyBalloon ( "Failed" ,
-                                   "Connection to desk failed" ,
-                                   visibilityBulbRed : Visibility.Visible ) ;
+                ConnectFailed ( ) ;
             }
+        }
+
+        private void ConnectFailed ( )
+        {
+            _desk = null ;
+
+            ShowFancyBalloon ( "Failed" ,
+                               "Connection to desk failed" ,
+                               visibilityBulbRed : Visibility.Visible ) ;
+        }
+
+        private void ConnectSuccessful ( IDesk desk )
+        {
+            _logger.Information ( $"Connected to {desk}" ) ;
+
+            _desk = desk ;
+
+            ShowFancyBalloon ( "Success" ,
+                               $"Connected to desk {desk.Name}" ,
+                               Visibility.Visible ) ;
         }
 
         private void ShowFancyBalloon ( string     title ,
