@@ -54,8 +54,10 @@ _Note:_ The settings are stored per Windows user.
 ## Exit
 *Exit* will close the application.
 
+---
+
 # Problems
-_Q: The application fails to connect to the Idasen desk._
+_Q: The application fails to connect to the Idasen desk?_
 
 A: Windows 10 needs to be connected to the Idasen desk which means the desk should be listed as a Bluetooth device.
 
