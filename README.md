@@ -10,7 +10,9 @@ Download and run the installer from here: ![Idasen.SystemTray.Setup.msi](https:/
 ### Pre-condition
 - .Net Core 3.1 runtime must already be installed (see https://dotnet.microsoft.com/download/dotnet-core/3.1)
 
-## System Tray Application
+---
+
+# System Tray Application
 At the moment the Windows 10 system tray application is a *work in progress*. It supports the following features:
 - Detect Desk
 - Show Settings
@@ -28,11 +30,10 @@ The application will automatically connect to the Idasen Desk during start-up. P
 
 ![Trying to connect](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/Trying%20To%20Connect.png)![Connected](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/Connected.png)![Connected](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/Failed%20to%20connect.png)
 
-
-### Connect
+## Connect
 *Connect* will try to detect a desk in case the application failed to detected the desk at start-up.
 
-### Show Settings
+## Show Settings
 *Show Settings* will display the current settings for the current user and allows to change them:
 - Standing Height
 - Seating Height
@@ -41,16 +42,16 @@ The application will automatically connect to the Idasen Desk during start-up. P
 
 _Note:_ The settings are stored per Windows user.
 
-### Hide Settings
+## Hide Settings
 *Hide Setting* will close the settings window.
 
-### Standing
+## Standing
 *Standing* will move the desk to the standing height specified in the settings.
 
-### Seating
+## Seating
 *Seating* will move the desk to the seating height specified in the settings.
 
-### Exit
+## Exit
 *Exit* will close the application.
 
 # Problems
