@@ -1,15 +1,16 @@
 ﻿using System ;
+using System.Collections.Generic ;
 using System.Threading ;
 using System.Threading.Tasks ;
 using System.Windows ;
 using System.Windows.Controls.Primitives ;
 using System.Windows.Input ;
 using Autofac ;
+using Autofac.Core ;
 using Hardcodet.Wpf.TaskbarNotification ;
 using Idasen.BluetoothLE.Linak.Interfaces ;
 using Idasen.Launcher ;
 using Idasen.SystemTray.Interfaces ;
-using Idasen.SystemTray.Settings ;
 using Idasen.SystemTray.Utils ;
 using JetBrains.Annotations ;
 using Serilog ;
@@ -27,15 +28,17 @@ namespace Idasen.SystemTray
     {
         public NotifyIconViewModel ( )
         {
+            IEnumerable < IModule > otherModules = new [ ] { new SystemTrayModule ( ) } ;
+
             var container = ContainerProvider.Create ( "Idasen.SystemTray" ,
-                                                       "Idasen.SystemTray.log" ) ;
+                                                       "Idasen.SystemTray.log" ,
+                                                       otherModules ) ;
 
             _logger   = container.Resolve < ILogger > ( ) ;
+            _manager  = container.Resolve < ISettingsManager > ( ) ;
             _provider = container.Resolve < IDeskProvider > ( ) ;
 
             _provider.Initialize ( ) ;
-
-            _manager = new SettingsManager ( _logger ) ; // todo move into container
 
             _tokenSource = new CancellationTokenSource ( TimeSpan.FromSeconds ( 60 ) ) ;
             _token       = _tokenSource.Token ;
