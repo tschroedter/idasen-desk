@@ -7,8 +7,6 @@ namespace Idasen.BluetoothLE.Common.Tests
 {
     public static class ExceptionAssertionsExtensions
     {
-        // todo make common test library
-
         /// <summary>
         ///     This extension allows to check the parameter of an exception.
         /// </summary>
