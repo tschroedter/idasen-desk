@@ -4,6 +4,7 @@ using System.Reactive.Concurrency ;
 using System.Reactive.Linq ;
 using System.Reactive.Subjects ;
 using FluentAssertions ;
+using Idasen.BluetoothLE.Common.Tests ;
 using Idasen.BluetoothLE.Core.DevicesDiscovery ;
 using Idasen.BluetoothLE.Core.Interfaces ;
 using Idasen.BluetoothLE.Core.Interfaces.DevicesDiscovery ;

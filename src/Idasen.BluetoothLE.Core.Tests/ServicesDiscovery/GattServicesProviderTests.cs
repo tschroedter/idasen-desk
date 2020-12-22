@@ -5,6 +5,7 @@ using System.Threading.Tasks ;
 using Windows.Devices.Bluetooth ;
 using Windows.Devices.Bluetooth.GenericAttributeProfile ;
 using FluentAssertions ;
+using Idasen.BluetoothLE.Common.Tests ;
 using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery ;
 using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers ;
 using Idasen.BluetoothLE.Core.ServicesDiscovery ;

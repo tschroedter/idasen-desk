@@ -1,5 +1,6 @@
 ﻿using System ;
 using FluentAssertions ;
+using Idasen.BluetoothLE.Common.Tests ;
 using Idasen.BluetoothLE.Core.DevicesDiscovery ;
 using Idasen.BluetoothLE.Core.Interfaces ;
 using Microsoft.VisualStudio.TestTools.UnitTesting ;

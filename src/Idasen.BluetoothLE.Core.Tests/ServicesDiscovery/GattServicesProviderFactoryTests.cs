@@ -1,5 +1,6 @@
 ﻿using System ;
 using FluentAssertions ;
+using Idasen.BluetoothLE.Common.Tests ;
 using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers ;
 using Idasen.BluetoothLE.Core.ServicesDiscovery ;
 using Selkie.AutoMocking ;
