@@ -49,9 +49,28 @@ namespace Idasen.BluetoothLE.Linak.Tests
         }
 
         [ TestMethod ]
-        public void Initialize_ForInvokedTwice_DisposesOldSubscriptions ( )
+        public void Initialize_ForInvokedTwice_DisposesOldSubscription ( )
         {
-            // todo
+            var disposable1    = Substitute.For < IDisposable > ( ) ;
+            var disposable2    = Substitute.For < IDisposable > ( ) ;
+
+            var heightAndSpeed = Substitute.For < IObservable < HeightSpeedDetails > > ( ) ;
+            heightAndSpeed.Subscribe ( Arg.Any < IObserver < HeightSpeedDetails > > ( ) )
+                          .Returns ( disposable1 ,
+                                     disposable2 ) ;
+
+            _heightAndSpeed.HeightAndSpeedChanged
+                           .Returns ( heightAndSpeed ) ;
+
+            using var sut = CreateSut ( ) ;
+
+            sut.Initialize ( ) ;
+            sut.Initialize ( ) ;
+
+            disposable1.Received ( )
+                       .Dispose ( ) ;
+            disposable2.DidNotReceive (  )
+                       .Dispose (  );
         }
 
         [ TestMethod ]
@@ -243,29 +262,29 @@ namespace Idasen.BluetoothLE.Linak.Tests
                .BeTrue ( ) ;
         }
 
-        [TestMethod]
-        public async Task Start_ForInitializedAndHeightGreaterZero_NotifiesFinished()
+        [ TestMethod ]
+        public async Task Start_ForInitializedAndHeightGreaterZero_NotifiesFinished ( )
         {
             _heightAndSpeed.Height
-                           .Returns(1u);
+                           .Returns ( 1u ) ;
 
-            var sut = CreateSut();
+            var sut = CreateSut ( ) ;
 
-            sut.Initialize();
+            sut.Initialize ( ) ;
 
-            var finished = false;
+            var finished = false ;
 
             sut.Finished
-               .ObserveOn(_scheduler)
-               .Subscribe(x => finished = true);
+               .ObserveOn ( _scheduler )
+               .Subscribe ( x => finished = true ) ;
 
-            await sut.Start();
+            await sut.Start ( ) ;
 
             _scheduler.Start ( ) ;
 
             finished
-               .Should()
-               .BeTrue();
+               .Should ( )
+               .BeTrue ( ) ;
         }
 
         [ TestMethod ]

@@ -42,7 +42,7 @@ namespace Idasen.BluetoothLE.Linak.Control
         /// <inheritdoc />
         public void Initialize ( )
         {
-            _disposalHeightAndSpeed?.Dispose ( ) ; // todo testing
+            _disposalHeightAndSpeed?.Dispose ( ) ;
 
             _disposalHeightAndSpeed = _heightAndSpeed.HeightAndSpeedChanged
                                                      .ObserveOn ( _scheduler )
@@ -124,6 +124,7 @@ namespace Idasen.BluetoothLE.Linak.Control
         private readonly IScheduler        _scheduler ;
         private readonly ISubject < uint > _subjectFinished ;
 
-        private IDisposable _disposalHeightAndSpeed ;
+        // ReSharper disable once InconsistentNaming - only used for testing
+        internal IDisposable _disposalHeightAndSpeed ;
     }
 }
