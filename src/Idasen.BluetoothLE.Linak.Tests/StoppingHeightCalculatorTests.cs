@@ -243,7 +243,6 @@ namespace Idasen.BluetoothLE.Linak.Tests
                .Be ( movementUntilStop ) ;
         }
 
-        // todo these test should be in the calculator class
         // Same Direction
         [ DataRow ( Direction.None ,
                     Direction.None ,
