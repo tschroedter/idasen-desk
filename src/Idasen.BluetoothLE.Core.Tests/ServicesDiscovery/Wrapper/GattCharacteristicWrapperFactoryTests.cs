@@ -1,4 +1,5 @@
-﻿using FluentAssertions ;
+﻿using System ;
+using FluentAssertions ;
 using Idasen.BluetoothLE.Core.ServicesDiscovery.Wrappers ;
 using Selkie.AutoMocking ;
 
@@ -8,11 +9,13 @@ namespace Idasen.BluetoothLE.Core.Tests.ServicesDiscovery.Wrapper
     public class GattCharacteristicWrapperFactoryTests
     {
         [ AutoDataTestMethod ]
-        public void Create_ForUnknownAddress_Throws (
+        public void Create_ForCharacteristicNull_Throws (
             GattCharacteristicWrapperFactory sut )
         {
-            sut.Should ( )
-               .NotBeNull ( ) ; // todo move successful instance creation into null tester
+            Action action = ( ) => sut.Create ( null! ) ;
+
+            action.Should ( )
+                  .Throw < ArgumentNullException > ( ) ;
         }
     }
 }

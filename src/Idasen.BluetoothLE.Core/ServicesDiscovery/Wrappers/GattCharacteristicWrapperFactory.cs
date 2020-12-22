@@ -19,6 +19,9 @@ namespace Idasen.BluetoothLE.Core.ServicesDiscovery.Wrappers
         [ ExcludeFromCodeCoverage ]
         public IGattCharacteristicWrapper Create ( GattCharacteristic characteristic )
         {
+            Guard.ArgumentNotNull ( characteristic ,
+                                    nameof ( characteristic ) ) ;
+
             return _factory ( characteristic ) ;
         }
 
