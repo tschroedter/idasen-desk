@@ -18,15 +18,15 @@ namespace Idasen.BluetoothLE.Linak
         : IDeskDetector
     {
         public DeskDetector ( [ NotNull ] ILogger                  logger ,
-                              [ NotNull ] IScheduler               scheduler,
+                              [ NotNull ] IScheduler               scheduler ,
                               [ NotNull ] IDeviceMonitorWithExpiry monitor ,
                               [ NotNull ] IDeskFactory             factory ,
                               [ NotNull ] ISubject < IDesk >       deskDetected )
         {
             Guard.ArgumentNotNull ( logger ,
                                     nameof ( logger ) ) ;
-            Guard.ArgumentNotNull(scheduler,
-                                  nameof(scheduler));
+            Guard.ArgumentNotNull ( scheduler ,
+                                    nameof ( scheduler ) ) ;
             Guard.ArgumentNotNull ( monitor ,
                                     nameof ( monitor ) ) ;
             Guard.ArgumentNotNull ( factory ,
@@ -34,11 +34,11 @@ namespace Idasen.BluetoothLE.Linak
             Guard.ArgumentNotNull ( deskDetected ,
                                     nameof ( deskDetected ) ) ;
 
-            _logger         = logger ;
-            _scheduler = scheduler ;
-            _monitor        = monitor ;
-            _factory        = factory ;
-            _deskDetected   = deskDetected ;
+            _logger       = logger ;
+            _scheduler    = scheduler ;
+            _monitor      = monitor ;
+            _factory      = factory ;
+            _deskDetected = deskDetected ;
         }
 
         /// <inheritdoc />
@@ -57,26 +57,26 @@ namespace Idasen.BluetoothLE.Linak
         public IObservable < IDesk > DeskDetected => _deskDetected ;
 
         /// <inheritdoc />
-        public void Initialize ( [ NotNull ] string deviceName    = "Desk" ,
-                                 ulong              deviceAddress = 250635178951455u)
+        public void Initialize ( string deviceName    = "Desk" ,
+                                 ulong  deviceAddress = 250635178951455u )
         {
             Guard.ArgumentNotNull ( deviceName ,
                                     nameof ( deviceName ) ) ;
 
-            _updated     = _monitor.DeviceUpdated
-                                   .ObserveOn ( _scheduler )
-                                   .Subscribe ( OnDeviceUpdated ) ;
+            _updated = _monitor.DeviceUpdated
+                               .ObserveOn ( _scheduler )
+                               .Subscribe ( OnDeviceUpdated ) ;
 
-            _discovered  = _monitor.DeviceDiscovered
-                                   .ObserveOn(_scheduler)
-                                   .Subscribe ( OnDeviceDiscovered ) ;
+            _discovered = _monitor.DeviceDiscovered
+                                  .ObserveOn ( _scheduler )
+                                  .Subscribe ( OnDeviceDiscovered ) ;
 
             _nameChanged = _monitor.DeviceNameUpdated
-                                   .ObserveOn(_scheduler)
+                                   .ObserveOn ( _scheduler )
                                    .Subscribe ( OnDeviceNameChanged ) ;
 
             _deskFound = _monitor.DeviceNameUpdated
-                                 .ObserveOn(_scheduler)
+                                 .ObserveOn ( _scheduler )
                                  .Where ( device => device.Name.StartsWith ( deviceName ) ||
                                                     device.Address == deviceAddress )
                                  .Subscribe ( OnDeskDiscovered ) ;
@@ -127,17 +127,17 @@ namespace Idasen.BluetoothLE.Linak
 
         private void OnDeviceUpdated ( IDevice device )
         {
-            _logger.Information( $"Device Updated: {device}" ) ;
+            _logger.Information ( $"Device Updated: {device}" ) ;
         }
 
         private void OnDeviceDiscovered ( IDevice device )
         {
-            _logger.Information( $"Device Discovered: {device}" ) ;
+            _logger.Information ( $"Device Discovered: {device}" ) ;
         }
 
         private void OnDeviceNameChanged ( IDevice device )
         {
-            _logger.Information( $"Device Name Changed: {device}" ) ;
+            _logger.Information ( $"Device Name Changed: {device}" ) ;
         }
 
         private void OnRefreshedChanged ( bool status )
@@ -150,8 +150,8 @@ namespace Idasen.BluetoothLE.Linak
         private readonly IDeskFactory _factory ;
 
         private readonly ILogger                  _logger ;
-        private readonly IScheduler               _scheduler ;
         private readonly IDeviceMonitorWithExpiry _monitor ;
+        private readonly IScheduler               _scheduler ;
 
         private IDesk       _desk ;
         private IDisposable _deskFound ;
