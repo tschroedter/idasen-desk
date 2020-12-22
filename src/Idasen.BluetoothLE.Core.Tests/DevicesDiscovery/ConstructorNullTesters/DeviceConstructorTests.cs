@@ -1,4 +1,5 @@
-﻿using FluentAssertions.Execution ;
+﻿using FluentAssertions.Execution;
+using Idasen.BluetoothLE.Common.Tests ;
 using Microsoft.VisualStudio.TestTools.UnitTesting ;
 
 namespace Idasen.BluetoothLE.Core.Tests.DevicesDiscovery.ConstructorNullTesters
