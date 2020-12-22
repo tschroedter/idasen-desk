@@ -6,7 +6,7 @@ namespace Idasen.BluetoothLE.Linak.Tests.ConstructorNullTester
 {
     [ TestClass ]
     public class InitialHeightProviderConstructorNullTests
-        : BaseConstructorNullTester < InitialHeightProvider > // todo BaseConstructorNullTester should be in a shared assembly
+        : BaseConstructorNullTester < InitialHeightProvider >
     {
         public override int NumberOfConstructorsPassed { get ; } = 1 ;
     }
