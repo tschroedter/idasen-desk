@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Idasen.BluetoothLE.Characteristics\Idasen.BluetoothLE.Characteristics.csproj" />
+    <ProjectReference Include="..\Idasen.BluetoothLE.Common.Tests\Idasen.BluetoothLE.Common.Tests.csproj" />
     <ProjectReference Include="..\Idasen.BluetoothLE.Core.Tests\Idasen.BluetoothLE.Core.Tests.csproj" />
     <ProjectReference Include="..\Idasen.BluetoothLE.Core\Idasen.BluetoothLE.Core.csproj" />
   </ItemGroup>

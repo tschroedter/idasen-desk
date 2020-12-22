@@ -3,6 +3,7 @@ using System.Threading.Tasks ;
 using FluentAssertions ;
 using FluentAssertions.Execution ;
 using Idasen.BluetoothLE.Characteristics.Interfaces.Characteristics ;
+using Idasen.BluetoothLE.Common.Tests ;
 using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery ;
 using Idasen.BluetoothLE.Linak.Interfaces ;
 using NSubstitute ;
