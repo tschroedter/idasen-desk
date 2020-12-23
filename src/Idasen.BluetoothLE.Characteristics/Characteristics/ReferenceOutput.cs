@@ -70,8 +70,6 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
         {
             await base.Refresh ( ) ;
 
-            _subscriber?.Dispose ( ) ; // todo this line needs testing
-
             if ( ! Characteristics.Characteristics.TryGetValue ( HeightSpeed ,
                                                                  out var heightAndSpeed ) ||
                  heightAndSpeed == null )
@@ -82,20 +80,20 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
                 return ;
             }
 
-            _subscriber?.Dispose ( ) ; // todo testing
+            _subscriber?.Dispose ( ) ; // Attention: this is to hard to test
 
             _subscriber = heightAndSpeed.ValueChanged
                                         .SubscribeOn ( Scheduler )
-                                        .Subscribe ( OnValueChanged ) ; // todo this line needs testing
+                                        .Subscribe ( OnValueChanged ) ;
 
             var rawValue = TryGetValueOrEmpty ( HeightSpeed ).ToArray ( ) ;
 
-            var valueChanged = new RawValueChangedDetails ( HeightSpeed ,
-                                                            rawValue ,
-                                                            DateTimeOffset.Now ,
-                                                            GattServiceUuid ) ;
+            var details = new RawValueChangedDetails ( HeightSpeed ,
+                                                       rawValue ,
+                                                       DateTimeOffset.Now ,
+                                                       GattServiceUuid ) ;
 
-            _subjectHeightSpeed.OnNext ( valueChanged ) ;
+            _subjectHeightSpeed.OnNext ( details ) ;
         }
 
         public void Dispose ( )
@@ -127,6 +125,13 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
 
         private void OnValueChanged ( GattCharacteristicValueChangedDetails details )
         {
+            if ( details == null )
+            {
+                Logger.Error ( $"{typeof ( GattCharacteristicValueChangedDetails )} is null" ) ;
+
+                return ;
+            }
+
             Logger.Debug ( $"Value = {details.Value.ToHex ( )}, " +
                            $"Timestamp = {details.Timestamp}, "   +
                            $"Uuid = {details.Uuid}" ) ;
