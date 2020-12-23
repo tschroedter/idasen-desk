@@ -111,7 +111,7 @@ namespace Idasen.SystemTray
                        {
                            CommandAction = async ( ) =>
                                            {
-                                               await _manager.Load ( ) ; // todo loading on UI thread
+                                               await _manager.Load ( ) ;
 
                                                _desk?.MoveTo ( _manager.CurrentSettings.StandingHeightInCm * 100 ) ;
                                            } ,
@@ -131,7 +131,7 @@ namespace Idasen.SystemTray
                        {
                            CommandAction = async ( ) =>
                                            {
-                                               await _manager.Load ( ) ; // todo loading on UI thread
+                                               await _manager.Load ( ) ;
 
                                                _desk?.MoveTo ( _manager.CurrentSettings.SeatingHeightInCm * 100 ) ;
                                            } ,
