@@ -1,7 +1,11 @@
-﻿using System.Reactive.Subjects ;
+﻿using System ;
+using System.Reactive.Concurrency ;
+using System.Reactive.Linq ;
+using System.Reactive.Subjects ;
 using System.Threading.Tasks ;
 using FluentAssertions ;
 using Idasen.BluetoothLE.Characteristics.Characteristics ;
+using Microsoft.Reactive.Testing ;
 using Microsoft.VisualStudio.TestTools.UnitTesting ;
 using NSubstitute ;
 
@@ -357,9 +361,45 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Characteristics
         }
 
         [ TestMethod ]
-        public void Dispose_ForInvoked_DisposesSubscriber ( )
+        public async Task Refresh_ForInvoked_NotifiesHeightAndSpeed ( )
         {
-            // todo
+            var scheduler = new TestScheduler ( ) ;
+            var subject   = new Subject < RawValueChangedDetails > ( ) ;
+
+            var sut = CreateSut ( scheduler ,
+                                  subject ) ;
+
+            RawValueChangedDetails heightAndSpeed = null ;
+
+            subject
+               .ObserveOn ( scheduler )
+               .Subscribe ( x => { heightAndSpeed = x ; } ) ;
+
+            ServiceWrapper.Uuid
+                          .Returns ( sut.GattServiceUuid ) ;
+
+            sut.Initialize < ReferenceOutput > ( ) ;
+
+            await sut.Refresh ( ) ;
+
+            scheduler.Start ( ) ;
+
+            heightAndSpeed.Value
+                          .Should ( )
+                          .BeEquivalentTo ( RawValue1 ) ;
+        }
+
+        private ReferenceOutput CreateSut ( IScheduler                          scheduler ,
+                                            ISubject < RawValueChangedDetails > subject )
+        {
+            return new ReferenceOutput ( Logger ,
+                                         scheduler ,
+                                         Device ,
+                                         ProviderFactory ,
+                                         RawValueReader ,
+                                         RawValueWriter ,
+                                         ToStringConverter ,
+                                         subject ) ;
         }
 
         protected override ReferenceOutput CreateSut ( )
