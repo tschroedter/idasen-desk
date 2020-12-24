@@ -80,6 +80,9 @@ namespace Idasen.BluetoothLE.Linak
 
             builder.RegisterType<DeskProvider>()
                    .As<IDeskProvider>();
+
+            builder.RegisterType<TaskRunner>()
+                   .As<ITaskRunner>();
         }
     }
 }
