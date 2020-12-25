@@ -1,6 +1,7 @@
 ﻿using System ;
 using System.Threading ;
 using System.Threading.Tasks ;
+using JetBrains.Annotations ;
 
 namespace Idasen.BluetoothLE.Linak.Interfaces
 {
@@ -45,5 +46,10 @@ namespace Idasen.BluetoothLE.Linak.Interfaces
         ///     The second parameter is the detected desk or null.
         /// </returns>
         Task<(bool, IDesk)> TryGetDesk(CancellationToken token) ;
+
+        /// <summary>
+        ///     The currently detected desk.
+        /// </summary>
+        [CanBeNull] public IDesk Desk { get; }
     }
 }

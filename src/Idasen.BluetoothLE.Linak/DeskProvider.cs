@@ -10,42 +10,46 @@ using Serilog ;
 
 namespace Idasen.BluetoothLE.Linak
 {
-    public class DeskProvider // todo tests
+    public class DeskProvider
         : IDeskProvider
     {
         public DeskProvider (
             [ NotNull ] ILogger       logger ,
+            [ NotNull ] ITaskRunner   taskRunner ,
             [ NotNull ] IScheduler    scheduler ,
             [ NotNull ] IDeskDetector detector )
         {
             Guard.ArgumentNotNull ( logger ,
                                     nameof ( logger ) ) ;
+            Guard.ArgumentNotNull ( taskRunner ,
+                                    nameof ( taskRunner ) ) ;
             Guard.ArgumentNotNull ( scheduler ,
                                     nameof ( scheduler ) ) ;
             Guard.ArgumentNotNull ( detector ,
                                     nameof ( detector ) ) ;
 
-            _logger    = logger ;
-            _scheduler = scheduler ;
-            _detector  = detector ;
+            _logger     = logger ;
+            _taskRunner = taskRunner ;
+            _scheduler  = scheduler ;
+            _detector   = detector ;
         }
 
         /// <inheritdoc />
         public async Task < (bool , IDesk) > TryGetDesk ( CancellationToken token )
         {
-            if ( _desk != null )
-                return ( true , _desk ) ;
+            if ( Desk != null )
+                return ( true , Desk ) ;
 
             try
             {
                 _detector.Start ( ) ;
 
-                await Task.Run ( DoTryGetDesk ,
-                                 token ) ;
+                await _taskRunner.Run ( ( ) => DoTryGetDesk ( token ) ,
+                                        token ) ;
 
                 return token.IsCancellationRequested
                            ? ( false , null )
-                           : ( true , _desk ) ;
+                           : ( true , Desk ) ;
             }
             catch ( Exception e )
             {
@@ -57,7 +61,7 @@ namespace Idasen.BluetoothLE.Linak
             finally
             {
                 _detector.Start ( ) ;
-                _deskDetectedEvent.Reset ( ) ;
+                DeskDetectedEvent.Reset ( ) ;
             }
         }
 
@@ -105,34 +109,38 @@ namespace Idasen.BluetoothLE.Linak
             _detector?.Dispose ( ) ;
         }
 
-        private void DoTryGetDesk ( )
+        /// <inheritdoc />
+        public IDesk Desk { get ; private set ; }
+
+        internal void DoTryGetDesk ( CancellationToken token )
         {
-            while ( _desk == null )
+            while ( Desk == null &&
+                    ! token.IsCancellationRequested )
             {
                 _logger.Information ( "Trying to find desk..." ) ;
 
-                _deskDetectedEvent.WaitOne ( TimeSpan.FromSeconds ( 1 ) ) ;
+                DeskDetectedEvent.WaitOne ( TimeSpan.FromSeconds ( 1 ) ) ;
             }
         }
 
-        /// <inheritdoc />
-        private void OnDeskDetected ( IDesk desk )
+        internal void OnDeskDetected ( IDesk desk )
         {
             _logger.Debug ( $"Detected desk {desk.Name} with " +
                             $"Bluetooth address {desk.BluetoothAddress}" ) ;
 
             _detector.Stop ( ) ;
 
-            _desk = desk ;
+            Desk = desk ;
 
-            _deskDetectedEvent.Set ( ) ;
+            DeskDetectedEvent.Set ( ) ;
         }
 
-        private readonly      AutoResetEvent _deskDetectedEvent = new AutoResetEvent ( false ) ;
-        private readonly      IDeskDetector  _detector ;
-        private readonly      ILogger        _logger ;
-        private readonly      IScheduler     _scheduler ;
-        [ CanBeNull ] private IDesk          _desk ;
+        private readonly IDeskDetector _detector ;
+        private readonly ILogger       _logger ;
+        private readonly IScheduler    _scheduler ;
+        private readonly ITaskRunner   _taskRunner ;
+
+        internal readonly AutoResetEvent DeskDetectedEvent = new AutoResetEvent ( false ) ;
 
         private IDisposable _deskDetected ;
     }
