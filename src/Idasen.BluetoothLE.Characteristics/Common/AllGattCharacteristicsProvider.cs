@@ -14,8 +14,12 @@ namespace Idasen.BluetoothLE.Characteristics.Common
     {
         public AllGattCharacteristicsProvider ( )
         {
+            OfficialGattCharacteristics = Assembly.GetAssembly ( this.GetType ( ) )?.FullName + Filename ;
+
             Populate ( ReadCsvFile ( ) ) ;
         }
+
+        public string OfficialGattCharacteristics { get ; }
 
         public bool TryGetDescription ( Guid       uuid ,
                                         out string description )
@@ -31,8 +35,7 @@ namespace Idasen.BluetoothLE.Characteristics.Common
                                                     out uuid ) ;
         }
 
-        private const string OfficialGattCharacteristics =
-            "Idasen.BluetoothLE.Characteristics.Common.OfficialGattCharacteristics.txt" ; // todo use current assembly name
+        private const string Filename = "OfficialGattCharacteristics.txt" ;
 
         private void Populate ( IEnumerable < CsvGattCharacteristic > records )
         {
@@ -47,7 +50,7 @@ namespace Idasen.BluetoothLE.Characteristics.Common
             }
         }
 
-        private static IEnumerable < CsvGattCharacteristic > ReadCsvFile ( )
+        private IEnumerable < CsvGattCharacteristic > ReadCsvFile ( )
         {
             var stream = Assembly.GetExecutingAssembly ( )
                                  .GetManifestResourceStream ( OfficialGattCharacteristics ) ;
