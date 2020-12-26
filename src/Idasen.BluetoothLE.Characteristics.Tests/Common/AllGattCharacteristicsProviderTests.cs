@@ -94,6 +94,15 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Common
                 .Be ( _knownGuid ) ;
         }
 
+        [ TestMethod ]
+        public void OfficialGattCharacteristics_ForInvoked_ResourceFilename ( )
+        {
+            CreateSut ( ).OfficialGattCharacteristics
+                         .Should ( )
+                         .Be ( "Idasen.BluetoothLE.Characteristics.Common." +
+                               AllGattCharacteristicsProvider.Filename ) ;
+        }
+
         private AllGattCharacteristicsProvider CreateSut ( )
         {
             return new AllGattCharacteristicsProvider ( ) ;
