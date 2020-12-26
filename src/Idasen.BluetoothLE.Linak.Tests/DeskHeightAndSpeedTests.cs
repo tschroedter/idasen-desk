@@ -20,6 +20,64 @@ namespace Idasen.BluetoothLE.Linak.Tests
         private const uint DefaultHeight = 1u ;
         private const int  DefaultSpeed  = 2 ;
 
+
+        [ TestMethod ]
+        public void Initialize_ForInvokedTwice_DisposesSubscriber ( )
+        {
+            var subscriber = Substitute.For < IDisposable > ( ) ;
+            var subject    = Substitute.For < ISubject < RawValueChangedDetails > > ( ) ;
+
+            subject.Subscribe ( Arg.Any < IObserver < RawValueChangedDetails > > ( ) )
+                   .Returns ( subscriber ) ;
+
+            _referenceOutput.HeightSpeedChanged
+                            .Returns ( subject ) ;
+
+            using var sut = CreateSut ( ) ;
+
+            sut.Initialize ( ) ;
+
+            sut.Initialize ( ) ;
+
+            subscriber.Received ( )
+                      .Dispose ( ) ;
+        }
+
+        [ TestMethod ]
+        public void Dispose_ForInvokedTwice_DisposesSubscriber ( )
+        {
+            var subscriber = Substitute.For < IDisposable > ( ) ;
+            var subject    = Substitute.For < ISubject < RawValueChangedDetails > > ( ) ;
+
+            subject.Subscribe ( Arg.Any < IObserver < RawValueChangedDetails > > ( ) )
+                   .Returns ( subscriber ) ;
+
+            _referenceOutput.HeightSpeedChanged
+                            .Returns ( subject ) ;
+
+            using var sut = CreateSut ( ) ;
+
+            sut.Initialize ( ) ;
+
+            sut.Dispose ( ) ;
+
+            subscriber.Received ( )
+                      .Dispose ( ) ;
+        }
+
+        [ TestMethod ]
+        public void Dispose_ForInvokedTwice_DisposesReferenceOutput ( )
+        {
+            using var sut = CreateSut ( ) ;
+
+            sut.Initialize ( ) ;
+
+            sut.Dispose ( ) ;
+
+            _referenceOutput.Received ( )
+                            .Dispose ( ) ;
+        }
+
         [ TestMethod ]
         public async Task Refresh_ForInvoked_CallsReferenceOutputRefresh ( )
         {
@@ -45,7 +103,7 @@ namespace Idasen.BluetoothLE.Linak.Tests
         }
 
         [ TestMethod ]
-        public async Task Initialize_ForInvokedAndHeightAvailable_SetsHeight ( )
+        public async Task Refresh_ForInvokedAndHeightAvailable_SetsHeight ( )
         {
             using var sut = CreateSut ( ) ;
 
@@ -57,7 +115,7 @@ namespace Idasen.BluetoothLE.Linak.Tests
         }
 
         [ TestMethod ]
-        public async Task Initialize_ForInvokedAndSpeedAvailable_SetsSpeed ( )
+        public async Task Refresh_ForInvokedAndSpeedAvailable_SetsSpeed ( )
         {
             using var sut = CreateSut ( ) ;
 
@@ -69,7 +127,7 @@ namespace Idasen.BluetoothLE.Linak.Tests
         }
 
         [ TestMethod ]
-        public async Task Initialize_ForInvokedAndHeightNotAvailable_DoesNotSetsHeight ( )
+        public async Task Refresh_ForInvokedAndHeightNotAvailable_DoesNotSetsHeight ( )
         {
             SetTryConvert ( _converter ,
                             false ,
@@ -86,7 +144,7 @@ namespace Idasen.BluetoothLE.Linak.Tests
         }
 
         [ TestMethod ]
-        public async Task Initialize_ForInvokedAndSpeedNotAvailable_DoesNotSetsSpeed ( )
+        public async Task Refresh_ForInvokedAndSpeedNotAvailable_DoesNotSetsSpeed ( )
         {
             SetTryConvert ( _converter ,
                             false ,

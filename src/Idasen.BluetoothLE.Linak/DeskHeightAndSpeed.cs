@@ -68,7 +68,7 @@ namespace Idasen.BluetoothLE.Linak
 
         public IDeskHeightAndSpeed Initialize ( )
         {
-            _subscriber?.Dispose ( ) ; // todo testing
+            _subscriber?.Dispose ( ) ;
 
             _subscriber = _referenceOutput.HeightSpeedChanged
                                           .ObserveOn ( _scheduler )
@@ -90,7 +90,7 @@ namespace Idasen.BluetoothLE.Linak
 
         public void Dispose ( )
         {
-            _referenceOutput?.Dispose ( ) ; // todo testing
+            _referenceOutput?.Dispose ( ) ;
             _subscriber?.Dispose ( ) ;
         }
 
