@@ -74,7 +74,7 @@ namespace Idasen.BluetoothLE.Core.Tests.ServicesDiscovery
             Device                               sut ,
             [ Freeze ] IBluetoothLeDeviceWrapper wrapper )
         {
-            sut.DeviceId
+            sut.Id
                .Should ( )
                .Be ( wrapper.DeviceId ) ;
         }

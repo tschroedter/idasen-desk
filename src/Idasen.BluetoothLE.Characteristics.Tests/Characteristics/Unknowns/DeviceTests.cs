@@ -40,19 +40,19 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Characteristics.Unknowns
         }
 
         [ TestMethod ]
-        public void Name_ForInvoked_UnknownDeviceName ( )
+        public void Name_ForInvoked_UnknownName ( )
         {
             CreateSut ( ).Name
                          .Should ( )
-                         .Be ( Device.UnknownDeviceName ) ;
+                         .Be ( Device.UnknownName ) ;
         }
 
         [ TestMethod ]
-        public void DeviceId_ForInvoked_UnknownDeviceId ( )
+        public void Id_ForInvoked_UnknownId ( )
         {
-            CreateSut ( ).DeviceId
+            CreateSut ( ).Id
                          .Should ( )
-                         .Be ( Device.UnknownDeviceId ) ;
+                         .Be ( Device.UnknownId ) ;
         }
 
         [ TestMethod ]

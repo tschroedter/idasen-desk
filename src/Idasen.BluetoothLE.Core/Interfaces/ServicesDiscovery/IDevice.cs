@@ -31,7 +31,7 @@ namespace Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery
         /// <summary>
         ///     Gets the device Id.
         /// </summary>
-        string DeviceId { get ; }
+        string Id { get ; }
 
         /// <summary>
         ///     Gets a value that indicates whether the device is currently paired.

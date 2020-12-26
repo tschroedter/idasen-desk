@@ -54,7 +54,7 @@ namespace Idasen.BluetoothLE.Core.ServicesDiscovery
         public string Name => _wrapper.Name ;
 
         /// <inheritdoc />
-        public string DeviceId => _wrapper.DeviceId ;
+        public string Id => _wrapper.DeviceId ;
 
         /// <inheritdoc />
         public bool IsPaired => _wrapper.IsPaired ;

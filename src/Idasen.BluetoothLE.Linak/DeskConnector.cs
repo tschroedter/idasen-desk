@@ -175,7 +175,7 @@ namespace Idasen.BluetoothLE.Linak
 
         private async void OnGattServicesRefreshed ( GattCommunicationStatus status )
         {
-            _logger.Information ( $"[{_device.DeviceId}] "                         +
+            _logger.Information ( $"[{_device.Id}] "                         +
                                   $"ConnectionStatus: {_device.ConnectionStatus} " +
                                   $"GattCommunicationStatus: {_device.GattCommunicationStatus}" ) ;
 

@@ -20,10 +20,10 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics.Unknowns
             throw new NotInitializeException ( Message ) ;
 
         public GattCommunicationStatus   GattCommunicationStatus { get ; } = GattCommunicationStatus.Unreachable ;
-        public string                    Name { get ; } = UnknownDeviceName ;
-        public string                    DeviceId { get ; } = UnknownDeviceId ; // todo maybe rename to just Id
-        public bool                      IsPaired { get ; } = false ;
-        public BluetoothConnectionStatus ConnectionStatus { get ; } = BluetoothConnectionStatus.Disconnected ;
+        public string                    Name                    { get ; } = UnknownName ;
+        public string                    Id                      { get ; } = UnknownId ;
+        public bool                      IsPaired                { get ; } = false ;
+        public BluetoothConnectionStatus ConnectionStatus        { get ; } = BluetoothConnectionStatus.Disconnected ;
 
         public IReadOnlyDictionary < IGattDeviceServiceWrapper , IGattCharacteristicsResultWrapper > GattServices
         {
@@ -34,7 +34,7 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics.Unknowns
         public IObservable < GattCommunicationStatus > GattServicesRefreshed =>
             throw new NotInitializeException ( Message ) ;
 
-        public ulong  BluetoothAddress     => UnknownBluetoothAddress;
+        public ulong BluetoothAddress => UnknownBluetoothAddress ;
 
         public string BluetoothAddressType => UnknownBluetoothAddressType ;
 
@@ -43,11 +43,11 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics.Unknowns
             // do nothing
         }
 
-        internal const ulong UnknownBluetoothAddress = 0u;
+        internal const ulong UnknownBluetoothAddress = 0u ;
 
-        internal const string UnknownBluetoothAddressType = "Unknown Address Type";
-        internal const string UnknownDeviceName           = "Unknown Device" ;
-        internal const string UnknownDeviceId             = "Unknown Device Id" ;
+        internal const string UnknownBluetoothAddressType = "Unknown Address Type" ;
+        internal const string UnknownName                 = "Unknown Device" ;
+        internal const string UnknownId                   = "Unknown Device Id" ;
         internal const string Message                     = "Can't use a anknown Instance" ;
     }
 }
