@@ -1,5 +1,5 @@
 ﻿using FluentAssertions ;
-using Idasen.BluetoothLE.Characteristics.Common ;
+using Idasen.BluetoothLE.Core ;
 using Microsoft.VisualStudio.TestTools.UnitTesting ;
 
 namespace Idasen.BluetoothLE.Characteristics.Tests.Common

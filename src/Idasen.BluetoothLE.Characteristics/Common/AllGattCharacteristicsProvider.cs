@@ -6,6 +6,7 @@ using System.Linq ;
 using System.Reflection ;
 using CsvHelper ;
 using Idasen.BluetoothLE.Characteristics.Interfaces.Common ;
+using Idasen.BluetoothLE.Core ;
 
 namespace Idasen.BluetoothLE.Characteristics.Common
 {

@@ -1,5 +1,5 @@
-﻿using Idasen.BluetoothLE.Characteristics.Common ;
-using Idasen.BluetoothLE.Common.Tests ;
+﻿using Idasen.BluetoothLE.Common.Tests ;
+using Idasen.BluetoothLE.Core ;
 using Microsoft.VisualStudio.TestTools.UnitTesting ;
 
 namespace Idasen.BluetoothLE.Characteristics.Tests.Common.ConstructorNullTester
