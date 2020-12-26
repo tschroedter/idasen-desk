@@ -3,7 +3,7 @@ using Windows.Storage.Streams ;
 
 namespace Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers
 {
-    public interface IGattReadResult
+    public interface IGattReadResultWrapper
     {
         GattCommunicationStatus Status        { get ; }
         byte?                   ProtocolError { get ; }

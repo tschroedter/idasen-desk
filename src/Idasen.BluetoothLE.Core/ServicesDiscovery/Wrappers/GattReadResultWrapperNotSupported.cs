@@ -4,8 +4,8 @@ using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers ;
 
 namespace Idasen.BluetoothLE.Core.ServicesDiscovery.Wrappers
 {
-    public class GattReadResultNotSupported
-        : IGattReadResult
+    public class GattReadResultWrapperNotSupported
+        : IGattReadResultWrapper
     {
         public GattCommunicationStatus Status { get ; } = GattCommunicationStatus.Unreachable ;
 

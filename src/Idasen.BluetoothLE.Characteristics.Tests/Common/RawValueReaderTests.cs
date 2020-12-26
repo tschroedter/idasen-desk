@@ -31,17 +31,17 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Common
         public async Task TryReadValueAsync_ForNotSupportingRead_False (
             RawValueReader             sut ,
             [ Freeze ] IBufferReader   reader ,
-            IGattReadResult            result ,
+            IGattReadResultWrapper            resultWrapper ,
             IGattCharacteristicWrapper characteristic )
         {
             WithTryReadValueResult ( reader ,
                                      Array.Empty < byte > ( ) ) ;
 
-            result.Status
+            resultWrapper.Status
                   .Returns ( GattCommunicationStatus.Success ) ;
 
             characteristic.WithCharacteristicProperties ( GattCharacteristicProperties.None )
-                          .WithReadValueAsyncResult ( result ) ;
+                          .WithReadValueAsyncResult ( resultWrapper ) ;
 
             var (success , _) = await sut.TryReadValueAsync ( characteristic ) ;
 
@@ -53,17 +53,17 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Common
         public async Task TryReadValueAsync_ForNotSupportingRead_Empty (
             RawValueReader             sut ,
             [ Freeze ] IBufferReader   reader ,
-            IGattReadResult            result ,
+            IGattReadResultWrapper            resultWrapper ,
             IGattCharacteristicWrapper characteristic )
         {
             WithTryReadValueResult ( reader ,
                                      Array.Empty < byte > ( ) ) ;
 
-            result.Status
+            resultWrapper.Status
                   .Returns ( GattCommunicationStatus.Success ) ;
 
             characteristic.WithCharacteristicProperties ( GattCharacteristicProperties.None )
-                          .WithReadValueAsyncResult ( result ) ;
+                          .WithReadValueAsyncResult ( resultWrapper ) ;
 
             var (_ , bytes) = await sut.TryReadValueAsync ( characteristic ) ;
 
@@ -75,17 +75,17 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Common
         public async Task TryReadValueAsync_ForGattCommunicationStatusIsSuccess_True (
             RawValueReader             sut ,
             [ Freeze ] IBufferReader   reader ,
-            IGattReadResult            result ,
+            IGattReadResultWrapper            resultWrapper ,
             IGattCharacteristicWrapper characteristic )
         {
             WithTryReadValueResult ( reader ,
                                      Array.Empty < byte > ( ) ) ;
 
-            result.Status
+            resultWrapper.Status
                   .Returns ( GattCommunicationStatus.Success ) ;
 
             characteristic.WithCharacteristicProperties ( GattCharacteristicProperties.Read )
-                          .WithReadValueAsyncResult ( result ) ;
+                          .WithReadValueAsyncResult ( resultWrapper ) ;
 
             var (success , _) = await sut.TryReadValueAsync ( characteristic ) ;
 
@@ -97,18 +97,18 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Common
         public async Task TryReadValueAsync_ForGattCommunicationStatusIsSuccess_Bytes (
             RawValueReader             sut ,
             [ Freeze ] IBufferReader   reader ,
-            IGattReadResult            result ,
+            IGattReadResultWrapper            resultWrapper ,
             IGattCharacteristicWrapper characteristic ,
             byte [ ]                   bytes )
         {
             WithTryReadValueResult ( reader ,
                                      bytes ) ;
 
-            result.Status
+            resultWrapper.Status
                   .Returns ( GattCommunicationStatus.Success ) ;
 
             characteristic.WithCharacteristicProperties ( GattCharacteristicProperties.Read )
-                          .WithReadValueAsyncResult ( result ) ;
+                          .WithReadValueAsyncResult ( resultWrapper ) ;
 
             var (_ , value) = await sut.TryReadValueAsync ( characteristic ) ;
 
@@ -120,17 +120,17 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Common
         public async Task TryReadValueAsync_ForGattCommunicationStatusIsNotSuccess_False (
             RawValueReader             sut ,
             [ Freeze ] IBufferReader   reader ,
-            IGattReadResult            result ,
+            IGattReadResultWrapper            resultWrapper ,
             IGattCharacteristicWrapper characteristic )
         {
             WithTryReadValueResult ( reader ,
                                      Array.Empty < byte > ( ) ) ;
 
-            result.Status
+            resultWrapper.Status
                   .Returns ( GattCommunicationStatus.Unreachable ) ;
 
             characteristic.WithCharacteristicProperties ( GattCharacteristicProperties.Read )
-                          .WithReadValueAsyncResult ( result ) ;
+                          .WithReadValueAsyncResult ( resultWrapper ) ;
 
             var (success , _) = await sut.TryReadValueAsync ( characteristic ) ;
 
@@ -142,17 +142,17 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Common
         public async Task TryReadValueAsync_ForGattCommunicationStatusIsNotSuccess_Empty (
             RawValueReader             sut ,
             [ Freeze ] IBufferReader   reader ,
-            IGattReadResult            result ,
+            IGattReadResultWrapper            resultWrapper ,
             IGattCharacteristicWrapper characteristic )
         {
             WithTryReadValueResult ( reader ,
                                      Array.Empty < byte > ( ) ) ;
 
-            result.Status
+            resultWrapper.Status
                   .Returns ( GattCommunicationStatus.Success ) ;
 
             characteristic.WithCharacteristicProperties ( GattCharacteristicProperties.Read )
-                          .WithReadValueAsyncResult ( result ) ;
+                          .WithReadValueAsyncResult ( resultWrapper ) ;
 
             var (_ , value) = await sut.TryReadValueAsync ( characteristic ) ;
 
@@ -164,21 +164,21 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Common
         public async Task TryReadValueAsync_ForGattCommunicationStatus_SetsProtocolError (
             RawValueReader             sut ,
             [ Freeze ] IBufferReader   reader ,
-            IGattReadResult            result ,
+            IGattReadResultWrapper            resultWrapper ,
             IGattCharacteristicWrapper characteristic ,
             byte                       protocolError )
         {
             WithTryReadValueResult ( reader ,
                                      Array.Empty < byte > ( ) ) ;
 
-            result.Status
+            resultWrapper.Status
                   .Returns ( GattCommunicationStatus.Success ) ;
 
-            result.ProtocolError
+            resultWrapper.ProtocolError
                   .Returns ( protocolError ) ;
 
             characteristic.WithCharacteristicProperties ( GattCharacteristicProperties.Read )
-                          .WithReadValueAsyncResult ( result ) ;
+                          .WithReadValueAsyncResult ( resultWrapper ) ;
 
             _ = await sut.TryReadValueAsync ( characteristic ) ;
 

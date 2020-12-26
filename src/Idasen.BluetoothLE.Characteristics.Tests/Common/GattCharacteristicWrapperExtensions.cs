@@ -40,10 +40,10 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Common
 
         public static IGattCharacteristicWrapper WithReadValueAsyncResult (
             this IGattCharacteristicWrapper characteristic ,
-            IGattReadResult                 result )
+            IGattReadResultWrapper                 resultWrapper )
         {
             _ = characteristic.ReadValueAsync ( )
-                              .Returns ( Task.FromResult ( result ) ) ;
+                              .Returns ( Task.FromResult ( resultWrapper ) ) ;
 
             return characteristic ;
         }

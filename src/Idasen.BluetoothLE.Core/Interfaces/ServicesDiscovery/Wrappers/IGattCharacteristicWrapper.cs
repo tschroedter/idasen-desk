@@ -62,7 +62,7 @@ namespace Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers
         ///     in turn contains the completion status of the asynchronous
         ///     operation and, if successful, the data read from the device.
         /// </returns>
-        Task < IGattReadResult > ReadValueAsync ( ) ;
+        Task < IGattReadResultWrapper > ReadValueAsync ( ) ;
 
         Task < IGattCharacteristicWrapper > Initialize ( ) ;
     }
