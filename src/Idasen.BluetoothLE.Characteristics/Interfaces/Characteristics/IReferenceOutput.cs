@@ -7,10 +7,10 @@ using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery ;
 
 namespace Idasen.BluetoothLE.Characteristics.Interfaces.Characteristics
 {
-    public interface IReferenceOutput // todo rename to Ch...Ref...
+    public interface IReferenceOutput
         : ICharacteristicBase , IDisposable
     {
-        delegate IReferenceOutput Factory ( IDevice device ) ; // todo check if other interfaces have factory
+        delegate IReferenceOutput Factory ( IDevice device ) ;
 
         Guid                                   GattServiceUuid    { get ; }
         IEnumerable < byte >                   RawHeightSpeed     { get ; }
