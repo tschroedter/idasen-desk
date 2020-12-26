@@ -56,7 +56,7 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
         public virtual T Initialize < T > ( )
             where T : class
         {
-            Guard.ArgumentNotNull ( GattServiceUuid , // todo log error/warning
+            Guard.ArgumentNotNull ( GattServiceUuid ,
                                     nameof ( GattServiceUuid ) ) ;
 
             var (service , characteristicsResultWrapper) = Device.GattServices
@@ -87,10 +87,18 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
             {
                 if ( ! Characteristics.Characteristics.TryGetValue ( key ,
                                                                      out var characteristic ) )
-                    continue ; // todo log warning
+                {
+                    Logger.Warning ( $"Failed to get value for key '{key}'" );
+
+                    continue ;
+                }
 
                 if ( characteristic == null )
-                    continue ; // todo log warning
+                {
+                    Logger.Warning($"Failed, characteristic for key '{key}' is null");
+
+                    continue;
+                }
 
                 Logger.Debug ( $"Reading raw value for {key} " +
                                $"and and characteristic {characteristic.Uuid}" ) ;
