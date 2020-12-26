@@ -68,7 +68,7 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
 
         /// <inheritdoc />
         public IEnumerable < byte > RawParameters =>
-            TryGetValueOrEmpty ( CharacteristicParameters ) ; // todo summary ConnectionParameters = RawPeripheralPreferredConnectionParameters
+            TryGetValueOrEmpty ( CharacteristicParameters ) ;
 
         /// <inheritdoc />
         public IEnumerable < byte > RawAppearance => TryGetValueOrEmpty ( CharacteristicAppearance ) ;

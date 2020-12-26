@@ -7,12 +7,14 @@ using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery ;
 
 namespace Idasen.BluetoothLE.Characteristics.Interfaces.Characteristics
 {
+    /// <summary>
+    ///     More details can be found here: https://www.bluetooth.com/
+    /// </summary>
     public interface IGenericAccess
         : ICharacteristicBase
     {
         delegate IGenericAccess Factory ( IDevice device ) ;
 
-        // todo get description from website
         /// <summary>
         ///     Raw Central Address Resolution
         /// </summary>
