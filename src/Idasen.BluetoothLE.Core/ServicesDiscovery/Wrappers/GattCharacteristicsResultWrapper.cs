@@ -69,7 +69,7 @@ namespace Idasen.BluetoothLE.Core.ServicesDiscovery.Wrappers
 
             foreach ( var characteristic in Characteristics )
             {
-                var properties = PropertiesToString ( characteristic.CharacteristicProperties ) ;
+                var properties = characteristic.CharacteristicProperties.ToCsv ( ) ;
                 var formats    = PresentationFormatsToString ( characteristic.PresentationFormats ) ;
 
                 list.Add ( $"Service UUID = {characteristic.ServiceUuid} "         +
@@ -98,20 +98,6 @@ namespace Idasen.BluetoothLE.Core.ServicesDiscovery.Wrappers
                            $"Namespace = {format.Namespace}, "     +
                            $"Exponent = {format.Exponent}, "       +
                            $"Unit = {format.Unit}" ) ;
-            }
-
-            return string.Join ( ", " ,
-                                 list ) ;
-        }
-
-        private static string PropertiesToString ( GattCharacteristicProperties properties )
-        {
-            var list = new List < GattCharacteristicProperties > ( ) ;
-
-            foreach ( GattCharacteristicProperties property in
-                Enum.GetValues ( typeof ( GattCharacteristicProperties ) ) )
-            {
-                if ( ( properties & property ) == property ) list.Add ( property ) ;
             }
 
             return string.Join ( ", " ,

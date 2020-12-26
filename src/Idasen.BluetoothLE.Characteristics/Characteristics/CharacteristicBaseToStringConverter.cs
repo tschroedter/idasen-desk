@@ -1,8 +1,6 @@
-﻿using System ;
-using System.Collections.Generic ;
+﻿using System.Collections.Generic ;
 using System.Linq ;
 using System.Text ;
-using Windows.Devices.Bluetooth.GenericAttributeProfile ;
 using Idasen.BluetoothLE.Characteristics.Common ;
 using Idasen.BluetoothLE.Characteristics.Interfaces.Characteristics ;
 using Idasen.BluetoothLE.Core ;
@@ -38,7 +36,7 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
                 if ( characteristic.Characteristics.Properties.TryGetValue ( key ,
                                                                              out var properties )
                 )
-                    builder.AppendLine ( $" ({PropertiesToString ( properties )})" ) ;
+                    builder.AppendLine ( $" ({properties.ToCsv (  )})" ) ;
                 else
                     builder.AppendLine ( ) ;
             }
@@ -49,20 +47,6 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
 
         internal static readonly IEnumerable < byte > RawArrayEmpty = Enumerable.Empty < byte > ( )
                                                                                 .ToArray ( ) ;
-
-        protected string PropertiesToString ( GattCharacteristicProperties properties ) // todo duplicated code
-        {
-            var list = new List < GattCharacteristicProperties > ( ) ;
-
-            foreach ( GattCharacteristicProperties property in
-                Enum.GetValues ( typeof ( GattCharacteristicProperties ) ) )
-            {
-                if ( ( properties & property ) == property ) list.Add ( property ) ;
-            }
-
-            return string.Join ( ", " ,
-                                 list ) ;
-        }
 
         [ NotNull ]
         protected IEnumerable < byte > TryGetValueOrEmpty ( CharacteristicBase characteristic ,
