@@ -6,7 +6,6 @@ namespace Idasen.BluetoothLE.Linak.Control
     public interface IDeskMover
         : IDisposable
     {
-        // todo summary
         uint                 Height       { get ; }
         int                  Speed        { get ; }
         uint                 TargetHeight { get ; set ; }
