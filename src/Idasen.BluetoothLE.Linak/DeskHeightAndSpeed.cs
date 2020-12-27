@@ -52,8 +52,7 @@ namespace Idasen.BluetoothLE.Linak
 
         public IObservable < int > SpeedChanged => _subjectSpeed ;
 
-        public IObservable < HeightSpeedDetails > HeightAndSpeedChanged =>
-            _subjectHeightAndSpeed ; // todo looks like duplicate of Height And Speed
+        public IObservable < HeightSpeedDetails > HeightAndSpeedChanged => _subjectHeightAndSpeed ;
 
         public uint Height { get ; private set ; }
 
