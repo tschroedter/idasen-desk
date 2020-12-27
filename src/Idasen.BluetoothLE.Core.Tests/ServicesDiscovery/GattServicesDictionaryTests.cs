@@ -16,7 +16,7 @@ namespace Idasen.BluetoothLE.Core.Tests.ServicesDiscovery
             GattServicesDictionary            sut,
             IGattDeviceServiceWrapper         service)
         {
-            Action action = () => sut[service] = null; ;
+            Action action = () => sut[service] = null;
 
             action.Should()
                   .Throw<ArgumentException>()
