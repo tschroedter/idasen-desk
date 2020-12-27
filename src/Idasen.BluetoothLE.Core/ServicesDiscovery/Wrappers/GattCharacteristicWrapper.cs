@@ -66,7 +66,7 @@ namespace Idasen.BluetoothLE.Core.ServicesDiscovery.Wrappers
         public ushort AttributeHandle => _characteristic.AttributeHandle ;
 
         /// <inheritdoc />
-        public async Task < IGattWriteResult > WriteValueWithResultAsync ( IBuffer buffer )
+        public async Task < IGattWriteResultWrapper > WriteValueWithResultAsync ( IBuffer buffer )
         {
             var result = await _characteristic.WriteValueWithResultAsync ( buffer ) ;
 

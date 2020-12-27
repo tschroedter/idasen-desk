@@ -59,7 +59,7 @@ namespace Idasen.BluetoothLE.Characteristics.Common
             return status == GattCommunicationStatus.Success ;
         }
 
-        public async Task < IGattWriteResult > TryWriteWithoutResponseAsync (
+        public async Task < IGattWriteResultWrapper > TryWriteWithoutResponseAsync (
             [ NotNull ] IGattCharacteristicWrapper characteristic ,
             [ NotNull ] IBuffer                    buffer )
         {

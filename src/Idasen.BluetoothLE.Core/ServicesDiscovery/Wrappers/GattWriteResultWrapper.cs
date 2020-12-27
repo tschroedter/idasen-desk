@@ -6,7 +6,7 @@ namespace Idasen.BluetoothLE.Core.ServicesDiscovery.Wrappers
 {
     [ ExcludeFromCodeCoverage ]
     public class GattWriteResultWrapper
-        : IGattWriteResult
+        : IGattWriteResultWrapper
     {
         public GattWriteResultWrapper ( [ JetBrains.Annotations.NotNull ] GattWriteResult result )
         {
@@ -20,9 +20,9 @@ namespace Idasen.BluetoothLE.Core.ServicesDiscovery.Wrappers
 
         public byte? ProtocolError => _result.ProtocolError ;
 
-        public delegate IGattWriteResult Factory ( GattWriteResult result ) ;
+        public delegate IGattWriteResultWrapper Factory ( GattWriteResult result ) ;
 
-        public static readonly IGattWriteResult NotSupported = new GattWriteResultNotSupported ( ) ;
+        public static readonly IGattWriteResultWrapper NotSupported = new GattWriteResultWrapperNotSupported ( ) ;
 
         private readonly GattWriteResult _result ;
     }

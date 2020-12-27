@@ -17,7 +17,7 @@ namespace Idasen.BluetoothLE.Core.ServicesDiscovery.Wrappers
         }
 
         /// <inheritdoc />
-        public IGattWriteResult Create ( GattWriteResult result )
+        public IGattWriteResultWrapper Create ( GattWriteResult result )
         {
             Guard.ArgumentNotNull ( result ,
                                     nameof ( result ) ) ;

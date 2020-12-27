@@ -43,7 +43,7 @@ namespace Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers
         /// </summary>
         /// <param name="buffer"></param>
         /// <returns></returns>
-        Task < IGattWriteResult > WriteValueWithResultAsync ( IBuffer buffer ) ;
+        Task < IGattWriteResultWrapper > WriteValueWithResultAsync ( IBuffer buffer ) ;
 
         /// <summary>
         ///     todo

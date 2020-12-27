@@ -30,7 +30,7 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Common
 
         public static IGattCharacteristicWrapper WithWriteValueWithResultAsync (
             this IGattCharacteristicWrapper characteristic ,
-            IGattWriteResult                result )
+            IGattWriteResultWrapper                result )
         {
             _ = characteristic.WriteValueWithResultAsync ( Arg.Any < IBuffer > ( ) )
                               .Returns ( Task.FromResult ( result ) ) ;
@@ -40,10 +40,10 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Common
 
         public static IGattCharacteristicWrapper WithReadValueAsyncResult (
             this IGattCharacteristicWrapper characteristic ,
-            IGattReadResultWrapper                 resultWrapper )
+            IGattReadResultWrapper          result )
         {
             _ = characteristic.ReadValueAsync ( )
-                              .Returns ( Task.FromResult ( resultWrapper ) ) ;
+                              .Returns ( Task.FromResult ( result ) ) ;
 
             return characteristic ;
         }

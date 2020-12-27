@@ -8,6 +8,6 @@ namespace Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers
         /// </summary>
         /// <param name="result"></param>
         /// <returns></returns>
-        IGattWriteResult Create ( GattWriteResult result ) ;
+        IGattWriteResultWrapper Create ( GattWriteResult result ) ;
     }
 }

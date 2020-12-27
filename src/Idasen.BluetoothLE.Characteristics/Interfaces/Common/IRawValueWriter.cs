@@ -16,7 +16,7 @@ namespace Idasen.BluetoothLE.Characteristics.Interfaces.Common
             IGattCharacteristicWrapper characteristic ,
             IBuffer                    buffer ) ;
 
-        Task < IGattWriteResult > TryWriteWithoutResponseAsync (
+        Task < IGattWriteResultWrapper > TryWriteWithoutResponseAsync (
             IGattCharacteristicWrapper characteristic ,
             IBuffer                    buffer ) ;
     }

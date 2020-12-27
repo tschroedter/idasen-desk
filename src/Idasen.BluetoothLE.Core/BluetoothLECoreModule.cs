@@ -96,7 +96,7 @@ namespace Idasen.BluetoothLE.Core
                    .As < IGatReadResultWrapperFactory > ( ) ;
 
             builder.RegisterType < GattWriteResultWrapper > ( )
-                   .As < IGattWriteResult > ( ) ; // todo rename
+                   .As < IGattWriteResultWrapper > ( ) ;
             builder.RegisterType < GattWriteResultWrapperFactory > ( )
                    .As < IGattWriteResultWrapperFactory > ( ) ;
         }

@@ -110,22 +110,22 @@ namespace Idasen.BluetoothLE.Core.Tests.ServicesDiscovery
         public async Task GattCommunicationStatus_ForConnectedAndServicesAvailable_Success (
             GattServicesProvider                 sut ,
             [ Freeze ] IBluetoothLeDeviceWrapper device ,
-            IGattDeviceServicesResultWrapper     resultWrapper )
+            IGattDeviceServicesResultWrapper     result )
         {
-            resultWrapper.Status
+            result.Status
                          .Returns ( GattCommunicationStatus.Success ) ;
 
             device.ConnectionStatus
                   .Returns ( BluetoothConnectionStatus.Connected ) ;
 
             device.GetGattServicesAsync ( )
-                  .Returns ( resultWrapper ) ;
+                  .Returns ( result ) ;
 
             await sut.Refresh ( ) ;
 
             sut.GattCommunicationStatus
                .Should ( )
-               .Be ( resultWrapper.Status ) ;
+               .Be ( result.Status ) ;
         }
 
         [ AutoDataTestMethod ]
