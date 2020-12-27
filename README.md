@@ -3,7 +3,16 @@ This repository is about controlling [Ikea's Idasen Desk](https://www.ikea.com/a
 
 ![taskbar](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/Taskbar.png)
 
-## System Tray Application
+# Installation
+## Idasen.SystemTray.Setup.msi
+Download and run the installer from here: ![Idasen.SystemTray.Setup.msi](https://github.com/tschroedter/idasen-desk/releases/tag/0.0.29) 
+
+### Pre-condition
+- .Net Core 3.1 runtime must already be installed (see https://dotnet.microsoft.com/download/dotnet-core/3.1)
+
+---
+
+# System Tray Application
 At the moment the Windows 10 system tray application is a *work in progress*. It supports the following features:
 - Detect Desk
 - Show Settings
@@ -14,24 +23,43 @@ At the moment the Windows 10 system tray application is a *work in progress*. It
 
 ![taskbar context menu](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/Taskbar%20Context%20Menu.png)
 
-### Connect
+The application will automatically connect to the Idasen Desk during start-up. Pop-ups will notify you about the progress:
+- Trying to connect,
+- Connected or
+- Failed to connect.
+
+![Trying to connect](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/Trying%20To%20Connect.png)![Connected](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/Connected.png)![Connected](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/Failed%20to%20connect.png)
+
+## Connect
 *Connect* will try to detect a desk in case the application failed to detected the desk at start-up.
 
-### Show Settings
-*Show Settings* will display the current settings and allows to change them:
+## Show Settings
+*Show Settings* will display the current settings for the current user and allows to change them:
 - Standing Height
 - Seating Height
 
 ![settings](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/settings.PNG)
 
-### Hide Settings
+_Note:_ The settings are stored per Windows user.
+
+## Hide Settings
 *Hide Setting* will close the settings window.
 
-### Standing
+## Standing
 *Standing* will move the desk to the standing height specified in the settings.
 
-### Seating
+## Seating
 *Seating* will move the desk to the seating height specified in the settings.
 
-### Exit
+## Exit
 *Exit* will close the application.
+
+---
+
+# Problems
+_Q: The application fails to connect to the Idasen desk?_
+
+A: Windows 10 needs to be connected to the Idasen desk which means the desk should be listed as a Bluetooth device.
+
+![Trying to connect](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/Windows%2010%20Bluetooth%20Settings.png)
+
