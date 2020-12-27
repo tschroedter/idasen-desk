@@ -46,7 +46,7 @@ namespace Idasen.BluetoothLE.Characteristics.Common
                                   "doesn't support 'Read'" ) ;
 
             return ( false , ArrayEmpty ) ;
-        } // todo do not move desk if height speed stays 0
+        }
 
         private static readonly byte [ ] ArrayEmpty = Enumerable.Empty < byte > ( )
                                                                 .ToArray ( ) ;
