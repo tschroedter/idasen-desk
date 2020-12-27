@@ -34,23 +34,31 @@ namespace Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers
         ushort AttributeHandle { get ; }
 
         /// <summary>
-        ///     todo
+        ///     Notifies when the Gatt Characteristic value has changed.
         /// </summary>
-        IObservable < GattCharacteristicValueChangedDetails > ValueChanged { get ; }
+        IObservable< GattCharacteristicValueChangedDetails > ValueChanged { get ; }
 
         /// <summary>
-        ///     todo
+        ///     Writes the given raw bytes.
         /// </summary>
-        /// <param name="buffer"></param>
-        /// <returns></returns>
-        Task < IGattWriteResultWrapper > WriteValueWithResultAsync ( IBuffer buffer ) ;
+        /// <param name="buffer">
+        ///     The bytes to be written.
+        /// </param>
+        /// <returns>
+        ///     Result of the write process.
+        /// </returns>
+        Task< IGattWriteResultWrapper > WriteValueWithResultAsync ( IBuffer buffer ) ;
 
         /// <summary>
-        ///     todo
+        ///     Writes the given raw bytes async.
         /// </summary>
-        /// <param name="buffer"></param>
-        /// <returns></returns>
-        Task < GattCommunicationStatus > WriteValueAsync ( IBuffer buffer ) ;
+        /// <param name="buffer">
+        ///     The bytes to be written.
+        /// </param>
+        /// <returns>
+        ///     Result of the write process.
+        /// </returns>
+        Task< GattCommunicationStatus > WriteValueAsync ( IBuffer buffer ) ;
 
         /// <summary>
         ///     Performs a Characteristic Value read from the value cache
@@ -64,6 +72,12 @@ namespace Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers
         /// </returns>
         Task < IGattReadResultWrapper > ReadValueAsync ( ) ;
 
+        /// <summary>
+        ///     Initializes the instance.
+        /// </summary>
+        /// <returns>
+        ///     Itself.
+        /// </returns>
         Task < IGattCharacteristicWrapper > Initialize ( ) ;
     }
 }
