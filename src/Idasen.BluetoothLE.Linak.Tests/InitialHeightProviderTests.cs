@@ -335,6 +335,28 @@ namespace Idasen.BluetoothLE.Linak.Tests
                .BeFalse ( ) ;
         }
 
+        [ TestMethod ]
+        public void Dispose_ForInvoked_DisposesHeightAndSpeed ( )
+        {
+            var disposable = Substitute.For < IDisposable > ( ) ;
+            var subject    = Substitute.For < ISubject < HeightSpeedDetails > > ( ) ;
+
+            subject.Subscribe ( null! )
+                   .ReturnsForAnyArgs ( disposable ) ;
+
+            _heightAndSpeed.HeightAndSpeedChanged
+                           .Returns ( subject ) ;
+
+            using var sut = CreateSut ( ) ;
+
+            sut.Initialize ( ) ;
+
+            sut.Dispose ( ) ;
+
+            disposable.Received ( )
+                      .Dispose ( ) ;
+        }
+
         private InitialHeightProvider CreateSut ( )
         {
             var deviceMonitor = new InitialHeightProvider ( _logger ,

@@ -82,7 +82,7 @@ namespace Idasen.BluetoothLE.Linak.Control
         /// <inheritdoc />
         public void Dispose ( )
         {
-            _disposalHeightAndSpeed?.Dispose ( ) ; // todo testing
+            _disposalHeightAndSpeed?.Dispose ( ) ;
         }
 
         /// <inheritdoc />
