@@ -46,7 +46,7 @@ namespace Idasen.BluetoothLE.Core.ServicesDiscovery
 
             if ( _device.ConnectionStatus == BluetoothConnectionStatus.Disconnected )
             {
-                _logger.Error ( $"{_device.DeviceId} {_device.ConnectionStatus}" ) ;
+                _logger.Error ( $"[{_device.DeviceId}] {_device.ConnectionStatus}" ) ;
 
                 _refreshed.OnNext ( GattCommunicationStatus.Unreachable ) ;
 
@@ -58,7 +58,6 @@ namespace Idasen.BluetoothLE.Core.ServicesDiscovery
             if ( _gattResult.Status == GattCommunicationStatus.Success )
                 await GetCharacteristicsAsync ( _gattResult ) ;
             else
-                // todo log everywhere [device.DeviceID]
                 _logger.Error ( $"[{_device.DeviceId}] Gatt communication status " +
                                 $"'{_gattResult.Status}'" ) ;
 
@@ -82,7 +81,7 @@ namespace Idasen.BluetoothLE.Core.ServicesDiscovery
 
                 if ( characteristics.Status != GattCommunicationStatus.Success )
                 {
-                    _logger.Error ( "Could not get Characteristics for device " +
+                    _logger.Error ( $"[{_device.DeviceId}] Could not get Characteristics for device " +
                                     $"'{service.DeviceId}' and service '{service.Uuid}'" ) ;
 
                     continue ;
