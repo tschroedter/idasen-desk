@@ -1,4 +1,6 @@
-﻿using FluentAssertions ;
+﻿using System ;
+using FluentAssertions ;
+using Idasen.BluetoothLE.Common.Tests ;
 using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers ;
 using Idasen.BluetoothLE.Core.ServicesDiscovery ;
 using NSubstitute ;
@@ -9,6 +11,18 @@ namespace Idasen.BluetoothLE.Core.Tests.ServicesDiscovery
     [ AutoDataTestClass ]
     public class GattServicesDictionaryTests
     {
+        [AutoDataTestMethod]
+        public void Indexer_ForServiceAndResultNull_Throws(
+            GattServicesDictionary            sut,
+            IGattDeviceServiceWrapper         service)
+        {
+            Action action = () => sut[service] = null; ;
+
+            action.Should()
+                  .Throw<ArgumentException>()
+                  .WithParameter("value");
+        }
+
         [ AutoDataTestMethod ]
         public void Indexer_ForServiceAndResult_SetsKeyAndValue (
             GattServicesDictionary            sut ,

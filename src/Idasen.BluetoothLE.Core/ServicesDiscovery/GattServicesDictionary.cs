@@ -10,7 +10,14 @@ namespace Idasen.BluetoothLE.Core.ServicesDiscovery
         public IGattCharacteristicsResultWrapper this [ IGattDeviceServiceWrapper service ]
         {
             get => _dictionary [ service ] ;
-            set => _dictionary [ service ] = value ; // todo can be null, add check?
+            set
+            {
+                Guard.ArgumentNotNull ( value ,
+                                        nameof ( value ) ) ;
+
+                _dictionary [ service ] = value ;
+
+            }
         }
 
         public void Clear ( )
