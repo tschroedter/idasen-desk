@@ -27,7 +27,7 @@ namespace Idasen.BluetoothLE.Linak
             _deskFactory          = deskFactory ;
         }
 
-        public async Task < IDesk > CreateAsync ( ulong address ) // todo check if other method need to end with Async
+        public async Task < IDesk > CreateAsync ( ulong address )
         {
             var device    = await _deviceFactory.FromBluetoothAddressAsync ( address ) ;
             var connector = _deskConnectorFactory.Invoke ( device ) ;
