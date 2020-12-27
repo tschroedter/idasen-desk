@@ -31,7 +31,7 @@ namespace Idasen.BluetoothLE.Characteristics.Common
             Guard.ArgumentNotNull ( characteristic ,
                                     nameof ( characteristic ) ) ;
 
-            if ( SupportsNotify ( characteristic ) ) // todo testing
+            if ( SupportsNotify ( characteristic ) )
                 return ( false , ArrayEmpty ) ;      // need to subscribe to value change
 
             if ( SupportsRead ( characteristic ) )

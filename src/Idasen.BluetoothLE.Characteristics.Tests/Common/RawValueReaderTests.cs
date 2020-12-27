@@ -28,6 +28,50 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Common
         }
 
         [ AutoDataTestMethod ]
+        public async Task TryReadValueAsync_ForSupportsNotifyTrue_False (
+            RawValueReader             sut ,
+            [ Freeze ] IBufferReader   reader ,
+            IGattReadResultWrapper     result ,
+            IGattCharacteristicWrapper characteristic )
+        {
+            WithTryReadValueResult ( reader ,
+                                     Array.Empty < byte > ( ) ) ;
+
+            result.Status
+                  .Returns ( GattCommunicationStatus.Success ) ;
+
+            characteristic.WithCharacteristicProperties ( GattCharacteristicProperties.Notify )
+                          .WithReadValueAsyncResult ( result ) ;
+
+            var (success , _) = await sut.TryReadValueAsync ( characteristic ) ;
+
+            success.Should ( )
+                   .BeFalse ( ) ;
+        }
+
+        [ AutoDataTestMethod ]
+        public async Task TryReadValueAsync_ForSupportsNotifyTrue_Empty (
+            RawValueReader             sut ,
+            [ Freeze ] IBufferReader   reader ,
+            IGattReadResultWrapper     result ,
+            IGattCharacteristicWrapper characteristic )
+        {
+            WithTryReadValueResult ( reader ,
+                                     Array.Empty < byte > ( ) ) ;
+
+            result.Status
+                  .Returns ( GattCommunicationStatus.Success ) ;
+
+            characteristic.WithCharacteristicProperties ( GattCharacteristicProperties.Notify )
+                          .WithReadValueAsyncResult ( result ) ;
+
+            var (_ , bytes) = await sut.TryReadValueAsync ( characteristic ) ;
+
+            bytes.Should ( )
+                 .BeEmpty ( ) ;
+        }
+
+        [ AutoDataTestMethod ]
         public async Task TryReadValueAsync_ForNotSupportingRead_False (
             RawValueReader             sut ,
             [ Freeze ] IBufferReader   reader ,
