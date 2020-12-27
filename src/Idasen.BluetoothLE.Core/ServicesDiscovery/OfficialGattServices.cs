@@ -76,7 +76,7 @@ namespace Idasen.BluetoothLE.Core.ServicesDiscovery
             }
         }
 
-        private static IEnumerable < OfficialGattService > ReadCsvFile ( string resourceName ) // todo duplicated code
+        private static IEnumerable < OfficialGattService > ReadCsvFile ( string resourceName )
         {
             var stream = Assembly.GetExecutingAssembly ( )
                                  .GetManifestResourceStream ( resourceName ) ;
