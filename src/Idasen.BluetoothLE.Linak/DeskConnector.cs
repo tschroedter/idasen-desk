@@ -83,8 +83,7 @@ namespace Idasen.BluetoothLE.Linak
         public IObservable < int > SpeedChanged => _subjectSpeed ;
 
         /// <inheritdoc />
-        public IObservable < HeightSpeedDetails > HeightAndSpeedChanged =>
-            _subjectHeightAndSpeed ; // todo use only this
+        public IObservable < HeightSpeedDetails > HeightAndSpeedChanged => _subjectHeightAndSpeed ;
 
         /// <inheritdoc />
         public IObservable < uint > FinishedChanged => _deskMover?.Finished ;
