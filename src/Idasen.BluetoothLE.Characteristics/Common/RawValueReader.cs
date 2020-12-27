@@ -32,7 +32,12 @@ namespace Idasen.BluetoothLE.Characteristics.Common
                                     nameof ( characteristic ) ) ;
 
             if ( SupportsNotify ( characteristic ) )
-                return ( false , ArrayEmpty ) ;      // need to subscribe to value change
+            {
+                _logger.Debug ( $"GattCharacteristic '{characteristic.Uuid}' " +
+                                "doesn't support 'Read' but supports 'Notify'" ) ;
+
+                return ( false , ArrayEmpty ) ; // need to subscribe to value change
+            }
 
             if ( SupportsRead ( characteristic ) )
                 return await ReadValue ( characteristic ) ;
