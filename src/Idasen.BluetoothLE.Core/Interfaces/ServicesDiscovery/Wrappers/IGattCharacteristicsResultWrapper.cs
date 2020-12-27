@@ -22,8 +22,12 @@ namespace Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers
         /// <summary>
         ///     Gets the characterisitics.
         /// </summary>
-        IReadOnlyList < IGattCharacteristicWrapper > Characteristics { get ; } // todo interface IGattCharacteristic
+        IReadOnlyList < IGattCharacteristicWrapper > Characteristics { get ; }
 
+        /// <summary>
+        ///     Initialize the instance.
+        /// </summary>
+        /// <returns></returns>
         Task < IGattCharacteristicsResultWrapper > Initialize ( ) ;
     }
 }
