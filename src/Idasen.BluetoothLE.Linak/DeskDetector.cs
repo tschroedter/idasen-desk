@@ -1,11 +1,7 @@
 ﻿using System ;
-using System.Collections.Generic ;
-using System.Linq ;
 using System.Reactive.Concurrency ;
 using System.Reactive.Linq ;
 using System.Reactive.Subjects ;
-using System.Text ;
-using Idasen.BluetoothLE.Characteristics.Common ;
 using Idasen.BluetoothLE.Core ;
 using Idasen.BluetoothLE.Core.Interfaces.DevicesDiscovery ;
 using Idasen.BluetoothLE.Linak.Interfaces ;
@@ -45,8 +41,7 @@ namespace Idasen.BluetoothLE.Linak
         public void Dispose ( )
         {
             _refreshedChanged?.Dispose ( ) ;
-            _subscriberDeskDeviceNameChanged?.Dispose ( ) ;
-            _deskFound?.Dispose ( ) ; // todo list
+            _deskFound?.Dispose ( ) ;
             _nameChanged?.Dispose ( ) ;
             _discovered?.Dispose ( ) ;
             _updated?.Dispose ( ) ;
@@ -57,8 +52,8 @@ namespace Idasen.BluetoothLE.Linak
         public IObservable < IDesk > DeskDetected => _deskDetected ;
 
         /// <inheritdoc />
-        public void Initialize ( string deviceName    = "Desk" ,
-                                 ulong  deviceAddress = 250635178951455u )
+        public void Initialize ( string deviceName    = "Desk",            // todo move into setting
+                                 ulong  deviceAddress = 250635178951455u ) // todo move into setting
         {
             Guard.ArgumentNotNull ( deviceName ,
                                     nameof ( deviceName ) ) ;
@@ -101,11 +96,12 @@ namespace Idasen.BluetoothLE.Linak
 
             try
             {
+                _logger.Information ( $"[{device.Name}] Desk discovered" );
+
                 _desk = await _factory.CreateAsync ( device.Address ) ;
 
-                _subscriberDeskDeviceNameChanged = _desk.DeviceNameChanged.Subscribe ( OnDeskDeviceNameChanged ) ;
                 _refreshedChanged = _desk.RefreshedChanged
-                                         .Subscribe ( OnRefreshedChanged ) ; // todo rename On..., swapped it with .Connect()
+                                         .Subscribe ( OnRefreshedChanged ) ;
 
                 _desk.Connect ( ) ;
             }
@@ -116,28 +112,19 @@ namespace Idasen.BluetoothLE.Linak
             }
         }
 
-        private void OnDeskDeviceNameChanged ( IEnumerable < byte > value )
-        {
-            var array = value.ToArray ( ) ;
-
-            var text = Encoding.UTF8.GetString ( array ) ;
-
-            _logger.Information ( $"Received: {array.ToHex ( )} - '{text}'" ) ;
-        }
-
         private void OnDeviceUpdated ( IDevice device )
         {
-            _logger.Information ( $"Device Updated: {device}" ) ;
+            _logger.Information ( $"[{device.Name}] Device Updated: {device}" ) ;
         }
 
         private void OnDeviceDiscovered ( IDevice device )
         {
-            _logger.Information ( $"Device Discovered: {device}" ) ;
+            _logger.Information ( $"[{device.Name}] Device Discovered: {device}" ) ;
         }
 
         private void OnDeviceNameChanged ( IDevice device )
         {
-            _logger.Information ( $"Device Name Changed: {device}" ) ;
+            _logger.Information ( $"[{device.Name}] Device Name Changed: {device}" ) ;
         }
 
         private void OnRefreshedChanged ( bool status )
@@ -159,7 +146,6 @@ namespace Idasen.BluetoothLE.Linak
 
         private IDisposable _nameChanged ;
         private IDisposable _refreshedChanged ;
-        private IDisposable _subscriberDeskDeviceNameChanged ;
         private IDisposable _updated ;
     }
 }
