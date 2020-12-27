@@ -13,32 +13,33 @@ namespace Idasen.Launcher
 {
     public static class ContainerProvider
     {
-        public static IContainer Create ( string appName ,
-                                          string appLogFileName,
-                                          IEnumerable <IModule> otherModules = null)
+        public static IContainer Create ( string                  appName ,
+                                          string                  appLogFileName ,
+                                          IEnumerable < IModule > otherModules = null )
         {
             var logFolder = CreateFullPathSettingsFolderName ( appName ) ;
-            var logFile   = CreateFullPathSettingsFileName(appName, appLogFileName);
+            var logFile = CreateFullPathSettingsFileName ( appName ,
+                                                           appLogFileName ) ;
 
             if ( ! Directory.Exists ( logFolder ) )
                 Directory.CreateDirectory ( logFolder ) ;
 
             const string template =
                 // "[{Timestamp:HH:mm:ss.ffff} {Level:u3}] {Message}{NewLine}{Exception}" ;
-                "[{Timestamp:HH:mm:ss.ffff} {Level:u3}] {Message} (at {Caller}){NewLine}{Exception}";
+                "[{Timestamp:HH:mm:ss.ffff} {Level:u3}] {Message} (at {Caller}){NewLine}{Exception}" ;
 
             Log.Logger = new LoggerConfiguration ( )
                         .MinimumLevel
-                        .Debug (  )
+                        .Debug ( )
                         .Enrich
                         .WithCaller ( )
                         .WriteTo
                         .ColoredConsole ( LogEventLevel.Debug ,
                                           template )
                         .WriteTo
-                        .File(logFile,
-                              LogEventLevel.Debug,
-                              template)
+                        .File ( logFile ,
+                                LogEventLevel.Debug ,
+                                template )
                         .CreateLogger ( ) ;
 
             var builder = new ContainerBuilder ( ) ;
@@ -47,7 +48,7 @@ namespace Idasen.Launcher
             builder.RegisterModule < BluetoothLECoreModule > ( ) ;
             builder.RegisterModule < BluetoothLELinakModule > ( ) ;
 
-            if (otherModules != null)
+            if ( otherModules != null )
                 foreach ( var otherModule in otherModules )
                 {
                     builder.RegisterModule ( otherModule ) ;
@@ -67,7 +68,7 @@ namespace Idasen.Launcher
 
         private static string CreateFullPathSettingsFolderName ( string appName )
         {
-            var appData = Environment.GetFolderPath ( Environment.SpecialFolder.CommonApplicationData) ;
+            var appData = Environment.GetFolderPath ( Environment.SpecialFolder.CommonApplicationData ) ;
             var folderName = Path.Combine ( appData ,
                                             appName ) ;
 

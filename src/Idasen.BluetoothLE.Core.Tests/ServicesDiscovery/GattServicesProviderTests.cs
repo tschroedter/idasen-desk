@@ -113,7 +113,7 @@ namespace Idasen.BluetoothLE.Core.Tests.ServicesDiscovery
             IGattDeviceServicesResultWrapper     result )
         {
             result.Status
-                         .Returns ( GattCommunicationStatus.Success ) ;
+                  .Returns ( GattCommunicationStatus.Success ) ;
 
             device.ConnectionStatus
                   .Returns ( BluetoothConnectionStatus.Connected ) ;

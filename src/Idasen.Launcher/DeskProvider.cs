@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Idasen.Launcher
+﻿namespace Idasen.Launcher
 {
     public class DeskProvider
     {

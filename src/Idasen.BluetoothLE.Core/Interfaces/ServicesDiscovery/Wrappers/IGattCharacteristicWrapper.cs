@@ -36,7 +36,7 @@ namespace Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers
         /// <summary>
         ///     Notifies when the Gatt Characteristic value has changed.
         /// </summary>
-        IObservable< GattCharacteristicValueChangedDetails > ValueChanged { get ; }
+        IObservable < GattCharacteristicValueChangedDetails > ValueChanged { get ; }
 
         /// <summary>
         ///     Writes the given raw bytes.
@@ -47,7 +47,7 @@ namespace Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers
         /// <returns>
         ///     Result of the write process.
         /// </returns>
-        Task< IGattWriteResultWrapper > WriteValueWithResultAsync ( IBuffer buffer ) ;
+        Task < IGattWriteResultWrapper > WriteValueWithResultAsync ( IBuffer buffer ) ;
 
         /// <summary>
         ///     Writes the given raw bytes async.
@@ -58,7 +58,7 @@ namespace Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers
         /// <returns>
         ///     Result of the write process.
         /// </returns>
-        Task< GattCommunicationStatus > WriteValueAsync ( IBuffer buffer ) ;
+        Task < GattCommunicationStatus > WriteValueAsync ( IBuffer buffer ) ;
 
         /// <summary>
         ///     Performs a Characteristic Value read from the value cache

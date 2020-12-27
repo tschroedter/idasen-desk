@@ -109,7 +109,7 @@ namespace Idasen.BluetoothLE.Linak
         public ulong BluetoothAddress => _device.BluetoothAddress ;
 
         /// <inheritdoc />
-        public string BluetoothAddressType => _device.BluetoothAddressType;
+        public string BluetoothAddressType => _device.BluetoothAddressType ;
 
         /// <inheritdoc />
         public string DeviceName => _device.Name ;
@@ -175,7 +175,7 @@ namespace Idasen.BluetoothLE.Linak
 
         private async void OnGattServicesRefreshed ( GattCommunicationStatus status )
         {
-            _logger.Information ( $"[{_device.Id}] "                         +
+            _logger.Information ( $"[{_device.Id}] "                               +
                                   $"ConnectionStatus: {_device.ConnectionStatus} " +
                                   $"GattCommunicationStatus: {_device.GattCommunicationStatus}" ) ;
 

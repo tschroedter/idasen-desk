@@ -15,8 +15,8 @@ namespace Idasen.SystemTray
         {
             builder.RegisterModule < BluetoothLELinakModule > ( ) ;
 
-            builder.RegisterType <SettingsManager> ( )
-                   .As <ISettingsManager> ( ) ;
+            builder.RegisterType < SettingsManager > ( )
+                   .As < ISettingsManager > ( ) ;
         }
     }
 }

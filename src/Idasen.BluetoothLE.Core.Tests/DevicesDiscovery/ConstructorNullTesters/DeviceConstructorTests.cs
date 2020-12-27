@@ -1,4 +1,4 @@
-﻿using FluentAssertions.Execution;
+﻿using FluentAssertions.Execution ;
 using Idasen.BluetoothLE.Common.Tests ;
 using Microsoft.VisualStudio.TestTools.UnitTesting ;
 

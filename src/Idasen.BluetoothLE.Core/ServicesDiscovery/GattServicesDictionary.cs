@@ -16,7 +16,6 @@ namespace Idasen.BluetoothLE.Core.ServicesDiscovery
                                         nameof ( value ) ) ;
 
                 _dictionary [ service ] = value ;
-
             }
         }
 

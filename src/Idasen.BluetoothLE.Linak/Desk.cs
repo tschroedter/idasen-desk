@@ -25,10 +25,10 @@ namespace Idasen.BluetoothLE.Linak
         }
 
         /// <inheritdoc />
-        public ulong BluetoothAddress => _connector.BluetoothAddress;
+        public ulong BluetoothAddress => _connector.BluetoothAddress ;
 
         /// <inheritdoc />
-        public string BluetoothAddressType => _connector.BluetoothAddressType;
+        public string BluetoothAddressType => _connector.BluetoothAddressType ;
 
         /// <inheritdoc />
         public void Connect ( )

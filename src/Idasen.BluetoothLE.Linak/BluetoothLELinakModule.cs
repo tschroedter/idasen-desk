@@ -75,14 +75,14 @@ namespace Idasen.BluetoothLE.Linak
             builder.RegisterType < DeskConnector > ( )
                    .As < IDeskConnector > ( ) ;
 
-            builder.RegisterType<DeskDetector>()
-                   .As<IDeskDetector>();
+            builder.RegisterType < DeskDetector > ( )
+                   .As < IDeskDetector > ( ) ;
 
-            builder.RegisterType<DeskProvider>()
-                   .As<IDeskProvider>();
+            builder.RegisterType < DeskProvider > ( )
+                   .As < IDeskProvider > ( ) ;
 
-            builder.RegisterType<TaskRunner>()
-                   .As<ITaskRunner>();
+            builder.RegisterType < TaskRunner > ( )
+                   .As < ITaskRunner > ( ) ;
         }
     }
 }

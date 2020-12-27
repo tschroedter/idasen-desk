@@ -88,16 +88,16 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
                 if ( ! Characteristics.Characteristics.TryGetValue ( key ,
                                                                      out var characteristic ) )
                 {
-                    Logger.Warning ( $"Failed to get value for key '{key}'" );
+                    Logger.Warning ( $"Failed to get value for key '{key}'" ) ;
 
                     continue ;
                 }
 
                 if ( characteristic == null )
                 {
-                    Logger.Warning($"Failed, characteristic for key '{key}' is null");
+                    Logger.Warning ( $"Failed, characteristic for key '{key}' is null" ) ;
 
-                    continue;
+                    continue ;
                 }
 
                 Logger.Debug ( $"Reading raw value for {key} " +

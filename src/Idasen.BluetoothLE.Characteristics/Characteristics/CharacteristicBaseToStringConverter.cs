@@ -36,7 +36,7 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
                 if ( characteristic.Characteristics.Properties.TryGetValue ( key ,
                                                                              out var properties )
                 )
-                    builder.AppendLine ( $" ({properties.ToCsv (  )})" ) ;
+                    builder.AppendLine ( $" ({properties.ToCsv ( )})" ) ;
                 else
                     builder.AppendLine ( ) ;
             }

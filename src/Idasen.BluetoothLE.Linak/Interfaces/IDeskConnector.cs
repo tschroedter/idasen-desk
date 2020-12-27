@@ -45,7 +45,7 @@ namespace Idasen.BluetoothLE.Linak.Interfaces
         /// <summary>
         ///     The address type.
         /// </summary>
-        string BluetoothAddressType { get; }
+        string BluetoothAddressType { get ; }
 
 
         /// <summary>

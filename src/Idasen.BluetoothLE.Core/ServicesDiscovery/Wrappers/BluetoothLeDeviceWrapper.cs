@@ -70,7 +70,7 @@ namespace Idasen.BluetoothLE.Core.ServicesDiscovery.Wrappers
         public ulong BluetoothAddress => _device.BluetoothAddress ;
 
         /// <inheritdoc />
-        public string BluetoothAddressType => _device.BluetoothAddressType.ToString();
+        public string BluetoothAddressType => _device.BluetoothAddressType.ToString ( ) ;
 
 
         /// <inheritdoc />

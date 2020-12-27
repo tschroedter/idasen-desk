@@ -39,7 +39,7 @@ namespace Idasen.BluetoothLE.Core.ServicesDiscovery
         public ulong BluetoothAddress => _wrapper.BluetoothAddress ;
 
         /// <inheritdoc />
-        public string BluetoothAddressType => _wrapper.BluetoothAddressType;
+        public string BluetoothAddressType => _wrapper.BluetoothAddressType ;
 
         /// <inheritdoc />
         public void Connect ( )

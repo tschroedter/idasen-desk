@@ -11,7 +11,7 @@ namespace Idasen.BluetoothLE.Linak.Interfaces
 
         /// <inheritdoc />
         void Initialize ( [ NotNull ] string deviceName    = "Desk" ,
-                          ulong   deviceAddress = 250635178951455 ) ;
+                          ulong              deviceAddress = 250635178951455 ) ;
 
         /// <inheritdoc />
         void Start ( ) ;

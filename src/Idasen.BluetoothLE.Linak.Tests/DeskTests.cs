@@ -76,24 +76,24 @@ namespace Idasen.BluetoothLE.Linak.Tests
                      .Dispose ( ) ;
         }
 
-        [AutoDataTestMethod]
-        public void BluetoothAddress_ForInvoked_BluetoothAddress(
-            Desk           sut,
-            [Freeze] ulong bluetoothAddress)
+        [ AutoDataTestMethod ]
+        public void BluetoothAddress_ForInvoked_BluetoothAddress (
+            Desk             sut ,
+            [ Freeze ] ulong bluetoothAddress )
         {
             sut.BluetoothAddress
-               .Should()
-               .Be(bluetoothAddress);
+               .Should ( )
+               .Be ( bluetoothAddress ) ;
         }
 
-        [AutoDataTestMethod]
-        public void BluetoothAddressType_ForInvoked_BluetoothAddressType(
-            Desk            sut,
-            [Freeze] string bluetoothAddressType)
+        [ AutoDataTestMethod ]
+        public void BluetoothAddressType_ForInvoked_BluetoothAddressType (
+            Desk              sut ,
+            [ Freeze ] string bluetoothAddressType )
         {
             sut.BluetoothAddressType
-               .Should()
-               .Be(bluetoothAddressType);
+               .Should ( )
+               .Be ( bluetoothAddressType ) ;
         }
     }
 }

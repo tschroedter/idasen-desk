@@ -304,7 +304,7 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Common
             RawValueWriter                        sut ,
             [ Freeze ] IGattCharacteristicWrapper characteristic ,
             IBuffer                               buffer ,
-            IGattWriteResultWrapper                      result )
+            IGattWriteResultWrapper               result )
         {
             characteristic.WithCharacteristicProperties ( GattCharacteristicProperties.WriteWithoutResponse )
                           .WithWriteValueWithResultAsync ( result ) ;
@@ -321,7 +321,7 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Common
             RawValueWriter                        sut ,
             [ Freeze ] IGattCharacteristicWrapper characteristic ,
             IBuffer                               buffer ,
-            IGattWriteResultWrapper                      result )
+            IGattWriteResultWrapper               result )
         {
             characteristic.WithCharacteristicProperties ( GattCharacteristicProperties.WriteWithoutResponse )
                           .WithWriteValueWithResultAsync ( result ) ;
@@ -338,7 +338,7 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Common
             RawValueWriter                        sut ,
             [ Freeze ] IGattCharacteristicWrapper characteristic ,
             IBuffer                               buffer ,
-            IGattWriteResultWrapper                      result )
+            IGattWriteResultWrapper               result )
         {
             characteristic.WithCharacteristicProperties ( GattCharacteristicProperties.WriteWithoutResponse )
                           .WithWriteValueWithResultAsync ( result ) ;
@@ -355,7 +355,7 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Common
             RawValueWriter                        sut ,
             [ Freeze ] IGattCharacteristicWrapper characteristic ,
             IBuffer                               buffer ,
-            IGattWriteResultWrapper                      result )
+            IGattWriteResultWrapper               result )
         {
             characteristic.WithCharacteristicProperties ( GattCharacteristicProperties.WriteWithoutResponse )
                           .WithWriteValueWithResultAsync ( result ) ;
@@ -372,7 +372,7 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Common
                 RawValueWriter                        sut ,
                 [ Freeze ] IGattCharacteristicWrapper characteristic ,
                 IBuffer                               buffer ,
-                IGattWriteResultWrapper                      result )
+                IGattWriteResultWrapper               result )
         {
             characteristic.WithCharacteristicProperties ( GattCharacteristicProperties.None )
                           .WithWriteValueWithResultAsync ( result ) ;

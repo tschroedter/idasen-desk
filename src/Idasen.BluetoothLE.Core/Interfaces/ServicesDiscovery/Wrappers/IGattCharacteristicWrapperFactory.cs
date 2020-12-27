@@ -5,6 +5,6 @@ namespace Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers
 {
     public interface IGattCharacteristicWrapperFactory
     {
-        IGattCharacteristicWrapper Create ( [NotNull] GattCharacteristic characteristic ) ;
+        IGattCharacteristicWrapper Create ( [ NotNull ] GattCharacteristic characteristic ) ;
     }
 }

@@ -1,13 +1,13 @@
-﻿using Autofac;
-using AutofacSerilogIntegration;
-using FluentAssertions;
-using FluentAssertions.Execution;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Selkie.DefCon.One;
-using Selkie.DefCon.One.Common;
-using Selkie.DefCon.One.Interfaces;
-using Serilog;
-using Serilog.Events;
+﻿using Autofac ;
+using AutofacSerilogIntegration ;
+using FluentAssertions ;
+using FluentAssertions.Execution ;
+using Microsoft.VisualStudio.TestTools.UnitTesting ;
+using Selkie.DefCon.One ;
+using Selkie.DefCon.One.Common ;
+using Selkie.DefCon.One.Interfaces ;
+using Serilog ;
+using Serilog.Events ;
 
 namespace Idasen.BluetoothLE.Common.Tests
 {

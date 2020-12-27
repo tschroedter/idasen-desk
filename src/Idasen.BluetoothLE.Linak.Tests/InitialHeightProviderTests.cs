@@ -51,8 +51,8 @@ namespace Idasen.BluetoothLE.Linak.Tests
         [ TestMethod ]
         public void Initialize_ForInvokedTwice_DisposesOldSubscription ( )
         {
-            var disposable1    = Substitute.For < IDisposable > ( ) ;
-            var disposable2    = Substitute.For < IDisposable > ( ) ;
+            var disposable1 = Substitute.For < IDisposable > ( ) ;
+            var disposable2 = Substitute.For < IDisposable > ( ) ;
 
             var heightAndSpeed = Substitute.For < IObservable < HeightSpeedDetails > > ( ) ;
             heightAndSpeed.Subscribe ( Arg.Any < IObserver < HeightSpeedDetails > > ( ) )
@@ -69,8 +69,8 @@ namespace Idasen.BluetoothLE.Linak.Tests
 
             disposable1.Received ( )
                        .Dispose ( ) ;
-            disposable2.DidNotReceive (  )
-                       .Dispose (  );
+            disposable2.DidNotReceive ( )
+                       .Dispose ( ) ;
         }
 
         [ TestMethod ]

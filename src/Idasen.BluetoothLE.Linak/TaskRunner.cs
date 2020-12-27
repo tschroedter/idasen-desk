@@ -7,13 +7,13 @@ using Idasen.BluetoothLE.Linak.Interfaces ;
 
 namespace Idasen.BluetoothLE.Linak
 {
-    [ExcludeFromCodeCoverage]
+    [ ExcludeFromCodeCoverage ]
     public class TaskRunner
         : ITaskRunner
     {
         public Task Run (
             [ JetBrains.Annotations.NotNull ] Action action ,
-            CancellationToken  token )
+            CancellationToken                        token )
         {
             Guard.ArgumentNotNull ( action ,
                                     nameof ( action ) ) ;

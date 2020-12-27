@@ -16,7 +16,7 @@ namespace Idasen.BluetoothLE.Characteristics.Common
         public AllGattCharacteristicsProvider ( )
         {
             OfficialGattCharacteristics = GetType ( ).Namespace +
-                                          "." +
+                                          "."                   +
                                           Filename ;
 
             Populate ( ReadCsvFile ( ) ) ;

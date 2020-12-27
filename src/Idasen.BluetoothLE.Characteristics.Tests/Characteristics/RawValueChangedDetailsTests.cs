@@ -45,8 +45,8 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Characteristics
         [ TestMethod ]
         public void ToString_ForInvoked_Instance ( )
         {
-            var expected = "Description = Description, "                +
-                           "Value =  01-02-03, "                        +
+            var expected = "Description = Description, "                     +
+                           "Value =  01-02-03, "                             +
                            "Timestamp = 2007-10-02T13:02:03.0000000-07:30, " +
                            "Uuid = 11111111-1111-1111-1111-111111111111" ;
 

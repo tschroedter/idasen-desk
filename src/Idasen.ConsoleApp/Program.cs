@@ -1,11 +1,11 @@
-﻿using System;
+﻿using System ;
 using System.Threading ;
-using System.Threading.Tasks;
-using Autofac;
-using Idasen.BluetoothLE.Linak.Interfaces;
+using System.Threading.Tasks ;
+using Autofac ;
+using Idasen.BluetoothLE.Linak.Interfaces ;
 using Idasen.Launcher ;
 using Serilog ;
-using static System.Console;
+using static System.Console ;
 
 namespace Idasen.ConsoleApp
 {
@@ -16,27 +16,23 @@ namespace Idasen.ConsoleApp
         /// </summary>
         private static async Task Main ( )
         {
-            var tokenSource = new CancellationTokenSource (TimeSpan.FromSeconds ( 60 )) ;
+            var tokenSource = new CancellationTokenSource ( TimeSpan.FromSeconds ( 60 ) ) ;
             var token       = tokenSource.Token ;
 
-            var container   = ContainerProvider.Create("Idasen.ConsoleApp",
-                                                       "Idasen.ConsoleApp.log") ;
+            var container = ContainerProvider.Create ( "Idasen.ConsoleApp" ,
+                                                       "Idasen.ConsoleApp.log" ) ;
 
             var logger   = container.Resolve < ILogger > ( ) ;
             var provider = container.Resolve < IDeskProvider > ( ) ;
 
-            provider.Initialize ( );
+            provider.Initialize ( ) ;
 
-            var (isSuccess , desk) = await provider.TryGetDesk (token ) ;
+            var (isSuccess , desk) = await provider.TryGetDesk ( token ) ;
 
             if ( isSuccess )
-            {
                 desk.MoveTo ( 7200u ) ;
-            }
             else
-            {
                 logger.Error ( "Failed to detect desk" ) ;
-            }
 
             ReadLine ( ) ;
         }

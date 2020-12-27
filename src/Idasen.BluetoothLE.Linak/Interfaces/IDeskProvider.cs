@@ -14,6 +14,12 @@ namespace Idasen.BluetoothLE.Linak.Interfaces
         IObservable < IDesk > DeskDetected { get ; }
 
         /// <summary>
+        ///     The currently detected desk.
+        /// </summary>
+        [ CanBeNull ]
+        public IDesk Desk { get ; }
+
+        /// <summary>
         ///     Initialize the instance and is required to be called first.
         /// </summary>
         /// <returns>
@@ -35,7 +41,7 @@ namespace Idasen.BluetoothLE.Linak.Interfaces
         /// <returns>
         ///     Returns itself.
         /// </returns>
-        IDeskProvider StopDetecting() ;
+        IDeskProvider StopDetecting ( ) ;
 
         /// <summary>
         ///     Try to detect a desk until the token has been cancelled.
@@ -45,11 +51,6 @@ namespace Idasen.BluetoothLE.Linak.Interfaces
         ///     A tuple with the first value indicating if a desk was found or not.
         ///     The second parameter is the detected desk or null.
         /// </returns>
-        Task<(bool, IDesk)> TryGetDesk(CancellationToken token) ;
-
-        /// <summary>
-        ///     The currently detected desk.
-        /// </summary>
-        [CanBeNull] public IDesk Desk { get; }
+        Task < (bool , IDesk) > TryGetDesk ( CancellationToken token ) ;
     }
 }
