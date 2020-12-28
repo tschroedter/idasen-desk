@@ -9,6 +9,7 @@ using Windows.Devices.Bluetooth.GenericAttributeProfile ;
 using Windows.Foundation ;
 using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers ;
 using Serilog ;
+using NotNullAttribute = JetBrains.Annotations.NotNullAttribute;
 
 namespace Idasen.BluetoothLE.Core.ServicesDiscovery.Wrappers
 {
@@ -16,9 +17,9 @@ namespace Idasen.BluetoothLE.Core.ServicesDiscovery.Wrappers
         : IGattCharacteristicValueChangedObservables
     {
         public GattCharacteristicValueChangedObservables (
-            [ JetBrains.Annotations.NotNull ] ILogger                                            logger ,
-            [ JetBrains.Annotations.NotNull ] IScheduler                                         scheduler ,
-            [ JetBrains.Annotations.NotNull ] ISubject < GattCharacteristicValueChangedDetails > subject )
+            [ NotNull ] ILogger                                            logger ,
+            [ NotNull ] IScheduler                                         scheduler ,
+            [ NotNull ] ISubject < GattCharacteristicValueChangedDetails > subject )
         {
             Guard.ArgumentNotNull ( logger ,
                                     nameof ( logger ) ) ;
@@ -109,7 +110,7 @@ namespace Idasen.BluetoothLE.Core.ServicesDiscovery.Wrappers
             GattValueChangedEventArgs                          args ,
             ISubject < GattCharacteristicValueChangedDetails > subject )
         {
-            var bytes = args.CharacteristicValue?.ToArray ( ) ?? Array.Empty < byte > ( ) ; // todo test for ?? Array...
+            var bytes = args.CharacteristicValue?.ToArray ( ) ?? Array.Empty < byte > ( ) ;
 
             var details = new GattCharacteristicValueChangedDetails ( sender.Uuid ,
                                                                       bytes ,
