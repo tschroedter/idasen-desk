@@ -8,6 +8,9 @@ namespace Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery
 {
     /// <summary>
     ///     Represents a Bluetooth LE device.
+    ///
+    ///     Add the moment only a limited set of properties and functions are
+    ///     exposed.
     /// </summary>
     public interface IDevice
         : IDisposable
@@ -37,7 +40,6 @@ namespace Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery
         ///     Gets a value that indicates whether the device is currently paired.
         /// </summary>
         bool IsPaired { get ; }
-        // todo maybe add: ProtectionLevel, CanPair...?
 
         /// <summary>
         ///     Gets the connection status of the device.
