@@ -5,7 +5,6 @@ using Serilog ;
 
 namespace Idasen.BluetoothLE.Linak.Control
 {
-    // todo split into multiple calculators
     /// <inheritdoc />
     public class StoppingHeightCalculator
         : IStoppingHeightCalculator
@@ -76,7 +75,7 @@ namespace Idasen.BluetoothLE.Linak.Control
             return this ;
         }
 
-        private const int DefaultMaxSpeedToStopMovement = 14 ;   //per notification, 16 notifications in 60 secs
+        private const int DefaultMaxSpeedToStopMovement = 14 ;   // per notification, 16 notifications in 60 secs
         private const int DefaultMaxSpeed               = 6200 ; // rpm/10
 
         private Direction CalculateMoveIntoDirection ( )
