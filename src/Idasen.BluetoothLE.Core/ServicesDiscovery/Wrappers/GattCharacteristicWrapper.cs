@@ -20,10 +20,9 @@ namespace Idasen.BluetoothLE.Core.ServicesDiscovery.Wrappers
             [ JetBrains.Annotations.NotNull ] ISubject < GattCharacteristicValueChangedDetails > valueChanged ,
             [ JetBrains.Annotations.NotNull ] GattCharacteristic                                 characteristic ,
             [ JetBrains.Annotations.NotNull ] IGattCharacteristicValueChangedObservables         observables ,
-            [ JetBrains.Annotations.NotNull ] IGattWriteResultWrapperFactory                     writeResultFactory )
+            [ JetBrains.Annotations.NotNull ] IGattWriteResultWrapperFactory                     writeResultFactory ,
+            [ JetBrains.Annotations.NotNull ] IGatReadResultWrapperFactory                       readResultFactory )
         {
-            Guard.ArgumentNotNull ( writeResultFactory ,
-                                    nameof ( writeResultFactory ) ) ;
             Guard.ArgumentNotNull ( logger ,
                                     nameof ( logger ) ) ;
             Guard.ArgumentNotNull ( valueChanged ,
@@ -32,11 +31,16 @@ namespace Idasen.BluetoothLE.Core.ServicesDiscovery.Wrappers
                                     nameof ( characteristic ) ) ;
             Guard.ArgumentNotNull ( observables ,
                                     nameof ( observables ) ) ;
+            Guard.ArgumentNotNull ( writeResultFactory ,
+                                    nameof ( writeResultFactory ) ) ;
+            Guard.ArgumentNotNull ( readResultFactory ,
+                                    nameof ( readResultFactory ) ) ;
 
-            _logger         = logger ;
-            _characteristic = characteristic ;
-            _observables    = observables ;
-            _writeResultFactory        = writeResultFactory ;
+            _logger             = logger ;
+            _characteristic     = characteristic ;
+            _observables        = observables ;
+            _writeResultFactory = writeResultFactory ;
+            _readResultFactory  = readResultFactory ;
         }
 
         /// <inheritdoc />
@@ -70,7 +74,7 @@ namespace Idasen.BluetoothLE.Core.ServicesDiscovery.Wrappers
         {
             var result = await _characteristic.WriteValueWithResultAsync ( buffer ) ;
 
-            return _writeResultFactory.Create( result ) ;
+            return _writeResultFactory.Create ( result ) ;
         }
 
         /// <inheritdoc />
@@ -85,9 +89,9 @@ namespace Idasen.BluetoothLE.Core.ServicesDiscovery.Wrappers
             var result = _characteristic.ReadValueAsync ( )
                                         .AsTask ( ) ;
 
-            var wrapper = new GattReadResultWrapper ( result.Result ) ; // todo use existing factory
+            var wrapper = _readResultFactory.Create ( result.Result ) ;
 
-            return Task.FromResult ( ( IGattReadResultWrapper ) wrapper ) ;
+            return Task.FromResult ( wrapper ) ;
         }
 
         public void Dispose ( )
@@ -97,10 +101,10 @@ namespace Idasen.BluetoothLE.Core.ServicesDiscovery.Wrappers
 
         public delegate IGattCharacteristicWrapper Factory ( GattCharacteristic characteristic ) ;
 
-        private readonly GattCharacteristic             _characteristic ; // todo use it
-        private readonly IGattWriteResultWrapperFactory _writeResultFactory ;
-
+        private readonly GattCharacteristic                         _characteristic ;
         private readonly ILogger                                    _logger ;
         private readonly IGattCharacteristicValueChangedObservables _observables ;
+        private readonly IGatReadResultWrapperFactory               _readResultFactory ;
+        private readonly IGattWriteResultWrapperFactory             _writeResultFactory ;
     }
 }
