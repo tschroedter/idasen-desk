@@ -54,9 +54,6 @@ namespace Idasen.BluetoothLE.Linak
             builder.RegisterType < DeskMoverFactory > ( )
                    .As < IDeskMoverFactory > ( ) ;
 
-            builder.RegisterType < RawValueChangedDetailsCollector > ( )
-                   .As < IRawValueChangedDetailsCollector > ( ) ;
-
             builder.RegisterType < StoppingHeightCalculator > ( )
                    .As < IStoppingHeightCalculator > ( ) ;
 
