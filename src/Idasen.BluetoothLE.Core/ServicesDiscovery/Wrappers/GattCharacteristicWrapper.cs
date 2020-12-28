@@ -20,10 +20,10 @@ namespace Idasen.BluetoothLE.Core.ServicesDiscovery.Wrappers
             [ JetBrains.Annotations.NotNull ] ISubject < GattCharacteristicValueChangedDetails > valueChanged ,
             [ JetBrains.Annotations.NotNull ] GattCharacteristic                                 characteristic ,
             [ JetBrains.Annotations.NotNull ] IGattCharacteristicValueChangedObservables         observables ,
-            [ JetBrains.Annotations.NotNull ] IGattWriteResultWrapperFactory                     factory )
+            [ JetBrains.Annotations.NotNull ] IGattWriteResultWrapperFactory                     writeResultFactory )
         {
-            Guard.ArgumentNotNull ( factory ,
-                                    nameof ( factory ) ) ;
+            Guard.ArgumentNotNull ( writeResultFactory ,
+                                    nameof ( writeResultFactory ) ) ;
             Guard.ArgumentNotNull ( logger ,
                                     nameof ( logger ) ) ;
             Guard.ArgumentNotNull ( valueChanged ,
@@ -36,7 +36,7 @@ namespace Idasen.BluetoothLE.Core.ServicesDiscovery.Wrappers
             _logger         = logger ;
             _characteristic = characteristic ;
             _observables    = observables ;
-            _factory        = factory ;
+            _writeResultFactory        = writeResultFactory ;
         }
 
         /// <inheritdoc />
@@ -70,7 +70,7 @@ namespace Idasen.BluetoothLE.Core.ServicesDiscovery.Wrappers
         {
             var result = await _characteristic.WriteValueWithResultAsync ( buffer ) ;
 
-            return new GattWriteResultWrapper ( result ) ; // todo use excisting factory
+            return _writeResultFactory.Create( result ) ;
         }
 
         /// <inheritdoc />
@@ -98,7 +98,7 @@ namespace Idasen.BluetoothLE.Core.ServicesDiscovery.Wrappers
         public delegate IGattCharacteristicWrapper Factory ( GattCharacteristic characteristic ) ;
 
         private readonly GattCharacteristic             _characteristic ; // todo use it
-        private readonly IGattWriteResultWrapperFactory _factory ;
+        private readonly IGattWriteResultWrapperFactory _writeResultFactory ;
 
         private readonly ILogger                                    _logger ;
         private readonly IGattCharacteristicValueChangedObservables _observables ;
