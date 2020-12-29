@@ -77,6 +77,16 @@ namespace Idasen.BluetoothLE.Linak.Tests
         }
 
         [ AutoDataTestMethod ]
+        public void DeviceName_ForInvoked_DeviceName (
+            Desk              sut ,
+            [ Freeze ] string deviceName )
+        {
+            sut.DeviceName
+               .Should ( )
+               .Be ( deviceName ) ;
+        }
+
+        [ AutoDataTestMethod ]
         public void BluetoothAddress_ForInvoked_BluetoothAddress (
             Desk             sut ,
             [ Freeze ] ulong bluetoothAddress )

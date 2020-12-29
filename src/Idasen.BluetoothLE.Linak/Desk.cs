@@ -98,6 +98,9 @@ namespace Idasen.BluetoothLE.Linak
             _connector.Dispose ( ) ;
         }
 
+        /// <inheritdoc />
+        public string DeviceName => _connector.DeviceName ;
+
         private readonly IDeskConnector _connector ;
         private readonly ILogger        _logger ;
     }

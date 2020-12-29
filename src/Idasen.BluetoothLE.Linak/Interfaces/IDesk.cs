@@ -53,6 +53,11 @@ namespace Idasen.BluetoothLE.Linak.Interfaces
         string BluetoothAddressType { get ; }
 
         /// <summary>
+        ///     The device name.
+        /// </summary>
+        string DeviceName { get ; }
+
+        /// <summary>
         ///     Connect to a desk.
         /// </summary>
         void Connect ( ) ;
