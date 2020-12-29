@@ -5,7 +5,9 @@
         public const string ApplicationName  = "Idasen.SystemTray" ;
         public const string SettingsFileName = "Settings.json" ;
 
-        public const uint DefaultHeightStandingInCm = 120 ;
-        public const uint DefaultHeightSeatingInCm  = 65 ;
+        public const uint   DefaultHeightStandingInCm = 120 ;
+        public const uint   DefaultHeightSeatingInCm  = 65 ;
+        public const string DefaultDeviceName         = "Desk" ;
+        public const ulong  DefaultDeviceAddress      = 250635178951455u ;
     }
 }
