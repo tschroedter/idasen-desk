@@ -11,6 +11,9 @@ namespace Idasen.ConsoleApp
 {
     internal sealed class Program
     {
+        private const string DefaultDeviceName    = "Desk" ;
+        private const ulong  DefaultDeviceAddress = 250635178951455u ;
+
         /// <summary>
         ///     Test Application
         /// </summary>
@@ -25,7 +28,8 @@ namespace Idasen.ConsoleApp
             var logger   = container.Resolve < ILogger > ( ) ;
             var provider = container.Resolve < IDeskProvider > ( ) ;
 
-            provider.Initialize ( ) ;
+            provider.Initialize ( DefaultDeviceName ,
+                                  DefaultDeviceAddress ) ;
 
             var (isSuccess , desk) = await provider.TryGetDesk ( token ) ;
 
