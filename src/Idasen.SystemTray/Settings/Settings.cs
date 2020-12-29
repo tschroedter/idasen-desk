@@ -5,13 +5,17 @@ namespace Idasen.SystemTray.Settings
 {
     public class Settings : ISettings
     {
-        public uint StandingHeightInCm { get ; set ; } = Constants.DefaultHeightStandingInCm ;
-        public uint SeatingHeightInCm  { get ; set ; } = Constants.DefaultHeightSeatingInCm ;
+        public uint   StandingHeightInCm { get ; set ; } = Constants.DefaultHeightStandingInCm ;
+        public uint   SeatingHeightInCm  { get ; set ; } = Constants.DefaultHeightSeatingInCm ;
+        public string DeviceName         { get ; set ; } = Constants.DefaultDeviceName ;
+        public ulong  DeviceAddress      { get ; set ; } = Constants.DefaultDeviceAddress ;
 
         public override string ToString ( )
         {
-            return $"StandingHeightInCm = {StandingHeightInCm}, " +
-                   $"SeatingHeightInCm = {SeatingHeightInCm}" ;
+            return $"{nameof ( StandingHeightInCm )} = {StandingHeightInCm}, " +
+                   $"{nameof ( SeatingHeightInCm )} = {SeatingHeightInCm}"     +
+                   $"{nameof ( DeviceName )} = {DeviceName}"                   +
+                   $"{nameof ( DeviceAddress )} = {DeviceAddress}" ;
         }
     }
 }
