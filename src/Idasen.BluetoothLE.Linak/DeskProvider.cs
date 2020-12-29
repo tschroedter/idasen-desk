@@ -69,11 +69,16 @@ namespace Idasen.BluetoothLE.Linak
         public IObservable < IDesk > DeskDetected => _detector.DeskDetected ;
 
         /// <inheritdoc />
-        public IDeskProvider Initialize ( )
+        public IDeskProvider Initialize([NotNull] string deviceName,
+                                        ulong            deviceAddress)
         {
+            Guard.ArgumentNotNull ( deviceName ,
+                                    nameof ( deviceName ) ) ;
+
             _logger.Information ( "Initialize..." ) ;
 
-            _detector.Initialize ( ) ;
+            _detector.Initialize ( deviceName ,
+                                   deviceAddress ) ;
 
             _deskDetected = _detector.DeskDetected
                                      .ObserveOn ( _scheduler )

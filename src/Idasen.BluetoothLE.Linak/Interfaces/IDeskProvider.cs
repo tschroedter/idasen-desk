@@ -22,10 +22,17 @@ namespace Idasen.BluetoothLE.Linak.Interfaces
         /// <summary>
         ///     Initialize the instance and is required to be called first.
         /// </summary>
+        /// <param name="deviceName">
+        ///     The device name used to detect a desk.
+        /// </param>
+        /// <param name="deviceAddress">
+        ///     The device address used to detect a desk.
+        /// </param>
         /// <returns>
         ///     Returns itself.
         /// </returns>
-        IDeskProvider Initialize ( ) ;
+        IDeskProvider Initialize ( [ NotNull ] string deviceName ,
+                                   ulong              deviceAddress ) ;
 
         /// <summary>
         ///     Start the desk detection process.
