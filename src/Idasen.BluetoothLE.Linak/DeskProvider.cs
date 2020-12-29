@@ -60,7 +60,7 @@ namespace Idasen.BluetoothLE.Linak
             }
             finally
             {
-                _detector.Start ( ) ;
+                _detector.Stop ( ) ;
                 DeskDetectedEvent.Reset ( ) ;
             }
         }
@@ -69,8 +69,8 @@ namespace Idasen.BluetoothLE.Linak
         public IObservable < IDesk > DeskDetected => _detector.DeskDetected ;
 
         /// <inheritdoc />
-        public IDeskProvider Initialize([NotNull] string deviceName,
-                                        ulong            deviceAddress)
+        public IDeskProvider Initialize ( string deviceName ,
+                                          ulong  deviceAddress )
         {
             Guard.ArgumentNotNull ( deviceName ,
                                     nameof ( deviceName ) ) ;
