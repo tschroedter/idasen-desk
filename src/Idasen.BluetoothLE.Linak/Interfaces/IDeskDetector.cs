@@ -6,17 +6,31 @@ namespace Idasen.BluetoothLE.Linak.Interfaces
     public interface IDeskDetector
         : IDisposable
     {
-        /// <inheritdoc />
+        /// <summary>
+        ///     Notifies when a desk was detected.
+        /// </summary>
         IObservable < IDesk > DeskDetected { get ; }
 
-        /// <inheritdoc />
-        void Initialize ( [ NotNull ] string deviceName    = "Desk" ,
-                          ulong              deviceAddress = 250635178951455 ) ;
+        /// <summary>
+        ///     Initializes the instance with the given parameters.
+        /// </summary>
+        /// <param name="deviceName">
+        ///     The device name to detect.
+        /// </param>
+        /// <param name="deviceAddress">
+        ///     The device address to detect.
+        /// </param>
+        void Initialize ( [ NotNull ] string deviceName ,
+                          ulong              deviceAddress ) ;
 
-        /// <inheritdoc />
+        /// <summary>
+        ///     Start the detection of a desk by device name or device address.
+        /// </summary>
         void Start ( ) ;
 
-        /// <inheritdoc />
+        /// <summary>
+        ///     Stop the detection of a desk.
+        /// </summary>
         void Stop ( ) ;
     }
 }
