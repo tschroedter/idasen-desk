@@ -2,7 +2,9 @@
 {
     public interface ISettings
     {
-        uint StandingHeightInCm { get ; set ; }
-        uint SeatingHeightInCm  { get ; set ; }
+        uint   StandingHeightInCm { get ; set ; }
+        uint   SeatingHeightInCm  { get ; set ; }
+        string DeviceName         { get;  set; }
+        ulong  DeviceAddress      { get;  set; }
     }
 }
