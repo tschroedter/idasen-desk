@@ -38,8 +38,6 @@ namespace Idasen.SystemTray
             _manager  = container.Resolve < ISettingsManager > ( ) ;
             _provider = container.Resolve < IDeskProvider > ( ) ;
 
-            _provider.Initialize ( ) ;
-
             _tokenSource = new CancellationTokenSource ( TimeSpan.FromSeconds ( 60 ) ) ;
             _token       = _tokenSource.Token ;
 
@@ -169,6 +167,15 @@ namespace Idasen.SystemTray
         {
             try
             {
+                _logger.Debug ( "Trying to load settings..." ) ;
+
+                await _manager.Load ( ) ;
+
+                _logger.Debug("Trying to initialize provider...");
+
+                _provider.Initialize ( _manager.CurrentSettings.DeviceName ,
+                                       _manager.CurrentSettings.DeviceAddress ) ;
+
                 _logger.Debug ( "Trying to auto connect to Idasen Desk..." ) ;
 
                 await Task.Delay ( TimeSpan.FromSeconds ( 5 ) ,
@@ -233,7 +240,7 @@ namespace Idasen.SystemTray
 
         private void ConnectSuccessful ( IDesk desk )
         {
-            _logger.Information ( $"Connected to {desk}" ) ;
+            _logger.Information ( $"[{desk.DeviceName}] Connected to {desk.DeviceName} with address {desk.BluetoothAddress}" ) ;
 
             _desk = desk ;
 
