@@ -52,8 +52,8 @@ namespace Idasen.BluetoothLE.Linak
         public IObservable < IDesk > DeskDetected => _deskDetected ;
 
         /// <inheritdoc />
-        public void Initialize ( string deviceName,            // todo move into setting
-                                 ulong  deviceAddress ) // todo move into setting
+        public void Initialize ( string deviceName,
+                                 ulong  deviceAddress )
         {
             Guard.ArgumentNotNull ( deviceName ,
                                     nameof ( deviceName ) ) ;
