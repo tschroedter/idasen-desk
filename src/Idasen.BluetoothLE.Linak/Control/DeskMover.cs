@@ -56,15 +56,18 @@ namespace Idasen.BluetoothLE.Linak.Control
 
         public void Initialize ( )
         {
-            _initialProvider?.Dispose ( ) ;
-            _initialProvider = _providerFactory.Create ( _executor ,
-                                                         _heightAndSpeed ) ; // todo maybe threading issue
-            _initialProvider.Initialize ( ) ;
+            lock ( _padlock )
+            {
+                _initialProvider?.Dispose ( ) ;
+                _initialProvider = _providerFactory.Create ( _executor ,
+                                                             _heightAndSpeed ) ;
+                _initialProvider.Initialize ( ) ;
 
-            _disposableProvider?.Dispose ( ) ;
-            _disposableProvider = _initialProvider.Finished
-                                                  .ObserveOn ( _scheduler )
-                                                  .Subscribe ( OnFinished ) ;
+                _disposableProvider?.Dispose ( ) ;
+                _disposableProvider = _initialProvider.Finished
+                                                      .ObserveOn ( _scheduler )
+                                                      .Subscribe ( OnFinished ) ;
+            }
         }
 
         public void Start ( )
@@ -216,6 +219,7 @@ namespace Idasen.BluetoothLE.Linak.Control
         private readonly IDeskHeightAndSpeed       _heightAndSpeed ;
 
         private readonly ILogger                               _logger ;
+        private readonly object                                _padlock = new object ( ) ;
         private readonly IInitialHeightAndSpeedProviderFactory _providerFactory ;
         private readonly IScheduler                            _scheduler ;
         private readonly ISubject < uint >                     _subjectFinished ;
