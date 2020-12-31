@@ -171,10 +171,11 @@ namespace Idasen.SystemTray
 
                 await _manager.Load ( ) ;
 
-                _logger.Debug("Trying to initialize provider...");
+                _logger.Debug ( "Trying to initialize provider..." ) ;
 
                 _provider.Initialize ( _manager.CurrentSettings.DeviceName ,
-                                       _manager.CurrentSettings.DeviceAddress ) ;
+                                       _manager.CurrentSettings.DeviceAddress ,
+                                       _manager.CurrentSettings.DeviceMonitoringTimeout ) ;
 
                 _logger.Debug ( "Trying to auto connect to Idasen Desk..." ) ;
 
