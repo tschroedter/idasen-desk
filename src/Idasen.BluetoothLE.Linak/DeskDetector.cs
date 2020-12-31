@@ -53,10 +53,13 @@ namespace Idasen.BluetoothLE.Linak
 
         /// <inheritdoc />
         public void Initialize ( string deviceName,
-                                 ulong  deviceAddress )
+                                 ulong  deviceAddress,
+                                 uint   deviceTimeout)
         {
             Guard.ArgumentNotNull ( deviceName ,
                                     nameof ( deviceName ) ) ;
+
+            _monitor.TimeOut = TimeSpan.FromSeconds(deviceTimeout) ;
 
             _updated = _monitor.DeviceUpdated
                                .ObserveOn ( _scheduler )

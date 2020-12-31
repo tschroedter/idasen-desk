@@ -20,8 +20,13 @@ namespace Idasen.BluetoothLE.Linak.Interfaces
         /// <param name="deviceAddress">
         ///     The device address to detect.
         /// </param>
+        /// <param name="deviceTimeout">
+        ///     The timeout used for monitored devices after a device expires
+        ///     and is removed from the cache.
+        /// </param>
         void Initialize ( [ NotNull ] string deviceName ,
-                          ulong              deviceAddress ) ;
+                          ulong              deviceAddress ,
+                          uint               deviceTimeout ) ;
 
         /// <summary>
         ///     Start the detection of a desk by device name or device address.
