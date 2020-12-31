@@ -15,10 +15,12 @@ namespace Idasen.BluetoothLE.Linak.Tests
         [ AutoDataTestMethod ]
         public void Initialize_ForDeviceNameIsNull_Throws (
             DeskProvider sut ,
-            ulong        deviceAddress )
+            ulong        deviceAddress ,
+            uint         deviceTimeout )
         {
             Action action = ( ) => sut.Initialize ( null! ,
-                                                    deviceAddress ) ;
+                                                    deviceAddress ,
+                                                    deviceTimeout ) ;
 
             action.Should ( )
                   .Throw < ArgumentException > ( )
@@ -30,14 +32,17 @@ namespace Idasen.BluetoothLE.Linak.Tests
             DeskProvider             sut ,
             [ Freeze ] IDeskDetector detector ,
             string                   deviceName ,
-            ulong                    deviceAddress )
+            ulong                    deviceAddress ,
+            uint                     deviceTimeout )
         {
             sut.Initialize ( deviceName ,
-                             deviceAddress ) ;
+                             deviceAddress ,
+                             deviceTimeout ) ;
 
             detector.Received ( )
                     .Initialize ( deviceName ,
-                                  deviceAddress ) ;
+                                  deviceAddress ,
+                                  deviceTimeout ) ;
         }
 
         [ AutoDataTestMethod ]
@@ -45,10 +50,12 @@ namespace Idasen.BluetoothLE.Linak.Tests
             DeskProvider                     sut ,
             [ Freeze ] IObservable < IDesk > deskDetected ,
             string                           deviceName ,
-            ulong                            deviceAddress )
+            ulong                            deviceAddress ,
+            uint                             deviceTimeout )
         {
             sut.Initialize ( deviceName ,
-                             deviceAddress ) ;
+                             deviceAddress ,
+                             deviceTimeout ) ;
 
             deskDetected.ReceivedWithAnyArgs ( )
                         .Subscribe ( ) ;
@@ -59,10 +66,12 @@ namespace Idasen.BluetoothLE.Linak.Tests
             DeskProvider             sut ,
             [ Freeze ] IDeskDetector detector ,
             string                   deviceName ,
-            ulong                    deviceAddress )
+            ulong                    deviceAddress ,
+            uint                     deviceTimeout )
         {
             sut.Initialize ( deviceName ,
-                             deviceAddress )
+                             deviceAddress ,
+                             deviceTimeout )
                .StartDetecting ( ) ;
 
             detector.Received ( )
@@ -74,10 +83,12 @@ namespace Idasen.BluetoothLE.Linak.Tests
             DeskProvider             sut ,
             [ Freeze ] IDeskDetector detector ,
             string                   deviceName ,
-            ulong                    deviceAddress )
+            ulong                    deviceAddress ,
+            uint                     deviceTimeout )
         {
             sut.Initialize ( deviceName ,
-                             deviceAddress )
+                             deviceAddress ,
+                             deviceTimeout )
                .StopDetecting ( ) ;
 
             detector.Received ( )
@@ -89,10 +100,12 @@ namespace Idasen.BluetoothLE.Linak.Tests
             DeskProvider           sut ,
             [ Freeze ] IDisposable deskDetected ,
             string                 deviceName ,
-            ulong                  deviceAddress )
+            ulong                  deviceAddress ,
+            uint                   deviceTimeout )
         {
             sut.Initialize ( deviceName ,
-                             deviceAddress )
+                             deviceAddress ,
+                             deviceTimeout )
                .Dispose ( ) ;
 
             deskDetected.Received ( )
@@ -104,10 +117,12 @@ namespace Idasen.BluetoothLE.Linak.Tests
             DeskProvider             sut ,
             [ Freeze ] IDeskDetector detector ,
             string                   deviceName ,
-            ulong                    deviceAddress )
+            ulong                    deviceAddress ,
+            uint                     deviceTimeout )
         {
             sut.Initialize ( deviceName ,
-                             deviceAddress )
+                             deviceAddress ,
+                             deviceTimeout )
                .Dispose ( ) ;
 
             detector.Received ( )
@@ -133,10 +148,12 @@ namespace Idasen.BluetoothLE.Linak.Tests
             [ Freeze ] IDeskDetector detector ,
             CancellationTokenSource  source ,
             string                   deviceName ,
-            ulong                    deviceAddress )
+            ulong                    deviceAddress ,
+            uint                     deviceTimeout )
         {
             await sut.Initialize ( deviceName ,
-                                   deviceAddress )
+                                   deviceAddress ,
+                                   deviceTimeout )
                      .TryGetDesk ( source.Token ) ;
 
             detector.Received ( )
@@ -149,14 +166,17 @@ namespace Idasen.BluetoothLE.Linak.Tests
             [ Freeze ] IDeskDetector detector ,
             CancellationTokenSource  source ,
             string                   deviceName ,
-            ulong                    deviceAddress )
+            ulong                    deviceAddress ,
+            uint                     deviceTimeout )
         {
             detector.When ( x => x.Initialize ( deviceName ,
-                                                deviceAddress ) )
+                                                deviceAddress ,
+                                                deviceTimeout ) )
                     .Do ( info => { source.Cancel ( ) ; } ) ;
 
             var (success , _) = await sut.Initialize ( deviceName ,
-                                                       deviceAddress )
+                                                       deviceAddress ,
+                                                       deviceTimeout )
                                          .TryGetDesk ( source.Token ) ;
 
             success.Should ( )
@@ -169,14 +189,17 @@ namespace Idasen.BluetoothLE.Linak.Tests
             [ Freeze ] IDeskDetector detector ,
             CancellationTokenSource  source ,
             string                   deviceName ,
-            ulong                    deviceAddress )
+            ulong                    deviceAddress ,
+            uint                     deviceTimeout )
         {
             detector.When ( x => x.Initialize ( deviceName ,
-                                                deviceAddress ) )
+                                                deviceAddress ,
+                                                deviceTimeout ) )
                     .Do ( info => { source.Cancel ( ) ; } ) ;
 
             var (_ , desk) = await sut.Initialize ( deviceName ,
-                                                    deviceAddress )
+                                                    deviceAddress ,
+                                                    deviceTimeout )
                                       .TryGetDesk ( source.Token ) ;
 
             desk.Should ( )
