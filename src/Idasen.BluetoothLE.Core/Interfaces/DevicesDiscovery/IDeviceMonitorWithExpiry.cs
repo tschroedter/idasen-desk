@@ -16,7 +16,6 @@ namespace Idasen.BluetoothLE.Core.Interfaces.DevicesDiscovery
         ///     Timespan after a device is expired and removed from the
         ///     collection of discovered devices.
         /// </summary>
-        [ UsedImplicitly ]
         TimeSpan TimeOut { get ; set ; }
     }
 }
