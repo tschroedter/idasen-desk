@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis ;
+﻿using System ;
+using System.Diagnostics.CodeAnalysis ;
 using Autofac ;
 using Idasen.BluetoothLE.Characteristics.Characteristics ;
 using Idasen.BluetoothLE.Characteristics.Characteristics.Customs ;
@@ -77,6 +78,9 @@ namespace Idasen.BluetoothLE.Characteristics
 
             builder.RegisterType < BufferReader > ( )
                    .As < IBufferReader > ( ) ;
+
+            builder.RegisterType<DescriptionToUuid>()
+                   .As<IDescriptionToUuid>();
         }
     }
 }
