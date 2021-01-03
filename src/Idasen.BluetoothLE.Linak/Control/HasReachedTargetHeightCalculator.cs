@@ -26,6 +26,7 @@ namespace Idasen.BluetoothLE.Linak.Control
         /// <inheritdoc />
         public bool HasReachedTargetHeight { get ; private set ; }
 
+        /// <inheritdoc />
         public IHasReachedTargetHeightCalculator Calculate ( )
         {
             Delta = TargetHeight >= StoppingHeight
