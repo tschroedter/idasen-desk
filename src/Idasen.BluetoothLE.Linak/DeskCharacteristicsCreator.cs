@@ -56,6 +56,8 @@ namespace Idasen.BluetoothLE.Linak
             Guard.ArgumentNotNull ( device ,
                                     nameof ( device ) ) ;
 
+            _logger.Debug ( $"[{device.Id}] Creating desk characteristics {characteristics}" );
+
             characteristics.WithCharacteristics ( DeskCharacteristicKey.GenericAccess ,
                                                   _genericAccessFactory.Create ( device ) )
                            .WithCharacteristics ( DeskCharacteristicKey.GenericAttribute ,
