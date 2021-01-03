@@ -27,7 +27,8 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
             [ NotNull ] IGattCharacteristicsProviderFactory  providerFactory ,
             [ NotNull ] IRawValueReader                      rawValueReader ,
             [ NotNull ] IRawValueWriter                      rawValueWriter ,
-            [ NotNull ] ICharacteristicBaseToStringConverter toStringConverter )
+            [ NotNull ] ICharacteristicBaseToStringConverter toStringConverter ,
+            [ NotNull ] IDescriptionToUuid                   descriptionToUuid )
         {
             Guard.ArgumentNotNull ( logger ,
                                     nameof ( logger ) ) ;
@@ -43,6 +44,8 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
                                     nameof ( rawValueWriter ) ) ;
             Guard.ArgumentNotNull ( toStringConverter ,
                                     nameof ( toStringConverter ) ) ;
+            Guard.ArgumentNotNull ( descriptionToUuid ,
+                                    nameof ( descriptionToUuid ) ) ;
 
             Device             = device ;
             Logger             = logger ;
@@ -51,6 +54,7 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
             RawValueReader     = rawValueReader ;
             RawValueWriter     = rawValueWriter ;
             _toStringConverter = toStringConverter ;
+            DescriptionToUuid  = descriptionToUuid ;
         }
 
         public virtual T Initialize < T > ( )
@@ -79,7 +83,7 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
 
         public virtual async Task Refresh ( )
         {
-            Characteristics.Refresh ( DescriptionToUuid ) ;
+            Characteristics.Refresh ( DescriptionToUuid.ReadOnlyDictionary) ;
 
             var keys = Characteristics.Characteristics.Keys.ToArray ( ) ;
 
@@ -117,8 +121,10 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
 
         public abstract Guid GattServiceUuid { get ; }
 
-        protected abstract T WithMapping < T > ( ) // todo maybe, no T and different name
-            where T : class ;                      // todo thread/race condition issue, corrupted exception
+        internal IDescriptionToUuid DescriptionToUuid { get ; }
+
+        protected abstract T WithMapping < T > ( )
+            where T : class ;
 
         protected async Task < bool > TryWriteValueAsync ( string               key ,
                                                            IEnumerable < byte > bytes )
@@ -156,9 +162,6 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
         }
 
         private readonly ICharacteristicBaseToStringConverter _toStringConverter ;
-
-        internal readonly Dictionary < string , Guid > DescriptionToUuid =
-            new Dictionary < string , Guid > ( ) ;
 
         protected readonly IDevice                             Device ;
         protected readonly ILogger                             Logger ;

@@ -31,6 +31,7 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Characteristics
             RawValueReader         = Substitute.For < IRawValueReader > ( ) ;
             RawValueWriter         = Substitute.For < IRawValueWriter > ( ) ;
             ToStringConverter      = Substitute.For < ICharacteristicBaseToStringConverter > ( ) ;
+            DescriptionToUuid      = new DescriptionToUuid ( ) ;
 
             ServiceWrapper = Substitute.For < IGattDeviceServiceWrapper > ( ) ;
             ResultWrapper  = Substitute.For < IGattCharacteristicsResultWrapper > ( ) ;
@@ -154,6 +155,7 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Characteristics
         protected IGattCharacteristicWrapper                           CharacteristicWrapper7 ;
         protected IGattCharacteristicWrapper                           CharacteristicWrapper8 ;
         protected IGattCharacteristicWrapper                           CharacteristicWrapper9 ;
+        protected IDescriptionToUuid                                   DescriptionToUuid ;
         protected IDevice                                              Device ;
         protected ILogger                                              Logger ;
         protected Dictionary < string , GattCharacteristicProperties > Properties ;

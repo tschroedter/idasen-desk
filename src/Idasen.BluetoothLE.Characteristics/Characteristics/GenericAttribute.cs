@@ -23,6 +23,7 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
             IRawValueReader                             rawValueReader ,
             IRawValueWriter                             rawValueWriter ,
             ICharacteristicBaseToStringConverter        toStringConverter ,
+            IDescriptionToUuid                          descriptionToUuid ,
             [ NotNull ] IAllGattCharacteristicsProvider allGattCharacteristicsProvider )
             : base ( logger ,
                      scheduler ,
@@ -30,7 +31,8 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
                      providerFactory ,
                      rawValueReader ,
                      rawValueWriter ,
-                     toStringConverter )
+                     toStringConverter ,
+                     descriptionToUuid )
         {
             Guard.ArgumentNotNull ( allGattCharacteristicsProvider ,
                                     nameof ( allGattCharacteristicsProvider ) ) ;

@@ -225,6 +225,7 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Characteristics
                                        RawValueReader ,
                                        RawValueWriter ,
                                        ToStringConverter ,
+                                       DescriptionToUuid ,
                                        _subjectFactory ,
                                        new AllGattCharacteristicsProvider ( ) ) ;
         }

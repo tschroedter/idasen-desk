@@ -100,7 +100,8 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Characteristics
                                  ProviderFactory ,
                                  RawValueReader ,
                                  RawValueWriter ,
-                                 ToStringConverter ) ;
+                                 ToStringConverter ,
+                                 DescriptionToUuid ) ;
         }
 
         protected override void PopulateWrappers ( )
