@@ -1,28 +1,27 @@
 ﻿using System ;
 using System.Collections.Generic ;
-using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis ;
 using System.Reactive.Subjects ;
 using System.Threading.Tasks ;
 using Windows.Devices.Bluetooth.GenericAttributeProfile ;
 using Windows.Storage.Streams ;
 using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers ;
 using Serilog ;
-using NotNullAttribute = JetBrains.Annotations.NotNullAttribute;
 
 namespace Idasen.BluetoothLE.Core.ServicesDiscovery.Wrappers
 {
     /// <inheritdoc />
-    [ExcludeFromCodeCoverage]
+    [ ExcludeFromCodeCoverage ]
     public class GattCharacteristicWrapper
         : IGattCharacteristicWrapper
     {
         public GattCharacteristicWrapper (
-            [ NotNull ] ILogger                                            logger ,
-            [ NotNull ] ISubject < GattCharacteristicValueChangedDetails > valueChanged ,
-            [ NotNull ] GattCharacteristic                                 characteristic ,
-            [ NotNull ] IGattCharacteristicValueChangedObservables         observables ,
-            [ NotNull ] IGattWriteResultWrapperFactory                     writeResultFactory ,
-            [ NotNull ] IGatReadResultWrapperFactory                       readResultFactory )
+            [ JetBrains.Annotations.NotNull ] ILogger                                            logger ,
+            [ JetBrains.Annotations.NotNull ] ISubject < GattCharacteristicValueChangedDetails > valueChanged ,
+            [ JetBrains.Annotations.NotNull ] GattCharacteristic                                 characteristic ,
+            [ JetBrains.Annotations.NotNull ] IGattCharacteristicValueChangedObservables         observables ,
+            [ JetBrains.Annotations.NotNull ] IGattWriteResultWrapperFactory                     writeResultFactory ,
+            [ JetBrains.Annotations.NotNull ] IGatReadResultWrapperFactory                       readResultFactory )
         {
             Guard.ArgumentNotNull ( logger ,
                                     nameof ( logger ) ) ;

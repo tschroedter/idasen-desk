@@ -52,14 +52,14 @@ namespace Idasen.BluetoothLE.Linak
         public IObservable < IDesk > DeskDetected => _deskDetected ;
 
         /// <inheritdoc />
-        public void Initialize ( string deviceName,
-                                 ulong  deviceAddress,
-                                 uint   deviceTimeout)
+        public void Initialize ( string deviceName ,
+                                 ulong  deviceAddress ,
+                                 uint   deviceTimeout )
         {
             Guard.ArgumentNotNull ( deviceName ,
                                     nameof ( deviceName ) ) ;
 
-            _monitor.TimeOut = TimeSpan.FromSeconds(deviceTimeout) ;
+            _monitor.TimeOut = TimeSpan.FromSeconds ( deviceTimeout ) ;
 
             _updated = _monitor.DeviceUpdated
                                .ObserveOn ( _scheduler )
@@ -99,7 +99,7 @@ namespace Idasen.BluetoothLE.Linak
 
             try
             {
-                _logger.Information ( $"[{device.Name}] Desk discovered" );
+                _logger.Information ( $"[{device.Name}] Desk discovered" ) ;
 
                 _desk = await _factory.CreateAsync ( device.Address ) ;
 

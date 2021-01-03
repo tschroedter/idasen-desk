@@ -7,22 +7,24 @@ namespace Idasen.BluetoothLE.Core.ServicesDiscovery
     public class GattServicesDictionary
         : IGattServicesDictionary
     {
-        private readonly object _padlock = new object (  );
-
         public IGattCharacteristicsResultWrapper this [ IGattDeviceServiceWrapper service ]
         {
             get
             {
-                lock(_padlock)
+                lock ( _padlock )
+                {
                     return _dictionary [ service ] ;
+                }
             }
             set
             {
                 Guard.ArgumentNotNull ( value ,
                                         nameof ( value ) ) ;
 
-                lock (_padlock)
+                lock ( _padlock )
+                {
                     _dictionary [ service ] = value ;
+                }
             }
         }
 
@@ -30,8 +32,10 @@ namespace Idasen.BluetoothLE.Core.ServicesDiscovery
         {
             DisposeServices ( ) ;
 
-            lock (_padlock)
+            lock ( _padlock )
+            {
                 _dictionary.Clear ( ) ;
+            }
         }
 
         public void Dispose ( )
@@ -55,8 +59,10 @@ namespace Idasen.BluetoothLE.Core.ServicesDiscovery
         {
             get
             {
-                lock (_padlock)
-                    return _dictionary.Count;
+                lock ( _padlock )
+                {
+                    return _dictionary.Count ;
+                }
             }
         }
 
@@ -64,14 +70,16 @@ namespace Idasen.BluetoothLE.Core.ServicesDiscovery
         {
             lock ( _padlock )
             {
-                foreach (var service in _dictionary.Keys)
+                foreach ( var service in _dictionary.Keys )
                 {
-                    service.Dispose();
+                    service.Dispose ( ) ;
                 }
             }
         }
 
         private readonly Dictionary < IGattDeviceServiceWrapper , IGattCharacteristicsResultWrapper > _dictionary =
             new Dictionary < IGattDeviceServiceWrapper , IGattCharacteristicsResultWrapper > ( ) ;
+
+        private readonly object _padlock = new object ( ) ;
     }
 }

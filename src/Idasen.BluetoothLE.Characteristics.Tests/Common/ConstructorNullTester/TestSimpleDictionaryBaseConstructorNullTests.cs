@@ -4,10 +4,10 @@ using Microsoft.VisualStudio.TestTools.UnitTesting ;
 
 namespace Idasen.BluetoothLE.Characteristics.Tests.Common.ConstructorNullTester
 {
-    [TestClass]
+    [ TestClass ]
     public class TestSimpleDictionaryBaseConstructorNullTests
-        : BaseConstructorNullTester<RawValueWriter>
+        : BaseConstructorNullTester < RawValueWriter >
     {
-        public override int NumberOfConstructorsPassed { get; } = 0;
+        public override int NumberOfConstructorsPassed { get ; } = 0 ;
     }
 }

@@ -28,9 +28,9 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
             IGattCharacteristicsProviderFactory             providerFactory ,
             IRawValueReader                                 rawValueReader ,
             IRawValueWriter                                 rawValueWriter ,
-            ICharacteristicBaseToStringConverter            toStringConverter,
-            IDescriptionToUuid                              descriptionToUuid,
-            [ NotNull ] ISubject < RawValueChangedDetails > subjectHeightSpeed)
+            ICharacteristicBaseToStringConverter            toStringConverter ,
+            IDescriptionToUuid                              descriptionToUuid ,
+            [ NotNull ] ISubject < RawValueChangedDetails > subjectHeightSpeed )
             : base ( logger ,
                      scheduler ,
                      device ,

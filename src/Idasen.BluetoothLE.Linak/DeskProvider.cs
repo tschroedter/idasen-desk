@@ -70,7 +70,7 @@ namespace Idasen.BluetoothLE.Linak
 
         /// <inheritdoc />
         public IDeskProvider Initialize ( string deviceName ,
-                                          ulong  deviceAddress,
+                                          ulong  deviceAddress ,
                                           uint   deviceTimeout )
         {
             Guard.ArgumentNotNull ( deviceName ,
@@ -79,7 +79,7 @@ namespace Idasen.BluetoothLE.Linak
             _logger.Information ( "Initialize..." ) ;
 
             _detector.Initialize ( deviceName ,
-                                   deviceAddress,
+                                   deviceAddress ,
                                    deviceTimeout ) ;
 
             _deskDetected = _detector.DeskDetected

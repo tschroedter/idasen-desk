@@ -9,7 +9,6 @@ using Windows.Devices.Bluetooth.GenericAttributeProfile ;
 using Windows.Foundation ;
 using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers ;
 using Serilog ;
-using NotNullAttribute = JetBrains.Annotations.NotNullAttribute;
 
 namespace Idasen.BluetoothLE.Core.ServicesDiscovery.Wrappers
 {
@@ -17,9 +16,9 @@ namespace Idasen.BluetoothLE.Core.ServicesDiscovery.Wrappers
         : IGattCharacteristicValueChangedObservables
     {
         public GattCharacteristicValueChangedObservables (
-            [ NotNull ] ILogger                                            logger ,
-            [ NotNull ] IScheduler                                         scheduler ,
-            [ NotNull ] ISubject < GattCharacteristicValueChangedDetails > subject )
+            [ JetBrains.Annotations.NotNull ] ILogger                                            logger ,
+            [ JetBrains.Annotations.NotNull ] IScheduler                                         scheduler ,
+            [ JetBrains.Annotations.NotNull ] ISubject < GattCharacteristicValueChangedDetails > subject )
         {
             Guard.ArgumentNotNull ( logger ,
                                     nameof ( logger ) ) ;

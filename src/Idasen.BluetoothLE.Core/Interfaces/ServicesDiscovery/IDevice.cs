@@ -8,7 +8,6 @@ namespace Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery
 {
     /// <summary>
     ///     Represents a Bluetooth LE device.
-    ///
     ///     Add the moment only a limited set of properties and functions are
     ///     exposed.
     /// </summary>

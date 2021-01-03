@@ -399,7 +399,7 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Characteristics
                                          RawValueReader ,
                                          RawValueWriter ,
                                          ToStringConverter ,
-                                         DescriptionToUuid,
+                                         DescriptionToUuid ,
                                          subject ) ;
         }
 
@@ -412,7 +412,7 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Characteristics
                                          RawValueReader ,
                                          RawValueWriter ,
                                          ToStringConverter ,
-                                         DescriptionToUuid,
+                                         DescriptionToUuid ,
                                          _subjectHeightSpeed ) ;
         }
 

@@ -35,7 +35,7 @@ namespace Idasen.BluetoothLE.Linak.Interfaces
         ///     Returns itself.
         /// </returns>
         IDeskProvider Initialize ( [ NotNull ] string deviceName ,
-                                   ulong              deviceAddress,
+                                   ulong              deviceAddress ,
                                    uint               deviceTimeout ) ;
 
         /// <summary>

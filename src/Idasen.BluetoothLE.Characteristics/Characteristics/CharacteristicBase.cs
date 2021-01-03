@@ -83,7 +83,7 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
 
         public virtual async Task Refresh ( )
         {
-            Characteristics.Refresh ( DescriptionToUuid.ReadOnlyDictionary) ;
+            Characteristics.Refresh ( DescriptionToUuid.ReadOnlyDictionary ) ;
 
             var keys = Characteristics.Characteristics.Keys.ToArray ( ) ;
 

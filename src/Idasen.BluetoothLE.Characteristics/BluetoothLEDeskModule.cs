@@ -78,8 +78,8 @@ namespace Idasen.BluetoothLE.Characteristics
             builder.RegisterType < BufferReader > ( )
                    .As < IBufferReader > ( ) ;
 
-            builder.RegisterType<DescriptionToUuid>()
-                   .As<IDescriptionToUuid>();
+            builder.RegisterType < DescriptionToUuid > ( )
+                   .As < IDescriptionToUuid > ( ) ;
         }
     }
 }
