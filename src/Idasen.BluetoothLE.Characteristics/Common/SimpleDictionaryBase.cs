@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic ;
 using System.Linq ;
-using Idasen.BluetoothLE.Characteristics.Interfaces.Characteristics ;
 using Idasen.BluetoothLE.Characteristics.Interfaces.Common ;
 using Idasen.BluetoothLE.Core ;
 
-namespace Idasen.BluetoothLE.Characteristics.Characteristics
+namespace Idasen.BluetoothLE.Characteristics.Common
 {
     public class SimpleDictionaryBase < TKey , TValue >
         : ISimpleDictionary < TKey , TValue >
