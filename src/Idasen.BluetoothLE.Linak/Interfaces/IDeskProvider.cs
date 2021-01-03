@@ -28,6 +28,9 @@ namespace Idasen.BluetoothLE.Linak.Interfaces
         /// <param name="deviceAddress">
         ///     The device address used to detect a desk.
         /// </param>
+        /// <param name="deviceTimeout">
+        ///     The devices timeout when its removed from the cache.
+        /// </param>
         /// <returns>
         ///     Returns itself.
         /// </returns>
