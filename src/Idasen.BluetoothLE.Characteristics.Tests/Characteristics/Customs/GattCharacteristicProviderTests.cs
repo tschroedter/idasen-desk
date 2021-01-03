@@ -32,11 +32,11 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Characteristics.Customs
 
             _characteristic1 = Substitute.For < IGattCharacteristicWrapper > ( ) ;
             _characteristic1.Uuid
-                            .Returns ( Characteristics1Uuid ) ;
+                            .Returns ( _characteristics1Uuid ) ;
 
             _characteristic2 = Substitute.For < IGattCharacteristicWrapper > ( ) ;
             _characteristic2.Uuid
-                            .Returns ( Characteristics2Uuid ) ;
+                            .Returns ( _characteristics2Uuid ) ;
 
 
             _gattCharacteristics.Characteristics
@@ -73,7 +73,7 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Characteristics.Customs
             _expectedCharacteristics.Add ( _characteristic1 ) ;
 
             _foundCharacteristicsDictionary.Add ( Description1 ,
-                                                  Characteristics1Uuid ) ;
+                                                  _characteristics1Uuid ) ;
 
             var sut = CreateSut ( ) ;
 
@@ -99,7 +99,7 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Characteristics.Customs
             _expectedCharacteristics.Add ( _characteristic1 ) ;
 
             _foundCharacteristicsDictionary.Add ( Description1 ,
-                                                  Characteristics1Uuid ) ;
+                                                  _characteristics1Uuid ) ;
 
             var sut = CreateSut ( ) ;
 
@@ -116,7 +116,7 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Characteristics.Customs
             _expectedCharacteristics.Add ( _characteristic1 ) ;
 
             _foundCharacteristicsDictionary.Add ( Description1 ,
-                                                  Characteristics1Uuid ) ;
+                                                  _characteristics1Uuid ) ;
 
             var sut = CreateSut ( ) ;
 
@@ -136,9 +136,9 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Characteristics.Customs
             _expectedCharacteristics.Add ( _characteristic2 ) ;
 
             _foundCharacteristicsDictionary.Add ( Description1 ,
-                                                  Characteristics1Uuid ) ;
+                                                  _characteristics1Uuid ) ;
             _foundCharacteristicsDictionary.Add ( Description2 ,
-                                                  Characteristics2Uuid ) ;
+                                                  _characteristics2Uuid ) ;
 
             var sut = CreateSut ( ) ;
 
@@ -170,9 +170,9 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Characteristics.Customs
             _expectedCharacteristics.Add ( _characteristic2 ) ;
 
             _foundCharacteristicsDictionary.Add ( Description1 ,
-                                                  Characteristics1Uuid ) ;
+                                                  _characteristics1Uuid ) ;
             _foundCharacteristicsDictionary.Add ( Description2 ,
-                                                  Characteristics2Uuid ) ;
+                                                  _characteristics2Uuid ) ;
 
             var sut = CreateSut ( ) ;
 
@@ -198,9 +198,9 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Characteristics.Customs
             _expectedCharacteristics.Add ( _characteristic2 ) ;
 
             _foundCharacteristicsDictionary.Add ( Description1 ,
-                                                  Characteristics1Uuid ) ;
+                                                  _characteristics1Uuid ) ;
             _foundCharacteristicsDictionary.Add ( Description2 ,
-                                                  Characteristics2Uuid ) ;
+                                                  _characteristics2Uuid ) ;
 
             var sut = CreateSut ( ) ;
 
@@ -216,7 +216,7 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Characteristics.Customs
         public void Refresh_ForReadOnlyDictionaryNotContainingExpectedCharacteristics_UnavailableCharacteristics ( )
         {
             _foundCharacteristicsDictionary.Add ( Description1 ,
-                                                  Characteristics1Uuid ) ;
+                                                  _characteristics1Uuid ) ;
 
             var sut = CreateSut ( ) ;
 
@@ -237,8 +237,8 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Characteristics.Customs
         private readonly List < IGattCharacteristicWrapper > _expectedCharacteristics =
             new List < IGattCharacteristicWrapper > ( ) ;
 
-        private readonly Guid                                  Characteristics1Uuid = Guid.NewGuid ( ) ;
-        private readonly Guid                                  Characteristics2Uuid = Guid.NewGuid ( ) ;
+        private readonly Guid                                  _characteristics1Uuid = Guid.NewGuid ( ) ;
+        private readonly Guid                                  _characteristics2Uuid = Guid.NewGuid ( ) ;
         private          IGattCharacteristicWrapper            _characteristic1 ;
         private          IGattCharacteristicWrapper            _characteristic2 ;
         private          IGattCharacteristicWrapper            _customCharacteristic1 ;
