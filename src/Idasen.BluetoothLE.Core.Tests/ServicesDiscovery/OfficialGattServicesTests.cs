@@ -92,7 +92,7 @@ namespace Idasen.BluetoothLE.Core.Tests.ServicesDiscovery
         {
             var expected = CreateUuidCollection ( ).Count ;
 
-            var count = CreateSut ( ).Count ( ) ;
+            var count = CreateSut ( ).Count ;
 
             count.Should ( )
                  .Be ( expected ) ;
