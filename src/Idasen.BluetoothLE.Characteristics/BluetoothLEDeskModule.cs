@@ -80,6 +80,9 @@ namespace Idasen.BluetoothLE.Characteristics
 
             builder.RegisterType < DescriptionToUuid > ( )
                    .As < IDescriptionToUuid > ( ) ;
+
+            builder.RegisterType ( typeof ( CharacteristicBaseFactory ) )
+                   .As ( typeof ( ICharacteristicBaseFactory ) ) ;
         }
     }
 }
