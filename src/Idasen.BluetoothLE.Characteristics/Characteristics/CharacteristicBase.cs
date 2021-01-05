@@ -175,6 +175,6 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
 
         protected readonly IScheduler Scheduler ;
 
-        internal IGattCharacteristicProvider Characteristics ; // todo rename to ICustomGattCharacteristic(s)Provider
+        internal IGattCharacteristicProvider Characteristics ;
     }
 }
