@@ -25,23 +25,26 @@ namespace Idasen.SystemTray
     ///     in App.xaml.cs could have created this view model, and assigned it to the NotifyIcon.
     /// </summary>
     public class NotifyIconViewModel
+        : IDisposable
     {
         public NotifyIconViewModel ( )
         {
             IEnumerable < IModule > otherModules = new [ ] { new SystemTrayModule ( ) } ;
 
-            var container = ContainerProvider.Create ( "Idasen.SystemTray" ,
-                                                       "Idasen.SystemTray.log" ,
-                                                       otherModules ) ;
+            _container = ContainerProvider.Create ( "Idasen.SystemTray" ,
+                                                    "Idasen.SystemTray.log" ,
+                                                    otherModules ) ;
 
-            _logger   = container.Resolve < ILogger > ( ) ;
-            _manager  = container.Resolve < ISettingsManager > ( ) ;
-            _provider = container.Resolve < IDeskProvider > ( ) ;
+            _logger   = _container.Resolve < ILogger > ( ) ;
+            _manager  = _container.Resolve < ISettingsManager > ( ) ;
+            _provider = _container.Resolve < IDeskProvider > ( ) ;
 
             _tokenSource = new CancellationTokenSource ( TimeSpan.FromSeconds ( 60 ) ) ;
             _token       = _tokenSource.Token ;
 
             Task.Run ( AutoConnect ) ;
+
+            _logger.Information ( "##### Starting up..." );
         }
 
         /// <summary>
@@ -149,6 +152,8 @@ namespace Idasen.SystemTray
                        {
                            CommandAction = ( ) =>
                                            {
+                                               _logger.Information("##### Exit...");
+
                                                _tokenSource.Cancel ( ) ;
                                                Application.Current.Shutdown ( ) ;
                                            }
@@ -294,5 +299,19 @@ namespace Idasen.SystemTray
         private               TaskbarIcon             _notifyIcon ;
         private               CancellationToken       _token ;
         private               CancellationTokenSource _tokenSource ;
+        private readonly      IContainer              _container ;
+
+        public void Dispose ( )
+        {
+            _logger.Information("Disposing...");
+
+            _tokenSource?.Cancel();
+
+            _container?.Dispose ( ) ;
+            _provider?.Dispose ( ) ;
+            _desk?.Dispose ( ) ;
+            _notifyIcon?.Dispose ( ) ;
+            _tokenSource?.Dispose ( ) ;
+        }
     }
 }
