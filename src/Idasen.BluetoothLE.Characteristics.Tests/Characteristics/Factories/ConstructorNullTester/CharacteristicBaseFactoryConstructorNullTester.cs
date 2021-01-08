@@ -1,4 +1,4 @@
-﻿using Idasen.BluetoothLE.Characteristics.Characteristics.Factories ;
+﻿using Idasen.BluetoothLE.Characteristics.Characteristics ;
 using Idasen.BluetoothLE.Common.Tests ;
 using Microsoft.VisualStudio.TestTools.UnitTesting ;
 

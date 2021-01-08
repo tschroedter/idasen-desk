@@ -2,11 +2,9 @@
 using Autofac ;
 using Idasen.BluetoothLE.Characteristics.Characteristics ;
 using Idasen.BluetoothLE.Characteristics.Characteristics.Customs ;
-using Idasen.BluetoothLE.Characteristics.Characteristics.Factories ;
 using Idasen.BluetoothLE.Characteristics.Common ;
 using Idasen.BluetoothLE.Characteristics.Interfaces.Characteristics ;
 using Idasen.BluetoothLE.Characteristics.Interfaces.Characteristics.Customs ;
-using Idasen.BluetoothLE.Characteristics.Interfaces.Characteristics.Factories ;
 using Idasen.BluetoothLE.Characteristics.Interfaces.Common ;
 using Idasen.BluetoothLE.Core ;
 

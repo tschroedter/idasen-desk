@@ -1,10 +1,10 @@
 ﻿using Autofac ;
-using Idasen.BluetoothLE.Characteristics.Interfaces.Characteristics.Factories ;
+using Idasen.BluetoothLE.Characteristics.Interfaces.Characteristics ;
 using Idasen.BluetoothLE.Core ;
 using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery ;
 using NotNullAttribute = JetBrains.Annotations.NotNullAttribute;
 
-namespace Idasen.BluetoothLE.Characteristics.Characteristics.Factories
+namespace Idasen.BluetoothLE.Characteristics.Characteristics
 {
     public class CharacteristicBaseFactory
         : ICharacteristicBaseFactory

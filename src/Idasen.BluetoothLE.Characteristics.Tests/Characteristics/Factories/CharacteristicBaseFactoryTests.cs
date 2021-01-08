@@ -1,5 +1,5 @@
 ﻿using FluentAssertions ;
-using Idasen.BluetoothLE.Characteristics.Characteristics.Factories ;
+using Idasen.BluetoothLE.Characteristics.Characteristics ;
 using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery ;
 using Selkie.AutoMocking ;
 

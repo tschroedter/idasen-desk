@@ -1,6 +1,4 @@
-﻿using Idasen.BluetoothLE.Characteristics.Characteristics.Factories ;
-using Idasen.BluetoothLE.Characteristics.Interfaces.Characteristics ;
-using Idasen.BluetoothLE.Characteristics.Interfaces.Characteristics.Factories ;
+﻿using Idasen.BluetoothLE.Characteristics.Interfaces.Characteristics ;
 using Idasen.BluetoothLE.Core ;
 using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery ;
 using Idasen.BluetoothLE.Linak.Interfaces ;
