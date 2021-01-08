@@ -36,41 +36,23 @@ namespace Idasen.BluetoothLE.Characteristics
             builder.RegisterType < RawValueWriter > ( )
                    .As < IRawValueWriter > ( ) ;
 
-            builder.RegisterType < GenericAccess > ( )
-                   .As < IGenericAccess > ( ) ;
+            builder.RegisterType<GenericAccess>()
+                   .As<IGenericAccess>();
 
-            builder.RegisterType < GenericAccessFactory > ( )
-                   .As < IGenericAccessFactory > ( ) ;
+            builder.RegisterType<GenericAttribute>()
+                   .As<IGenericAttribute>();
 
-            builder.RegisterType < GenericAttribute > ( )
-                   .As < IGenericAttribute > ( ) ;
+            builder.RegisterType<ReferenceInput>()
+                   .As<IReferenceInput>();
 
-            builder.RegisterType < GenericAttributeFactory > ( )
-                   .As < IGenericAttributeFactory > ( ) ;
+            builder.RegisterType<ReferenceOutput>()
+                   .As<IReferenceOutput>();
 
-            builder.RegisterType < ReferenceInput > ( )
-                   .As < IReferenceInput > ( ) ;
+            builder.RegisterType<Dpg>()
+                   .As<IDpg>();
 
-            builder.RegisterType < ReferenceInputFactory > ( )
-                   .As < IReferenceInputFactory > ( ) ;
-
-            builder.RegisterType < ReferenceOutput > ( )
-                   .As < IReferenceOutput > ( ) ;
-
-            builder.RegisterType < ReferenceOutputFactory > ( )
-                   .As < IReferenceOutputFactory > ( ) ;
-
-            builder.RegisterType < Dpg > ( )
-                   .As < IDpg > ( ) ;
-
-            builder.RegisterType < DpgFactory > ( )
-                   .As < IDpgFactory > ( ) ;
-
-            builder.RegisterType < Control > ( )
-                   .As < IControl > ( ) ;
-
-            builder.RegisterType < ControlFactory > ( )
-                   .As < IControlFactory > ( ) ;
+            builder.RegisterType<Control>()
+                   .As<IControl>();
 
             builder.RegisterType < CharacteristicBaseToStringConverter > ( )
                    .As < ICharacteristicBaseToStringConverter > ( ) ;
