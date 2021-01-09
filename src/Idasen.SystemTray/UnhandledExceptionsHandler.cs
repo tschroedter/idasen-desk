@@ -65,8 +65,9 @@ namespace Idasen.SystemTray
         {
             var exception          = args.ExceptionObject as Exception;
             var terminatingMessage = args.IsTerminating ? " The application is terminating." : string.Empty;
-            var exceptionMessage   = exception?.Message ?? "An unmanaged exception occured.";
+            var exceptionMessage   = exception?.Message ?? "An unmanaged exception occurred.";
             var message            = string.Concat(exceptionMessage, terminatingMessage);
+
             log.Error(exception, message);
         }
     }
