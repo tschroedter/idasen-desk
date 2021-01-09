@@ -4,6 +4,7 @@
     {
         public const string ApplicationName  = "Idasen.SystemTray" ;
         public const string SettingsFileName = "Settings.json" ;
+        public const string LogFilename      = "Idasen.SystemTray.log" ;
 
         public const uint   DefaultHeightStandingInCm      = 120 ;
         public const uint   DefaultHeightSeatingInCm       = 65 ;

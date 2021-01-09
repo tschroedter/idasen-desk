@@ -8,6 +8,7 @@ using Hardcodet.Wpf.TaskbarNotification ;
 using Idasen.BluetoothLE.Linak.Interfaces ;
 using Idasen.Launcher ;
 using Idasen.SystemTray.Interfaces ;
+using Idasen.SystemTray.Utils ;
 using Serilog ;
 
 namespace Idasen.SystemTray
@@ -23,8 +24,8 @@ namespace Idasen.SystemTray
 
             IEnumerable < IModule > otherModules = new [ ] { new SystemTrayModule ( ) } ;
 
-            _container = ContainerProvider.Create ( "Idasen.SystemTray" ,
-                                                    "Idasen.SystemTray.log" ,
+            _container = ContainerProvider.Create ( Constants.ApplicationName ,
+                                                    Constants.LogFilename ,
                                                     otherModules ) ;
 
             _logger = _container.Resolve < ILogger > ( ) ;
