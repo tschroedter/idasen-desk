@@ -17,9 +17,9 @@ namespace Idasen.Launcher
                                           string                  appLogFileName ,
                                           IEnumerable < IModule > otherModules = null )
         {
-            var logFolder = CreateFullPathSettingsFolderName ( appName ) ;
-            var logFile = CreateFullPathSettingsFileName ( appName ,
-                                                           appLogFileName ) ;
+            var logFolder = CreateFullPathApplicationFolderName ( appName ) ;
+            var logFile = CreateFullPathLogFileName ( appName ,
+                                                      appLogFileName ) ;
 
             if ( ! Directory.Exists ( logFolder ) )
                 Directory.CreateDirectory ( logFolder ) ;
@@ -58,15 +58,15 @@ namespace Idasen.Launcher
         }
 
 #pragma warning disable SecurityIntelliSenseCS // MS Security rules violation
-        public static string CreateFullPathSettingsFileName ( string appName ,
+        public static string CreateFullPathLogFileName ( string appName ,
                                                               string fileName )
         {
-            var fullPath = Path.Combine ( CreateFullPathSettingsFolderName ( appName ) ,
+            var fullPath = Path.Combine ( CreateFullPathApplicationFolderName ( appName ) ,
                                           fileName ) ;
             return fullPath ;
         }
 
-        private static string CreateFullPathSettingsFolderName ( string appName )
+        private static string CreateFullPathApplicationFolderName ( string appName )
         {
             var appData = Environment.GetFolderPath ( Environment.SpecialFolder.CommonApplicationData ) ;
             var folderName = Path.Combine ( appData ,
