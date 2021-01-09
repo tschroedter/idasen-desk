@@ -18,19 +18,19 @@ namespace Idasen.SystemTray
     /// </summary>
     public partial class App
     {
+        private readonly ILogger _logger = LoggerProvider.CreateLogger ( Constants.ApplicationName ,
+                                                                         Constants.LogFilename ) ;
         protected override void OnStartup ( StartupEventArgs e )
         {
             base.OnStartup ( e ) ;
+
+            UnhandledExceptionsHandler.RegisterGlobalExceptionHandling ( ) ;
 
             IEnumerable < IModule > otherModules = new [ ] { new SystemTrayModule ( ) } ;
 
             _container = ContainerProvider.Create ( Constants.ApplicationName ,
                                                     Constants.LogFilename ,
                                                     otherModules ) ;
-
-            _logger = _container.Resolve < ILogger > ( ) ;
-
-            UnhandledExceptionsHandler.RegisterGlobalExceptionHandling ( _logger ) ;
 
             //create the notifyIcon (it's a resource declared in NotifyIconResources.xaml
             _notifyIcon = ( TaskbarIcon ) FindResource ( "NotifyIcon" ) ;
@@ -39,12 +39,13 @@ namespace Idasen.SystemTray
                 throw new ArgumentException ( "Can't find resource: NotifyIcon" ,
                                               nameof ( _notifyIcon ) ) ;
 
-            var model = _notifyIcon?.DataContext as NotifyIconViewModel ;
-
-            if ( model == null )
+            if ( ! ( _notifyIcon?.DataContext is NotifyIconViewModel model ) )
                 throw new ArgumentException ( "Can't find DataContext: NotifyIconViewModel" ,
                                               nameof ( model ) ) ;
-            model.Initialize ( _logger ,
+
+            _logger.Information ( "##### Startup..." ) ;
+
+            model.Initialize ( _container.Resolve < ILogger > ( ) ,
                                _container.Resolve < ISettingsManager > ( ) ,
                                _container.Resolve < IDeskProvider > ( ) ) ;
 
@@ -59,9 +60,7 @@ namespace Idasen.SystemTray
             base.OnExit ( e ) ;
         }
 
-        private IContainer _container ;
-        private ILogger    _logger ;
-
+        private IContainer  _container ;
         private TaskbarIcon _notifyIcon ;
     }
 }
