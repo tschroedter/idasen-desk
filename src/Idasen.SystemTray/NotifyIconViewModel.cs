@@ -1,15 +1,12 @@
 ﻿using System ;
-using System.Collections.Generic ;
 using System.Threading ;
 using System.Threading.Tasks ;
 using System.Windows ;
 using System.Windows.Controls.Primitives ;
 using System.Windows.Input ;
-using Autofac ;
-using Autofac.Core ;
 using Hardcodet.Wpf.TaskbarNotification ;
+using Idasen.BluetoothLE.Core ;
 using Idasen.BluetoothLE.Linak.Interfaces ;
-using Idasen.Launcher ;
 using Idasen.SystemTray.Interfaces ;
 using Idasen.SystemTray.Utils ;
 using JetBrains.Annotations ;
@@ -29,22 +26,31 @@ namespace Idasen.SystemTray
     {
         public NotifyIconViewModel ( )
         {
-            IEnumerable < IModule > otherModules = new [ ] { new SystemTrayModule ( ) } ;
+        }
 
-            _container = ContainerProvider.Create ( "Idasen.SystemTray" ,
-                                                    "Idasen.SystemTray.log" ,
-                                                    otherModules ) ;
+        public NotifyIconViewModel (
+            [ NotNull ] ILogger          logger ,
+            [ NotNull ] ISettingsManager manager ,
+            [ NotNull ] IDeskProvider    provider )
+        {
+            Guard.ArgumentNotNull ( logger ,
+                                    nameof ( logger ) ) ;
+            Guard.ArgumentNotNull ( manager ,
+                                    nameof ( manager ) ) ;
+            Guard.ArgumentNotNull ( provider ,
+                                    nameof ( provider ) ) ;
+        }
 
-            _logger   = _container.Resolve < ILogger > ( ) ;
-            _manager  = _container.Resolve < ISettingsManager > ( ) ;
-            _provider = _container.Resolve < IDeskProvider > ( ) ;
+        public void Dispose ( )
+        {
+            _logger.Information ( "Disposing..." ) ;
 
-            _tokenSource = new CancellationTokenSource ( TimeSpan.FromSeconds ( 60 ) ) ;
-            _token       = _tokenSource.Token ;
+            _tokenSource?.Cancel ( ) ;
 
-            Task.Run ( AutoConnect ) ;
-
-            _logger.Information ( "##### Starting up..." );
+            _provider?.Dispose ( ) ;
+            _desk?.Dispose ( ) ;
+            _notifyIcon?.Dispose ( ) ;
+            _tokenSource?.Dispose ( ) ;
         }
 
         /// <summary>
@@ -152,7 +158,7 @@ namespace Idasen.SystemTray
                        {
                            CommandAction = ( ) =>
                                            {
-                                               _logger.Information("##### Exit...");
+                                               _logger.Information ( "##### Exit..." ) ;
 
                                                _tokenSource.Cancel ( ) ;
                                                Application.Current.Shutdown ( ) ;
@@ -168,10 +174,36 @@ namespace Idasen.SystemTray
             set => Application.Current.MainWindow = value as Window ;
         }
 
-        private async void AutoConnect ( )
+        public bool IsInitialize => _logger != null && _manager != null && _provider != null ;
+
+        public NotifyIconViewModel Initialize (
+            [ NotNull ] ILogger          logger ,
+            [ NotNull ] ISettingsManager manager ,
+            [ NotNull ] IDeskProvider    provider )
+        {
+            Guard.ArgumentNotNull ( logger ,
+                                    nameof ( logger ) ) ;
+            Guard.ArgumentNotNull ( manager ,
+                                    nameof ( manager ) ) ;
+            Guard.ArgumentNotNull ( provider ,
+                                    nameof ( provider ) ) ;
+
+            _logger   = logger ;
+            _manager  = manager ;
+            _provider = provider ;
+
+            _tokenSource = new CancellationTokenSource ( TimeSpan.FromSeconds ( 60 ) ) ;
+            _token       = _tokenSource.Token ;
+
+            return this ;
+        }
+
+        public async Task AutoConnect ( )
         {
             try
             {
+                CheckIfInitialized ( ) ;
+
                 _logger.Debug ( "Trying to load settings..." ) ;
 
                 await _manager.Load ( ) ;
@@ -204,6 +236,12 @@ namespace Idasen.SystemTray
 
                 ConnectFailed ( ) ;
             }
+        }
+
+        private void CheckIfInitialized ( )
+        {
+            if ( ! IsInitialize )
+                throw new Exception ( "Initialize needs to be called first!" ) ;
         }
 
         private async Task Connect ( )
@@ -291,27 +329,12 @@ namespace Idasen.SystemTray
                                             4000 ) ;
         }
 
-        private readonly ILogger _logger ;
-
-        private readonly      ISettingsManager        _manager ;
-        private readonly      IDeskProvider           _provider ;
         [ CanBeNull ] private IDesk                   _desk ;
+        private               ILogger                 _logger ;
+        private               ISettingsManager        _manager ;
         private               TaskbarIcon             _notifyIcon ;
+        private               IDeskProvider           _provider ;
         private               CancellationToken       _token ;
         private               CancellationTokenSource _tokenSource ;
-        private readonly      IContainer              _container ;
-
-        public void Dispose ( )
-        {
-            _logger.Information("Disposing...");
-
-            _tokenSource?.Cancel();
-
-            _container?.Dispose ( ) ;
-            _provider?.Dispose ( ) ;
-            _desk?.Dispose ( ) ;
-            _notifyIcon?.Dispose ( ) ;
-            _tokenSource?.Dispose ( ) ;
-        }
     }
 }
