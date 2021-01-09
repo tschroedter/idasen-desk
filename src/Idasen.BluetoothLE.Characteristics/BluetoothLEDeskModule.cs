@@ -34,23 +34,23 @@ namespace Idasen.BluetoothLE.Characteristics
             builder.RegisterType < RawValueWriter > ( )
                    .As < IRawValueWriter > ( ) ;
 
-            builder.RegisterType<GenericAccess>()
-                   .As<IGenericAccess>();
+            builder.RegisterType < GenericAccess > ( )
+                   .As < IGenericAccess > ( ) ;
 
-            builder.RegisterType<GenericAttribute>()
-                   .As<IGenericAttribute>();
+            builder.RegisterType < GenericAttribute > ( )
+                   .As < IGenericAttribute > ( ) ;
 
-            builder.RegisterType<ReferenceInput>()
-                   .As<IReferenceInput>();
+            builder.RegisterType < ReferenceInput > ( )
+                   .As < IReferenceInput > ( ) ;
 
-            builder.RegisterType<ReferenceOutput>()
-                   .As<IReferenceOutput>();
+            builder.RegisterType < ReferenceOutput > ( )
+                   .As < IReferenceOutput > ( ) ;
 
-            builder.RegisterType<Dpg>()
-                   .As<IDpg>();
+            builder.RegisterType < Dpg > ( )
+                   .As < IDpg > ( ) ;
 
-            builder.RegisterType<Control>()
-                   .As<IControl>();
+            builder.RegisterType < Control > ( )
+                   .As < IControl > ( ) ;
 
             builder.RegisterType < CharacteristicBaseToStringConverter > ( )
                    .As < ICharacteristicBaseToStringConverter > ( ) ;

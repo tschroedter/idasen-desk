@@ -9,66 +9,84 @@ using Serilog ;
 
 namespace Idasen.SystemTray
 {
-    [ExcludeFromCodeCoverage]
+    [ ExcludeFromCodeCoverage ]
     public static class UnhandledExceptionsHandler
     {
-        public static void RegisterGlobalExceptionHandling()
+        public static void RegisterGlobalExceptionHandling ( )
         {
             var logger = LoggerProvider.CreateLogger ( Constants.ApplicationName ,
                                                        Constants.LogFilename ) ;
 
-            logger.Debug ( "Registering global exception handlers..." );
+            logger.Debug ( "Registering global exception handlers..." ) ;
 
             // this is the line you really want
             AppDomain.CurrentDomain.UnhandledException +=
-                (sender, args) => CurrentDomainOnUnhandledException(args, logger);
+            ( sender ,
+              args ) => CurrentDomainOnUnhandledException ( args ,
+                                                            logger ) ;
 
             // optional: hooking up some more handlers, remember that you need
             // to hook up additional handlers when logging from other dispatchers,
             // schedulers, or applications
 
             Application.Current.Dispatcher.UnhandledException +=
-                (sender, args) => DispatcherOnUnhandledException(args, logger);
+            ( sender ,
+              args ) => DispatcherOnUnhandledException ( args ,
+                                                         logger ) ;
 
             Application.Current.DispatcherUnhandledException +=
-                (sender, args) => CurrentOnDispatcherUnhandledException(args, logger);
+            ( sender ,
+              args ) => CurrentOnDispatcherUnhandledException ( args ,
+                                                                logger ) ;
 
             TaskScheduler.UnobservedTaskException +=
-                (sender, args) => TaskSchedulerOnUnobservedTaskException(args, logger);
+            ( sender ,
+              args ) => TaskSchedulerOnUnobservedTaskException ( args ,
+                                                                 logger ) ;
         }
 
-        private static void TaskSchedulerOnUnobservedTaskException(
-            UnobservedTaskExceptionEventArgs args, ILogger log)
+        private static void TaskSchedulerOnUnobservedTaskException (
+            UnobservedTaskExceptionEventArgs args ,
+            ILogger                          log )
         {
             log.Error ( args.Exception ,
                         args.Exception != null
                             ? args.Exception.Message
-                            : "Message is null") ;
+                            : "Message is null" ) ;
 
-            args.SetObserved();
+            args.SetObserved ( ) ;
         }
 
-        private static void CurrentOnDispatcherUnhandledException(
-            DispatcherUnhandledExceptionEventArgs args, ILogger log)
+        private static void CurrentOnDispatcherUnhandledException (
+            DispatcherUnhandledExceptionEventArgs args ,
+            ILogger                               log )
         {
-            log.Error(args.Exception, args.Exception.Message);
+            log.Error ( args.Exception ,
+                        args.Exception.Message ) ;
             // args.Handled = true;
         }
 
-        private static void DispatcherOnUnhandledException(DispatcherUnhandledExceptionEventArgs args, ILogger log)
+        private static void DispatcherOnUnhandledException ( DispatcherUnhandledExceptionEventArgs args ,
+                                                             ILogger                               log )
         {
-            log.Error(args.Exception, args.Exception.Message);
+            log.Error ( args.Exception ,
+                        args.Exception.Message ) ;
             // args.Handled = true;
         }
 
-        private static void CurrentDomainOnUnhandledException(UnhandledExceptionEventArgs args, ILogger log)
+        private static void CurrentDomainOnUnhandledException ( UnhandledExceptionEventArgs args ,
+                                                                ILogger                     log )
         {
-            var exception          = args.ExceptionObject as Exception;
-            var terminatingMessage = args.IsTerminating ? " The application is terminating." : string.Empty;
-            var exceptionMessage   = exception?.Message ?? "An unmanaged exception occurred.";
-            var message            = string.Concat(exceptionMessage, terminatingMessage);
+            var exception = args.ExceptionObject as Exception ;
+            var terminatingMessage = args.IsTerminating
+                                         ? " The application is terminating."
+                                         : string.Empty ;
+            var exceptionMessage = exception?.Message ?? "An unmanaged exception occurred." ;
+            var message = string.Concat ( exceptionMessage ,
+                                          terminatingMessage ) ;
 
-            log.Error(exception, message);
+            log.Error ( exception ,
+                        message ) ;
         }
     }
 }

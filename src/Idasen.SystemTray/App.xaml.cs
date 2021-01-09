@@ -18,8 +18,6 @@ namespace Idasen.SystemTray
     /// </summary>
     public partial class App
     {
-        private readonly ILogger _logger = LoggerProvider.CreateLogger ( Constants.ApplicationName ,
-                                                                         Constants.LogFilename ) ;
         protected override void OnStartup ( StartupEventArgs e )
         {
             base.OnStartup ( e ) ;
@@ -59,6 +57,9 @@ namespace Idasen.SystemTray
 
             base.OnExit ( e ) ;
         }
+
+        private readonly ILogger _logger = LoggerProvider.CreateLogger ( Constants.ApplicationName ,
+                                                                         Constants.LogFilename ) ;
 
         private IContainer  _container ;
         private TaskbarIcon _notifyIcon ;

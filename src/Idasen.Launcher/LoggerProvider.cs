@@ -21,8 +21,8 @@ namespace Idasen.Launcher
         {
             Guard.ArgumentNotNull ( appName ,
                                     nameof ( appName ) ) ;
-            Guard.ArgumentNotNull(appLogFileName,
-                                  nameof(appLogFileName));
+            Guard.ArgumentNotNull ( appLogFileName ,
+                                    nameof ( appLogFileName ) ) ;
 
             if ( Logger != null )
             {
