@@ -3,6 +3,8 @@ using System.Diagnostics.CodeAnalysis ;
 using System.Threading.Tasks ;
 using System.Windows ;
 using System.Windows.Threading ;
+using Idasen.Launcher ;
+using Idasen.SystemTray.Utils ;
 using Serilog ;
 
 namespace Idasen.SystemTray
@@ -10,8 +12,11 @@ namespace Idasen.SystemTray
     [ExcludeFromCodeCoverage]
     public static class UnhandledExceptionsHandler
     {
-        public static void RegisterGlobalExceptionHandling(ILogger logger)
+        public static void RegisterGlobalExceptionHandling()
         {
+            var logger = LoggerProvider.CreateLogger ( Constants.ApplicationName ,
+                                                       Constants.LogFilename ) ;
+
             logger.Debug ( "Registering global exception handlers..." );
 
             // this is the line you really want
@@ -32,7 +37,8 @@ namespace Idasen.SystemTray
                 (sender, args) => TaskSchedulerOnUnobservedTaskException(args, logger);
         }
 
-        private static void TaskSchedulerOnUnobservedTaskException(UnobservedTaskExceptionEventArgs args, ILogger log)
+        private static void TaskSchedulerOnUnobservedTaskException(
+            UnobservedTaskExceptionEventArgs args, ILogger log)
         {
             log.Error ( args.Exception ,
                         args.Exception != null
@@ -42,7 +48,8 @@ namespace Idasen.SystemTray
             args.SetObserved();
         }
 
-        private static void CurrentOnDispatcherUnhandledException(DispatcherUnhandledExceptionEventArgs args, ILogger log)
+        private static void CurrentOnDispatcherUnhandledException(
+            DispatcherUnhandledExceptionEventArgs args, ILogger log)
         {
             log.Error(args.Exception, args.Exception.Message);
             // args.Handled = true;
