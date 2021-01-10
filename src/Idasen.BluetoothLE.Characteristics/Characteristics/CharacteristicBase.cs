@@ -131,42 +131,42 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
         protected abstract T WithMapping < T > ( )
             where T : class ;
 
-        protected async Task<bool> TryWriteValueAsync(string            key,
-                                                      IEnumerable<byte> bytes)
+        protected async Task < bool > TryWriteValueAsync ( string               key ,
+                                                           IEnumerable < byte > bytes )
         {
             try
             {
-                return await DoTryWriteValueAsync(key,
-                                                  bytes);
+                return await DoTryWriteValueAsync ( key ,
+                                                    bytes ) ;
             }
-            catch (Exception e)
+            catch ( Exception e )
             {
                 Logger.Error ( e ,
-                               "Failed to write Value Async! " ) ;
+                               "Failed to write Value Async!" ) ;
 
-                return false;
+                return false ;
             }
         }
 
-        private async Task<bool> DoTryWriteValueAsync(string            key,
-                                                      IEnumerable<byte> bytes)
+        private async Task < bool > DoTryWriteValueAsync ( string               key ,
+                                                           IEnumerable < byte > bytes )
         {
-            if (!Characteristics.Characteristics.TryGetValue(key,
-                                                             out var characteristic))
+            if ( ! Characteristics.Characteristics.TryGetValue ( key ,
+                                                                 out var characteristic ) )
             {
-                Logger.Error($"Unknown characteristic with key '{key}'");
+                Logger.Error ( $"Unknown characteristic with key '{key}'" ) ;
 
-                return false;
+                return false ;
             }
 
-            if (characteristic != null)
-                return await RawValueWriter.TryWriteValueAsync(characteristic,
-                                                               bytes.ToArray()
-                                                                    .AsBuffer());
+            if ( characteristic != null )
+                return await RawValueWriter.TryWriteValueAsync ( characteristic ,
+                                                                 bytes.ToArray ( )
+                                                                      .AsBuffer ( ) ) ;
 
-            Logger.Error($"Characteristic for key '{key}' is null");
+            Logger.Error ( $"Characteristic for key '{key}' is null" ) ;
 
-            return false;
+            return false ;
         }
 
         [ NotNull ]
@@ -176,6 +176,30 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
                                            out var values )
                        ? values
                        : RawArrayEmpty ;
+        }
+
+        protected bool TryGetValueOrEmpty ( string                   key ,
+                                            out IEnumerable < byte > bytes )
+        {
+            try
+            {
+                if ( RawValues.TryGetValue ( key ,
+                                             out bytes ) )
+                    return true ;
+
+                bytes = RawArrayEmpty ;
+
+                return false ;
+            }
+            catch ( Exception e )
+            {
+                Logger.Error ( e ,
+                               "Failed to write Value Async!" ) ;
+
+                bytes = RawArrayEmpty ;
+
+                return false ;
+            }
         }
 
         public override string ToString ( )
