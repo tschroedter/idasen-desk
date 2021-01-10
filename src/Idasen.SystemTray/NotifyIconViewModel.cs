@@ -54,7 +54,7 @@ namespace Idasen.SystemTray
 
             _tokenSource?.Cancel ( ) ;
 
-            DisposeDesk (  );
+            DisposeDesk ( ) ;
 
             _provider?.Dispose ( ) ;
             _notifyIcon?.Dispose ( ) ;
@@ -111,6 +111,21 @@ namespace Idasen.SystemTray
                        {
                            CommandAction  = async ( ) => { await Connect ( ) ; } ,
                            CanExecuteFunc = ( ) => _desk == null
+                       } ;
+            }
+        }
+
+        /// <summary>
+        ///     Disconnects from the Idasen Desk.
+        /// </summary>
+        public ICommand DisconnectCommand
+        {
+            get
+            {
+                return new DelegateCommand
+                       {
+                           CommandAction  = Disconnect ,
+                           CanExecuteFunc = ( ) => _desk != null
                        } ;
             }
         }
@@ -256,7 +271,7 @@ namespace Idasen.SystemTray
         {
             try
             {
-                _logger.Debug ( "Trying to connect to Idasen Desk..." ) ;
+                _logger.Debug ( $"[{_desk?.DeviceName}] Trying to connect to Idasen Desk..." ) ;
 
                 DisposeDesk ( ) ;
 
@@ -275,7 +290,28 @@ namespace Idasen.SystemTray
             catch ( Exception e )
             {
                 _logger.Error ( e ,
-                                "Failed to connect" ) ;
+                                $"[{_desk?.DeviceName}] Failed to connect" ) ;
+
+                ConnectFailed ( ) ;
+            }
+        }
+
+        private void Disconnect ( )
+        {
+            try
+            {
+                _logger.Debug ( $"[{_desk?.DeviceName}] Trying to disconnect from Idasen Desk..." ) ;
+
+                DisposeDesk ( ) ;
+
+                _tokenSource?.Cancel ( false ) ;
+
+                _logger.Debug ( $"[{_desk?.DeviceName}] ...disconnected from Idasen Desk" ) ;
+            }
+            catch ( Exception e )
+            {
+                _logger.Error ( e ,
+                                "Failed to disconnect" ) ;
 
                 ConnectFailed ( ) ;
             }
@@ -286,6 +322,8 @@ namespace Idasen.SystemTray
             ShowFancyBalloon ( "Failed" ,
                                "Connection to desk failed" ,
                                visibilityBulbRed : Visibility.Visible ) ;
+
+            _logger.Debug ( $"[{_desk?.DeviceName}] Failed to connected" ) ;
         }
 
         private void DisposeDesk ( )
@@ -310,12 +348,14 @@ namespace Idasen.SystemTray
             ShowFancyBalloon ( "Success" ,
                                $"Connected to desk {desk.Name}" ,
                                Visibility.Visible ) ;
+
+            _logger.Debug ( $"[{_desk?.DeviceName}] Connected successful" ) ;
         }
 
         private void OnFinishedChanged ( uint height )
         {
             ShowFancyBalloon ( "Finished" ,
-                               $"Desk height is {height/100:F2} cm" ,
+                               $"Desk height is {height / 100:F2} cm" ,
                                Visibility.Visible ) ;
         }
 

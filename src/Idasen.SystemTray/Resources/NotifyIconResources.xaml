@@ -10,6 +10,7 @@
   -->
     <ContextMenu x:Shared="false" x:Key="SysTrayMenu">
         <MenuItem Header="Connect" Command="{Binding ConnectCommand}" />
+        <MenuItem Header="Disconnect" Command="{Binding DisconnectCommand}" />
         <Separator />
         <MenuItem Header="Show Settings" Command="{Binding ShowSettingsCommand}" />
         <MenuItem Header="Hide Settings" Command="{Binding HideSettingsCommand}" />
