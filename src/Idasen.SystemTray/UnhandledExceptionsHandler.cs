@@ -12,6 +12,8 @@ namespace Idasen.SystemTray
     [ ExcludeFromCodeCoverage ]
     public static class UnhandledExceptionsHandler
     {
+        private const string CheckAndEnableBluetooth = "*** Make sure Bluetooth is enabled ***" ;
+
         public static void RegisterGlobalExceptionHandling ( )
         {
             var logger = LoggerProvider.CreateLogger ( Constants.ApplicationName ,
@@ -54,6 +56,8 @@ namespace Idasen.SystemTray
                             ? args.Exception.Message
                             : "Message is null" ) ;
 
+            log.Information ( CheckAndEnableBluetooth ) ;
+
             args.SetObserved ( ) ;
         }
 
@@ -63,6 +67,9 @@ namespace Idasen.SystemTray
         {
             log.Error ( args.Exception ,
                         args.Exception.Message ) ;
+
+            log.Information ( CheckAndEnableBluetooth ) ;
+
             // args.Handled = true;
         }
 
@@ -71,6 +78,9 @@ namespace Idasen.SystemTray
         {
             log.Error ( args.Exception ,
                         args.Exception.Message ) ;
+
+            log.Information ( CheckAndEnableBluetooth ) ;
+
             // args.Handled = true;
         }
 
@@ -87,6 +97,8 @@ namespace Idasen.SystemTray
 
             log.Error ( exception ,
                         message ) ;
+
+            log.Information ( CheckAndEnableBluetooth ) ;
         }
     }
 }

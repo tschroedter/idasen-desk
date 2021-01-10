@@ -13,6 +13,8 @@ namespace Idasen.BluetoothLE.Linak
     public class DeskProvider
         : IDeskProvider
     {
+        private const string CheckAndEnableBluetooth = "*** Make sure Bluetooth is enabled ***";
+
         public DeskProvider (
             [ NotNull ] ILogger       logger ,
             [ NotNull ] ITaskRunner   taskRunner ,
@@ -55,6 +57,8 @@ namespace Idasen.BluetoothLE.Linak
             {
                 _logger.Error ( e ,
                                 "Failed to detect desk" ) ;
+
+                _logger.Information ( CheckAndEnableBluetooth );
 
                 return ( false , null ) ;
             }
