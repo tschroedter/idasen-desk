@@ -40,7 +40,7 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Characteristics
 
         public override Guid GattServiceUuid { get ; } = Guid.Parse ( "11111111-1111-1111-1111-111111111111" ) ;
 
-        public IEnumerable < byte > RawValue => TryGetValueOrEmpty ( RawValueKey ) ;
+        public IEnumerable < byte > RawValue => GetValueOrEmpty ( RawValueKey ) ;
 
         public async Task < bool > TryWriteRawValue ( IEnumerable < byte > bytes )
         {

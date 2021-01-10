@@ -50,16 +50,16 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
 
         public override Guid GattServiceUuid { get ; } = Guid.Parse ( "99FA0020-338A-1024-8A49-009C0215F78A" ) ;
 
-        public IEnumerable < byte > RawHeightSpeed => TryGetValueOrEmpty ( HeightSpeed ) ;
-        public IEnumerable < byte > RawTwo         => TryGetValueOrEmpty ( Two ) ;
-        public IEnumerable < byte > RawThree       => TryGetValueOrEmpty ( Three ) ;
-        public IEnumerable < byte > RawFour        => TryGetValueOrEmpty ( Four ) ;
-        public IEnumerable < byte > RawFive        => TryGetValueOrEmpty ( Five ) ;
-        public IEnumerable < byte > RawSix         => TryGetValueOrEmpty ( Six ) ;
-        public IEnumerable < byte > RawSeven       => TryGetValueOrEmpty ( Seven ) ;
-        public IEnumerable < byte > RawEight       => TryGetValueOrEmpty ( Eight ) ;
-        public IEnumerable < byte > RawMask        => TryGetValueOrEmpty ( Mask ) ;
-        public IEnumerable < byte > RawDetectMask  => TryGetValueOrEmpty ( DetectMask ) ;
+        public IEnumerable < byte > RawHeightSpeed => GetValueOrEmpty ( HeightSpeed ) ;
+        public IEnumerable < byte > RawTwo         => GetValueOrEmpty ( Two ) ;
+        public IEnumerable < byte > RawThree       => GetValueOrEmpty ( Three ) ;
+        public IEnumerable < byte > RawFour        => GetValueOrEmpty ( Four ) ;
+        public IEnumerable < byte > RawFive        => GetValueOrEmpty ( Five ) ;
+        public IEnumerable < byte > RawSix         => GetValueOrEmpty ( Six ) ;
+        public IEnumerable < byte > RawSeven       => GetValueOrEmpty ( Seven ) ;
+        public IEnumerable < byte > RawEight       => GetValueOrEmpty ( Eight ) ;
+        public IEnumerable < byte > RawMask        => GetValueOrEmpty ( Mask ) ;
+        public IEnumerable < byte > RawDetectMask  => GetValueOrEmpty ( DetectMask ) ;
 
         public override T Initialize < T > ( )
         {
@@ -88,7 +88,7 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
                                         .SubscribeOn ( Scheduler )
                                         .Subscribe ( OnValueChanged ) ;
 
-            var rawValue = TryGetValueOrEmpty ( HeightSpeed ).ToArray ( ) ;
+            var rawValue = GetValueOrEmpty ( HeightSpeed ).ToArray ( ) ;
 
             var details = new RawValueChangedDetails ( HeightSpeed ,
                                                        rawValue ,

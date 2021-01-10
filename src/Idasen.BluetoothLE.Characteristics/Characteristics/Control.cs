@@ -34,9 +34,9 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
         {
         }
 
-        public IEnumerable < byte > RawControl2 => TryGetValueOrEmpty ( Control2Key ) ;
+        public IEnumerable < byte > RawControl2 => GetValueOrEmpty ( Control2Key ) ;
 
-        public IEnumerable < byte > RawControl3 => TryGetValueOrEmpty ( Control3Key ) ;
+        public IEnumerable < byte > RawControl3 => GetValueOrEmpty ( Control3Key ) ;
 
         public async Task < bool > TryWriteRawControl2 ( IEnumerable < byte > bytes )
         {

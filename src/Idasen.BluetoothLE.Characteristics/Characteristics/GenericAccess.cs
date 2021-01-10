@@ -66,17 +66,17 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
         public override Guid GattServiceUuid { get ; } = Guid.Parse ( "00001800-0000-1000-8000-00805F9B34FB" ) ;
 
         /// <inheritdoc />
-        public IEnumerable < byte > RawResolution => TryGetValueOrEmpty ( CharacteristicResolution ) ;
+        public IEnumerable < byte > RawResolution => GetValueOrEmpty ( CharacteristicResolution ) ;
 
         /// <inheritdoc />
         public IEnumerable < byte > RawParameters =>
-            TryGetValueOrEmpty ( CharacteristicParameters ) ;
+            GetValueOrEmpty ( CharacteristicParameters ) ;
 
         /// <inheritdoc />
-        public IEnumerable < byte > RawAppearance => TryGetValueOrEmpty ( CharacteristicAppearance ) ;
+        public IEnumerable < byte > RawAppearance => GetValueOrEmpty ( CharacteristicAppearance ) ;
 
         /// <inheritdoc />
-        public IEnumerable < byte > RawDeviceName => TryGetValueOrEmpty ( CharacteristicDeviceName ) ;
+        public IEnumerable < byte > RawDeviceName => GetValueOrEmpty ( CharacteristicDeviceName ) ;
 
         public override async Task Refresh ( )
         {

@@ -40,7 +40,7 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
             _allGattCharacteristicsProvider = allGattCharacteristicsProvider ;
         }
 
-        public IEnumerable < byte > RawServiceChanged => TryGetValueOrEmpty ( CharacteristicServiceChanged ) ;
+        public IEnumerable < byte > RawServiceChanged => GetValueOrEmpty ( CharacteristicServiceChanged ) ;
 
         public delegate IGenericAttribute Factory ( IDevice device ) ;
 

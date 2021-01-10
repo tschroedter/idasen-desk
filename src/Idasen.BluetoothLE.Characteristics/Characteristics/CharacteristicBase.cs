@@ -153,7 +153,7 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
         }
 
         [ NotNull ]
-        protected IEnumerable < byte > TryGetValueOrEmpty ( string key )
+        protected IEnumerable < byte > GetValueOrEmpty ( string key )
         {
             return RawValues.TryGetValue ( key ,
                                            out var values )

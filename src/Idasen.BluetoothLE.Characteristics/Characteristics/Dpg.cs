@@ -34,7 +34,7 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
         }
 
 
-        public IEnumerable < byte > RawDpg => TryGetValueOrEmpty ( DpgKey ) ;
+        public IEnumerable < byte > RawDpg => GetValueOrEmpty ( DpgKey ) ;
 
         public delegate IDpg Factory ( IDevice device ) ;
 

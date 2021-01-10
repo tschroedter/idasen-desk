@@ -33,7 +33,7 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
         {
         }
 
-        public IEnumerable < byte > Ctrl1 => TryGetValueOrEmpty ( Ctrl1Key ) ;
+        public IEnumerable < byte > Ctrl1 => GetValueOrEmpty ( Ctrl1Key ) ;
 
         public delegate IReferenceInput Factory ( IDevice device ) ;
 
