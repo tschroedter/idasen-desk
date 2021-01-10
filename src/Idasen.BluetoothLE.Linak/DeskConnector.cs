@@ -3,12 +3,12 @@ using System.Collections.Generic ;
 using System.Reactive.Concurrency ;
 using System.Reactive.Linq ;
 using System.Reactive.Subjects ;
+using System.Threading.Tasks ;
 using Windows.Devices.Bluetooth.GenericAttributeProfile ;
 using Idasen.BluetoothLE.Core ;
 using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery ;
 using Idasen.BluetoothLE.Linak.Control ;
 using Idasen.BluetoothLE.Linak.Interfaces ;
-using JetBrains.Annotations ;
 using Serilog ;
 
 namespace Idasen.BluetoothLE.Linak
@@ -18,18 +18,18 @@ namespace Idasen.BluetoothLE.Linak
         : IDeskConnector
     {
         public DeskConnector (
-            [ NotNull ] ILogger                                    logger ,
-            [ NotNull ] IScheduler                                 scheduler ,
-            [ NotNull ] Func < ISubject < IEnumerable < byte > > > subjectFactory ,
-            [ NotNull ] ISubject < uint >                          subjectHeight ,
-            [ NotNull ] ISubject < int >                           subjectSpeed ,
-            [ NotNull ] ISubject < bool >                          subjectRefreshed ,
-            [ NotNull ] ISubject < HeightSpeedDetails >            subjectHeightAndSpeed ,
-            [ NotNull ] IDevice                                    device ,
-            [ NotNull ] IDeskCharacteristics                       deskCharacteristics ,
-            [ NotNull ] IDeskHeightAndSpeedFactory                 heightAndSpeedFactory ,
-            [ NotNull ] IDeskCommandExecutorFactory                commandExecutorFactory ,
-            [ NotNull ] IDeskMoverFactory                          moverFactory )
+            [ JetBrains.Annotations.NotNull ] ILogger                                    logger ,
+            [ JetBrains.Annotations.NotNull ] IScheduler                                 scheduler ,
+            [ JetBrains.Annotations.NotNull ] Func < ISubject < IEnumerable < byte > > > subjectFactory ,
+            [ JetBrains.Annotations.NotNull ] ISubject < uint >                          subjectHeight ,
+            [ JetBrains.Annotations.NotNull ] ISubject < int >                           subjectSpeed ,
+            [ JetBrains.Annotations.NotNull ] ISubject < bool >                          subjectRefreshed ,
+            [ JetBrains.Annotations.NotNull ] ISubject < HeightSpeedDetails >            subjectHeightAndSpeed ,
+            [ JetBrains.Annotations.NotNull ] IDevice                                    device ,
+            [ JetBrains.Annotations.NotNull ] IDeskCharacteristics                       deskCharacteristics ,
+            [ JetBrains.Annotations.NotNull ] IDeskHeightAndSpeedFactory                 heightAndSpeedFactory ,
+            [ JetBrains.Annotations.NotNull ] IDeskCommandExecutorFactory                commandExecutorFactory ,
+            [ JetBrains.Annotations.NotNull ] IDeskMoverFactory                          moverFactory )
         {
             Guard.ArgumentNotNull ( logger ,
                                     nameof ( logger ) ) ;
@@ -71,7 +71,7 @@ namespace Idasen.BluetoothLE.Linak
             _device.GattServicesRefreshed
                    .Throttle ( TimeSpan.FromSeconds ( 1 ) )
                    .SubscribeOn ( scheduler )
-                   .Subscribe ( OnGattServicesRefreshed ) ;
+                   .SubscribeAsync( OnGattServicesRefreshed ) ;
 
             DeviceNameChanged = subjectFactory ( ) ;
         }
@@ -172,10 +172,11 @@ namespace Idasen.BluetoothLE.Linak
             return true ;
         }
 
-        private async void OnGattServicesRefreshed ( GattCommunicationStatus status )
+        private async Task OnGattServicesRefreshed ( GattCommunicationStatus status )
         {
             _logger.Information ( $"[{_device.Id}] "                               +
                                   $"ConnectionStatus: {_device.ConnectionStatus} " +
+                                  $"GattCommunicationStatus: {status} "            +
                                   $"GattCommunicationStatus: {_device.GattCommunicationStatus}" ) ;
 
             _deskCharacteristics.Initialize ( _device ) ;
