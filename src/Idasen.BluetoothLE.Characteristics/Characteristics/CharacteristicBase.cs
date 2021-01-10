@@ -116,6 +116,11 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
             }
         }
 
+        public void Dispose ( )
+        {
+            Dispose ( true ) ;
+        }
+
         internal static readonly IEnumerable < byte > RawArrayEmpty = Enumerable.Empty < byte > ( )
                                                                                 .ToArray ( ) ;
 
@@ -161,6 +166,13 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
             return _toStringConverter.ToString ( this ) ;
         }
 
+        protected virtual void Dispose ( bool disposing )
+        {
+            if ( _disposed ) return ;
+
+            _disposed = true ;
+        }
+
         private readonly ICharacteristicBaseToStringConverter _toStringConverter ;
 
         protected readonly IDevice                             Device ;
@@ -174,6 +186,8 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
         protected readonly IRawValueWriter RawValueWriter ;
 
         protected readonly IScheduler Scheduler ;
+
+        private bool _disposed ;
 
         internal IGattCharacteristicProvider Characteristics ;
     }

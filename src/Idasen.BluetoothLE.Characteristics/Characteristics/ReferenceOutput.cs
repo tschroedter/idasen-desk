@@ -98,9 +98,23 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
             _subjectHeightSpeed.OnNext ( details ) ;
         }
 
-        public void Dispose ( )
+        private bool _disposed ;
+
+        protected override void Dispose(bool disposing)
         {
-            _subscriber?.Dispose ( ) ;
+            if (_disposed)
+            {
+                return;
+            }
+
+            if (disposing)
+            {
+                _subscriber?.Dispose();
+            }
+
+            _disposed = true;
+
+            base.Dispose(disposing);
         }
 
         public delegate IReferenceOutput Factory ( IDevice device ) ;

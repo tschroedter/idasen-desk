@@ -23,10 +23,6 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics.Unknowns
         public IObservable < RawValueChangedDetails > HeightSpeedChanged =>
             throw new NotInitializeException ( Message ) ;
 
-        public void Dispose ( )
-        {
-        }
-
         internal const string Message = "Can't use a anknown Instance" ;
     }
 }

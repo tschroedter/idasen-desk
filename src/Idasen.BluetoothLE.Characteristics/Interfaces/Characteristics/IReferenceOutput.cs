@@ -8,7 +8,7 @@ using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery ;
 namespace Idasen.BluetoothLE.Characteristics.Interfaces.Characteristics
 {
     public interface IReferenceOutput
-        : ICharacteristicBase , IDisposable
+        : ICharacteristicBase
     {
         delegate IReferenceOutput Factory ( IDevice device ) ;
 
