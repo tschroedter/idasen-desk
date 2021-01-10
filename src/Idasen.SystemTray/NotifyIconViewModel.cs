@@ -1,4 +1,6 @@
 ﻿using System ;
+using System.Reactive.Concurrency ;
+using System.Reactive.Linq ;
 using System.Threading ;
 using System.Threading.Tasks ;
 using System.Windows ;
@@ -31,7 +33,8 @@ namespace Idasen.SystemTray
         public NotifyIconViewModel (
             [ NotNull ] ILogger          logger ,
             [ NotNull ] ISettingsManager manager ,
-            [ NotNull ] IDeskProvider    provider )
+            [ NotNull ] IDeskProvider    provider ,
+            [ NotNull ] IScheduler       scheduler )
         {
             Guard.ArgumentNotNull ( logger ,
                                     nameof ( logger ) ) ;
@@ -39,6 +42,10 @@ namespace Idasen.SystemTray
                                     nameof ( manager ) ) ;
             Guard.ArgumentNotNull ( provider ,
                                     nameof ( provider ) ) ;
+            Guard.ArgumentNotNull ( scheduler ,
+                                    nameof ( scheduler ) ) ;
+
+            _scheduler = scheduler ;
         }
 
         public void Dispose ( )
@@ -47,8 +54,9 @@ namespace Idasen.SystemTray
 
             _tokenSource?.Cancel ( ) ;
 
+            DisposeDesk (  );
+
             _provider?.Dispose ( ) ;
-            _desk?.Dispose ( ) ;
             _notifyIcon?.Dispose ( ) ;
             _tokenSource?.Dispose ( ) ;
         }
@@ -250,7 +258,7 @@ namespace Idasen.SystemTray
             {
                 _logger.Debug ( "Trying to connect to Idasen Desk..." ) ;
 
-                _desk?.Dispose ( ) ;
+                DisposeDesk ( ) ;
 
                 _tokenSource?.Cancel ( false ) ;
 
@@ -275,11 +283,18 @@ namespace Idasen.SystemTray
 
         private void ConnectFailed ( )
         {
-            _desk = null ;
-
             ShowFancyBalloon ( "Failed" ,
                                "Connection to desk failed" ,
                                visibilityBulbRed : Visibility.Visible ) ;
+        }
+
+        private void DisposeDesk ( )
+        {
+            _finished?.Dispose ( ) ;
+            _desk?.Dispose ( ) ;
+
+            _desk     = null ;
+            _finished = null ;
         }
 
         private void ConnectSuccessful ( IDesk desk )
@@ -288,8 +303,19 @@ namespace Idasen.SystemTray
 
             _desk = desk ;
 
+            _finished = _desk.FinishedChanged
+                             .ObserveOn ( _scheduler )
+                             .Subscribe ( OnFinishedChanged ) ;
+
             ShowFancyBalloon ( "Success" ,
                                $"Connected to desk {desk.Name}" ,
+                               Visibility.Visible ) ;
+        }
+
+        private void OnFinishedChanged ( uint height )
+        {
+            ShowFancyBalloon ( "Finished" ,
+                               $"Desk height is {height/100:F2} cm" ,
                                Visibility.Visible ) ;
         }
 
@@ -329,7 +355,10 @@ namespace Idasen.SystemTray
                                             4000 ) ;
         }
 
+        private readonly IScheduler _scheduler = Scheduler.CurrentThread ;
+
         [ CanBeNull ] private IDesk                   _desk ;
+        private               IDisposable             _finished ;
         private               ILogger                 _logger ;
         private               ISettingsManager        _manager ;
         private               TaskbarIcon             _notifyIcon ;
