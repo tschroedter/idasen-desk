@@ -131,25 +131,42 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
         protected abstract T WithMapping < T > ( )
             where T : class ;
 
-        protected async Task < bool > TryWriteValueAsync ( string               key ,
-                                                           IEnumerable < byte > bytes )
+        protected async Task<bool> TryWriteValueAsync(string            key,
+                                                      IEnumerable<byte> bytes)
         {
-            if ( ! Characteristics.Characteristics.TryGetValue ( key ,
-                                                                 out var characteristic ) )
+            try
             {
-                Logger.Error ( $"Unknown characteristic with key '{key}'" ) ;
+                return await DoTryWriteValueAsync(key,
+                                                  bytes);
+            }
+            catch (Exception e)
+            {
+                Logger.Error ( e ,
+                               "Failed to write Value Async! " ) ;
 
-                return false ;
+                return false;
+            }
+        }
+
+        private async Task<bool> DoTryWriteValueAsync(string            key,
+                                                      IEnumerable<byte> bytes)
+        {
+            if (!Characteristics.Characteristics.TryGetValue(key,
+                                                             out var characteristic))
+            {
+                Logger.Error($"Unknown characteristic with key '{key}'");
+
+                return false;
             }
 
-            if ( characteristic != null )
-                return await RawValueWriter.TryWriteValueAsync ( characteristic ,
-                                                                 bytes.ToArray ( )
-                                                                      .AsBuffer ( ) ) ;
+            if (characteristic != null)
+                return await RawValueWriter.TryWriteValueAsync(characteristic,
+                                                               bytes.ToArray()
+                                                                    .AsBuffer());
 
-            Logger.Error ( $"Characteristic for key '{key}' is null" ) ;
+            Logger.Error($"Characteristic for key '{key}' is null");
 
-            return false ;
+            return false;
         }
 
         [ NotNull ]
