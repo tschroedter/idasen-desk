@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis ;
 using System.Threading.Tasks ;
 using System.Windows ;
 using System.Windows.Threading ;
+using Idasen.BluetoothLE.Characteristics.Common ;
 using Idasen.Launcher ;
 using Idasen.SystemTray.Utils ;
 using Serilog ;
@@ -51,37 +52,58 @@ namespace Idasen.SystemTray
             UnobservedTaskExceptionEventArgs args ,
             ILogger                          log )
         {
-            log.Error ( args.Exception ,
-                        args.Exception != null
-                            ? args.Exception.Message
-                            : "Message is null" ) ;
-
-            log.Information ( CheckAndEnableBluetooth ) ;
+            if ( args.Exception.IsBluetoothDisabledException ( ) )
+                LogBluetoothStatusException ( args.Exception ,
+                                              log ) ;
+            else
+                log.Error ( args.Exception ,
+                            args.Exception != null
+                                ? args.Exception.Message
+                                : "Message is null" ) ;
 
             args.SetObserved ( ) ;
+        }
+
+        private static void LogBluetoothStatusException ( Exception exception ,
+                                                          ILogger   log )
+        {
+            log.Information ( CheckAndEnableBluetooth +
+                              $" (0x{exception?.HResult:X})" ) ;
         }
 
         private static void CurrentOnDispatcherUnhandledException (
             DispatcherUnhandledExceptionEventArgs args ,
             ILogger                               log )
         {
-            log.Error ( args.Exception ,
-                        args.Exception.Message ) ;
+            if ( args.Exception.IsBluetoothDisabledException ( ) )
+            {
+                LogBluetoothStatusException ( args.Exception ,
+                                              log ) ;
 
-            log.Information ( CheckAndEnableBluetooth ) ;
-
-            // args.Handled = true;
+                args.Handled = true ;
+            }
+            else
+            {
+                log.Error ( args.Exception ,
+                            args.Exception.Message ) ;
+            }
         }
 
         private static void DispatcherOnUnhandledException ( DispatcherUnhandledExceptionEventArgs args ,
                                                              ILogger                               log )
         {
-            log.Error ( args.Exception ,
-                        args.Exception.Message ) ;
+            if ( args.Exception.IsBluetoothDisabledException ( ) )
+            {
+                LogBluetoothStatusException ( args.Exception ,
+                                              log ) ;
 
-            log.Information ( CheckAndEnableBluetooth ) ;
-
-            // args.Handled = true;
+                args.Handled = true ;
+            }
+            else
+            {
+                log.Error ( args.Exception ,
+                            args.Exception.Message ) ;
+            }
         }
 
         private static void CurrentDomainOnUnhandledException ( UnhandledExceptionEventArgs args ,
@@ -95,10 +117,12 @@ namespace Idasen.SystemTray
             var message = string.Concat ( exceptionMessage ,
                                           terminatingMessage ) ;
 
-            log.Error ( exception ,
-                        message ) ;
-
-            log.Information ( CheckAndEnableBluetooth ) ;
+            if ( exception.IsBluetoothDisabledException ( ) )
+                LogBluetoothStatusException ( exception ,
+                                              log ) ;
+            else
+                log.Error ( exception ,
+                            message ) ;
         }
     }
 }
