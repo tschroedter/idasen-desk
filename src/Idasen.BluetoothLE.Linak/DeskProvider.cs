@@ -3,6 +3,7 @@ using System.Reactive.Concurrency ;
 using System.Reactive.Linq ;
 using System.Threading ;
 using System.Threading.Tasks ;
+using Idasen.BluetoothLE.Characteristics.Common ;
 using Idasen.BluetoothLE.Core ;
 using Idasen.BluetoothLE.Linak.Interfaces ;
 using JetBrains.Annotations ;
@@ -19,7 +20,8 @@ namespace Idasen.BluetoothLE.Linak
             [ NotNull ] ILogger       logger ,
             [ NotNull ] ITaskRunner   taskRunner ,
             [ NotNull ] IScheduler    scheduler ,
-            [ NotNull ] IDeskDetector detector )
+            [ NotNull ] IDeskDetector detector,
+            [ NotNull ] IErrorManager errorManager)
         {
             Guard.ArgumentNotNull ( logger ,
                                     nameof ( logger ) ) ;
@@ -29,11 +31,14 @@ namespace Idasen.BluetoothLE.Linak
                                     nameof ( scheduler ) ) ;
             Guard.ArgumentNotNull ( detector ,
                                     nameof ( detector ) ) ;
+            Guard.ArgumentNotNull(errorManager,
+                                  nameof(errorManager));
 
-            _logger     = logger ;
-            _taskRunner = taskRunner ;
-            _scheduler  = scheduler ;
-            _detector   = detector ;
+            _logger       = logger ;
+            _taskRunner   = taskRunner ;
+            _scheduler    = scheduler ;
+            _detector     = detector ;
+            _errorManager = errorManager ;
         }
 
         /// <inheritdoc />
@@ -55,10 +60,11 @@ namespace Idasen.BluetoothLE.Linak
             }
             catch ( Exception e )
             {
-                _logger.Error ( e ,
-                                "Failed to detect desk" ) ;
-
-                _logger.Information ( CheckAndEnableBluetooth );
+                if (e.IsBluetoothDisabledException (  ))
+                    e.LogBluetoothStatusException ( _logger );
+                else
+                    _logger.Error(e,
+                                  "Failed to detect desk");
 
                 return ( false , null ) ;
             }
@@ -98,7 +104,17 @@ namespace Idasen.BluetoothLE.Linak
         {
             _logger.Information ( "Start trying to detect desk..." ) ;
 
-            _detector.Start ( ) ;
+            try
+            {
+                _detector.Start();
+            }
+            catch ( Exception e )
+            {
+                _logger.Error ( e,
+                               "Failed Start Detecting");
+
+                _errorManager.PublishForMessage ( "Failed Start Detecting" ) ;
+            }
 
             return this ;
         }
@@ -108,7 +124,17 @@ namespace Idasen.BluetoothLE.Linak
         {
             _logger.Information ( "Stop trying to detect desk..." ) ;
 
-            _detector.Stop ( ) ;
+            try
+            {
+                _detector.Stop();
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e,
+                              "Failed Stop Detecting");
+
+                _errorManager.PublishForMessage("Failed Stop Detecting");
+            }
 
             return this ;
         }
@@ -147,6 +173,7 @@ namespace Idasen.BluetoothLE.Linak
         }
 
         private readonly IDeskDetector _detector ;
+        private readonly IErrorManager _errorManager ;
         private readonly ILogger       _logger ;
         private readonly IScheduler    _scheduler ;
         private readonly ITaskRunner   _taskRunner ;
