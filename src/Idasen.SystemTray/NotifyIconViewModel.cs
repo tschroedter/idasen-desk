@@ -201,7 +201,11 @@ namespace Idasen.SystemTray
         {
             _logger.Error ( $"[{_desk?.DeviceName}] {details.Message}" ) ;
 
-            ShowErrorMessage ( details.Message ) ;
+            ShowFancyBalloon ( "Error" ,
+                               details.Message     +
+                               Environment.NewLine +
+                               details.Caller ,
+                               Visibility.Visible ) ;
         }
 
         private async Task Standing ( )
@@ -223,13 +227,12 @@ namespace Idasen.SystemTray
                                     nameof ( manager ) ) ;
             Guard.ArgumentNotNull ( provider ,
                                     nameof ( provider ) ) ;
-            Guard.ArgumentNotNull(errorManager,
-                                  nameof(errorManager));
+            Guard.ArgumentNotNull ( errorManager ,
+                                    nameof ( errorManager ) ) ;
 
             _logger       = logger ;
             _manager      = manager ;
             _provider     = provider ;
-            _errorManager = errorManager ;
 
             _tokenSource = new CancellationTokenSource ( TimeSpan.FromSeconds ( 60 ) ) ;
             _token       = _tokenSource.Token ;
@@ -263,7 +266,7 @@ namespace Idasen.SystemTray
                                    _token ) ;
 
                 ShowFancyBalloon ( "Auto Connect" ,
-                                   "Trying to auto connect to Idasen Desk...",
+                                   "Trying to auto connect to Idasen Desk..." ,
                                    visibilityBulbYellow : Visibility.Visible ) ;
 
                 await Connect ( ) ;
@@ -339,9 +342,8 @@ namespace Idasen.SystemTray
 
         private void ConnectFailed ( )
         {
-            ShowFancyBalloon ( "Failed" ,
-                               "Connection to desk failed" ,
-                               visibilityBulbRed : Visibility.Visible ) ;
+            ShowFancyBalloon ( "Failed to Connect" ,
+                               BluetoothLE.Characteristics.Common.Constants.CheckAndEnableBluetooth ,
                                visibilityBulbRed : Visibility.Visible ) ;
         }
 
@@ -350,8 +352,8 @@ namespace Idasen.SystemTray
             _finished?.Dispose ( ) ;
             _desk?.Dispose ( ) ;
 
-            _desk           = null ;
-            _finished       = null ;
+            _desk     = null ;
+            _finished = null ;
         }
 
         private void ConnectSuccessful ( IDesk desk )
@@ -427,6 +429,5 @@ namespace Idasen.SystemTray
         private                    IDeskProvider           _provider ;
         private                    CancellationToken       _token ;
         private                    CancellationTokenSource _tokenSource ;
-        private                    IErrorManager           _errorManager ;
     }
 }
