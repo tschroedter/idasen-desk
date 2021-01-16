@@ -80,6 +80,10 @@ namespace Idasen.BluetoothLE.Linak
 
             builder.RegisterType < TaskRunner > ( )
                    .As < ITaskRunner > ( ) ;
+
+            builder.RegisterType < ErrorManager > ( )
+                   .As < IErrorManager > ( )
+                   .SingleInstance (  );
         }
     }
 }
