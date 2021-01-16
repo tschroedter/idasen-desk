@@ -109,12 +109,21 @@ namespace Idasen.BluetoothLE.Core.ServicesDiscovery.Wrappers
             GattValueChangedEventArgs                          args ,
             ISubject < GattCharacteristicValueChangedDetails > subject )
         {
-            var bytes = args.CharacteristicValue?.ToArray ( ) ?? Array.Empty < byte > ( ) ;
+            var bytes = Array.Empty < byte > ( ) ;
+
+            try
+            {
+                bytes = args.CharacteristicValue?.ToArray ( ) ?? Array.Empty < byte > ( ) ;
+            }
+            catch ( Exception e )
+            {
+                _logger.Error ( e ,
+                                "Failed to handle ValueChange event" ) ;
+            }
 
             var details = new GattCharacteristicValueChangedDetails ( sender.Uuid ,
                                                                       bytes ,
                                                                       args.Timestamp ) ;
-
             subject.OnNext ( details ) ;
         }
 
