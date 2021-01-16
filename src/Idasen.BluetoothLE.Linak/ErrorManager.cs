@@ -1,5 +1,6 @@
 ﻿using System ;
 using System.Reactive.Subjects ;
+using System.Runtime.CompilerServices ;
 using Idasen.BluetoothLE.Core ;
 using Idasen.BluetoothLE.Linak.Interfaces ;
 using JetBrains.Annotations ;
@@ -31,6 +32,19 @@ namespace Idasen.BluetoothLE.Linak
             _logger.Debug ( $"Received {details}" ) ;
 
             _subject.OnNext ( details ) ;
+        }
+
+        /// <inheritdoc />
+        public void PublishForMessage ( string                      message ,
+                                        [ CallerMemberName ] string caller = "" )
+        {
+            Guard.ArgumentNotNull ( message ,
+                                    nameof ( message ) ) ;
+
+            _logger.Debug ( $"Received {message}" ) ;
+
+            _subject.OnNext ( new ErrorDetails ( message ,
+                                                 caller ) ) ;
         }
 
         public           IObservable < IErrorDetails > ErrorChanged => _subject ;

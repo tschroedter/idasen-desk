@@ -1,4 +1,5 @@
 ﻿using System ;
+using System.Runtime.CompilerServices ;
 using JetBrains.Annotations ;
 
 namespace Idasen.BluetoothLE.Linak.Interfaces
@@ -17,5 +18,9 @@ namespace Idasen.BluetoothLE.Linak.Interfaces
         ///     The details about the error.
         /// </param>
         void Publish ( [ NotNull ] IErrorDetails details ) ;
+
+        /// <inheritdoc />
+        void PublishForMessage( [ NotNull ]                   string message,
+                                [CallerMemberName] string caller = "") ;
     }
 }
