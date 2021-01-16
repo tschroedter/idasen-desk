@@ -130,7 +130,7 @@ namespace Idasen.BluetoothLE.Linak
         }
 
         /// <inheritdoc />
-        public void MoveUp ( )
+        public void MoveUp ( ) // todo this should be async
         {
             if ( ! TryGetDeskMover ( out var deskMover ) )
                 return ;
