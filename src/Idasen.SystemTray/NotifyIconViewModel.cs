@@ -34,7 +34,8 @@ namespace Idasen.SystemTray
             [ NotNull ] ILogger          logger ,
             [ NotNull ] ISettingsManager manager ,
             [ NotNull ] IDeskProvider    provider ,
-            [ NotNull ] IScheduler       scheduler )
+            [ NotNull ] IScheduler       scheduler ,
+            [ NotNull ] IErrorManager    errorManager )
         {
             Guard.ArgumentNotNull ( logger ,
                                     nameof ( logger ) ) ;
@@ -44,6 +45,8 @@ namespace Idasen.SystemTray
                                     nameof ( provider ) ) ;
             Guard.ArgumentNotNull ( scheduler ,
                                     nameof ( scheduler ) ) ;
+            Guard.ArgumentNotNull ( errorManager ,
+                                    nameof ( errorManager ) ) ;
 
             _scheduler = scheduler ;
         }
@@ -139,12 +142,7 @@ namespace Idasen.SystemTray
             {
                 return new DelegateCommand
                        {
-                           CommandAction = async ( ) =>
-                                           {
-                                               await _manager.Load ( ) ;
-
-                                               _desk?.MoveTo ( _manager.CurrentSettings.StandingHeightInCm * 100 ) ;
-                                           } ,
+                           CommandAction  = async ( ) => { await Standing ( ) ; } ,
                            CanExecuteFunc = ( ) => _desk != null
                        } ;
             }
@@ -199,10 +197,25 @@ namespace Idasen.SystemTray
 
         public bool IsInitialize => _logger != null && _manager != null && _provider != null ;
 
+        private void OnErrorChanged ( IErrorDetails details )
+        {
+            _logger.Error ( $"[{_desk?.DeviceName}] {details.Message}" ) ;
+
+            ShowErrorMessage ( details.Message ) ;
+        }
+
+        private async Task Standing ( )
+        {
+            await _manager.Load ( ) ;
+
+            _desk?.MoveTo ( _manager.CurrentSettings.StandingHeightInCm * 100 ) ;
+        }
+
         public NotifyIconViewModel Initialize (
             [ NotNull ] ILogger          logger ,
             [ NotNull ] ISettingsManager manager ,
-            [ NotNull ] IDeskProvider    provider )
+            [ NotNull ] IDeskProvider    provider ,
+            [ NotNull ] IErrorManager    errorManager )
         {
             Guard.ArgumentNotNull ( logger ,
                                     nameof ( logger ) ) ;
@@ -210,13 +223,20 @@ namespace Idasen.SystemTray
                                     nameof ( manager ) ) ;
             Guard.ArgumentNotNull ( provider ,
                                     nameof ( provider ) ) ;
+            Guard.ArgumentNotNull(errorManager,
+                                  nameof(errorManager));
 
-            _logger   = logger ;
-            _manager  = manager ;
-            _provider = provider ;
+            _logger       = logger ;
+            _manager      = manager ;
+            _provider     = provider ;
+            _errorManager = errorManager ;
 
             _tokenSource = new CancellationTokenSource ( TimeSpan.FromSeconds ( 60 ) ) ;
             _token       = _tokenSource.Token ;
+
+            _onErrorChanged = errorManager.ErrorChanged
+                                          .ObserveOn ( _scheduler )
+                                          .Subscribe ( OnErrorChanged ) ;
 
             return this ;
         }
@@ -243,7 +263,7 @@ namespace Idasen.SystemTray
                                    _token ) ;
 
                 ShowFancyBalloon ( "Auto Connect" ,
-                                   "Trying to connected to a desk" ,
+                                   "Trying to auto connect to Idasen Desk...",
                                    visibilityBulbYellow : Visibility.Visible ) ;
 
                 await Connect ( ) ;
@@ -322,8 +342,7 @@ namespace Idasen.SystemTray
             ShowFancyBalloon ( "Failed" ,
                                "Connection to desk failed" ,
                                visibilityBulbRed : Visibility.Visible ) ;
-
-            _logger.Debug ( $"[{_desk?.DeviceName}] Failed to connected" ) ;
+                               visibilityBulbRed : Visibility.Visible ) ;
         }
 
         private void DisposeDesk ( )
@@ -331,8 +350,8 @@ namespace Idasen.SystemTray
             _finished?.Dispose ( ) ;
             _desk?.Dispose ( ) ;
 
-            _desk     = null ;
-            _finished = null ;
+            _desk           = null ;
+            _finished       = null ;
         }
 
         private void ConnectSuccessful ( IDesk desk )
@@ -346,7 +365,9 @@ namespace Idasen.SystemTray
                              .Subscribe ( OnFinishedChanged ) ;
 
             ShowFancyBalloon ( "Success" ,
-                               $"Connected to desk {desk.Name}" ,
+                               "Connected to desk: " +
+                               Environment.NewLine   +
+                               $"'{desk.Name}'" ,
                                Visibility.Visible ) ;
 
             _logger.Debug ( $"[{_desk?.DeviceName}] Connected successful" ) ;
@@ -397,13 +418,15 @@ namespace Idasen.SystemTray
 
         private readonly IScheduler _scheduler = Scheduler.CurrentThread ;
 
-        [ CanBeNull ] private IDesk                   _desk ;
-        private               IDisposable             _finished ;
-        private               ILogger                 _logger ;
-        private               ISettingsManager        _manager ;
-        private               TaskbarIcon             _notifyIcon ;
-        private               IDeskProvider           _provider ;
-        private               CancellationToken       _token ;
-        private               CancellationTokenSource _tokenSource ;
+        [ CanBeNull ] private      IDesk                   _desk ;
+        private                    IDisposable             _finished ;
+        private                    ILogger                 _logger ;
+        private                    ISettingsManager        _manager ;
+        private                    TaskbarIcon             _notifyIcon ;
+        [ UsedImplicitly ] private IDisposable             _onErrorChanged ;
+        private                    IDeskProvider           _provider ;
+        private                    CancellationToken       _token ;
+        private                    CancellationTokenSource _tokenSource ;
+        private                    IErrorManager           _errorManager ;
     }
 }
