@@ -11,6 +11,7 @@ namespace Idasen.BluetoothLE.Linak.Control
         : IDeskCommandExecutor
     {
         public DeskCommandExecutor ( [ NotNull ] ILogger               logger ,
+                                     [ NotNull ] IErrorManager         errorManager ,
                                      [ NotNull ] IDeskCommandsProvider provider ,
                                      [ NotNull ] IControl              control )
         {
@@ -20,10 +21,13 @@ namespace Idasen.BluetoothLE.Linak.Control
                                     nameof ( provider ) ) ;
             Guard.ArgumentNotNull ( control ,
                                     nameof ( control ) ) ;
+            Guard.ArgumentNotNull ( errorManager ,
+                                    nameof ( errorManager ) ) ;
 
-            _logger   = logger ;
-            _provider = provider ;
-            _control  = control ;
+            _logger       = logger ;
+            _errorManager = errorManager ;
+            _provider     = provider ;
+            _control      = control ;
         }
 
         public async Task < bool > Up ( )
@@ -57,12 +61,26 @@ namespace Idasen.BluetoothLE.Linak.Control
 
             var result = await _control.TryWriteRawControl2 ( bytes ) ;
 
+            if ( !result )
+                ExecutionFailed ( deskCommand ) ; // to do testing
+
             return result ;
+        }
+
+        private void ExecutionFailed ( DeskCommands deskCommand )
+        {
+            var message = $"Failed for '{deskCommand}' command. " +
+                          Characteristics.Common.Constants.CheckAndEnableBluetooth ;
+
+            _logger.Error ( message ) ;
+
+            _errorManager.PublishForMessage ( Characteristics.Common.Constants.CheckAndEnableBluetooth ) ;
         }
 
         private readonly IControl _control ;
 
         private readonly ILogger               _logger ;
+        private readonly IErrorManager         _errorManager ;
         private readonly IDeskCommandsProvider _provider ;
     }
 }
