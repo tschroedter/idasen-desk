@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks ;
+using Idasen.BluetoothLE.Characteristics.Common ;
 using Idasen.BluetoothLE.Characteristics.Interfaces.Characteristics ;
 using Idasen.BluetoothLE.Core ;
 using Idasen.BluetoothLE.Linak.Interfaces ;
@@ -61,7 +62,7 @@ namespace Idasen.BluetoothLE.Linak.Control
 
             var result = await _control.TryWriteRawControl2 ( bytes ) ;
 
-            if ( !result )
+            if ( ! result )
                 ExecutionFailed ( deskCommand ) ; // to do testing
 
             return result ;
@@ -70,17 +71,17 @@ namespace Idasen.BluetoothLE.Linak.Control
         private void ExecutionFailed ( DeskCommands deskCommand )
         {
             var message = $"Failed for '{deskCommand}' command. " +
-                          Characteristics.Common.Constants.CheckAndEnableBluetooth ;
+                          Constants.CheckAndEnableBluetooth ;
 
             _logger.Error ( message ) ;
 
-            _errorManager.PublishForMessage ( Characteristics.Common.Constants.CheckAndEnableBluetooth ) ;
+            _errorManager.PublishForMessage ( Constants.CheckAndEnableBluetooth ) ;
         }
 
-        private readonly IControl _control ;
+        private readonly IControl      _control ;
+        private readonly IErrorManager _errorManager ;
 
         private readonly ILogger               _logger ;
-        private readonly IErrorManager         _errorManager ;
         private readonly IDeskCommandsProvider _provider ;
     }
 }

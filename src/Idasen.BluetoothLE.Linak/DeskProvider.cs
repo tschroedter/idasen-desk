@@ -14,14 +14,12 @@ namespace Idasen.BluetoothLE.Linak
     public class DeskProvider
         : IDeskProvider
     {
-        private const string CheckAndEnableBluetooth = "*** Make sure Bluetooth is enabled ***";
-
         public DeskProvider (
             [ NotNull ] ILogger       logger ,
             [ NotNull ] ITaskRunner   taskRunner ,
             [ NotNull ] IScheduler    scheduler ,
-            [ NotNull ] IDeskDetector detector,
-            [ NotNull ] IErrorManager errorManager)
+            [ NotNull ] IDeskDetector detector ,
+            [ NotNull ] IErrorManager errorManager )
         {
             Guard.ArgumentNotNull ( logger ,
                                     nameof ( logger ) ) ;
@@ -31,8 +29,8 @@ namespace Idasen.BluetoothLE.Linak
                                     nameof ( scheduler ) ) ;
             Guard.ArgumentNotNull ( detector ,
                                     nameof ( detector ) ) ;
-            Guard.ArgumentNotNull(errorManager,
-                                  nameof(errorManager));
+            Guard.ArgumentNotNull ( errorManager ,
+                                    nameof ( errorManager ) ) ;
 
             _logger       = logger ;
             _taskRunner   = taskRunner ;
@@ -60,11 +58,11 @@ namespace Idasen.BluetoothLE.Linak
             }
             catch ( Exception e )
             {
-                if (e.IsBluetoothDisabledException (  ))
-                    e.LogBluetoothStatusException ( _logger );
+                if ( e.IsBluetoothDisabledException ( ) )
+                    e.LogBluetoothStatusException ( _logger ) ;
                 else
-                    _logger.Error(e,
-                                  "Failed to detect desk");
+                    _logger.Error ( e ,
+                                    "Failed to detect desk" ) ;
 
                 return ( false , null ) ;
             }
@@ -106,12 +104,12 @@ namespace Idasen.BluetoothLE.Linak
 
             try
             {
-                _detector.Start();
+                _detector.Start ( ) ;
             }
             catch ( Exception e )
             {
-                _logger.Error ( e,
-                               "Failed Start Detecting");
+                _logger.Error ( e ,
+                                "Failed Start Detecting" ) ;
 
                 _errorManager.PublishForMessage ( "Failed Start Detecting" ) ;
             }
@@ -126,14 +124,14 @@ namespace Idasen.BluetoothLE.Linak
 
             try
             {
-                _detector.Stop();
+                _detector.Stop ( ) ;
             }
-            catch (Exception e)
+            catch ( Exception e )
             {
-                _logger.Error(e,
-                              "Failed Stop Detecting");
+                _logger.Error ( e ,
+                                "Failed Stop Detecting" ) ;
 
-                _errorManager.PublishForMessage("Failed Stop Detecting");
+                _errorManager.PublishForMessage ( "Failed Stop Detecting" ) ;
             }
 
             return this ;
@@ -148,6 +146,8 @@ namespace Idasen.BluetoothLE.Linak
 
         /// <inheritdoc />
         public IDesk Desk { get ; private set ; }
+
+        private const string CheckAndEnableBluetooth = "*** Make sure Bluetooth is enabled ***" ;
 
         internal void DoTryGetDesk ( CancellationToken token )
         {

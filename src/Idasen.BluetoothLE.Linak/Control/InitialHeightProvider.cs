@@ -72,11 +72,11 @@ namespace Idasen.BluetoothLE.Linak.Control
 
             HasReceivedHeightAndSpeed = false ;
 
-            if (await _executor.Up ( ) &&
-                await _executor.Stop ( ) )
-                return;
+            if ( await _executor.Up ( ) &&
+                 await _executor.Stop ( ) )
+                return ;
 
-            _logger.Error ( "Failed to move desk up and down" );
+            _logger.Error ( "Failed to move desk up and down" ) ;
         }
 
         /// <inheritdoc />

@@ -6,17 +6,17 @@ using System.Windows.Threading ;
 using Idasen.BluetoothLE.Characteristics.Common ;
 using Idasen.Launcher ;
 using Serilog ;
+using Constants = Idasen.SystemTray.Utils.Constants ;
 
 namespace Idasen.SystemTray
 {
     [ ExcludeFromCodeCoverage ]
     public static class UnhandledExceptionsHandler
     {
-
         public static void RegisterGlobalExceptionHandling ( )
         {
-            var logger = LoggerProvider.CreateLogger ( Utils.Constants.ApplicationName ,
-                                                       Utils.Constants.LogFilename ) ;
+            var logger = LoggerProvider.CreateLogger ( Constants.ApplicationName ,
+                                                       Constants.LogFilename ) ;
 
             logger.Debug ( "Registering global exception handlers..." ) ;
 
@@ -51,7 +51,7 @@ namespace Idasen.SystemTray
             ILogger                          log )
         {
             if ( args.Exception.IsBluetoothDisabledException ( ) )
-                args.Exception.LogBluetoothStatusException( log ) ;
+                args.Exception.LogBluetoothStatusException ( log ) ;
             else
                 log.Error ( args.Exception ,
                             args.Exception != null
@@ -67,7 +67,7 @@ namespace Idasen.SystemTray
         {
             if ( args.Exception.IsBluetoothDisabledException ( ) )
             {
-                args.Exception.LogBluetoothStatusException(log);
+                args.Exception.LogBluetoothStatusException ( log ) ;
 
                 args.Handled = true ;
             }
@@ -83,7 +83,7 @@ namespace Idasen.SystemTray
         {
             if ( args.Exception.IsBluetoothDisabledException ( ) )
             {
-                args.Exception.LogBluetoothStatusException(log);
+                args.Exception.LogBluetoothStatusException ( log ) ;
 
                 args.Handled = true ;
             }
@@ -106,7 +106,7 @@ namespace Idasen.SystemTray
                                           terminatingMessage ) ;
 
             if ( exception.IsBluetoothDisabledException ( ) )
-                exception.LogBluetoothStatusException(log);
+                exception.LogBluetoothStatusException ( log ) ;
             else
                 log.Error ( exception ,
                             message ) ;

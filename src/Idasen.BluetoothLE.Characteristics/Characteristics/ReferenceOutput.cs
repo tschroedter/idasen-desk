@@ -98,25 +98,6 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
             _subjectHeightSpeed.OnNext ( details ) ;
         }
 
-        private bool _disposed ;
-
-        protected override void Dispose(bool disposing)
-        {
-            if (_disposed)
-            {
-                return;
-            }
-
-            if (disposing)
-            {
-                _subscriber?.Dispose();
-            }
-
-            _disposed = true;
-
-            base.Dispose(disposing);
-        }
-
         public delegate IReferenceOutput Factory ( IDevice device ) ;
 
         internal const string HeightSpeed = "Height Speed" ;
@@ -129,6 +110,17 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
         internal const string Eight       = "EIGHT" ;
         internal const string Mask        = "MASK" ;
         internal const string DetectMask  = "DETECT MASK" ;
+
+        protected override void Dispose ( bool disposing )
+        {
+            if ( _disposed ) return ;
+
+            if ( disposing ) _subscriber?.Dispose ( ) ;
+
+            _disposed = true ;
+
+            base.Dispose ( disposing ) ;
+        }
 
         protected override T WithMapping < T > ( ) where T : class
         {
@@ -167,6 +159,8 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
         }
 
         private readonly ISubject < RawValueChangedDetails > _subjectHeightSpeed ;
+
+        private bool _disposed ;
 
         private IDisposable _subscriber ;
     }

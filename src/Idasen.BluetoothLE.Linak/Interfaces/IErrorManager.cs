@@ -20,7 +20,7 @@ namespace Idasen.BluetoothLE.Linak.Interfaces
         void Publish ( [ NotNull ] IErrorDetails details ) ;
 
         /// <inheritdoc />
-        void PublishForMessage( [ NotNull ]                   string message,
-                                [CallerMemberName] string caller = "") ;
+        void PublishForMessage ( [ NotNull ]          string message ,
+                                 [ CallerMemberName ] string caller = "" ) ;
     }
 }

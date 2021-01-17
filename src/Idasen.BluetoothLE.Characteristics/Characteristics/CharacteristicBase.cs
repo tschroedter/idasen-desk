@@ -142,11 +142,11 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
             }
             catch ( Exception e )
             {
-                var message = "Failed to write value async!";
+                var message = "Failed to write value async!" ;
 
-                if (e.IsBluetoothDisabledException (  ))
-                    e.LogBluetoothStatusException ( Logger,
-                                                   message);
+                if ( e.IsBluetoothDisabledException ( ) )
+                    e.LogBluetoothStatusException ( Logger ,
+                                                    message ) ;
                 else
                     Logger.Error ( e ,
                                    message ) ;

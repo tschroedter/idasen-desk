@@ -83,7 +83,7 @@ namespace Idasen.BluetoothLE.Linak
 
             builder.RegisterType < ErrorManager > ( )
                    .As < IErrorManager > ( )
-                   .SingleInstance (  );
+                   .SingleInstance ( ) ;
         }
     }
 }

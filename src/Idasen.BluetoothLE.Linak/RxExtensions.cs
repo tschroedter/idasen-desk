@@ -27,7 +27,7 @@ namespace Idasen.BluetoothLE.Linak
                                                                    handler ) ;
         }
 
-        [UsedImplicitly]
+        [ UsedImplicitly ]
         public static IDisposable SubscribeAsync < T > ( this IObservable < T > source ,
                                                          Func < T , Task >      asyncAction ,
                                                          Action < Exception >   handler = null )

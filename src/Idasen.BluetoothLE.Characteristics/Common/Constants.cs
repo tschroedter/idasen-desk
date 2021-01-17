@@ -2,6 +2,6 @@
 {
     public class Constants
     {
-        public const string CheckAndEnableBluetooth = "Make sure Bluetooth is enabled!";
+        public const string CheckAndEnableBluetooth = "Make sure Bluetooth is enabled!" ;
     }
 }

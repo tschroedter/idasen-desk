@@ -10,7 +10,7 @@ namespace Idasen.BluetoothLE.Linak
     {
         public ErrorDetails (
             [ NotNull ] string message ,
-            [ NotNull ] string caller,
+            [ NotNull ] string caller ,
             Exception          exception = null )
         {
             Guard.ArgumentNotNull ( message ,

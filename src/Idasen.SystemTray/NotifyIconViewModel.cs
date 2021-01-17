@@ -13,6 +13,7 @@ using Idasen.SystemTray.Interfaces ;
 using Idasen.SystemTray.Utils ;
 using JetBrains.Annotations ;
 using Serilog ;
+using Constants = Idasen.BluetoothLE.Characteristics.Common.Constants ;
 
 // ReSharper disable UnusedMember.Global
 
@@ -205,7 +206,7 @@ namespace Idasen.SystemTray
                                details.Message     +
                                Environment.NewLine +
                                details.Caller ,
-                               visibilityBulbRed: Visibility.Visible ) ;
+                               visibilityBulbRed : Visibility.Visible ) ;
         }
 
         private async Task Standing ( )
@@ -230,9 +231,9 @@ namespace Idasen.SystemTray
             Guard.ArgumentNotNull ( errorManager ,
                                     nameof ( errorManager ) ) ;
 
-            _logger       = logger ;
-            _manager      = manager ;
-            _provider     = provider ;
+            _logger   = logger ;
+            _manager  = manager ;
+            _provider = provider ;
 
             _tokenSource = new CancellationTokenSource ( TimeSpan.FromSeconds ( 60 ) ) ;
             _token       = _tokenSource.Token ;
@@ -343,7 +344,7 @@ namespace Idasen.SystemTray
         private void ConnectFailed ( )
         {
             ShowFancyBalloon ( "Failed to Connect" ,
-                               BluetoothLE.Characteristics.Common.Constants.CheckAndEnableBluetooth ,
+                               Constants.CheckAndEnableBluetooth ,
                                visibilityBulbRed : Visibility.Visible ) ;
         }
 
