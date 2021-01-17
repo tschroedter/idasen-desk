@@ -203,9 +203,7 @@ namespace Idasen.SystemTray
             _logger.Error ( $"[{_desk?.DeviceName}] {details.Message}" ) ;
 
             ShowFancyBalloon ( "Error" ,
-                               details.Message     +
-                               Environment.NewLine +
-                               details.Caller ,
+                               details.Message,
                                visibilityBulbRed : Visibility.Visible ) ;
         }
 
