@@ -205,7 +205,7 @@ namespace Idasen.SystemTray
                                details.Message     +
                                Environment.NewLine +
                                details.Caller ,
-                               Visibility.Visible ) ;
+                               visibilityBulbRed: Visibility.Visible ) ;
         }
 
         private async Task Standing ( )
@@ -378,7 +378,7 @@ namespace Idasen.SystemTray
         private void OnFinishedChanged ( uint height )
         {
             ShowFancyBalloon ( "Finished" ,
-                               $"Desk height is {height / 100:F2} cm" ,
+                               $"Desk height is {height / 100:F0} cm" ,
                                Visibility.Visible ) ;
         }
 
