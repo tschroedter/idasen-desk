@@ -378,8 +378,10 @@ namespace Idasen.SystemTray
 
         private void OnFinishedChanged ( uint height )
         {
+            var heightInCm = Math.Round(height / 100.0) ;
+
             ShowFancyBalloon ( "Finished" ,
-                               $"Desk height is {height / 100:F0} cm" ,
+                               $"Desk height is {heightInCm:F0} cm" ,
                                Visibility.Visible ) ;
         }
 
