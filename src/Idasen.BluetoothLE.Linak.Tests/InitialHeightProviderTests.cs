@@ -46,6 +46,13 @@ namespace Idasen.BluetoothLE.Linak.Tests
             _detailsZeroHeight = new HeightSpeedDetails ( DateTimeOffset.Now ,
                                                           0u ,
                                                           22 ) ;
+
+            _executor.Up ( )
+                     .Returns ( true ) ;
+            _executor.Down ( )
+                     .Returns ( true ) ;
+            _executor.Stop ( )
+                     .Returns ( true ) ;
         }
 
         [ TestMethod ]
