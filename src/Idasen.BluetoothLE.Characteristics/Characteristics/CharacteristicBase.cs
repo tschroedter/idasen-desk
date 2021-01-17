@@ -5,6 +5,7 @@ using System.Reactive.Concurrency ;
 using System.Runtime.CompilerServices ;
 using System.Runtime.InteropServices.WindowsRuntime ;
 using System.Threading.Tasks ;
+using Idasen.BluetoothLE.Characteristics.Common ;
 using Idasen.BluetoothLE.Characteristics.Interfaces.Characteristics ;
 using Idasen.BluetoothLE.Characteristics.Interfaces.Characteristics.Customs ;
 using Idasen.BluetoothLE.Characteristics.Interfaces.Common ;
@@ -141,8 +142,14 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
             }
             catch ( Exception e )
             {
-                Logger.Error ( e ,
-                               "Failed to write Value Async!" ) ;
+                var message = "Failed to write value async!";
+
+                if (e.IsBluetoothDisabledException (  ))
+                    e.LogBluetoothStatusException ( Logger,
+                                                   message);
+                else
+                    Logger.Error ( e ,
+                                   message ) ;
 
                 return false ;
             }
@@ -176,30 +183,6 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
                                            out var values )
                        ? values
                        : RawArrayEmpty ;
-        }
-
-        protected bool TryGetValueOrEmpty ( string                   key ,
-                                            out IEnumerable < byte > bytes )
-        {
-            try
-            {
-                if ( RawValues.TryGetValue ( key ,
-                                             out bytes ) )
-                    return true ;
-
-                bytes = RawArrayEmpty ;
-
-                return false ;
-            }
-            catch ( Exception e )
-            {
-                Logger.Error ( e ,
-                               "Failed to write Value Async!" ) ;
-
-                bytes = RawArrayEmpty ;
-
-                return false ;
-            }
         }
 
         public override string ToString ( )
