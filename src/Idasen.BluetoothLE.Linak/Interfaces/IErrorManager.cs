@@ -19,7 +19,15 @@ namespace Idasen.BluetoothLE.Linak.Interfaces
         /// </param>
         void Publish ( [ NotNull ] IErrorDetails details ) ;
 
-        /// <inheritdoc />
+        /// <summary>
+        ///     Publish an error so the UI can show it.
+        /// </summary>
+        /// <param name="message">
+        ///     The message to be displayed.
+        /// </param>
+        /// <param name="caller">
+        ///     The caller information.
+        /// </param>
         void PublishForMessage ( [ NotNull ]          string message ,
                                  [ CallerMemberName ] string caller = "" ) ;
     }
