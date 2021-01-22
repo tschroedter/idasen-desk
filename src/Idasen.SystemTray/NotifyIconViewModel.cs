@@ -77,6 +77,8 @@ namespace Idasen.SystemTray
                            CanExecuteFunc = ( ) => SettingsWindow == null ,
                            CommandAction = ( ) =>
                                            {
+                                               _logger.Debug ( $"{nameof ( ShowSettingsCommand )}" ) ;
+
                                                SettingsWindow = new SettingsWindow ( _logger ,
                                                                                      _manager ) ;
                                                SettingsWindow?.Show ( ) ;
@@ -96,6 +98,8 @@ namespace Idasen.SystemTray
                        {
                            CommandAction = ( ) =>
                                            {
+                                               _logger.Debug ( $"{nameof ( HideSettingsCommand )}" ) ;
+
                                                SettingsWindow?.Close ( ) ;
                                                SettingsWindow = null ;
                                            } ,
@@ -113,7 +117,12 @@ namespace Idasen.SystemTray
             {
                 return new DelegateCommand
                        {
-                           CommandAction  = async ( ) => { await Connect ( ) ; } ,
+                           CommandAction = async ( ) =>
+                                           {
+                                               _logger.Debug ( $"{nameof ( ConnectCommand )}" ) ;
+
+                                               await Connect ( ) ;
+                                           } ,
                            CanExecuteFunc = ( ) => _desk == null
                        } ;
             }
@@ -128,7 +137,12 @@ namespace Idasen.SystemTray
             {
                 return new DelegateCommand
                        {
-                           CommandAction  = Disconnect ,
+                           CommandAction = ( ) =>
+                                           {
+                                               _logger.Debug ( $"{nameof ( DisconnectCommand )}" ) ;
+
+                                               Disconnect ( ) ;
+                                           } ,
                            CanExecuteFunc = ( ) => _desk != null
                        } ;
             }
@@ -143,7 +157,12 @@ namespace Idasen.SystemTray
             {
                 return new DelegateCommand
                        {
-                           CommandAction  = async ( ) => { await Standing ( ) ; } ,
+                           CommandAction = async ( ) =>
+                                           {
+                                               _logger.Debug ( $"{nameof ( StandingCommand )}" ) ;
+
+                                               await Standing ( ) ;
+                                           } ,
                            CanExecuteFunc = ( ) => _desk != null
                        } ;
             }
@@ -160,6 +179,8 @@ namespace Idasen.SystemTray
                        {
                            CommandAction = async ( ) =>
                                            {
+                                               _logger.Debug ( $"{nameof ( SeatingCommand )}" ) ;
+
                                                await _manager.Load ( ) ;
 
                                                _desk?.MoveTo ( _manager.CurrentSettings.SeatingHeightInCm * 100 ) ;
@@ -203,12 +224,14 @@ namespace Idasen.SystemTray
             _logger.Error ( $"[{_desk?.DeviceName}] {details.Message}" ) ;
 
             ShowFancyBalloon ( "Error" ,
-                               details.Message,
+                               details.Message ,
                                visibilityBulbRed : Visibility.Visible ) ;
         }
 
         private async Task Standing ( )
         {
+            _logger.Debug ( "Executing Standing..." ) ;
+
             await _manager.Load ( ) ;
 
             _desk?.MoveTo ( _manager.CurrentSettings.StandingHeightInCm * 100 ) ;
@@ -233,6 +256,8 @@ namespace Idasen.SystemTray
             _manager  = manager ;
             _provider = provider ;
 
+            _logger.Debug("Initializing...");
+
             _tokenSource = new CancellationTokenSource ( TimeSpan.FromSeconds ( 60 ) ) ;
             _token       = _tokenSource.Token ;
 
@@ -245,6 +270,8 @@ namespace Idasen.SystemTray
 
         public async Task AutoConnect ( )
         {
+            _logger.Debug ( "Auto connecting..." ) ;
+
             try
             {
                 CheckIfInitialized ( ) ;
@@ -341,6 +368,8 @@ namespace Idasen.SystemTray
 
         private void ConnectFailed ( )
         {
+            _logger.Debug ( "Connection failed..." ) ;
+
             ShowFancyBalloon ( "Failed to Connect" ,
                                Constants.CheckAndEnableBluetooth ,
                                visibilityBulbRed : Visibility.Visible ) ;
@@ -376,7 +405,9 @@ namespace Idasen.SystemTray
 
         private void OnFinishedChanged ( uint height )
         {
-            var heightInCm = Math.Round(height / 100.0) ;
+            _logger.Debug ( $"Height = {height}" ) ;
+
+            var heightInCm = Math.Round ( height / 100.0 ) ;
 
             ShowFancyBalloon ( "Finished" ,
                                $"Desk height is {heightInCm:F0} cm" ,
@@ -392,10 +423,16 @@ namespace Idasen.SystemTray
             _notifyIcon ??= ( TaskbarIcon ) Application.Current.FindResource ( "NotifyIcon" ) ;
 
             if ( _notifyIcon == null )
+            {
+                _logger.Debug ( "Failed because NotifyIcon is null" );
+
                 return ;
+            }
 
             if ( ! _notifyIcon.Dispatcher.CheckAccess ( ) )
             {
+                _logger.Debug("Dispatching call on UI thread");
+
                 _notifyIcon.Dispatcher.BeginInvoke ( new Action ( ( ) => ShowFancyBalloon ( title ,
                                                                                             text ,
                                                                                             visibilityBulbGreen ,
@@ -404,6 +441,12 @@ namespace Idasen.SystemTray
 
                 return ;
             }
+
+            _logger.Debug ( $"Title = '{title}', "                              +
+                            $"Text = '{text}', "                                +
+                            $"visibilityBulbGreen = '{visibilityBulbGreen}', "  +
+                            $"visibilityBulbYellow = '{visibilityBulbYellow}' " +
+                            $"visibilityBulbRed = '{visibilityBulbRed}'" ) ;
 
             var balloon = new FancyBalloon
                           {
