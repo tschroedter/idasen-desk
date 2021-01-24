@@ -108,6 +108,11 @@ namespace Idasen.BluetoothLE.Linak.Control
 
             var stop = await _executor.Stop ( ) ;
 
+            if ( !stop )
+                _logger.Error ( "Failed to stop" );
+
+            _logger.Debug($"Sending finished with height {Height}");
+
             _subjectFinished.OnNext ( Height ) ;
 
             return stop ;
@@ -127,8 +132,13 @@ namespace Idasen.BluetoothLE.Linak.Control
 
         public bool IsAllowedToMove { get ; private set ; }
 
-        private void StartAfterRefreshed ( )
+        private void StartAfterReceivingCurrentHeight ( )
         {
+            _logger.Debug("Start after refreshed...");
+
+            if ( TargetHeight == 0 )
+                throw new Exception ( "TargetHeight is 0" ) ;
+
             Height = _heightAndSpeed.Height ;
             Speed  = _heightAndSpeed.Speed ;
 
@@ -170,18 +180,24 @@ namespace Idasen.BluetoothLE.Linak.Control
         {
             Height = height ;
 
-            StartAfterRefreshed ( ) ;
+            StartAfterReceivingCurrentHeight ( ) ;
         }
 
         private async Task Move ( )
         {
-            _logger.Debug ( "Moving..." ) ;
+            _logger.Debug ( "Move..." ) ;
 
             if ( ! IsAllowedToMove )
             {
                 _logger.Debug ( "Not allowed to move..." ) ;
 
                 return ;
+            }
+
+            if ( TargetHeight == 0u )
+            {
+                _logger.Debug ( "*** TargetHeight = 0\r\n" +
+                                $"{Environment.StackTrace}" );
             }
 
             _calculator.Height                   = Height ;
