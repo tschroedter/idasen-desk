@@ -183,7 +183,7 @@ namespace Idasen.SystemTray
 
                                                await _manager.Load ( ) ;
 
-                                               _desk?.MoveTo ( _manager.CurrentSettings.SeatingHeightInCm * 100 ) ;
+                                               _desk?.MoveTo ( _manager.CurrentSettings.SeatingHeightInCm * 100 ) ; // todo duplicated
                                            } ,
                            CanExecuteFunc = ( ) => _desk != null
                        } ;
