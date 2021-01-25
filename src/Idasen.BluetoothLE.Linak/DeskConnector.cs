@@ -17,7 +17,7 @@ using Serilog ;
 namespace Idasen.BluetoothLE.Linak
 {
     // todo tests
-    [Intercept( typeof(LogAspect))]
+    [ Intercept ( typeof ( LogAspect ) ) ]
     public class DeskConnector
         : IDeskConnector
     {

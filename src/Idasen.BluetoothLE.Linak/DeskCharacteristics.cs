@@ -12,7 +12,7 @@ using Serilog ;
 
 namespace Idasen.BluetoothLE.Linak
 {
-    [Intercept( typeof(LogAspect))]
+    [ Intercept ( typeof ( LogAspect ) ) ]
     public class DeskCharacteristics
         : IDeskCharacteristics
     {
@@ -79,7 +79,7 @@ namespace Idasen.BluetoothLE.Linak
 
             _available [ key ] = characteristic ;
 
-            _logger.Debug($"Added characteristic {characteristic} for key {key}");
+            _logger.Debug ( $"Added characteristic {characteristic} for key {key}" ) ;
 
             return this ;
         }

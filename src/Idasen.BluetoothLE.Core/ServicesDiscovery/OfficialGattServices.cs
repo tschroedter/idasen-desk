@@ -88,13 +88,13 @@ namespace Idasen.BluetoothLE.Core.ServicesDiscovery
 
             using var reader = new StreamReader ( stream ) ;
 
-            var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+            var config = new CsvConfiguration ( CultureInfo.InvariantCulture )
                          {
                              Delimiter = ","
-                         };
+                         } ;
 
             using var csv = new CsvReader ( reader ,
-                                            config) ;
+                                            config ) ;
 
 
             csv.Context.RegisterClassMap < GattServiceCsvHelperMap > ( ) ;

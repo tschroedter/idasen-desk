@@ -10,7 +10,7 @@ using Serilog ;
 
 namespace Idasen.BluetoothLE.Linak.Control
 {
-    [Intercept( typeof(LogAspect))]
+    [ Intercept ( typeof ( LogAspect ) ) ]
     public class DeskCommandExecutor
         : IDeskCommandExecutor
     {

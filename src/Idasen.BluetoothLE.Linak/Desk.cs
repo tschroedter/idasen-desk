@@ -9,7 +9,7 @@ using JetBrains.Annotations ;
 
 namespace Idasen.BluetoothLE.Linak
 {
-    [Intercept( typeof(LogAspect))]
+    [ Intercept ( typeof ( LogAspect ) ) ]
     public class Desk
         : IDesk
     {

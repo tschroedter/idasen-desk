@@ -26,87 +26,87 @@ namespace Idasen.BluetoothLE.Linak
                    .As < IScheduler > ( ) ;
 
             builder.RegisterType < DeskCharacteristics > ( )
-                   .As < IDeskCharacteristics > ()
-                   .EnableInterfaceInterceptors();
+                   .As < IDeskCharacteristics > ( )
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < Desk > ( )
-                   .As < IDesk > ()
-                   .EnableInterfaceInterceptors();
+                   .As < IDesk > ( )
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < DeskFactory > ( )
-                   .As < IDeskFactory > ()
-                   .EnableInterfaceInterceptors();
+                   .As < IDeskFactory > ( )
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < DeskHeightAndSpeed > ( )
-                   .As < IDeskHeightAndSpeed > ()
-                   .EnableInterfaceInterceptors();
+                   .As < IDeskHeightAndSpeed > ( )
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < DeskHeightAndSpeedFactory > ( )
-                   .As < IDeskHeightAndSpeedFactory > ()
-                   .EnableInterfaceInterceptors();
+                   .As < IDeskHeightAndSpeedFactory > ( )
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < RawValueToHeightAndSpeedConverter > ( )
-                   .As < IRawValueToHeightAndSpeedConverter > ()
-                   .EnableInterfaceInterceptors();
+                   .As < IRawValueToHeightAndSpeedConverter > ( )
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < DeskCommandExecutor > ( )
-                   .As < IDeskCommandExecutor > ()
-                   .EnableInterfaceInterceptors();
+                   .As < IDeskCommandExecutor > ( )
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < DeskCommandExecutorFactory > ( )
-                   .As < IDeskCommandExecutorFactory > ()
-                   .EnableInterfaceInterceptors();
+                   .As < IDeskCommandExecutorFactory > ( )
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < DeskCommandsProvider > ( )
-                   .As < IDeskCommandsProvider > ()
-                   .EnableInterfaceInterceptors();
+                   .As < IDeskCommandsProvider > ( )
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < DeskMover > ( )
                    .As < IDeskMover > ( )
                    .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < DeskMoverFactory > ( )
-                   .As < IDeskMoverFactory > ()
-                   .EnableInterfaceInterceptors();
+                   .As < IDeskMoverFactory > ( )
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < StoppingHeightCalculator > ( )
-                   .As < IStoppingHeightCalculator > ()
-                   .EnableInterfaceInterceptors();
+                   .As < IStoppingHeightCalculator > ( )
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < HasReachedTargetHeightCalculator > ( )
-                   .As < IHasReachedTargetHeightCalculator > ()
-                   .EnableInterfaceInterceptors();
+                   .As < IHasReachedTargetHeightCalculator > ( )
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < InitialHeightProvider > ( )
                    .As < IInitialHeightProvider > ( ) ;
 
             builder.RegisterType < InitialHeightAndSpeedProviderFactory > ( )
-                   .As < IInitialHeightAndSpeedProviderFactory > ()
-                   .EnableInterfaceInterceptors();
+                   .As < IInitialHeightAndSpeedProviderFactory > ( )
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < DeskCharacteristicsCreator > ( )
-                   .As < IDeskCharacteristicsCreator > ()
-                   .EnableInterfaceInterceptors();
+                   .As < IDeskCharacteristicsCreator > ( )
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < DeskConnector > ( )
-                   .As < IDeskConnector > ()
-                   .EnableInterfaceInterceptors();
+                   .As < IDeskConnector > ( )
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < DeskDetector > ( )
-                   .As < IDeskDetector > ()
-                   .EnableInterfaceInterceptors();
+                   .As < IDeskDetector > ( )
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < DeskProvider > ( )
-                   .As < IDeskProvider > ()
-                   .EnableInterfaceInterceptors();
+                   .As < IDeskProvider > ( )
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < TaskRunner > ( )
                    .As < ITaskRunner > ( ) ;
 
             builder.RegisterType < ErrorManager > ( )
                    .As < IErrorManager > ( )
-                   .SingleInstance ()
-                   .EnableInterfaceInterceptors();
+                   .SingleInstance ( )
+                   .EnableInterfaceInterceptors ( ) ;
         }
     }
 }

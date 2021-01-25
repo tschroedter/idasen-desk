@@ -11,7 +11,7 @@ using Serilog ;
 
 namespace Idasen.BluetoothLE.Linak
 {
-    [Intercept( typeof(LogAspect))]
+    [ Intercept ( typeof ( LogAspect ) ) ]
     public class RawValueToHeightAndSpeedConverter
         : IRawValueToHeightAndSpeedConverter
     {

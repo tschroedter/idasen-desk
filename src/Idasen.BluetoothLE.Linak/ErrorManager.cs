@@ -10,7 +10,7 @@ using Serilog ;
 
 namespace Idasen.BluetoothLE.Linak
 {
-    [Intercept( typeof(LogAspect))]
+    [ Intercept ( typeof ( LogAspect ) ) ]
     public class ErrorManager // todo testing, move to more general project
         : IErrorManager
     {

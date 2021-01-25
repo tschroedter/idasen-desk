@@ -65,13 +65,13 @@ namespace Idasen.BluetoothLE.Characteristics.Common
 
             using var reader = new StreamReader ( stream ) ;
 
-            var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+            var config = new CsvConfiguration ( CultureInfo.InvariantCulture )
                          {
                              Delimiter = ","
-                         };
+                         } ;
 
             using var csv = new CsvReader ( reader ,
-                                            config) ;
+                                            config ) ;
 
             var readCsvFile = csv.GetRecords < CsvGattCharacteristic > ( )
                                  .ToArray ( ) ;

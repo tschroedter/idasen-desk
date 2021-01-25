@@ -183,7 +183,8 @@ namespace Idasen.SystemTray
 
                                                await _manager.Load ( ) ;
 
-                                               _desk?.MoveTo ( _manager.CurrentSettings.SeatingHeightInCm * 100 ) ; // todo duplicated
+                                               _desk?.MoveTo ( _manager.CurrentSettings.SeatingHeightInCm *
+                                                               100 ) ; // todo duplicated
                                            } ,
                            CanExecuteFunc = ( ) => _desk != null
                        } ;
@@ -256,7 +257,7 @@ namespace Idasen.SystemTray
             _manager  = manager ;
             _provider = provider ;
 
-            _logger.Debug("Initializing...");
+            _logger.Debug ( "Initializing..." ) ;
 
             _tokenSource = new CancellationTokenSource ( TimeSpan.FromSeconds ( 60 ) ) ;
             _token       = _tokenSource.Token ;
@@ -424,14 +425,14 @@ namespace Idasen.SystemTray
 
             if ( _notifyIcon == null )
             {
-                _logger.Debug ( "Failed because NotifyIcon is null" );
+                _logger.Debug ( "Failed because NotifyIcon is null" ) ;
 
                 return ;
             }
 
             if ( ! _notifyIcon.Dispatcher.CheckAccess ( ) )
             {
-                _logger.Debug("Dispatching call on UI thread");
+                _logger.Debug ( "Dispatching call on UI thread" ) ;
 
                 _notifyIcon.Dispatcher.BeginInvoke ( new Action ( ( ) => ShowFancyBalloon ( title ,
                                                                                             text ,

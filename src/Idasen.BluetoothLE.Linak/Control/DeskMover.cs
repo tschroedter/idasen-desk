@@ -15,7 +15,7 @@ using Serilog ;
 
 namespace Idasen.BluetoothLE.Linak.Control
 {
-    [Intercept( typeof(LogAspect))]
+    [ Intercept ( typeof ( LogAspect ) ) ]
     public class DeskMover
         : IDeskMover
     {
@@ -111,10 +111,10 @@ namespace Idasen.BluetoothLE.Linak.Control
 
             var stop = await _executor.Stop ( ) ;
 
-            if ( !stop )
-                _logger.Error ( "Failed to stop" );
+            if ( ! stop )
+                _logger.Error ( "Failed to stop" ) ;
 
-            _logger.Debug($"Sending finished with height {Height}");
+            _logger.Debug ( $"Sending finished with height {Height}" ) ;
 
             _subjectFinished.OnNext ( Height ) ;
 
@@ -137,7 +137,7 @@ namespace Idasen.BluetoothLE.Linak.Control
 
         private void StartAfterReceivingCurrentHeight ( )
         {
-            _logger.Debug("Start after refreshed...");
+            _logger.Debug ( "Start after refreshed..." ) ;
 
             if ( TargetHeight == 0 )
                 throw new Exception ( "TargetHeight is 0" ) ;
@@ -198,10 +198,8 @@ namespace Idasen.BluetoothLE.Linak.Control
             }
 
             if ( TargetHeight == 0u )
-            {
                 _logger.Debug ( "*** TargetHeight = 0\r\n" +
-                                $"{Environment.StackTrace}" );
-            }
+                                $"{Environment.StackTrace}" ) ;
 
             _calculator.Height                   = Height ;
             _calculator.Speed                    = Speed ;

@@ -7,7 +7,7 @@ using JetBrains.Annotations ;
 
 namespace Idasen.BluetoothLE.Linak.Control
 {
-    [Intercept( typeof(LogAspect))]
+    [ Intercept ( typeof ( LogAspect ) ) ]
     public class DeskCommandExecutorFactory
         : IDeskCommandExecutorFactory
     {

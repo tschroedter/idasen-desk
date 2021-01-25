@@ -10,7 +10,7 @@ using Serilog ;
 namespace Idasen.BluetoothLE.Linak
 {
     /// <inheritdoc />
-    [Intercept( typeof(LogAspect))]
+    [ Intercept ( typeof ( LogAspect ) ) ]
     public class DeskCharacteristicsCreator
         : IDeskCharacteristicsCreator
     {

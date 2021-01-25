@@ -10,7 +10,7 @@ namespace Idasen.Launcher
     public static class LoggerProvider
     {
         private const string LogTemplate = "[{Timestamp:yyyy-MM-dd HH:mm:ss.ffff} " +
-                                           "{Level:u3}] {Message} "      +
+                                           "{Level:u3}] {Message} "                 +
                                            "(at {Caller}){NewLine}{Exception}" ;
 
         private static ILogger Logger ;
