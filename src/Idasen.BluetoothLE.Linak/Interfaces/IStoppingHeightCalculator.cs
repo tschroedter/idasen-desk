@@ -1,4 +1,6 @@
-﻿namespace Idasen.BluetoothLE.Linak.Control
+﻿using Idasen.BluetoothLE.Linak.Control ;
+
+namespace Idasen.BluetoothLE.Linak.Interfaces
 {
     public interface IStoppingHeightCalculator
     {

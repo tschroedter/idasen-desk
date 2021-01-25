@@ -1,6 +1,7 @@
 ﻿using System ;
 using Autofac.Extras.DynamicProxy ;
 using Idasen.Aop.Aspects ;
+using Idasen.BluetoothLE.Linak.Interfaces ;
 
 namespace Idasen.BluetoothLE.Linak.Control
 {
