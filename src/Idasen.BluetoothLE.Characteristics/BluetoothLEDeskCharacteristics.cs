@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis ;
 using Autofac ;
+using Autofac.Extras.DynamicProxy ;
 using Idasen.BluetoothLE.Characteristics.Characteristics ;
 using Idasen.BluetoothLE.Characteristics.Characteristics.Customs ;
 using Idasen.BluetoothLE.Characteristics.Common ;
@@ -20,49 +21,64 @@ namespace Idasen.BluetoothLE.Characteristics
             builder.RegisterModule < BluetoothLECoreModule > ( ) ;
 
             builder.RegisterType < AllGattCharacteristicsProvider > ( )
-                   .As < IAllGattCharacteristicsProvider > ( ) ;
+                   .As < IAllGattCharacteristicsProvider > ( )
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < GattCharacteristicProvider > ( )
-                   .As < IGattCharacteristicProvider > ( ) ;
+                   .As < IGattCharacteristicProvider > ( )
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < GattCharacteristicsProviderFactory > ( )
-                   .As < IGattCharacteristicsProviderFactory > ( ) ;
+                   .As < IGattCharacteristicsProviderFactory > ( )
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < RawValueReader > ( )
-                   .As < IRawValueReader > ( ) ;
+                   .As < IRawValueReader > ( )
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < RawValueWriter > ( )
-                   .As < IRawValueWriter > ( ) ;
+                   .As < IRawValueWriter > ( )
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < GenericAccess > ( )
-                   .As < IGenericAccess > ( ) ;
+                   .As < IGenericAccess > ( )
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < GenericAttribute > ( )
-                   .As < IGenericAttribute > ( ) ;
+                   .As < IGenericAttribute > ( )
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < ReferenceInput > ( )
-                   .As < IReferenceInput > ( ) ;
+                   .As < IReferenceInput > ( )
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < ReferenceOutput > ( )
-                   .As < IReferenceOutput > ( ) ;
+                   .As < IReferenceOutput > ( )
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < Dpg > ( )
-                   .As < IDpg > ( ) ;
+                   .As < IDpg > ( )
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < Control > ( )
-                   .As < IControl > ( ) ;
+                   .As < IControl > ( )
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < CharacteristicBaseToStringConverter > ( )
-                   .As < ICharacteristicBaseToStringConverter > ( ) ;
+                   .As < ICharacteristicBaseToStringConverter > ( )
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < BufferReader > ( )
-                   .As < IBufferReader > ( ) ;
+                   .As < IBufferReader > ( )
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < DescriptionToUuid > ( )
-                   .As < IDescriptionToUuid > ( ) ;
+                   .As < IDescriptionToUuid > ( )
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType ( typeof ( CharacteristicBaseFactory ) )
-                   .As ( typeof ( ICharacteristicBaseFactory ) ) ;
+                   .As ( typeof ( ICharacteristicBaseFactory ) )
+                   .EnableInterfaceInterceptors ( ) ;
         }
     }
 }

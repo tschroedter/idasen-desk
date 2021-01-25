@@ -1,6 +1,8 @@
 ﻿using System ;
 using System.Diagnostics.CodeAnalysis ;
 using Windows.Storage.Streams ;
+using Autofac.Extras.DynamicProxy ;
+using Idasen.Aop.Aspects ;
 using Idasen.BluetoothLE.Characteristics.Interfaces.Common ;
 using Idasen.BluetoothLE.Core ;
 using Serilog ;
@@ -8,6 +10,7 @@ using Serilog ;
 namespace Idasen.BluetoothLE.Characteristics.Common
 {
     [ ExcludeFromCodeCoverage ]
+    [Intercept( typeof(LogAspect))]
     public class BufferReader
         : IBufferReader
     {
@@ -36,7 +39,7 @@ namespace Idasen.BluetoothLE.Characteristics.Common
             }
             catch ( Exception e )
             {
-                var message = "Failed to read from buffer" ;
+                const string message = "Failed to read from buffer" ;
 
                 _logger.Error ( e ,
                                 message ) ;

@@ -4,13 +4,16 @@ using System.Globalization ;
 using System.IO ;
 using System.Linq ;
 using System.Reflection ;
+using Autofac.Extras.DynamicProxy ;
 using CsvHelper ;
 using CsvHelper.Configuration ;
+using Idasen.Aop.Aspects ;
 using Idasen.BluetoothLE.Characteristics.Interfaces.Common ;
 using Idasen.BluetoothLE.Core ;
 
 namespace Idasen.BluetoothLE.Characteristics.Common
 {
+    [ Intercept ( typeof ( LogAspect ) ) ]
     public sealed class AllGattCharacteristicsProvider
         : IAllGattCharacteristicsProvider
     {

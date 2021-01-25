@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic ;
 using System.Linq ;
 using System.Text ;
+using Autofac.Extras.DynamicProxy ;
+using Idasen.Aop.Aspects ;
 using Idasen.BluetoothLE.Characteristics.Common ;
 using Idasen.BluetoothLE.Characteristics.Interfaces.Characteristics ;
 using Idasen.BluetoothLE.Core ;
@@ -9,6 +11,7 @@ using JetBrains.Annotations ;
 namespace Idasen.BluetoothLE.Characteristics.Characteristics
 {
     /// <inheritdoc cref="ICharacteristicBaseToStringConverter" />
+    [ Intercept ( typeof ( LogAspect ) ) ]
     public class CharacteristicBaseToStringConverter
         : ICharacteristicBaseToStringConverter
     {

@@ -5,6 +5,8 @@ using System.Reactive.Concurrency ;
 using System.Runtime.CompilerServices ;
 using System.Runtime.InteropServices.WindowsRuntime ;
 using System.Threading.Tasks ;
+using Autofac.Extras.DynamicProxy ;
+using Idasen.Aop.Aspects ;
 using Idasen.BluetoothLE.Characteristics.Common ;
 using Idasen.BluetoothLE.Characteristics.Interfaces.Characteristics ;
 using Idasen.BluetoothLE.Characteristics.Interfaces.Characteristics.Customs ;
@@ -18,6 +20,7 @@ using Serilog ;
 
 namespace Idasen.BluetoothLE.Characteristics.Characteristics
 {
+    [ Intercept ( typeof ( LogAspect ) ) ]
     public abstract class CharacteristicBase
         : ICharacteristicBase
     {
@@ -73,7 +76,7 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
                                               $"UUID {GattServiceUuid}" ,
                                               nameof ( GattServiceUuid ) ) ;
 
-            Logger.Debug ( $"Found GattDeviceService with UUID {GattServiceUuid}" ) ;
+            Logger.Information ( $"Found GattDeviceService with UUID {GattServiceUuid}" ) ;
 
             Characteristics = ProviderFactory.Create ( characteristicsResultWrapper ) ;
 
@@ -142,7 +145,7 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
             }
             catch ( Exception e )
             {
-                var message = "Failed to write value async!" ;
+                const string message = "Failed to write value async!" ;
 
                 if ( e.IsBluetoothDisabledException ( ) )
                     e.LogBluetoothStatusException ( Logger ,

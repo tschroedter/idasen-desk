@@ -2,6 +2,8 @@
 using System.Collections.Generic ;
 using System.Linq ;
 using Windows.Devices.Bluetooth.GenericAttributeProfile ;
+using Autofac.Extras.DynamicProxy ;
+using Idasen.Aop.Aspects ;
 using Idasen.BluetoothLE.Characteristics.Interfaces.Characteristics.Customs ;
 using Idasen.BluetoothLE.Core ;
 using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers ;
@@ -10,6 +12,7 @@ using Serilog ;
 
 namespace Idasen.BluetoothLE.Characteristics.Characteristics.Customs
 {
+    [ Intercept ( typeof ( LogAspect ) ) ]
     public class GattCharacteristicProvider
         : IGattCharacteristicProvider
     {

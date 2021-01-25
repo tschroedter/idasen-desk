@@ -1,6 +1,8 @@
 ﻿using System.Threading.Tasks ;
 using Windows.Devices.Bluetooth.GenericAttributeProfile ;
 using Windows.Storage.Streams ;
+using Autofac.Extras.DynamicProxy ;
+using Idasen.Aop.Aspects ;
 using Idasen.BluetoothLE.Characteristics.Interfaces.Common ;
 using Idasen.BluetoothLE.Core ;
 using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers ;
@@ -10,6 +12,7 @@ using Serilog ;
 
 namespace Idasen.BluetoothLE.Characteristics.Common
 {
+    [ Intercept ( typeof ( LogAspect ) ) ]
     public class RawValueWriter
         : IRawValueWriter
     {

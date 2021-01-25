@@ -1,6 +1,8 @@
 ﻿using System.Linq ;
 using System.Threading.Tasks ;
 using Windows.Devices.Bluetooth.GenericAttributeProfile ;
+using Autofac.Extras.DynamicProxy ;
+using Idasen.Aop.Aspects ;
 using Idasen.BluetoothLE.Characteristics.Interfaces.Common ;
 using Idasen.BluetoothLE.Core ;
 using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers ;
@@ -9,6 +11,7 @@ using Serilog ;
 
 namespace Idasen.BluetoothLE.Characteristics.Common
 {
+    [ Intercept ( typeof ( LogAspect ) ) ]
     public class RawValueReader
         : IRawValueReader
     {
@@ -33,8 +36,8 @@ namespace Idasen.BluetoothLE.Characteristics.Common
 
             if ( SupportsNotify ( characteristic ) )
             {
-                _logger.Debug ( $"GattCharacteristic '{characteristic.Uuid}' " +
-                                "doesn't support 'Read' but supports 'Notify'" ) ;
+                _logger.Warning ( $"GattCharacteristic '{characteristic.Uuid}' " +
+                                  "doesn't support 'Read' but supports 'Notify'" ) ;
 
                 return ( false , ArrayEmpty ) ; // need to subscribe to value change
             }

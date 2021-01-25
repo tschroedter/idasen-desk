@@ -1,4 +1,6 @@
 ﻿using Autofac ;
+using Autofac.Extras.DynamicProxy ;
+using Idasen.Aop.Aspects ;
 using Idasen.BluetoothLE.Characteristics.Interfaces.Characteristics ;
 using Idasen.BluetoothLE.Core ;
 using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery ;
@@ -6,6 +8,7 @@ using JetBrains.Annotations ;
 
 namespace Idasen.BluetoothLE.Characteristics.Characteristics
 {
+    [ Intercept ( typeof ( LogAspect ) ) ]
     public class CharacteristicBaseFactory
         : ICharacteristicBaseFactory
     {
