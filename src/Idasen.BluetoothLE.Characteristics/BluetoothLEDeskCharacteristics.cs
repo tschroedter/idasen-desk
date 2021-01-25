@@ -12,7 +12,7 @@ namespace Idasen.BluetoothLE.Characteristics
 {
     // ReSharper disable once InconsistentNaming
     [ ExcludeFromCodeCoverage ]
-    public class BluetoothLEDeskModule
+    public class BluetoothLEDeskCharacteristics
         : Module
     {
         protected override void Load ( ContainerBuilder builder )

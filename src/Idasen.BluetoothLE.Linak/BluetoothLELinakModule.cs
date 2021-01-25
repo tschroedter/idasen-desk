@@ -18,7 +18,7 @@ namespace Idasen.BluetoothLE.Linak
         {
             builder.RegisterModule < BluetoothLEAop > ( ) ;
 
-            builder.RegisterModule < BluetoothLEDeskModule > ( ) ;
+            builder.RegisterModule < BluetoothLEDeskCharacteristics > ( ) ;
 
             var scheduler = TaskPoolScheduler.Default ;
 
