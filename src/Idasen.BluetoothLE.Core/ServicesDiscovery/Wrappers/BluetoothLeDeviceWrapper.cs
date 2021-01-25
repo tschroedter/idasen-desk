@@ -81,14 +81,14 @@ namespace Idasen.BluetoothLE.Core.ServicesDiscovery.Wrappers
         {
             if ( ConnectionStatus == BluetoothConnectionStatus.Connected )
             {
-                _logger.Debug ( $"[{DeviceId}] Already connected" ) ;
+                _logger.Information ( $"[{DeviceId}] Already connected" ) ;
 
                 return ;
             }
 
             if ( ! IsPaired )
             {
-                _logger.Debug ( $"[{DeviceId}] Not paired" ) ;
+                _logger.Information ( $"[{DeviceId}] Not paired" ) ;
 
                 return ;
             }
@@ -152,7 +152,8 @@ namespace Idasen.BluetoothLE.Core.ServicesDiscovery.Wrappers
         {
             if ( ConnectionStatus == BluetoothConnectionStatus.Connected )
             {
-                _logger.Debug ( $"{DeviceId} " ) ;
+                _logger.Information ( $"[{DeviceId}] BluetoothConnectionStatus = " +
+                                      $"{BluetoothConnectionStatus.Connected}" ) ;
 
                 await _provider.Refresh ( ) ;
             }

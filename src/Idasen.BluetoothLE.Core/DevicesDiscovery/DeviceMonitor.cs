@@ -101,7 +101,7 @@ namespace Idasen.BluetoothLE.Core.DevicesDiscovery
             if ( ! _devices.TryGetDevice ( device.Address ,
                                            out var storedDevice ) )
             {
-                _logger.Debug ( $"Discovered Device {device.Address}" ) ;
+                _logger.Information ( $"[{device.Address}] Discovered Device" ) ;
 
                 _devices.AddOrUpdateDevice ( device ) ;
 
@@ -109,7 +109,7 @@ namespace Idasen.BluetoothLE.Core.DevicesDiscovery
             }
             else
             {
-                _logger.Debug ( $"Updated Device {device.Address}" ) ;
+                _logger.Information ( $"[{device.Address}] Updated Device" ) ;
 
                 var hasNameChanged = HasDeviceNameChanged ( device ,
                                                             storedDevice ) ;
@@ -121,7 +121,7 @@ namespace Idasen.BluetoothLE.Core.DevicesDiscovery
                 if ( ! hasNameChanged )
                     return ;
 
-                _logger.Debug ( $"Device Name Changed {device.Address}" ) ;
+                _logger.Information ( $"[{device.Address}] Device Name Changed" ) ;
 
                 _deviceNameUpdated.OnNext ( device ) ;
             }
@@ -129,12 +129,12 @@ namespace Idasen.BluetoothLE.Core.DevicesDiscovery
 
         private void OnStopped ( DateTime dateTime )
         {
-            _logger.Debug ( "Watcher Stopped listening" ) ;
+            _logger.Information ( "Watcher Stopped listening" ) ;
         }
 
         private void OnStarted ( DateTime dateTime )
         {
-            _logger.Debug ( "Watcher Started listening" ) ;
+            _logger.Information ( "Watcher Started listening" ) ;
         }
 
         private static bool HasDeviceNameChanged ( IDevice device ,

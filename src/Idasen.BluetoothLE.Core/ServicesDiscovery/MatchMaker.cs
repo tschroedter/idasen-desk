@@ -45,8 +45,8 @@ namespace Idasen.BluetoothLE.Core.ServicesDiscovery
                 throw new ArgumentNullException ( message ) ;
             }
 
-            _logger.Information ( $"DeviceId after FromBluetoothAddressAsync: {device.Id}" ) ;
-            _logger.Information ( $"ConnectionStatus after FromBluetoothAddressAsync: {device.ConnectionStatus}" ) ;
+            _logger.Information ( $"[{device.Id}] DeviceId after FromBluetoothAddressAsync: {device.Id}" ) ;
+            _logger.Information ( $"[{device.Id}] ConnectionStatus after FromBluetoothAddressAsync: {device.ConnectionStatus}" ) ;
 
             return device ;
         }
