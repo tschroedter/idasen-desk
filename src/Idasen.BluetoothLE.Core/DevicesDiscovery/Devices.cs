@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic ;
 using System.Linq ;
+using Autofac.Extras.DynamicProxy ;
+using Idasen.Aop.Aspects ;
 using Idasen.BluetoothLE.Core.Interfaces.DevicesDiscovery ;
 using JetBrains.Annotations ;
 using Serilog ;
@@ -7,6 +9,7 @@ using Serilog ;
 namespace Idasen.BluetoothLE.Core.DevicesDiscovery
 {
     /// <inheritdoc cref="IDevices" />
+    [ Intercept ( typeof ( LogAspect ) ) ]
     public class Devices
         : IDevices
     {

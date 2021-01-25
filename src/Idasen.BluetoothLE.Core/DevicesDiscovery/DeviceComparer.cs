@@ -1,7 +1,10 @@
-﻿using Idasen.BluetoothLE.Core.Interfaces.DevicesDiscovery ;
+﻿using Autofac.Extras.DynamicProxy ;
+using Idasen.Aop.Aspects ;
+using Idasen.BluetoothLE.Core.Interfaces.DevicesDiscovery ;
 
 namespace Idasen.BluetoothLE.Core.DevicesDiscovery
 {
+    [ Intercept ( typeof ( LogAspect ) ) ]
     public class DeviceComparer
         : IDeviceComparer
     {

@@ -1,10 +1,13 @@
-﻿using Idasen.BluetoothLE.Core.Interfaces ;
+﻿using Autofac.Extras.DynamicProxy ;
+using Idasen.Aop.Aspects ;
+using Idasen.BluetoothLE.Core.Interfaces ;
 using Idasen.BluetoothLE.Core.Interfaces.DevicesDiscovery ;
 using JetBrains.Annotations ;
 
 namespace Idasen.BluetoothLE.Core.DevicesDiscovery
 {
     /// <inheritdoc />
+    [ Intercept ( typeof ( LogAspect ) ) ]
     public class DeviceFactory
         : IDeviceFactory
     {

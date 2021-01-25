@@ -3,6 +3,8 @@ using System.Collections.Generic ;
 using System.Reactive.Concurrency ;
 using System.Reactive.Linq ;
 using System.Reactive.Subjects ;
+using Autofac.Extras.DynamicProxy ;
+using Idasen.Aop.Aspects ;
 using Idasen.BluetoothLE.Core.Interfaces ;
 using Idasen.BluetoothLE.Core.Interfaces.DevicesDiscovery ;
 using JetBrains.Annotations ;
@@ -10,6 +12,7 @@ using Serilog ;
 
 namespace Idasen.BluetoothLE.Core.DevicesDiscovery
 {
+    [ Intercept ( typeof ( LogAspect ) ) ]
     public class DeviceMonitorWithExpiry
         : IDeviceMonitorWithExpiry
     {
@@ -90,24 +93,18 @@ namespace Idasen.BluetoothLE.Core.DevicesDiscovery
         /// <inheritdoc />
         public void Start ( )
         {
-            _logger.Debug ( "Start" ) ;
-
             _deviceMonitor.Start ( ) ;
         }
 
         /// <inheritdoc />
         public void Stop ( )
         {
-            _logger.Debug ( "Stop" ) ;
-
             _deviceMonitor.Stop ( ) ;
         }
 
         /// <inheritdoc />
         public void RemoveDevice ( IDevice device )
         {
-            _logger.Debug ( "RemoveDevice" ) ;
-
             _deviceMonitor.RemoveDevice ( device ) ;
         }
 
@@ -115,8 +112,6 @@ namespace Idasen.BluetoothLE.Core.DevicesDiscovery
 
         private void OnCompleted ( )
         {
-            _logger.Debug ( "OnCompleted" ) ;
-
             Stop ( ) ;
         }
 
@@ -129,8 +124,6 @@ namespace Idasen.BluetoothLE.Core.DevicesDiscovery
 
         private void CleanUp ( long l )
         {
-            _logger.Debug ( "CleanUp" ) ;
-
             foreach ( var device in DiscoveredDevices )
             {
                 var delta = _dateTimeOffset.Now.Ticks - device.BroadcastTime.Ticks ;

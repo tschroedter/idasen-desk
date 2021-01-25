@@ -1,10 +1,13 @@
 ﻿using Windows.Devices.Bluetooth.GenericAttributeProfile ;
+using Autofac.Extras.DynamicProxy ;
+using Idasen.Aop.Aspects ;
 using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers ;
 using JetBrains.Annotations ;
 
 namespace Idasen.BluetoothLE.Core.ServicesDiscovery.Wrappers
 {
     /// <inheritdoc />
+    [ Intercept ( typeof ( LogAspect ) ) ]
     public class GattReadResultWrapperFactory
         : IGatReadResultWrapperFactory
     {

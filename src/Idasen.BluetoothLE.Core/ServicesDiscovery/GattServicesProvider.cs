@@ -4,6 +4,8 @@ using System.Reactive.Subjects ;
 using System.Threading.Tasks ;
 using Windows.Devices.Bluetooth ;
 using Windows.Devices.Bluetooth.GenericAttributeProfile ;
+using Autofac.Extras.DynamicProxy ;
+using Idasen.Aop.Aspects ;
 using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery ;
 using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers ;
 using JetBrains.Annotations ;
@@ -12,6 +14,7 @@ using Serilog ;
 namespace Idasen.BluetoothLE.Core.ServicesDiscovery
 {
     /// <inheritdoc />
+    [ Intercept ( typeof ( LogAspect ) ) ]
     public class GattServicesProvider
         : IGattServicesProvider
     {

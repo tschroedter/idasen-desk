@@ -1,10 +1,13 @@
-﻿using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery ;
+﻿using Autofac.Extras.DynamicProxy ;
+using Idasen.Aop.Aspects ;
+using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery ;
 using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers ;
 using JetBrains.Annotations ;
 
 namespace Idasen.BluetoothLE.Core.ServicesDiscovery
 {
     /// <inheritdoc />
+    [ Intercept ( typeof ( LogAspect ) ) ]
     public class GattServicesProviderFactory
         : IGattServicesProviderFactory
     {

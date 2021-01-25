@@ -1,11 +1,14 @@
 ﻿using System.Diagnostics.CodeAnalysis ;
 using Windows.Devices.Bluetooth.GenericAttributeProfile ;
+using Autofac.Extras.DynamicProxy ;
+using Idasen.Aop.Aspects ;
 using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers ;
 
 namespace Idasen.BluetoothLE.Core.ServicesDiscovery.Wrappers
 {
     /// <inheritdoc />
     [ ExcludeFromCodeCoverage ]
+    [ Intercept ( typeof ( LogAspect ) ) ]
     public class GattDeviceServicesResultWrapperFactory
         : IGattDeviceServicesResultWrapperFactory
     {

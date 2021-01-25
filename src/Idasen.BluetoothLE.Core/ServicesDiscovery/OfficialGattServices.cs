@@ -6,13 +6,16 @@ using System.Globalization ;
 using System.IO ;
 using System.Linq ;
 using System.Reflection ;
+using Autofac.Extras.DynamicProxy ;
 using CsvHelper ;
 using CsvHelper.Configuration ;
+using Idasen.Aop.Aspects ;
 using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers ;
 
 namespace Idasen.BluetoothLE.Core.ServicesDiscovery
 {
     /// <inheritdoc />
+    [ Intercept ( typeof ( LogAspect ) ) ]
     public class OfficialGattServices
         : IOfficialGattServices
     {

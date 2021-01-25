@@ -4,6 +4,8 @@ using System.Reactive.Concurrency ;
 using System.Reactive.Linq ;
 using System.Reactive.Subjects ;
 using Windows.Devices.Bluetooth.Advertisement ;
+using Autofac.Extras.DynamicProxy ;
+using Idasen.Aop.Aspects ;
 using Idasen.BluetoothLE.Core.Interfaces ;
 using Idasen.BluetoothLE.Core.Interfaces.DevicesDiscovery ;
 using JetBrains.Annotations ;
@@ -14,6 +16,7 @@ namespace Idasen.BluetoothLE.Core.DevicesDiscovery
 {
     // ReSharper disable once InconsistentNaming
     [ ExcludeFromCodeCoverage ]
+    [ Intercept ( typeof ( LogAspect ) ) ]
     public sealed class Wrapper
         : IWrapper
     {

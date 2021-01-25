@@ -1,9 +1,12 @@
 ﻿using System.Collections.Generic ;
+using Autofac.Extras.DynamicProxy ;
+using Idasen.Aop.Aspects ;
 using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery ;
 using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers ;
 
 namespace Idasen.BluetoothLE.Core.ServicesDiscovery
 {
+    [ Intercept ( typeof ( LogAspect ) ) ]
     public class GattServicesDictionary
         : IGattServicesDictionary
     {

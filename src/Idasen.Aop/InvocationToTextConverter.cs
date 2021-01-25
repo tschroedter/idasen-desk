@@ -28,7 +28,7 @@ namespace Idasen.Aop
         [ UsedImplicitly ]
         internal string ConvertArgumentsToString ( [ NotNull ] object [ ] arguments )
         {
-            var builder = new StringBuilder ( 100 ) ;
+            var builder = new StringBuilder ( ) ;
 
             foreach ( var argument in arguments )
             {
@@ -46,20 +46,34 @@ namespace Idasen.Aop
 
         private string DumpObject ( object argument )
         {
+            if ( argument == null )
+                return "null" ;
+
             try
             {
+                if ( IsWindowsBluetoothInstance ( argument ) )
+                    return argument.ToString ( ) ;
+
                 var json = JsonSerializer.Serialize ( argument ) ;
 
                 return json ;
             }
             catch ( Exception e )
             {
-                _logger.Error ( e ,
-                                "Failed to convert object " +
-                                $"'{argument.GetType ( ).FullName}' to json" ) ;
+                _logger.Debug ( "Failed to convert object "                     +
+                                $"'{argument.GetType ( ).FullName}' to json - " +
+                                $"Message: '{e.Message}'" ) ;
 
-                return string.Empty ;
+                return argument.ToString ( ) ;
             }
+        }
+
+        private static bool IsWindowsBluetoothInstance ( object argument )
+        {
+            var ns = argument.GetType ( ).Namespace ;
+
+            return ns != null &&
+                   ns.StartsWith ( "Windows.Devices.Bluetooth" ) ;
         }
 
         private readonly ILogger _logger ;

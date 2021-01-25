@@ -3,6 +3,8 @@ using System.Collections.Generic ;
 using System.Reactive.Concurrency ;
 using System.Reactive.Linq ;
 using System.Reactive.Subjects ;
+using Autofac.Extras.DynamicProxy ;
+using Idasen.Aop.Aspects ;
 using Idasen.BluetoothLE.Core.Interfaces.DevicesDiscovery ;
 using JetBrains.Annotations ;
 using Serilog ;
@@ -12,6 +14,7 @@ using Serilog ;
 namespace Idasen.BluetoothLE.Core.DevicesDiscovery
 {
     /// <inheritdoc cref="IDeviceMonitor" />
+    [ Intercept ( typeof ( LogAspect ) ) ]
     public class DeviceMonitor
         : IDeviceMonitor
     {
@@ -70,24 +73,18 @@ namespace Idasen.BluetoothLE.Core.DevicesDiscovery
         /// <inheritdoc />
         public void Start ( )
         {
-            _logger.Debug ( "Starting" ) ;
-
             _watcher.Start ( ) ;
         }
 
         /// <inheritdoc />
         public void Stop ( )
         {
-            _logger.Debug ( "Stopping" ) ;
-
             _watcher.Stop ( ) ;
         }
 
         /// <inheritdoc />
         public void RemoveDevice ( IDevice device )
         {
-            _logger.Debug ( $"Removing Device {device.Address}" ) ;
-
             _devices.RemoveDevice ( device ) ;
         }
 
@@ -121,12 +118,12 @@ namespace Idasen.BluetoothLE.Core.DevicesDiscovery
 
                 _deviceUpdated.OnNext ( device ) ;
 
-                if ( hasNameChanged )
-                {
-                    _logger.Debug ( $"Device Name Changed {device.Address}" ) ;
+                if ( ! hasNameChanged )
+                    return ;
 
-                    _deviceNameUpdated.OnNext ( device ) ;
-                }
+                _logger.Debug ( $"Device Name Changed {device.Address}" ) ;
+
+                _deviceNameUpdated.OnNext ( device ) ;
             }
         }
 

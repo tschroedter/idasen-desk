@@ -7,11 +7,14 @@ using System.Runtime.InteropServices.WindowsRuntime ;
 using System.Threading.Tasks ;
 using Windows.Devices.Bluetooth.GenericAttributeProfile ;
 using Windows.Foundation ;
+using Autofac.Extras.DynamicProxy ;
+using Idasen.Aop.Aspects ;
 using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers ;
 using Serilog ;
 
 namespace Idasen.BluetoothLE.Core.ServicesDiscovery.Wrappers
 {
+    [Intercept( typeof(LogAspect))]
     public class GattCharacteristicValueChangedObservables
         : IGattCharacteristicValueChangedObservables
     {

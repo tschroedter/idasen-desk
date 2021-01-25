@@ -2,12 +2,15 @@
 using System.Diagnostics.CodeAnalysis ;
 using System.Threading.Tasks ;
 using Windows.Devices.Bluetooth ;
+using Autofac.Extras.DynamicProxy ;
+using Idasen.Aop.Aspects ;
 using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery ;
 using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers ;
 
 namespace Idasen.BluetoothLE.Core.ServicesDiscovery
 {
     /// <inheritdoc />
+    [ Intercept ( typeof ( LogAspect ) ) ]
     public class DeviceFactory
         : IDeviceFactory
     {

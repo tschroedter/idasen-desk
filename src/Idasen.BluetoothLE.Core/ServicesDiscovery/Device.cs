@@ -4,6 +4,8 @@ using System.Reactive.Concurrency ;
 using System.Reactive.Linq ;
 using Windows.Devices.Bluetooth ;
 using Windows.Devices.Bluetooth.GenericAttributeProfile ;
+using Autofac.Extras.DynamicProxy ;
+using Idasen.Aop.Aspects ;
 using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery ;
 using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers ;
 using JetBrains.Annotations ;
@@ -11,6 +13,7 @@ using JetBrains.Annotations ;
 namespace Idasen.BluetoothLE.Core.ServicesDiscovery
 {
     /// <inheritdoc />
+    [ Intercept ( typeof ( LogAspect ) ) ]
     public class Device
         : IDevice
     {

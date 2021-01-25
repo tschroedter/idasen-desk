@@ -1,5 +1,7 @@
 ﻿using System.Diagnostics ;
 using System.Globalization ;
+using Autofac.Extras.DynamicProxy ;
+using Idasen.Aop.Aspects ;
 using Idasen.BluetoothLE.Core.Interfaces ;
 using Idasen.BluetoothLE.Core.Interfaces.DevicesDiscovery ;
 using JetBrains.Annotations ;
@@ -9,6 +11,7 @@ namespace Idasen.BluetoothLE.Core.DevicesDiscovery
 {
     /// <inheritdoc />
     [ DebuggerDisplay ( "{Address} {Name}" ) ]
+    [ Intercept ( typeof ( LogAspect ) ) ]
     public class Device
         : IDevice
     {

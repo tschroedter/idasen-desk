@@ -1,11 +1,14 @@
 ﻿using System ;
 using System.Reactive.Subjects ;
+using Autofac.Extras.DynamicProxy ;
+using Idasen.Aop.Aspects ;
 using Idasen.BluetoothLE.Core.Interfaces.DevicesDiscovery ;
 using JetBrains.Annotations ;
 
 namespace Idasen.BluetoothLE.Core.DevicesDiscovery
 {
     /// <inheritdoc cref="IWatcher" />
+    [ Intercept ( typeof ( LogAspect ) ) ]
     public class Watcher
         : IWatcher
     {
