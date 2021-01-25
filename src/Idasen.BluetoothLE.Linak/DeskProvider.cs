@@ -3,6 +3,8 @@ using System.Reactive.Concurrency ;
 using System.Reactive.Linq ;
 using System.Threading ;
 using System.Threading.Tasks ;
+using Autofac.Extras.DynamicProxy ;
+using Idasen.Aop.Aspects ;
 using Idasen.BluetoothLE.Characteristics.Common ;
 using Idasen.BluetoothLE.Core ;
 using Idasen.BluetoothLE.Linak.Interfaces ;
@@ -11,6 +13,7 @@ using Serilog ;
 
 namespace Idasen.BluetoothLE.Linak
 {
+    [Intercept( typeof(LogAspect))]
     public class DeskProvider
         : IDeskProvider
     {
@@ -84,8 +87,6 @@ namespace Idasen.BluetoothLE.Linak
             Guard.ArgumentNotNull ( deviceName ,
                                     nameof ( deviceName ) ) ;
 
-            _logger.Information ( "Initialize..." ) ;
-
             _detector.Initialize ( deviceName ,
                                    deviceAddress ,
                                    deviceTimeout ) ;
@@ -147,8 +148,6 @@ namespace Idasen.BluetoothLE.Linak
         /// <inheritdoc />
         public IDesk Desk { get ; private set ; }
 
-        private const string CheckAndEnableBluetooth = "*** Make sure Bluetooth is enabled ***" ;
-
         internal void DoTryGetDesk ( CancellationToken token )
         {
             while ( Desk == null &&
@@ -162,8 +161,8 @@ namespace Idasen.BluetoothLE.Linak
 
         internal void OnDeskDetected ( IDesk desk )
         {
-            _logger.Debug ( $"Detected desk {desk.Name} with " +
-                            $"Bluetooth address {desk.BluetoothAddress}" ) ;
+            _logger.Information ( $"Detected desk {desk.Name} with " +
+                                  $"Bluetooth address {desk.BluetoothAddress}" ) ;
 
             _detector.Stop ( ) ;
 

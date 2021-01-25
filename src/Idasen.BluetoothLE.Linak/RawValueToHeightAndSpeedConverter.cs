@@ -1,6 +1,8 @@
 ﻿using System ;
 using System.Collections.Generic ;
 using System.Linq ;
+using Autofac.Extras.DynamicProxy ;
+using Idasen.Aop.Aspects ;
 using Idasen.BluetoothLE.Characteristics.Common ;
 using Idasen.BluetoothLE.Core ;
 using Idasen.BluetoothLE.Linak.Interfaces ;
@@ -9,6 +11,7 @@ using Serilog ;
 
 namespace Idasen.BluetoothLE.Linak
 {
+    [Intercept( typeof(LogAspect))]
     public class RawValueToHeightAndSpeedConverter
         : IRawValueToHeightAndSpeedConverter
     {

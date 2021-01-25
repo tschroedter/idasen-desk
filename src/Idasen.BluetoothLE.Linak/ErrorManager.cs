@@ -1,6 +1,8 @@
 ﻿using System ;
 using System.Reactive.Subjects ;
 using System.Runtime.CompilerServices ;
+using Autofac.Extras.DynamicProxy ;
+using Idasen.Aop.Aspects ;
 using Idasen.BluetoothLE.Core ;
 using Idasen.BluetoothLE.Linak.Interfaces ;
 using JetBrains.Annotations ;
@@ -8,6 +10,7 @@ using Serilog ;
 
 namespace Idasen.BluetoothLE.Linak
 {
+    [Intercept( typeof(LogAspect))]
     public class ErrorManager // todo testing, move to more general project
         : IErrorManager
     {

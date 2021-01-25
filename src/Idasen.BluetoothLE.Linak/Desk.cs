@@ -1,26 +1,24 @@
 ﻿using System ;
 using System.Collections.Generic ;
 using System.Reactive.Subjects ;
+using Autofac.Extras.DynamicProxy ;
+using Idasen.Aop.Aspects ;
 using Idasen.BluetoothLE.Core ;
 using Idasen.BluetoothLE.Linak.Interfaces ;
 using JetBrains.Annotations ;
-using Serilog ;
 
 namespace Idasen.BluetoothLE.Linak
 {
+    [Intercept( typeof(LogAspect))]
     public class Desk
         : IDesk
     {
         public Desk (
-            [ NotNull ] ILogger        logger ,
             [ NotNull ] IDeskConnector connector )
         {
-            Guard.ArgumentNotNull ( logger ,
-                                    nameof ( logger ) ) ;
             Guard.ArgumentNotNull ( connector ,
                                     nameof ( connector ) ) ;
 
-            _logger    = logger ;
             _connector = connector ;
         }
 
@@ -33,8 +31,6 @@ namespace Idasen.BluetoothLE.Linak
         /// <inheritdoc />
         public void Connect ( )
         {
-            _logger.Debug ( "Connecting to desk..." ) ;
-
             _connector.Connect ( ) ;
         }
 
@@ -63,32 +59,24 @@ namespace Idasen.BluetoothLE.Linak
         /// <inheritdoc />
         public void MoveTo ( uint targetHeight )
         {
-            _logger.Debug ( $"Move desk to target height {targetHeight}" ) ;
-
             _connector.MoveTo ( targetHeight ) ;
         }
 
         /// <inheritdoc />
         public void MoveUp ( )
         {
-            _logger.Debug ( "Move desk up" ) ;
-
             _connector.MoveUp ( ) ;
         }
 
         /// <inheritdoc />
         public void MoveDown ( )
         {
-            _logger.Debug ( "Move desk down" ) ;
-
             _connector.MoveDown ( ) ;
         }
 
         /// <inheritdoc />
         public void MoveStop ( )
         {
-            _logger.Debug ( "Stop moving desk" ) ;
-
             _connector.MoveStop ( ) ;
         }
 
@@ -102,6 +90,5 @@ namespace Idasen.BluetoothLE.Linak
         public string DeviceName => _connector.DeviceName ;
 
         private readonly IDeskConnector _connector ;
-        private readonly ILogger        _logger ;
     }
 }

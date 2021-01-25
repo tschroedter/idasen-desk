@@ -5,6 +5,8 @@ using System.Reactive.Linq ;
 using System.Reactive.Subjects ;
 using System.Threading.Tasks ;
 using Windows.Devices.Bluetooth.GenericAttributeProfile ;
+using Autofac.Extras.DynamicProxy ;
+using Idasen.Aop.Aspects ;
 using Idasen.BluetoothLE.Core ;
 using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery ;
 using Idasen.BluetoothLE.Linak.Control ;
@@ -15,6 +17,7 @@ using Serilog ;
 namespace Idasen.BluetoothLE.Linak
 {
     // todo tests
+    [Intercept( typeof(LogAspect))]
     public class DeskConnector
         : IDeskConnector
     {

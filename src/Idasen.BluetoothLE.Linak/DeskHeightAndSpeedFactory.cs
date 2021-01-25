@@ -1,10 +1,13 @@
-﻿using Idasen.BluetoothLE.Characteristics.Interfaces.Characteristics ;
+﻿using Autofac.Extras.DynamicProxy ;
+using Idasen.Aop.Aspects ;
+using Idasen.BluetoothLE.Characteristics.Interfaces.Characteristics ;
 using Idasen.BluetoothLE.Core ;
 using Idasen.BluetoothLE.Linak.Interfaces ;
 using JetBrains.Annotations ;
 
 namespace Idasen.BluetoothLE.Linak
 {
+    [Intercept( typeof(LogAspect))]
     public class DeskHeightAndSpeedFactory
         : IDeskHeightAndSpeedFactory
     {

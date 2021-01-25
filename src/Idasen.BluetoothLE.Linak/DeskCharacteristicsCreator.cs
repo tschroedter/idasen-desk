@@ -1,4 +1,6 @@
-﻿using Idasen.BluetoothLE.Characteristics.Interfaces.Characteristics ;
+﻿using Autofac.Extras.DynamicProxy ;
+using Idasen.Aop.Aspects ;
+using Idasen.BluetoothLE.Characteristics.Interfaces.Characteristics ;
 using Idasen.BluetoothLE.Core ;
 using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery ;
 using Idasen.BluetoothLE.Linak.Interfaces ;
@@ -8,6 +10,7 @@ using Serilog ;
 namespace Idasen.BluetoothLE.Linak
 {
     /// <inheritdoc />
+    [Intercept( typeof(LogAspect))]
     public class DeskCharacteristicsCreator
         : IDeskCharacteristicsCreator
     {

@@ -1,4 +1,6 @@
 ﻿using System ;
+using Autofac.Extras.DynamicProxy ;
+using Idasen.Aop.Aspects ;
 using Idasen.BluetoothLE.Core ;
 using JetBrains.Annotations ;
 using Serilog ;
@@ -6,6 +8,7 @@ using Serilog ;
 namespace Idasen.BluetoothLE.Linak.Control
 {
     /// <inheritdoc />
+    [Intercept( typeof(LogAspect))]
     public class StoppingHeightCalculator
         : IStoppingHeightCalculator
     {
@@ -90,8 +93,6 @@ namespace Idasen.BluetoothLE.Linak.Control
 
         private void CalculateForSpeed ( )
         {
-            _logger.Information ( "CalculateForSpeed" ) ;
-
             MovementUntilStop = DefaultMaxSpeedToStopMovement ;
 
             StoppingHeight = Height ;
@@ -121,8 +122,6 @@ namespace Idasen.BluetoothLE.Linak.Control
 
         private void CalculateForSpeedZero ( )
         {
-            _logger.Information ( "CalculateForSpeedZero" ) ;
-
             MovementUntilStop = 0 ;
 
             StoppingHeight = Height ;

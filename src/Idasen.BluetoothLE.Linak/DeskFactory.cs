@@ -1,5 +1,7 @@
 ﻿using System ;
 using System.Threading.Tasks ;
+using Autofac.Extras.DynamicProxy ;
+using Idasen.Aop.Aspects ;
 using Idasen.BluetoothLE.Core ;
 using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery ;
 using Idasen.BluetoothLE.Linak.Interfaces ;
@@ -7,6 +9,7 @@ using JetBrains.Annotations ;
 
 namespace Idasen.BluetoothLE.Linak
 {
+    [Intercept( typeof(LogAspect))]
     public class DeskFactory
         : IDeskFactory
     {

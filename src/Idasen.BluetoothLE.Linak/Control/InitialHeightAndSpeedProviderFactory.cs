@@ -1,9 +1,12 @@
-﻿using Idasen.BluetoothLE.Core ;
+﻿using Autofac.Extras.DynamicProxy ;
+using Idasen.Aop.Aspects ;
+using Idasen.BluetoothLE.Core ;
 using Idasen.BluetoothLE.Linak.Interfaces ;
 using JetBrains.Annotations ;
 
 namespace Idasen.BluetoothLE.Linak.Control
 {
+    [Intercept( typeof(LogAspect))]
     public class InitialHeightAndSpeedProviderFactory
         : IInitialHeightAndSpeedProviderFactory
     {

@@ -4,6 +4,8 @@ using System.Reactive.Linq ;
 using System.Reactive.Subjects ;
 using System.Runtime.CompilerServices ;
 using System.Threading.Tasks ;
+using Autofac.Extras.DynamicProxy ;
+using Idasen.Aop.Aspects ;
 using Idasen.BluetoothLE.Core ;
 using Idasen.BluetoothLE.Linak.Interfaces ;
 using JetBrains.Annotations ;
@@ -13,6 +15,7 @@ using Serilog ;
 
 namespace Idasen.BluetoothLE.Linak.Control
 {
+    [Intercept( typeof(LogAspect))]
     public class DeskMover
         : IDeskMover
     {

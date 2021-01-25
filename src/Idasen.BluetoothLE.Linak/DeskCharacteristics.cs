@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic ;
 using System.Text ;
 using System.Threading.Tasks ;
+using Autofac.Extras.DynamicProxy ;
+using Idasen.Aop.Aspects ;
 using Idasen.BluetoothLE.Characteristics.Interfaces.Characteristics ;
 using Idasen.BluetoothLE.Core ;
 using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery ;
@@ -10,6 +12,7 @@ using Serilog ;
 
 namespace Idasen.BluetoothLE.Linak
 {
+    [Intercept( typeof(LogAspect))]
     public class DeskCharacteristics
         : IDeskCharacteristics
     {
@@ -28,8 +31,6 @@ namespace Idasen.BluetoothLE.Linak
 
         public async Task Refresh ( )
         {
-            _logger.Debug ( "Refreshing characteristics..." ) ;
-
             foreach ( var characteristicBase in _available.Values )
             {
                 await characteristicBase.Refresh ( ) ;
@@ -40,8 +41,6 @@ namespace Idasen.BluetoothLE.Linak
         {
             Guard.ArgumentNotNull ( device ,
                                     nameof ( device ) ) ;
-
-            _logger.Debug ( $"Initialize characteristics from device {device}..." ) ;
 
             _creator.Create ( this ,
                               device ) ;
@@ -72,15 +71,15 @@ namespace Idasen.BluetoothLE.Linak
             Guard.ArgumentNotNull ( characteristic ,
                                     nameof ( characteristic ) ) ;
 
-            _logger.Debug ( $"Initialize characteristic {characteristic} for key {key}" ) ;
             characteristic.Initialize < ICharacteristicBase > ( ) ;
 
             if ( _available.TryGetValue ( key ,
                                           out var oldCharacteristic ) )
                 oldCharacteristic.Dispose ( ) ;
 
-            _logger.Debug ( $"Adding characteristic {characteristic} for key {key}" ) ;
             _available [ key ] = characteristic ;
+
+            _logger.Debug($"Added characteristic {characteristic} for key {key}");
 
             return this ;
         }

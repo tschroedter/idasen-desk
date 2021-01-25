@@ -1,7 +1,10 @@
 ﻿using System ;
+using Autofac.Extras.DynamicProxy ;
+using Idasen.Aop.Aspects ;
 
 namespace Idasen.BluetoothLE.Linak.Control
 {
+    [Intercept( typeof(LogAspect))]
     public class HasReachedTargetHeightCalculator
         : IHasReachedTargetHeightCalculator
     {

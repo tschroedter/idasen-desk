@@ -1,8 +1,11 @@
 ﻿using System.Collections.Generic ;
+using Autofac.Extras.DynamicProxy ;
+using Idasen.Aop.Aspects ;
 using Idasen.BluetoothLE.Linak.Interfaces ;
 
 namespace Idasen.BluetoothLE.Linak.Control
 {
+    [Intercept( typeof(LogAspect))]
     public class DeskCommandsProvider
         : IDeskCommandsProvider
     {

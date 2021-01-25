@@ -23,8 +23,7 @@ namespace Idasen.BluetoothLE.Linak.Tests
             SetSubject ( connector ,
                          subject ) ;
 
-            var sut = new Desk ( logger ,
-                                 connector ) ;
+            var sut = new Desk ( connector ) ;
 
             SetSubscription ( sut ,
                               scheduler ) ;

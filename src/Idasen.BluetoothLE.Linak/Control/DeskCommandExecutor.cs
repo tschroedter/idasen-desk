@@ -1,4 +1,6 @@
 ﻿using System.Threading.Tasks ;
+using Autofac.Extras.DynamicProxy ;
+using Idasen.Aop.Aspects ;
 using Idasen.BluetoothLE.Characteristics.Common ;
 using Idasen.BluetoothLE.Characteristics.Interfaces.Characteristics ;
 using Idasen.BluetoothLE.Core ;
@@ -8,6 +10,7 @@ using Serilog ;
 
 namespace Idasen.BluetoothLE.Linak.Control
 {
+    [Intercept( typeof(LogAspect))]
     public class DeskCommandExecutor
         : IDeskCommandExecutor
     {
@@ -50,8 +53,6 @@ namespace Idasen.BluetoothLE.Linak.Control
 
         private async Task < bool > Execute ( DeskCommands deskCommand )
         {
-            _logger.Debug ( $"Executing command {deskCommand}" ) ;
-
             if ( ! _provider.TryGetValue ( deskCommand ,
                                            out var bytes ) )
             {
