@@ -25,7 +25,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Idasen.SystemTray", "Idasen
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Idasen.SystemTray.Setup", "Idasen.SystemTray.Setup\Idasen.SystemTray.Setup.vdproj", "{255DDD87-2586-4461-A45C-FF062A4D66AB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Idasen.BluetoothLE.Common.Tests", "Idasen.BluetoothLE.Common.Tests\Idasen.BluetoothLE.Common.Tests.csproj", "{E363AA7E-28BD-4EF5-B709-3E4DB28BCD04}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

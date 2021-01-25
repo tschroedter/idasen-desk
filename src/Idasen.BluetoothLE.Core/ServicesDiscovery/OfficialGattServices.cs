@@ -7,6 +7,7 @@ using System.IO ;
 using System.Linq ;
 using System.Reflection ;
 using CsvHelper ;
+using CsvHelper.Configuration ;
 using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers ;
 
 namespace Idasen.BluetoothLE.Core.ServicesDiscovery
@@ -87,11 +88,16 @@ namespace Idasen.BluetoothLE.Core.ServicesDiscovery
 
             using var reader = new StreamReader ( stream ) ;
 
-            using var csv = new CsvReader ( reader ,
-                                            CultureInfo.InvariantCulture ) ;
+            var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+                         {
+                             Delimiter = ","
+                         };
 
-            csv.Configuration.Delimiter = "," ;
-            csv.Configuration.RegisterClassMap < GattServiceCsvHelperMap > ( ) ;
+            using var csv = new CsvReader ( reader ,
+                                            config) ;
+
+
+            csv.Context.RegisterClassMap < GattServiceCsvHelperMap > ( ) ;
 
             var readCsvFile = csv.GetRecords < OfficialGattService > ( )
                                  .ToArray ( ) ;

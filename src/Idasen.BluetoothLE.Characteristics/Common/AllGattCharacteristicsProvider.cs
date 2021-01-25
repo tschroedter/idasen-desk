@@ -5,6 +5,7 @@ using System.IO ;
 using System.Linq ;
 using System.Reflection ;
 using CsvHelper ;
+using CsvHelper.Configuration ;
 using Idasen.BluetoothLE.Characteristics.Interfaces.Common ;
 using Idasen.BluetoothLE.Core ;
 
@@ -64,10 +65,13 @@ namespace Idasen.BluetoothLE.Characteristics.Common
 
             using var reader = new StreamReader ( stream ) ;
 
-            using var csv = new CsvReader ( reader ,
-                                            CultureInfo.InvariantCulture ) ;
+            var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+                         {
+                             Delimiter = ","
+                         };
 
-            csv.Configuration.Delimiter = "," ;
+            using var csv = new CsvReader ( reader ,
+                                            config) ;
 
             var readCsvFile = csv.GetRecords < CsvGattCharacteristic > ( )
                                  .ToArray ( ) ;
