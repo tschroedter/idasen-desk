@@ -45,113 +45,113 @@ namespace Idasen.BluetoothLE.Core
                    .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < Device > ( )
-                   .As < IDevice > ()
-                   .EnableInterfaceInterceptors();
+                   .As < IDevice > ( )
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < DeviceMonitor > ( )
-                   .As < IDeviceMonitor > ()
-                   .EnableInterfaceInterceptors();
+                   .As < IDeviceMonitor > ( )
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < DeviceMonitorWithExpiry > ( )
-                   .As < IDeviceMonitorWithExpiry > ()
-                   .EnableInterfaceInterceptors();
+                   .As < IDeviceMonitorWithExpiry > ( )
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < Devices > ( )
-                   .As < IDevices > ()
-                   .EnableInterfaceInterceptors();
+                   .As < IDevices > ( )
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < Watcher > ( )
-                   .As < IWatcher > ()
-                   .EnableInterfaceInterceptors();
+                   .As < IWatcher > ( )
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < Wrapper > ( )
-                   .As < IWrapper > ()
-                   .EnableInterfaceInterceptors();
+                   .As < IWrapper > ( )
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < DeviceFactory > ( )
-                   .As < IDeviceFactory > ()
-                   .EnableInterfaceInterceptors();
+                   .As < IDeviceFactory > ( )
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < StatusMapper > ( )
-                   .As < IStatusMapper > ()
-                   .EnableInterfaceInterceptors();
+                   .As < IStatusMapper > ( )
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < GattCharacteristicValueChangedObservables > ( )
-                   .As < IGattCharacteristicValueChangedObservables > ()
-                   .EnableInterfaceInterceptors();
+                   .As < IGattCharacteristicValueChangedObservables > ( )
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < GattCharacteristicWrapper > ( )
                    .As < IGattCharacteristicWrapper > ( )
-                   .EnableInterfaceInterceptors();
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < GattCharacteristicWrapperFactory > ( )
-                   .As < IGattCharacteristicWrapperFactory > ()
-                   .EnableInterfaceInterceptors();
+                   .As < IGattCharacteristicWrapperFactory > ( )
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < MatchMaker > ( )
-                   .As < IMatchMaker > ()
-                   .EnableInterfaceInterceptors();
+                   .As < IMatchMaker > ( )
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < OfficialGattServices > ( )
-                   .As < IOfficialGattServices > ()
-                   .EnableInterfaceInterceptors();
+                   .As < IOfficialGattServices > ( )
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < GattServicesDictionary > ( )
-                   .As < IGattServicesDictionary > ()
-                   .EnableInterfaceInterceptors();
+                   .As < IGattServicesDictionary > ( )
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < GattServicesProvider > ( )
-                   .As < IGattServicesProvider > ()
-                   .EnableInterfaceInterceptors();
+                   .As < IGattServicesProvider > ( )
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < GattServicesProviderFactory > ( )
-                   .As < IGattServicesProviderFactory > ()
-                   .EnableInterfaceInterceptors();
+                   .As < IGattServicesProviderFactory > ( )
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < ServicesDiscovery.Device > ( )
-                   .As < Interfaces.ServicesDiscovery.IDevice > ()
-                   .EnableInterfaceInterceptors();
+                   .As < Interfaces.ServicesDiscovery.IDevice > ( )
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < ServicesDiscovery.DeviceFactory > ( )
-                   .As < Interfaces.ServicesDiscovery.IDeviceFactory > ()
-                   .EnableInterfaceInterceptors();
+                   .As < Interfaces.ServicesDiscovery.IDeviceFactory > ( )
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < BluetoothLeDeviceWrapper > ( )
-                   .As < IBluetoothLeDeviceWrapper > ()
-                   .EnableInterfaceInterceptors();
+                   .As < IBluetoothLeDeviceWrapper > ( )
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < BluetoothLeDeviceWrapperFactory > ( )
-                   .As < IBluetoothLeDeviceWrapperFactory > ()
-                   .EnableInterfaceInterceptors();
+                   .As < IBluetoothLeDeviceWrapperFactory > ( )
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < GattDeviceServicesResultWrapper > ( )
                    .As < IGattDeviceServicesResultWrapper > ( ) ;
 
             builder.RegisterType < GattDeviceServicesResultWrapperFactory > ( )
-                   .As < IGattDeviceServicesResultWrapperFactory > ()
-                   .EnableInterfaceInterceptors();
+                   .As < IGattDeviceServicesResultWrapperFactory > ( )
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < GattCharacteristicsResultWrapper > ( )
-                   .As < IGattCharacteristicsResultWrapper > ()
-                   .EnableInterfaceInterceptors();
+                   .As < IGattCharacteristicsResultWrapper > ( )
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < GattCharacteristicsResultWrapperFactory > ( )
                    .As < IGattCharacteristicsResultWrapperFactory > ( )
-                   .EnableInterfaceInterceptors();
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < GattReadResultWrapper > ( )
                    .As < IGattReadResultWrapper > ( ) ;
 
             builder.RegisterType < GattReadResultWrapperFactory > ( )
-                   .As < IGatReadResultWrapperFactory > ()
-                   .EnableInterfaceInterceptors();
+                   .As < IGatReadResultWrapperFactory > ( )
+                   .EnableInterfaceInterceptors ( ) ;
 
             builder.RegisterType < GattWriteResultWrapper > ( )
                    .As < IGattWriteResultWrapper > ( ) ;
 
             builder.RegisterType < GattWriteResultWrapperFactory > ( )
                    .As < IGattWriteResultWrapperFactory > ( )
-                   .EnableInterfaceInterceptors();
+                   .EnableInterfaceInterceptors ( ) ;
         }
     }
 }

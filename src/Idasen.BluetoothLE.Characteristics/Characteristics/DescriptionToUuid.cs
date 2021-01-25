@@ -6,7 +6,7 @@ using Idasen.BluetoothLE.Characteristics.Interfaces.Characteristics ;
 
 namespace Idasen.BluetoothLE.Characteristics.Characteristics
 {
-    [Intercept( typeof(LogAspect))]
+    [ Intercept ( typeof ( LogAspect ) ) ]
     public class DescriptionToUuid
         : SimpleDictionaryBase < string , Guid > ,
           IDescriptionToUuid

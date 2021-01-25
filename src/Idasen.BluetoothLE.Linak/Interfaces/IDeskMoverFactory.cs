@@ -1,5 +1,4 @@
-﻿using Idasen.BluetoothLE.Linak.Control ;
-using JetBrains.Annotations ;
+﻿using JetBrains.Annotations ;
 
 namespace Idasen.BluetoothLE.Linak.Interfaces
 {

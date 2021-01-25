@@ -10,7 +10,7 @@ using Serilog ;
 namespace Idasen.BluetoothLE.Characteristics.Common
 {
     [ ExcludeFromCodeCoverage ]
-    [Intercept( typeof(LogAspect))]
+    [ Intercept ( typeof ( LogAspect ) ) ]
     public class BufferReader
         : IBufferReader
     {

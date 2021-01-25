@@ -14,7 +14,7 @@ using Serilog ;
 
 namespace Idasen.BluetoothLE.Core.ServicesDiscovery.Wrappers
 {
-    [Intercept( typeof(LogAspect))]
+    [ Intercept ( typeof ( LogAspect ) ) ]
     public class GattCharacteristicValueChangedObservables
         : IGattCharacteristicValueChangedObservables
     {
