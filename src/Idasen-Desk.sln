@@ -25,6 +25,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Idasen.SystemTray", "Idasen
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Idasen.SystemTray.Setup", "Idasen.SystemTray.Setup\Idasen.SystemTray.Setup.vdproj", "{255DDD87-2586-4461-A45C-FF062A4D66AB}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Idasen.BluetoothLE.Common.Tests", "Idasen.BluetoothLE.Common.Tests\Idasen.BluetoothLE.Common.Tests.csproj", "{E363AA7E-28BD-4EF5-B709-3E4DB28BCD04}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Idasen.Aop", "Idasen.Aop\Idasen.Aop.csproj", "{5597EE14-0D54-483A-B3F7-22C739FCEFEF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -74,6 +77,10 @@ Global
 		{E363AA7E-28BD-4EF5-B709-3E4DB28BCD04}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E363AA7E-28BD-4EF5-B709-3E4DB28BCD04}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E363AA7E-28BD-4EF5-B709-3E4DB28BCD04}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5597EE14-0D54-483A-B3F7-22C739FCEFEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5597EE14-0D54-483A-B3F7-22C739FCEFEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5597EE14-0D54-483A-B3F7-22C739FCEFEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5597EE14-0D54-483A-B3F7-22C739FCEFEF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
