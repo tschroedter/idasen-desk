@@ -1,6 +1,5 @@
 ﻿using System ;
 using System.Collections.Generic ;
-using System.Reactive.Subjects ;
 using Autofac.Extras.DynamicProxy ;
 using Idasen.Aop.Aspects ;
 using Idasen.BluetoothLE.Core ;
@@ -35,7 +34,7 @@ namespace Idasen.BluetoothLE.Linak
         }
 
         /// <inheritdoc />
-        public ISubject < IEnumerable < byte > > DeviceNameChanged => _connector.DeviceNameChanged ;
+        public IObservable < IEnumerable < byte > > DeviceNameChanged => _connector.DeviceNameChanged ;
 
         /// <inheritdoc />
         public IObservable < uint > HeightChanged => _connector.HeightChanged ;

@@ -1,6 +1,5 @@
 ﻿using System ;
 using System.Collections.Generic ;
-using System.Reactive.Subjects ;
 
 namespace Idasen.BluetoothLE.Linak.Interfaces
 {
@@ -10,7 +9,7 @@ namespace Idasen.BluetoothLE.Linak.Interfaces
         /// <summary>
         ///     Notifies when the desk's name changed.
         /// </summary>
-        ISubject < IEnumerable < byte > > DeviceNameChanged { get ; }
+        IObservable < IEnumerable < byte > > DeviceNameChanged { get ; }
 
         /// <summary>
         ///     Notifies when the desk's height changed.
