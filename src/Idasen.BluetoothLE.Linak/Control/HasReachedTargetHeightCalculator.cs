@@ -1,7 +1,11 @@
 ﻿using System ;
+using System.Text.Json ;
 using Autofac.Extras.DynamicProxy ;
 using Idasen.Aop.Aspects ;
+using Idasen.BluetoothLE.Core ;
 using Idasen.BluetoothLE.Linak.Interfaces ;
+using JetBrains.Annotations ;
+using Serilog ;
 
 namespace Idasen.BluetoothLE.Linak.Control
 {
@@ -9,6 +13,14 @@ namespace Idasen.BluetoothLE.Linak.Control
     public class HasReachedTargetHeightCalculator
         : IHasReachedTargetHeightCalculator
     {
+        public HasReachedTargetHeightCalculator ( [ NotNull ] ILogger logger )
+        {
+            Guard.ArgumentNotNull ( logger ,
+                                    nameof ( logger ) ) ;
+
+            _logger = logger ;
+        }
+
         /// <inheritdoc />
         public int MovementUntilStop { get ; set ; }
 
@@ -61,6 +73,8 @@ namespace Idasen.BluetoothLE.Linak.Control
                                          _              => true
                                      } ;
 
+            _logger.Debug ( ToString() ) ;
+
             return this ;
         }
 
@@ -84,5 +98,12 @@ namespace Idasen.BluetoothLE.Linak.Control
 
             return false ;
         }
+
+        public override string ToString ( )
+        {
+            return $"{JsonSerializer.Serialize ( this )}" ;
+        }
+
+        private readonly ILogger _logger ;
     }
 }
