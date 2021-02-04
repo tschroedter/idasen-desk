@@ -8,6 +8,7 @@ using Selkie.DefCon.One.Common ;
 using Selkie.DefCon.One.Interfaces ;
 using Serilog ;
 using Serilog.Events ;
+using Serilog.Sinks.SystemConsole.Themes ;
 
 namespace Idasen.BluetoothLE.Common.Tests
 {
@@ -33,8 +34,9 @@ namespace Idasen.BluetoothLE.Common.Tests
             Log.Logger = new LoggerConfiguration ( )
                         .Enrich.WithCaller ( )
                         .MinimumLevel.Information ( )
-                        .WriteTo.ColoredConsole ( LogEventLevel.Debug ,
-                                                  template )
+                        .WriteTo.Console ( LogEventLevel.Debug ,
+                                           template ,
+                                           theme : AnsiConsoleTheme.Code )
                         .CreateLogger ( ) ;
 
             var builder = new ContainerBuilder ( ) ;

@@ -4,6 +4,7 @@ using Idasen.BluetoothLE.Core ;
 using JetBrains.Annotations ;
 using Serilog ;
 using Serilog.Events ;
+using Serilog.Sinks.SystemConsole.Themes ;
 
 namespace Idasen.Launcher
 {
@@ -55,9 +56,9 @@ namespace Idasen.Launcher
                   .Debug ( )
                   .Enrich
                   .WithCaller ( )
-                  .WriteTo
-                  .ColoredConsole ( LogEventLevel.Debug ,
-                                    LogTemplate )
+                  .WriteTo.Console(LogEventLevel.Debug,
+                                   LogTemplate,
+                                   theme: AnsiConsoleTheme.Code)
                   .WriteTo
                   .File ( logFile ,
                           LogEventLevel.Debug ,

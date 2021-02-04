@@ -19,7 +19,7 @@
   <ItemGroup>
     <PackageReference Include="Autofac" Version="6.1.0" />
     <PackageReference Include="AutofacSerilogIntegration" Version="5.0.0" />
-    <PackageReference Include="CsvHelper" Version="21.2.0" />
+    <PackageReference Include="CsvHelper" Version="21.3.1" />
     <PackageReference Include="JetBrains.Annotations" Version="2020.3.0" />
     <PackageReference Include="Microsoft.Windows.SDK.Contracts" Version="10.0.19041.1" />
     <PackageReference Include="Selkie.DefCon.One.Common" Version="0.0.17" />
