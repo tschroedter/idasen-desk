@@ -16,7 +16,7 @@ namespace Idasen.BluetoothLE.Linak.Tests
         public void Initialize ( )
         {
             _logger     = Substitute.For < ILogger > ( ) ;
-            _calculator = new HasReachedTargetHeightCalculator ( ) ;
+            _calculator = new HasReachedTargetHeightCalculator ( _logger ) ;
         }
 
         [ TestMethod ]
