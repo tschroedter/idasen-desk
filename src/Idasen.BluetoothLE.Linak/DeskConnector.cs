@@ -76,7 +76,7 @@ namespace Idasen.BluetoothLE.Linak
                    .SubscribeOn ( scheduler )
                    .SubscribeAsync ( OnGattServicesRefreshed ) ;
 
-            DeviceNameChanged = subjectFactory ( ) ;
+            _deviceNameChanged = subjectFactory ( ) ;
         }
 
         /// <inheritdoc />
@@ -89,7 +89,15 @@ namespace Idasen.BluetoothLE.Linak
         public IObservable < HeightSpeedDetails > HeightAndSpeedChanged => _subjectHeightAndSpeed ;
 
         /// <inheritdoc />
-        public IObservable < uint > FinishedChanged => _deskMover?.Finished ;
+        public IObservable < uint > FinishedChanged {
+            get
+            {
+                if (_deskMover == null)
+                    _logger.Error ( $"{_deskMover} is null\r\n{Environment.StackTrace}" );
+
+                return _deskMover?.Finished ;
+            }
+        }
 
         /// <inheritdoc />
         public IObservable < bool > RefreshedChanged => _subjectRefreshed ;
@@ -97,15 +105,13 @@ namespace Idasen.BluetoothLE.Linak
         /// <inheritdoc />
         public void Dispose ( )
         {
+            _deskMover?.Dispose (  );
             _disposableHeightAndSpeed?.Dispose ( ) ;
             _disposableSpeed?.Dispose ( ) ;
             _disposableHeight?.Dispose ( ) ;
             _heightAndSpeed?.Dispose ( ) ;
             _subscriber?.Dispose ( ) ;
         }
-
-        /// <inheritdoc />
-        public ISubject < IEnumerable < byte > > DeviceNameChanged { get ; }
 
         /// <inheritdoc />
         public ulong BluetoothAddress => _device.BluetoothAddress ;
@@ -123,40 +129,48 @@ namespace Idasen.BluetoothLE.Linak
         }
 
         /// <inheritdoc />
-        public void MoveTo ( in uint targetHeight )
+        public async Task < bool > MoveUp ( ) // todo this should be async
         {
             if ( ! TryGetDeskMover ( out var deskMover ) )
-                return ;
+                return false ;
+
+            return await deskMover.Up ( ) ;
+        }
+
+        /// <inheritdoc />
+        public async Task < bool > MoveDown () // todo check test for asyn
+        {
+            if ( ! TryGetDeskMover ( out var deskMover ) )
+                return false ;
+
+            return await deskMover.Down ( ) ;
+        }
+
+        /// <inheritdoc />
+        public IObservable < IEnumerable < byte > > DeviceNameChanged => _deviceNameChanged ;
+
+        /// <inheritdoc />
+        public void MoveTo ( uint targetHeight )
+        {
+            if ( ! TryGetDeskMover ( out var deskMover ) )
+                return;
 
             deskMover.TargetHeight = targetHeight ;
+
+            if ( targetHeight == 0u )
+                throw new ArgumentException ( "TargetHeight can't be zero" ,
+                                              nameof ( targetHeight ) ) ;
+
             deskMover.Start ( ) ;
         }
 
         /// <inheritdoc />
-        public void MoveUp ( ) // todo this should be async
+        public async Task < bool > MoveStop ( ) // todo check test for asyn
         {
             if ( ! TryGetDeskMover ( out var deskMover ) )
-                return ;
+                return false ;
 
-            deskMover.Up ( ) ;
-        }
-
-        /// <inheritdoc />
-        public void MoveDown ( )
-        {
-            if ( ! TryGetDeskMover ( out var deskMover ) )
-                return ;
-
-            deskMover.Down ( ) ;
-        }
-
-        /// <inheritdoc />
-        public void MoveStop ( )
-        {
-            if ( ! TryGetDeskMover ( out var deskMover ) )
-                return ;
-
-            deskMover.Stop ( ) ;
+            return await deskMover.Stop ( ) ;
         }
 
         private bool TryGetDeskMover ( out IDeskMover deskMover )
@@ -220,7 +234,7 @@ namespace Idasen.BluetoothLE.Linak
 
         private void OnDeviceNameChanged ( IEnumerable < byte > value )
         {
-            DeviceNameChanged.OnNext ( value ) ;
+            _deviceNameChanged.OnNext ( value ) ;
         }
 
         private readonly IDeskCommandExecutorFactory     _commandExecutorFactory ;
@@ -241,7 +255,8 @@ namespace Idasen.BluetoothLE.Linak
         private IDisposable          _disposableSpeed ;
         private IDeskCommandExecutor _executor ;
 
-        private IDeskHeightAndSpeed _heightAndSpeed ;
-        private IDisposable         _subscriber ;
+        private IDeskHeightAndSpeed               _heightAndSpeed ;
+        private IDisposable                       _subscriber ;
+        private ISubject < IEnumerable < byte > > _deviceNameChanged ;
     }
 }
