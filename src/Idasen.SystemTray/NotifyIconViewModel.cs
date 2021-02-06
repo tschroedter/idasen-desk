@@ -49,7 +49,8 @@ namespace Idasen.SystemTray
             Guard.ArgumentNotNull ( errorManager ,
                                     nameof ( errorManager ) ) ;
 
-            _scheduler = scheduler ;
+            _scheduler    = scheduler ;
+            _errorManager = errorManager ;
         }
 
         public void Dispose ( )
@@ -75,14 +76,7 @@ namespace Idasen.SystemTray
                 return new DelegateCommand
                        {
                            CanExecuteFunc = ( ) => SettingsWindow == null ,
-                           CommandAction = ( ) =>
-                                           {
-                                               _logger.Debug ( $"{nameof ( ShowSettingsCommand )}" ) ;
-
-                                               SettingsWindow = new SettingsWindow ( _logger ,
-                                                                                     _manager ) ;
-                                               SettingsWindow?.Show ( ) ;
-                                           }
+                           CommandAction  = DoShowSettings
                        } ;
             }
         }
@@ -96,13 +90,7 @@ namespace Idasen.SystemTray
             {
                 return new DelegateCommand
                        {
-                           CommandAction = ( ) =>
-                                           {
-                                               _logger.Debug ( $"{nameof ( HideSettingsCommand )}" ) ;
-
-                                               SettingsWindow?.Close ( ) ;
-                                               SettingsWindow = null ;
-                                           } ,
+                           CommandAction  = DoHideSettings ,
                            CanExecuteFunc = ( ) => SettingsWindow != null
                        } ;
             }
@@ -117,12 +105,7 @@ namespace Idasen.SystemTray
             {
                 return new DelegateCommand
                        {
-                           CommandAction = async ( ) =>
-                                           {
-                                               _logger.Debug ( $"{nameof ( ConnectCommand )}" ) ;
-
-                                               await Connect ( ) ;
-                                           } ,
+                           CommandAction  = async ( ) => await DoConnect ( ) ,
                            CanExecuteFunc = ( ) => _desk == null
                        } ;
             }
@@ -137,12 +120,7 @@ namespace Idasen.SystemTray
             {
                 return new DelegateCommand
                        {
-                           CommandAction = ( ) =>
-                                           {
-                                               _logger.Debug ( $"{nameof ( DisconnectCommand )}" ) ;
-
-                                               Disconnect ( ) ;
-                                           } ,
+                           CommandAction  = DoDisconnect ,
                            CanExecuteFunc = ( ) => _desk != null
                        } ;
             }
@@ -157,12 +135,7 @@ namespace Idasen.SystemTray
             {
                 return new DelegateCommand
                        {
-                           CommandAction = async ( ) =>
-                                           {
-                                               _logger.Debug ( $"{nameof ( StandingCommand )}" ) ;
-
-                                               await Standing ( ) ;
-                                           } ,
+                           CommandAction  = async ( ) => await DoStanding ( ) ,
                            CanExecuteFunc = ( ) => _desk != null
                        } ;
             }
@@ -177,15 +150,7 @@ namespace Idasen.SystemTray
             {
                 return new DelegateCommand
                        {
-                           CommandAction = async ( ) =>
-                                           {
-                                               _logger.Debug ( $"{nameof ( SeatingCommand )}" ) ;
-
-                                               await _manager.Load ( ) ;
-
-                                               _desk?.MoveTo ( _manager.CurrentSettings.SeatingHeightInCm *
-                                                               100 ) ; // todo duplicated
-                                           } ,
+                           CommandAction  = async ( ) => await DoSeating ( ) ,
                            CanExecuteFunc = ( ) => _desk != null
                        } ;
             }
@@ -194,22 +159,11 @@ namespace Idasen.SystemTray
         /// <summary>
         ///     Shuts down the application.
         /// </summary>
-        public ICommand ExitApplicationCommand
-        {
-            get
+        public ICommand ExitApplicationCommand =>
+            new DelegateCommand
             {
-                return new DelegateCommand
-                       {
-                           CommandAction = ( ) =>
-                                           {
-                                               _logger.Information ( "##### Exit..." ) ;
-
-                                               _tokenSource.Cancel ( ) ;
-                                               Application.Current.Shutdown ( ) ;
-                                           }
-                       } ;
-            }
-        }
+                CommandAction = DoExitApplication
+            } ;
 
         [ CanBeNull ]
         private ISettingsWindow SettingsWindow
@@ -219,6 +173,109 @@ namespace Idasen.SystemTray
         }
 
         public bool IsInitialize => _logger != null && _manager != null && _provider != null ;
+
+        private void DoExitApplication ( )
+        {
+            _logger.Information ( "##### Exit..." ) ;
+
+            _tokenSource.Cancel ( ) ;
+            Application.Current.Shutdown ( ) ;
+        }
+
+        private void DoShowSettings ( )
+        {
+            _logger.Debug ( $"{nameof ( ShowSettingsCommand )}" ) ;
+
+            SettingsWindow = new SettingsWindow ( _logger ,
+                                                  _manager ) ;
+            SettingsWindow?.Show ( ) ;
+        }
+
+        private void DoHideSettings ( )
+        {
+            _logger.Debug ( $"{nameof ( HideSettingsCommand )}" ) ;
+
+            SettingsWindow?.Close ( ) ;
+            SettingsWindow = null ;
+        }
+
+        private void DoDisconnect ( )
+        {
+            try
+            {
+                _logger.Debug ( $"{nameof ( DisconnectCommand )}" ) ;
+
+                Disconnect ( ) ;
+            }
+            catch ( Exception e )
+            {
+                _logger.Error ( e ,
+                                $"Failed to call {nameof ( DisconnectCommand )}" ) ;
+
+                _errorManager
+                   .PublishForMessage ( $"Failed to call {nameof ( DisconnectCommand )}" ) ;
+            }
+        }
+
+        private async Task DoConnect ( )
+        {
+            _logger.Error ( $"*** {nameof ( DoConnect )}" ) ;
+
+            try
+            {
+                _logger.Debug ( $"{nameof ( DoConnect )}" ) ;
+
+                await Connect ( ).ConfigureAwait ( false ) ;
+            }
+            catch ( Exception e )
+            {
+                _logger.Error ( e ,
+                                $"Failed to call {nameof ( DoConnect )}" ) ;
+
+                _errorManager
+                   .PublishForMessage ( $"Failed to call {nameof ( DoConnect )}" ) ;
+            }
+        }
+
+        private async Task DoStanding ( )
+        {
+            try
+            {
+                _logger.Debug ( $"{nameof ( StandingCommand )}" ) ;
+
+                await Standing ( ).ConfigureAwait ( false ) ;
+            }
+            catch ( Exception e )
+            {
+                _logger.Error ( e ,
+                                $"Failed to call {nameof ( StandingCommand )}" ) ;
+
+                _errorManager
+                   .PublishForMessage ( $"Failed to call {nameof ( StandingCommand )}" ) ;
+            }
+        }
+
+        private async Task DoSeating ( )
+        {
+            try
+            {
+                _logger.Debug ( $"{nameof ( SeatingCommand )}" ) ;
+
+                await _manager.Load ( )
+                              .ConfigureAwait ( false ) ;
+
+                _desk?.MoveTo ( _manager.CurrentSettings.SeatingHeightInCm *
+                                100 ) ; // todo duplicate
+            }
+            catch ( Exception e )
+            {
+                _logger.Error ( e ,
+                                $"Failed to call {nameof ( SeatingCommand )}" ) ;
+
+                _errorManager
+                   .PublishForMessage ( $"Failed to call {nameof ( SeatingCommand )}" ) ;
+            }
+        }
 
         private void OnErrorChanged ( IErrorDetails details )
         {
@@ -378,6 +435,8 @@ namespace Idasen.SystemTray
 
         private void DisposeDesk ( )
         {
+            _logger.Debug ( $"[{_desk?.Name}] Disposing desk" ) ;
+
             _finished?.Dispose ( ) ;
             _desk?.Dispose ( ) ;
 
@@ -463,6 +522,8 @@ namespace Idasen.SystemTray
                                             4000 ) ;
         }
 
+        private readonly IErrorManager _errorManager ;
+
         private readonly IScheduler _scheduler = Scheduler.CurrentThread ;
 
         [ CanBeNull ] private      IDesk                   _desk ;
@@ -476,3 +537,4 @@ namespace Idasen.SystemTray
         private                    CancellationTokenSource _tokenSource ;
     }
 }
+
