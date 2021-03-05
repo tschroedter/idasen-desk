@@ -92,6 +92,8 @@ namespace Idasen.BluetoothLE.Linak
         public IObservable < uint > FinishedChanged {
             get
             {
+                _logger.Debug ( $"***Finished = {_deskMover?.Finished.GetHashCode (  )}" );
+
                 if (_deskMover == null)
                     _logger.Error ( $"{_deskMover} is null\r\n{Environment.StackTrace}" );
 
