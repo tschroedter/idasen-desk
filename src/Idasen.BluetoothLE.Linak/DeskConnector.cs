@@ -89,13 +89,14 @@ namespace Idasen.BluetoothLE.Linak
         public IObservable < HeightSpeedDetails > HeightAndSpeedChanged => _subjectHeightAndSpeed ;
 
         /// <inheritdoc />
-        public IObservable < uint > FinishedChanged {
+        public IObservable < uint > FinishedChanged
+        {
             get
             {
-                _logger.Debug ( $"***Finished = {_deskMover?.Finished.GetHashCode (  )}" );
+                _logger.Debug ( $"***Finished = {_deskMover?.Finished.GetHashCode ( )}" ) ;
 
-                if (_deskMover == null)
-                    _logger.Error ( $"{_deskMover} is null\r\n{Environment.StackTrace}" );
+                if ( _deskMover == null )
+                    _logger.Error ( $"{_deskMover} is null\r\n{Environment.StackTrace}" ) ;
 
                 return _deskMover?.Finished ;
             }
@@ -107,7 +108,7 @@ namespace Idasen.BluetoothLE.Linak
         /// <inheritdoc />
         public void Dispose ( )
         {
-            _deskMover?.Dispose (  );
+            _deskMover?.Dispose ( ) ;
             _disposableHeightAndSpeed?.Dispose ( ) ;
             _disposableSpeed?.Dispose ( ) ;
             _disposableHeight?.Dispose ( ) ;
@@ -140,7 +141,7 @@ namespace Idasen.BluetoothLE.Linak
         }
 
         /// <inheritdoc />
-        public async Task < bool > MoveDown () // todo check test for asyn
+        public async Task < bool > MoveDown ( ) // todo check test for asyn
         {
             if ( ! TryGetDeskMover ( out var deskMover ) )
                 return false ;
@@ -155,7 +156,7 @@ namespace Idasen.BluetoothLE.Linak
         public void MoveTo ( uint targetHeight )
         {
             if ( ! TryGetDeskMover ( out var deskMover ) )
-                return;
+                return ;
 
             deskMover.TargetHeight = targetHeight ;
 
@@ -239,17 +240,19 @@ namespace Idasen.BluetoothLE.Linak
             _deviceNameChanged.OnNext ( value ) ;
         }
 
-        private readonly IDeskCommandExecutorFactory     _commandExecutorFactory ;
-        private readonly IDeskCharacteristics            _deskCharacteristics ;
-        private readonly IDevice                         _device ;
-        private readonly IDeskHeightAndSpeedFactory      _heightAndSpeedFactory ;
-        private readonly ILogger                         _logger ;
-        private readonly IDeskMoverFactory               _moverFactory ;
-        private readonly IScheduler                      _scheduler ;
-        private readonly ISubject < uint >               _subjectHeight ;
-        private readonly ISubject < HeightSpeedDetails > _subjectHeightAndSpeed ;
-        private readonly ISubject < bool >               _subjectRefreshed ;
-        private readonly ISubject < int >                _subjectSpeed ;
+        private readonly IDeskCommandExecutorFactory       _commandExecutorFactory ;
+        private readonly IDeskCharacteristics              _deskCharacteristics ;
+        private readonly IDevice                           _device ;
+        private readonly ISubject < IEnumerable < byte > > _deviceNameChanged ;
+        private readonly IDeskHeightAndSpeedFactory        _heightAndSpeedFactory ;
+        private readonly ILogger                           _logger ;
+        private readonly IDeskMovementMonitorFactory       _monitorFactory ;
+        private readonly IDeskMoverFactory                 _moverFactory ;
+        private readonly IScheduler                        _scheduler ;
+        private readonly ISubject < uint >                 _subjectHeight ;
+        private readonly ISubject < HeightSpeedDetails >   _subjectHeightAndSpeed ;
+        private readonly ISubject < bool >                 _subjectRefreshed ;
+        private readonly ISubject < int >                  _subjectSpeed ;
 
         private IDeskMover           _deskMover ;
         private IDisposable          _disposableHeight ;
@@ -257,8 +260,7 @@ namespace Idasen.BluetoothLE.Linak
         private IDisposable          _disposableSpeed ;
         private IDeskCommandExecutor _executor ;
 
-        private IDeskHeightAndSpeed               _heightAndSpeed ;
-        private IDisposable                       _subscriber ;
-        private ISubject < IEnumerable < byte > > _deviceNameChanged ;
+        private IDeskHeightAndSpeed _heightAndSpeed ;
+        private IDisposable         _subscriber ;
     }
 }
