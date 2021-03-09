@@ -69,6 +69,14 @@ namespace Idasen.BluetoothLE.Linak
                    .As < IDeskMoverFactory > ( )
                    .EnableInterfaceInterceptors ( ) ;
 
+            builder.RegisterType < DeskMovementMonitor > ( )
+                   .As < IDeskMovementMonitor > ( )
+                   .EnableInterfaceInterceptors ( ) ;
+
+            builder.RegisterType < DeskMovementMonitorFactory > ( )
+                   .As < IDeskMovementMonitorFactory > ( )
+                   .EnableInterfaceInterceptors ( ) ;
+
             builder.RegisterType < StoppingHeightCalculator > ( )
                    .As < IStoppingHeightCalculator > ( )
                    .EnableInterfaceInterceptors ( ) ;
