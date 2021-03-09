@@ -27,6 +27,7 @@ namespace Idasen.BluetoothLE.Linak.Tests
             _logger                = Substitute.For < ILogger > ( ) ;
             _scheduler             = new TestScheduler ( ) ;
             _providerFactory       = Substitute.For < IInitialHeightAndSpeedProviderFactory > ( ) ;
+            _monitorFactory        = Substitute.For < IDeskMovementMonitorFactory > ( ) ;
             _executor              = Substitute.For < IDeskCommandExecutor > ( ) ;
             _heightAndSpeed        = Substitute.For < IDeskHeightAndSpeed > ( ) ;
             _calculator            = Substitute.For < IStoppingHeightCalculator > ( ) ;
@@ -58,6 +59,7 @@ namespace Idasen.BluetoothLE.Linak.Tests
             return new DeskMover ( _logger ,
                                    _scheduler ,
                                    _providerFactory ,
+                                   _monitorFactory ,
                                    _executor ,
                                    _heightAndSpeed ,
                                    _calculator ,
@@ -355,6 +357,7 @@ namespace Idasen.BluetoothLE.Linak.Tests
         private IDeskHeightAndSpeed       _heightAndSpeed ;
 
         private ILogger                               _logger ;
+        private IDeskMovementMonitorFactory           _monitorFactory ;
         private IInitialHeightProvider                _provider ;
         private IInitialHeightAndSpeedProviderFactory _providerFactory ;
         private TestScheduler                         _scheduler ;

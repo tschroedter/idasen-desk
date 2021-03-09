@@ -22,10 +22,11 @@ namespace Idasen.BluetoothLE.Linak.Control
         public DeskMover ( [ NotNull ] ILogger                               logger ,
                            [ NotNull ] IScheduler                            scheduler ,
                            [ NotNull ] IInitialHeightAndSpeedProviderFactory providerFactory ,
+                           [ NotNull ] IDeskMovementMonitorFactory           monitorFactory,
                            [ NotNull ] IDeskCommandExecutor                  executor ,
                            [ NotNull ] IDeskHeightAndSpeed                   heightAndSpeed ,
                            [ NotNull ] IStoppingHeightCalculator             calculator ,
-                           [ NotNull ] ISubject < uint >                     subjectFinished )
+                           [ NotNull ] ISubject < uint >                     subjectFinished)
         {
             Guard.ArgumentNotNull ( logger ,
                                     nameof ( logger ) ) ;
@@ -33,6 +34,8 @@ namespace Idasen.BluetoothLE.Linak.Control
                                     nameof ( scheduler ) ) ;
             Guard.ArgumentNotNull ( providerFactory ,
                                     nameof ( providerFactory ) ) ;
+            Guard.ArgumentNotNull(monitorFactory,
+                                  nameof(monitorFactory));
             Guard.ArgumentNotNull ( executor ,
                                     nameof ( executor ) ) ;
             Guard.ArgumentNotNull ( heightAndSpeed ,
@@ -42,13 +45,14 @@ namespace Idasen.BluetoothLE.Linak.Control
             Guard.ArgumentNotNull ( subjectFinished ,
                                     nameof ( subjectFinished ) ) ;
 
-            _logger          = logger ;
-            _scheduler       = scheduler ;
-            _providerFactory = providerFactory ;
-            _executor        = executor ;
-            _heightAndSpeed  = heightAndSpeed ;
-            _calculator      = calculator ;
-            _subjectFinished = subjectFinished ;
+            _logger              = logger ;
+            _scheduler           = scheduler ;
+            _providerFactory     = providerFactory ;
+            _monitorFactory = monitorFactory ;
+            _executor            = executor ;
+            _heightAndSpeed      = heightAndSpeed ;
+            _calculator          = calculator ;
+            _subjectFinished     = subjectFinished ;
         }
 
         public uint Height       { get ; private set ; }
@@ -61,6 +65,10 @@ namespace Idasen.BluetoothLE.Linak.Control
         {
             lock ( _padlock )
             {
+                _monitor?.Dispose ( ) ; // todo testing
+                _monitor = _monitorFactory.Create ( _heightAndSpeed ) ;
+                _monitor.Initialize ( ) ;
+
                 _initialProvider?.Dispose ( ) ;
                 _initialProvider = _providerFactory.Create ( _executor ,
                                                              _heightAndSpeed ) ;
@@ -123,6 +131,7 @@ namespace Idasen.BluetoothLE.Linak.Control
 
         public void Dispose ( )
         {
+            _monitor?.Dispose (  ); // todo testing
             _disposableProvider?.Dispose ( ) ;
             _disposalHeightAndSpeed?.Dispose ( ) ;
             _disposableTimer?.Dispose ( ) ;
@@ -238,6 +247,7 @@ namespace Idasen.BluetoothLE.Linak.Control
         private readonly ILogger                               _logger ;
         private readonly object                                _padlock = new object ( ) ;
         private readonly IInitialHeightAndSpeedProviderFactory _providerFactory ;
+        private readonly IDeskMovementMonitorFactory           _monitorFactory ;
         private readonly IScheduler                            _scheduler ;
         private readonly ISubject < uint >                     _subjectFinished ;
 
@@ -248,5 +258,6 @@ namespace Idasen.BluetoothLE.Linak.Control
 
         private IDisposable            _disposalHeightAndSpeed ;
         private IInitialHeightProvider _initialProvider ;
+        private IDeskMovementMonitor   _monitor ;
     }
 }
