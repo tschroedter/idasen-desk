@@ -1,7 +1,5 @@
 ﻿using System ;
-using System.Reactive ;
 using System.Reactive.Concurrency ;
-using System.Reactive.Linq ;
 using System.Reactive.Subjects ;
 using Windows.Devices.Bluetooth.Advertisement ;
 using Autofac.Extras.DynamicProxy ;
@@ -50,18 +48,6 @@ namespace Idasen.BluetoothLE.Core.DevicesDiscovery
                        {
                            ScanningMode = BluetoothLEScanningMode.Active
                        } ;
-
-            var fromReceivedEvent =
-                Observable.FromEventPattern < BluetoothLEAdvertisementReceivedEventArgs > ( _watcher ,
-                                                                                            "Received" ) ;
-            var fromStoppedEvent =
-                Observable.FromEventPattern < BluetoothLEAdvertisementWatcherStoppedEventArgs > ( _watcher ,
-                                                                                                  "Stopped" ) ;
-
-            _subscriberReceived = fromReceivedEvent.SubscribeOn ( scheduler )
-                                                   .Subscribe ( OnReceived ) ;
-            _subscriberStopped = fromStoppedEvent.SubscribeOn ( scheduler )
-                                                 .Subscribe ( OnStopped ) ;
         }
 
         /// <inheritdoc />
@@ -76,6 +62,8 @@ namespace Idasen.BluetoothLE.Core.DevicesDiscovery
         /// <inheritdoc />
         public void Start ( )
         {
+            Subscribe ( ) ;
+
             _watcher.Start ( ) ;
         }
 
@@ -83,30 +71,45 @@ namespace Idasen.BluetoothLE.Core.DevicesDiscovery
         public void Stop ( )
         {
             _watcher.Stop ( ) ;
+
+            Unsubscribe ( ) ;
         }
 
         /// <inheritdoc />
         public void Dispose ( )
         {
-            _subscriberReceived.Dispose ( ) ;
-            _subscriberStopped.Dispose ( ) ;
+            Unsubscribe ( ) ;
         }
 
-        private void OnReceived ( EventPattern < BluetoothLEAdvertisementReceivedEventArgs > args )
+        private void Subscribe ( )
         {
-            var dateTimeOffset = _dateTimeFactory.Invoke ( args.EventArgs.Timestamp ) ;
-
-            var device = _deviceFactory.Create ( dateTimeOffset ,
-                                                 args.EventArgs.BluetoothAddress ,
-                                                 args.EventArgs.Advertisement.LocalName ,
-                                                 args.EventArgs.RawSignalStrengthInDBm ) ;
-
-            _received.OnNext ( device ) ;
+            _watcher.Received += OnReceivedHandler ;
+            _watcher.Stopped  += OnStoppedHandler ;
         }
 
-        private void OnStopped ( EventPattern < BluetoothLEAdvertisementWatcherStoppedEventArgs > args )
+        private void Unsubscribe ( )
+        {
+            _watcher.Received -= OnReceivedHandler ;
+            _watcher.Stopped  -= OnStoppedHandler ;
+        }
+
+        private void OnStoppedHandler ( AdvertisementWatcher                            sender ,
+                                        BluetoothLEAdvertisementWatcherStoppedEventArgs args )
         {
             _stopped.OnNext ( DateTime.Now ) ;
+        }
+
+        private void OnReceivedHandler ( BluetoothLEAdvertisementWatcher           sender ,
+                                         BluetoothLEAdvertisementReceivedEventArgs args )
+        {
+            var dateTimeOffset = _dateTimeFactory.Invoke ( args.Timestamp ) ;
+
+            var device = _deviceFactory.Create ( dateTimeOffset ,
+                                                 args.BluetoothAddress ,
+                                                 args.Advertisement.LocalName ,
+                                                 args.RawSignalStrengthInDBm ) ;
+
+            _received.OnNext ( device ) ;
         }
 
         private readonly Func < DateTimeOffset , IDateTimeOffset > _dateTimeFactory ;
@@ -114,8 +117,6 @@ namespace Idasen.BluetoothLE.Core.DevicesDiscovery
         private readonly ISubject < IDevice >                      _received ;
         private readonly IStatusMapper                             _statusMapper ;
         private readonly ISubject < DateTime >                     _stopped ;
-        private readonly IDisposable                               _subscriberReceived ;
-        private readonly IDisposable                               _subscriberStopped ;
         private readonly AdvertisementWatcher                      _watcher ;
     }
 }
