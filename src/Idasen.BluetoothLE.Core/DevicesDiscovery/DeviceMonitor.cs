@@ -36,23 +36,14 @@ namespace Idasen.BluetoothLE.Core.DevicesDiscovery
             Guard.ArgumentNotNull ( scheduler ,
                                     nameof ( scheduler ) ) ;
 
-            _logger  = logger ;
-            _devices = devices ;
-            _watcher = watcher ;
+            _logger    = logger ;
+            _scheduler = scheduler ;
+            _devices   = devices ;
+            _watcher   = watcher ;
 
             _deviceUpdated     = factory.Invoke ( ) ;
             _deviceDiscovered  = factory.Invoke ( ) ;
             _deviceNameUpdated = factory.Invoke ( ) ;
-
-            _disposableStarted = _watcher.Started
-                                         .SubscribeOn ( scheduler )
-                                         .Subscribe ( OnStarted ) ;
-            _disposableStopped = _watcher.Stopped
-                                         .SubscribeOn ( scheduler )
-                                         .Subscribe ( OnStopped ) ;
-            _disposableUpdated = _watcher.Received
-                                         .SubscribeOn ( scheduler )
-                                         .Subscribe ( OnDeviceUpdated ) ;
         }
 
         /// <inheritdoc />
@@ -73,6 +64,8 @@ namespace Idasen.BluetoothLE.Core.DevicesDiscovery
         /// <inheritdoc />
         public void Start ( )
         {
+            Subscribe ( ) ;
+
             _watcher.Start ( ) ;
         }
 
@@ -80,6 +73,8 @@ namespace Idasen.BluetoothLE.Core.DevicesDiscovery
         public void Stop ( )
         {
             _watcher.Stop ( ) ;
+
+            Unsubscribe ( ) ;
         }
 
         /// <inheritdoc />
@@ -91,9 +86,32 @@ namespace Idasen.BluetoothLE.Core.DevicesDiscovery
         /// <inheritdoc />
         public void Dispose ( )
         {
-            _disposableStarted.Dispose ( ) ;
-            _disposableStopped.Dispose ( ) ;
-            _disposableUpdated.Dispose ( ) ;
+            Unsubscribe ( ) ;
+
+            _watcher.Dispose ( ) ;
+            _devices.Clear ( ) ;
+        }
+
+        private void Subscribe ( )
+        {
+            Unsubscribe ( ) ;
+
+            _disposableStarted = _watcher.Started
+                                         .SubscribeOn ( _scheduler )
+                                         .Subscribe ( OnStarted ) ;
+            _disposableStopped = _watcher.Stopped
+                                         .SubscribeOn ( _scheduler )
+                                         .Subscribe ( OnStopped ) ;
+            _disposableUpdated = _watcher.Received
+                                         .SubscribeOn ( _scheduler )
+                                         .Subscribe ( OnDeviceUpdated ) ;
+        }
+
+        private void Unsubscribe ( )
+        {
+            _disposableStarted?.Dispose ( ) ;
+            _disposableStopped?.Dispose ( ) ;
+            _disposableUpdated?.Dispose ( ) ;
         }
 
         private void OnDeviceUpdated ( IDevice device )
@@ -101,7 +119,7 @@ namespace Idasen.BluetoothLE.Core.DevicesDiscovery
             if ( ! _devices.TryGetDevice ( device.Address ,
                                            out var storedDevice ) )
             {
-                _logger.Information ( $"[{device.Address}] Discovered Device" ) ;
+                _logger.Information ( $"[{device.MacAddress}] Discovered Device" ) ;
 
                 _devices.AddOrUpdateDevice ( device ) ;
 
@@ -109,7 +127,10 @@ namespace Idasen.BluetoothLE.Core.DevicesDiscovery
             }
             else
             {
-                _logger.Information ( $"[{device.Address}] Updated Device" ) ;
+                _logger.Information ( $"[{device.MacAddress}] Updated Device " +
+                                      $"(Name = {device.Name}, "               +
+                                      $"{device.RawSignalStrengthInDBm}DBm, "  +
+                                      $"Address = {device.Address})" ) ;
 
                 var hasNameChanged = HasDeviceNameChanged ( device ,
                                                             storedDevice ) ;
@@ -121,7 +142,7 @@ namespace Idasen.BluetoothLE.Core.DevicesDiscovery
                 if ( ! hasNameChanged )
                     return ;
 
-                _logger.Information ( $"[{device.Address}] Device Name Changed" ) ;
+                _logger.Information ( $"[{device.MacAddress}] Device Name Changed" ) ;
 
                 _deviceNameUpdated.OnNext ( device ) ;
             }
@@ -140,6 +161,10 @@ namespace Idasen.BluetoothLE.Core.DevicesDiscovery
         private static bool HasDeviceNameChanged ( IDevice device ,
                                                    IDevice storedDevice )
         {
+            if ( string.IsNullOrEmpty ( storedDevice.Name ) &&
+                 string.IsNullOrEmpty ( device.Name ) )
+                return true ;
+
             if ( string.IsNullOrWhiteSpace ( storedDevice.Name ) &&
                  ! string.IsNullOrWhiteSpace ( device.Name ) )
                 return storedDevice.Name != device.Name ;
@@ -147,16 +172,17 @@ namespace Idasen.BluetoothLE.Core.DevicesDiscovery
             return false ;
         }
 
-        private readonly ISubject < IDevice > _deviceDiscovered ;
-        private readonly ISubject < IDevice > _deviceNameUpdated ;
-        private readonly IDevices             _devices ;
-        private readonly ISubject < IDevice > _deviceUpdated ;
-
-        private readonly IDisposable _disposableStarted ;
-        private readonly IDisposable _disposableStopped ;
-        private readonly IDisposable _disposableUpdated ;
-        private readonly ILogger     _logger ;
+        private readonly             ISubject < IDevice > _deviceDiscovered ;
+        private readonly             ISubject < IDevice > _deviceNameUpdated ;
+        private readonly             IDevices             _devices ;
+        private readonly             ISubject < IDevice > _deviceUpdated ;
+        private readonly             ILogger              _logger ;
+        [ NotNull ] private readonly IScheduler           _scheduler ;
 
         private readonly IWatcher _watcher ;
+
+        private IDisposable _disposableStarted ;
+        private IDisposable _disposableStopped ;
+        private IDisposable _disposableUpdated ;
     }
 }

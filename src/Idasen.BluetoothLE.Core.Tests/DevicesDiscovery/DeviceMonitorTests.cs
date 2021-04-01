@@ -171,7 +171,7 @@ namespace Idasen.BluetoothLE.Core.Tests.DevicesDiscovery
         {
             ConfigureDeviceDiscovered ( ) ;
 
-            using var sut = CreateSut ( ) ;
+            using var sut = CreateSutSubscribed ( ) ;
 
             _scheduler.Start ( ) ;
 
@@ -185,7 +185,7 @@ namespace Idasen.BluetoothLE.Core.Tests.DevicesDiscovery
         {
             ConfigureDeviceDiscovered ( ) ;
 
-            using var sut = CreateSut ( ) ;
+            using var sut = CreateSutSubscribed ( ) ;
 
             IDevice discovered = null ;
 
@@ -203,7 +203,7 @@ namespace Idasen.BluetoothLE.Core.Tests.DevicesDiscovery
         {
             ConfigureNameUpdated ( ) ;
 
-            using var sut = CreateSut ( ) ;
+            using var sut = CreateSutSubscribed ( ) ;
 
             _scheduler.Start ( ) ;
 
@@ -222,7 +222,7 @@ namespace Idasen.BluetoothLE.Core.Tests.DevicesDiscovery
         {
             ConfigureSameDevice ( ) ;
 
-            using var sut = CreateSut ( ) ;
+            using var sut = CreateSutSubscribed ( ) ;
 
             IDevice updated = null ;
 
@@ -240,7 +240,7 @@ namespace Idasen.BluetoothLE.Core.Tests.DevicesDiscovery
         {
             ConfigureNameUpdatedTwice ( ) ; // maybe, later allow name change?
 
-            using var sut = CreateSut ( ) ;
+            using var sut = CreateSutSubscribed ( ) ;
 
             _scheduler.Start ( ) ;
 
@@ -254,12 +254,20 @@ namespace Idasen.BluetoothLE.Core.Tests.DevicesDiscovery
                    .Be ( _deviceNewName.Name ) ;
         }
 
+        private DeviceMonitor CreateSutSubscribed ( )
+        {
+            var sut = CreateSut ( ) ;
+            sut.Start ( ) ;
+
+            return sut ;
+        }
+
         [ TestMethod ]
         public void OnDeviceUpdated_ForExistingDeviceWithNewName_RaisesDeviceUpdated ( )
         {
             ConfigureNameUpdated ( ) ;
 
-            using var sut = CreateSut ( ) ;
+            using var sut = CreateSutSubscribed ( ) ;
 
             IDevice updated = null ;
 
@@ -325,7 +333,7 @@ namespace Idasen.BluetoothLE.Core.Tests.DevicesDiscovery
         {
             ConfigureNameUpdated ( ) ;
 
-            using var sut = CreateSut ( ) ;
+            using var sut = CreateSutSubscribed ( ) ;
 
             IDevice updated = null ;
 
@@ -343,7 +351,7 @@ namespace Idasen.BluetoothLE.Core.Tests.DevicesDiscovery
         {
             ConfigureSameDevice ( ) ;
 
-            using var sut = CreateSut ( ) ;
+            using var sut = CreateSutSubscribed ( ) ;
 
             IDevice updated = null ;
 
