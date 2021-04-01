@@ -310,5 +310,19 @@ namespace Idasen.BluetoothLE.Core.Tests.DevicesDiscovery
                     .Should ( )
                     .BeTrue ( ) ;
         }
+
+        [ AutoDataTestMethod ]
+        public void Clear_ForInvoked_ClearsDiscoveredDevices (
+            Devices sut ,
+            IDevice device )
+        {
+            sut.AddOrUpdateDevice ( device ) ;
+
+            sut.Clear ( ) ;
+
+            sut.DiscoveredDevices
+               .Should ( )
+               .BeEmpty ( ) ;
+        }
     }
 }

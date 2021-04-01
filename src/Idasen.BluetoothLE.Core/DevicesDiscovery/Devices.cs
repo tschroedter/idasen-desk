@@ -67,6 +67,15 @@ namespace Idasen.BluetoothLE.Core.DevicesDiscovery
         }
 
         /// <inheritdoc />
+        public void Clear ( )
+        {
+            lock ( _padLock )
+            {
+                _discoveredDevices.Clear ( ) ;
+            }
+        }
+
+        /// <inheritdoc />
         public bool ContainsDevice ( IDevice device )
         {
             Guard.ArgumentNotNull ( device ,

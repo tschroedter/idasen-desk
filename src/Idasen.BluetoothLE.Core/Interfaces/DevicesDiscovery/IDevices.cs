@@ -50,5 +50,10 @@ namespace Idasen.BluetoothLE.Core.Interfaces.DevicesDiscovery
         ///     The device to be removed.
         /// </param>
         void RemoveDevice ( [ NotNull ] IDevice device ) ;
+
+        /// <summary>
+        ///     Clear the collection.
+        /// </summary>
+        void Clear ( ) ;
     }
 }
