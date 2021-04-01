@@ -10,7 +10,7 @@ using Selkie.DefCon.One.Common ;
 namespace Idasen.BluetoothLE.Core.DevicesDiscovery
 {
     /// <inheritdoc />
-    [ DebuggerDisplay ( "{Address} {Name}" ) ]
+    [ DebuggerDisplay ( "{Name} {MacAddress}" ) ]
     [ Intercept ( typeof ( LogAspect ) ) ]
     public class Device
         : IDevice
@@ -36,6 +36,7 @@ namespace Idasen.BluetoothLE.Core.DevicesDiscovery
 
             BroadcastTime          = broadcastTime ;
             Address                = address ;
+            MacAddress             = address.ToMacAddress () ;
             Name                   = name ?? string.Empty ;
             RawSignalStrengthInDBm = rawSignalStrengthInDBm ;
         }
@@ -45,6 +46,9 @@ namespace Idasen.BluetoothLE.Core.DevicesDiscovery
 
         /// <inheritdoc />
         public ulong Address { get ; }
+
+        /// <inheritdoc />
+        public string MacAddress { get ;  }
 
         /// <inheritdoc />
         public string Name
@@ -69,9 +73,11 @@ namespace Idasen.BluetoothLE.Core.DevicesDiscovery
                            : Name ;
 
             return
-                $"{name} {Address} "                                                  +
-                $"({BroadcastTime.ToString ( "O" , CultureInfo.InvariantCulture )}, " +
-                $"{RawSignalStrengthInDBm}dB)" ;
+                $"Name = {name}, "                                                           +
+                $"MacAddress = {MacAddress}, "                                                     +
+                $"Address = {Address}, "                                                        +
+                $"BroadcastTime = {BroadcastTime.ToString ( "O" , CultureInfo.InvariantCulture )}, " +
+                $"RawSignalStrengthInDBm = {RawSignalStrengthInDBm}dB" ;
         }
 
         private string _name ;

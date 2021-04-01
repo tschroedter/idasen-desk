@@ -28,5 +28,10 @@ namespace Idasen.BluetoothLE.Core.Interfaces.DevicesDiscovery
         ///     The signal strength in dB.
         /// </summary>
         public short RawSignalStrengthInDBm { get ; }
+
+        /// <summary>
+        ///     The Mac Address of the device.
+        /// </summary>
+        string MacAddress { get ; }
     }
 }

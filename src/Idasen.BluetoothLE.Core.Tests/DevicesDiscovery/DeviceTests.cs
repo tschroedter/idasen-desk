@@ -10,7 +10,7 @@ namespace Idasen.BluetoothLE.Core.Tests.DevicesDiscovery
     [ TestClass ]
     public class DeviceTests
     {
-        private const ulong  Address                = 1234 ;
+        private const ulong  Address                = 197530862419747;
         private const string Name                   = "Name" ;
         private const short  RawSignalStrengthInDBm = - 50 ;
 
@@ -94,7 +94,11 @@ namespace Idasen.BluetoothLE.Core.Tests.DevicesDiscovery
 
             sut.ToString ( )
                .Should ( )
-               .Be ( "Name 1234 (2007-10-02T13:02:03.0000000-07:30, -50dB)" ) ;
+               .Be ( "Name = Name, "                                       +
+                     "MacAddress = B3:A7:3C:E2:FF:23, "                    +
+                     "Address = 197530862419747, "                         +
+                     "BroadcastTime = 2007-10-02T13:02:03.0000000-07:30, " +
+                     "RawSignalStrengthInDBm = -50dB" ) ;
         }
 
         [ TestMethod ]
