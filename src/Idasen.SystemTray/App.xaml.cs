@@ -45,7 +45,7 @@ namespace Idasen.SystemTray
 
             model.Initialize ( _container.Resolve < ILogger > ( ) ,
                                _container.Resolve < ISettingsManager > ( ) ,
-                               _container.Resolve < IDeskProvider > ( ) ,
+                               _container.Resolve < Func < IDeskProvider > > ( ) ,
                                _container.Resolve < IErrorManager > ( ) ) ;
 
             Task.Run ( new Action ( async ( ) => await model.AutoConnect ( ) ) ) ;

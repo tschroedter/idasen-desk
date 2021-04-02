@@ -34,7 +34,7 @@ namespace Idasen.SystemTray
         public NotifyIconViewModel (
             [ NotNull ] ILogger          logger ,
             [ NotNull ] ISettingsManager manager ,
-            [ NotNull ] IDeskProvider    provider ,
+            [ NotNull ] Func< IDeskProvider >    providerFactory ,
             [ NotNull ] IScheduler       scheduler ,
             [ NotNull ] IErrorManager    errorManager )
         {
@@ -42,15 +42,16 @@ namespace Idasen.SystemTray
                                     nameof ( logger ) ) ;
             Guard.ArgumentNotNull ( manager ,
                                     nameof ( manager ) ) ;
-            Guard.ArgumentNotNull ( provider ,
-                                    nameof ( provider ) ) ;
+            Guard.ArgumentNotNull (providerFactory,
+                                    nameof (providerFactory) ) ;
             Guard.ArgumentNotNull ( scheduler ,
                                     nameof ( scheduler ) ) ;
             Guard.ArgumentNotNull ( errorManager ,
                                     nameof ( errorManager ) ) ;
 
-            _scheduler    = scheduler ;
-            _errorManager = errorManager ;
+            _scheduler       = scheduler ;
+            _errorManager    = errorManager ;
+            _providerFactory = providerFactory ;
         }
 
         public void Dispose ( )
@@ -172,7 +173,7 @@ namespace Idasen.SystemTray
             set => Application.Current.MainWindow = value as Window ;
         }
 
-        public bool IsInitialize => _logger != null && _manager != null && _provider != null ;
+        public bool IsInitialize => _logger != null && _manager != null; // todo  && _provider != null ;
 
         private void DoExitApplication ( )
         {
@@ -298,21 +299,21 @@ namespace Idasen.SystemTray
         public NotifyIconViewModel Initialize (
             [ NotNull ] ILogger          logger ,
             [ NotNull ] ISettingsManager manager ,
-            [ NotNull ] IDeskProvider    provider ,
+            [ NotNull ] Func<IDeskProvider>   providerFactory ,
             [ NotNull ] IErrorManager    errorManager )
         {
             Guard.ArgumentNotNull ( logger ,
                                     nameof ( logger ) ) ;
             Guard.ArgumentNotNull ( manager ,
                                     nameof ( manager ) ) ;
-            Guard.ArgumentNotNull ( provider ,
-                                    nameof ( provider ) ) ;
+            Guard.ArgumentNotNull (providerFactory,
+                                    nameof (providerFactory) ) ;
             Guard.ArgumentNotNull ( errorManager ,
                                     nameof ( errorManager ) ) ;
 
             _logger   = logger ;
             _manager  = manager ;
-            _provider = provider ;
+            _providerFactory = providerFactory;
 
             _logger.Debug ( "Initializing..." ) ;
 
@@ -337,12 +338,6 @@ namespace Idasen.SystemTray
                 _logger.Debug ( "Trying to load settings..." ) ;
 
                 await _manager.Load ( ) ;
-
-                _logger.Debug ( "Trying to initialize provider..." ) ;
-
-                _provider.Initialize ( _manager.CurrentSettings.DeviceName ,
-                                       _manager.CurrentSettings.DeviceAddress ,
-                                       _manager.CurrentSettings.DeviceMonitoringTimeout ) ;
 
                 _logger.Debug ( "Trying to auto connect to Idasen Desk..." ) ;
 
@@ -378,9 +373,17 @@ namespace Idasen.SystemTray
         {
             try
             {
+                _logger.Debug("Trying to initialize provider...");
+
+                _provider?.Dispose();
+                _provider = _providerFactory();
+                _provider.Initialize(_manager.CurrentSettings.DeviceName,
+                                     _manager.CurrentSettings.DeviceAddress,
+                                     _manager.CurrentSettings.DeviceMonitoringTimeout);
+
                 _logger.Debug ( $"[{_desk?.DeviceName}] Trying to connect to Idasen Desk..." ) ;
 
-                DisposeDesk ( ) ;
+                // DisposeDesk ( ) ;
 
                 _tokenSource?.Cancel ( false ) ;
 
@@ -428,6 +431,8 @@ namespace Idasen.SystemTray
         {
             _logger.Debug ( "Connection failed..." ) ;
 
+            Disconnect ( ) ;
+
             ShowFancyBalloon ( "Failed to Connect" ,
                                Constants.CheckAndEnableBluetooth ,
                                visibilityBulbRed : Visibility.Visible ) ;
@@ -439,14 +444,18 @@ namespace Idasen.SystemTray
 
             _finished?.Dispose ( ) ;
             _desk?.Dispose ( ) ;
+            _provider?.Dispose ( ) ;
 
-            _desk     = null ;
             _finished = null ;
+            _desk     = null ;
+            _provider = null ;
         }
 
         private void ConnectSuccessful ( IDesk desk )
         {
-            _logger.Information ( $"[{desk.DeviceName}] Connected to {desk.DeviceName} with address {desk.BluetoothAddress}" ) ;
+            _logger.Information ( $"[{desk.DeviceName}] Connected to {desk.DeviceName} " +
+                                  $"with address {desk.BluetoothAddress} "               +
+                                  $"(MacAddress {desk.BluetoothAddress.ToMacAddress ()})" ) ;
 
             _desk = desk ;
 
@@ -535,6 +544,7 @@ namespace Idasen.SystemTray
         private                    IDeskProvider           _provider ;
         private                    CancellationToken       _token ;
         private                    CancellationTokenSource _tokenSource ;
+        private                    Func < IDeskProvider >  _providerFactory ;
     }
 }
 
