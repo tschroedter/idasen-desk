@@ -74,6 +74,12 @@ namespace Idasen.BluetoothLE.Core.ServicesDiscovery
         public IReadOnlyDictionary < IGattDeviceServiceWrapper , IGattCharacteristicsResultWrapper > Services =>
             _services.ReadOnlyDictionary ;
 
+        /// <inheritdoc />
+        public void Dispose ( )
+        {
+            _services.Dispose ( ) ;
+        }
+
         public delegate IGattServicesProvider Factory ( [ NotNull ] IBluetoothLeDeviceWrapper device ) ;
 
         private async Task GetCharacteristicsAsync ( IGattDeviceServicesResultWrapper gatt )

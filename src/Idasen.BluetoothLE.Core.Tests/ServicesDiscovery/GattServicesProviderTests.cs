@@ -292,6 +292,17 @@ namespace Idasen.BluetoothLE.Core.Tests.ServicesDiscovery
                .BeEquivalentTo ( services.ReadOnlyDictionary ) ;
         }
 
+        [AutoDataTestMethod]
+        public void Dispose_ForInvoked_CallsServices(
+            GattServicesProvider                       sut,
+            [Freeze][Populate] IGattServicesDictionary services)
+        {
+            sut.Dispose ( ) ;
+
+            services.Received ( )
+                    .Dispose ( ) ;
+        }
+
         private void DoNothing ( GattCommunicationStatus status )
         {
         }

@@ -7,6 +7,7 @@ using Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery.Wrappers ;
 namespace Idasen.BluetoothLE.Core.Interfaces.ServicesDiscovery
 {
     public interface IGattServicesProvider
+        : IDisposable
     {
         /// <summary>
         ///     Gets the read-only list of GATT services supported by the device.
