@@ -161,15 +161,13 @@ namespace Idasen.BluetoothLE.Core.DevicesDiscovery
         private static bool HasDeviceNameChanged ( IDevice device ,
                                                    IDevice storedDevice )
         {
-            if ( string.IsNullOrEmpty ( storedDevice.Name ) &&
-                 string.IsNullOrEmpty ( device.Name ) )
-                return true ;
-
-            if ( string.IsNullOrWhiteSpace ( storedDevice.Name ) &&
-                 ! string.IsNullOrWhiteSpace ( device.Name ) )
+            if ( ! string.IsNullOrEmpty ( storedDevice.Name ) )
                 return storedDevice.Name != device.Name ;
 
-            return false ;
+            if ( ! string.IsNullOrEmpty ( device.Name ) )
+                return true ;
+
+            return storedDevice.Name != device.Name;
         }
 
         private readonly             ISubject < IDevice > _deviceDiscovered ;
