@@ -20,7 +20,7 @@ namespace Idasen.Aop
         {
             var arguments = ConvertArgumentsToString ( invocation.Arguments ) ;
 
-            var called = $"{invocation.TargetType.Name}.{invocation.Method.Name}({arguments})" ;
+            var called = $"{invocation.TargetType.FullName}.{invocation.Method.Name}({arguments})" ;
 
             return called ;
         }
