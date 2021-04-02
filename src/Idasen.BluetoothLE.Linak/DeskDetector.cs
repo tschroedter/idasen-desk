@@ -45,6 +45,7 @@ namespace Idasen.BluetoothLE.Linak
         {
             _refreshedChanged?.Dispose ( ) ;
             _deskFound?.Dispose ( ) ;
+            _deskFoundByAddress?.Dispose ( ) ;
             _nameChanged?.Dispose ( ) ;
             _discovered?.Dispose ( ) ;
             _updated?.Dispose ( ) ;
@@ -76,6 +77,12 @@ namespace Idasen.BluetoothLE.Linak
                                    .ObserveOn ( _scheduler )
                                    .Subscribe ( OnDeviceNameChanged ) ;
 
+            // todo testing
+            _deskFoundByAddress = _monitor.DeviceDiscovered
+                                          .ObserveOn ( _scheduler )
+                                          .Where ( x => x.Address == deviceAddress )
+                                          .Subscribe ( OnDeskDiscovered ) ;
+
             _deskFound = _monitor.DeviceNameUpdated
                                  .ObserveOn ( _scheduler )
                                  .Where ( device => device.Name.StartsWith ( deviceName ) ||
@@ -86,6 +93,9 @@ namespace Idasen.BluetoothLE.Linak
         /// <inheritdoc />
         public void Start ( )
         {
+            _desk?.Dispose ( ) ;
+            _desk = null ;
+
             _monitor.Start ( ) ;
         }
 
@@ -97,12 +107,9 @@ namespace Idasen.BluetoothLE.Linak
 
         private async void OnDeskDiscovered ( IDevice device )
         {
-            if ( _desk != null )
-                return ;
-
             try
             {
-                _logger.Information ( $"[{device.Name}] Desk discovered" ) ;
+                _logger.Information ( $"[{device.MacAddress}] Desk '{device.Name}' discovered" ) ;
 
                 _desk = await _factory.CreateAsync ( device.Address ) ;
 
@@ -120,17 +127,17 @@ namespace Idasen.BluetoothLE.Linak
 
         private void OnDeviceUpdated ( IDevice device )
         {
-            _logger.Information ( $"[{device.Name}] Device Updated: {device}" ) ;
+            _logger.Information ( $"[{device.MacAddress}] Device Updated: {device}" ) ;
         }
 
         private void OnDeviceDiscovered ( IDevice device )
         {
-            _logger.Information ( $"[{device.Name}] Device Discovered: {device}" ) ;
+            _logger.Information ( $"[{device.MacAddress}] Device Discovered: {device}" ) ;
         }
 
         private void OnDeviceNameChanged ( IDevice device )
         {
-            _logger.Information ( $"[{device.Name}] Device Name Changed: {device}" ) ;
+            _logger.Information ( $"[{device.MacAddress}] Device Name Changed: {device}" ) ;
         }
 
         private void OnRefreshedChanged ( bool status )
@@ -153,5 +160,6 @@ namespace Idasen.BluetoothLE.Linak
         private IDisposable _nameChanged ;
         private IDisposable _refreshedChanged ;
         private IDisposable _updated ;
+        private IDisposable _deskFoundByAddress ;
     }
 }
