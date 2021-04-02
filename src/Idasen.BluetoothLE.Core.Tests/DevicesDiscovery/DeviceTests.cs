@@ -10,7 +10,7 @@ namespace Idasen.BluetoothLE.Core.Tests.DevicesDiscovery
     [ TestClass ]
     public class DeviceTests
     {
-        private const ulong  Address                = 197530862419747;
+        private const ulong  Address                = 197530862419747 ;
         private const string Name                   = "Name" ;
         private const short  RawSignalStrengthInDBm = - 50 ;
 

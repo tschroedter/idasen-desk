@@ -2,6 +2,6 @@
 {
     public interface IDeskMovementMonitorFactory
     {
-        IDeskMovementMonitor Create(IDeskHeightAndSpeed heightAndSpeed) ;
+        IDeskMovementMonitor Create ( IDeskHeightAndSpeed heightAndSpeed ) ;
     }
 }

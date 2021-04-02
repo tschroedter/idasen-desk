@@ -9,14 +9,14 @@ namespace Idasen.Aop.Aspects
     public class LogExceptionAspect : IInterceptor
     {
         // todo move ErrorManager to common space
-        public LogExceptionAspect([NotNull] ILogger                    logger,
-                                  [NotNull] IInvocationToTextConverter converter)
+        public LogExceptionAspect ( [ NotNull ] ILogger                    logger ,
+                                    [ NotNull ] IInvocationToTextConverter converter )
         {
-            _logger    = logger;
-            _converter = converter;
+            _logger    = logger ;
+            _converter = converter ;
         }
 
-        public void Intercept(IInvocation invocation)
+        public void Intercept ( IInvocation invocation )
         {
             try
             {
@@ -29,7 +29,7 @@ namespace Idasen.Aop.Aspects
             }
         }
 
-        private readonly IInvocationToTextConverter _converter;
-        private readonly ILogger                    _logger;
+        private readonly IInvocationToTextConverter _converter ;
+        private readonly ILogger                    _logger ;
     }
 }

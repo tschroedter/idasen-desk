@@ -6,26 +6,26 @@ using JetBrains.Annotations ;
 
 namespace Idasen.BluetoothLE.Linak.Control
 {
-    [Intercept( typeof(LogAspect))]
+    [ Intercept ( typeof ( LogAspect ) ) ]
     public class DeskMovementMonitorFactory
         : IDeskMovementMonitorFactory
     {
-        public DeskMovementMonitorFactory([NotNull] DeskMovementMonitor.Factory factory)
+        public DeskMovementMonitorFactory ( [ NotNull ] DeskMovementMonitor.Factory factory )
         {
-            Guard.ArgumentNotNull(factory,
-                                  nameof(factory));
+            Guard.ArgumentNotNull ( factory ,
+                                    nameof ( factory ) ) ;
 
-            _factory = factory;
+            _factory = factory ;
         }
 
-        public IDeskMovementMonitor Create(IDeskHeightAndSpeed heightAndSpeed)
+        public IDeskMovementMonitor Create ( IDeskHeightAndSpeed heightAndSpeed )
         {
-            Guard.ArgumentNotNull(heightAndSpeed,
-                                  nameof(heightAndSpeed));
+            Guard.ArgumentNotNull ( heightAndSpeed ,
+                                    nameof ( heightAndSpeed ) ) ;
 
-            return _factory(heightAndSpeed);
+            return _factory ( heightAndSpeed ) ;
         }
 
-        private readonly DeskMovementMonitor.Factory _factory;
+        private readonly DeskMovementMonitor.Factory _factory ;
     }
 }

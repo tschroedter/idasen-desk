@@ -56,9 +56,9 @@ namespace Idasen.Launcher
                   .Debug ( )
                   .Enrich
                   .WithCaller ( )
-                  .WriteTo.Console(LogEventLevel.Debug,
-                                   LogTemplate,
-                                   theme: AnsiConsoleTheme.Code)
+                  .WriteTo.Console ( LogEventLevel.Debug ,
+                                     LogTemplate ,
+                                     theme : AnsiConsoleTheme.Code )
                   .WriteTo
                   .File ( logFile ,
                           LogEventLevel.Debug ,

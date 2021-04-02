@@ -14,7 +14,7 @@ using Serilog ;
 namespace Idasen.BluetoothLE.Linak.Control
 {
     /// <inheritdoc />
-    [Intercept( typeof(LogAspect))]
+    [ Intercept ( typeof ( LogAspect ) ) ]
     public class InitialHeightProvider
         : IInitialHeightProvider
     {

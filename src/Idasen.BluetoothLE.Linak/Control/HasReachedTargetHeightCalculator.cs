@@ -73,7 +73,7 @@ namespace Idasen.BluetoothLE.Linak.Control
                                          _              => true
                                      } ;
 
-            _logger.Debug ( ToString() ) ;
+            _logger.Debug ( ToString ( ) ) ;
 
             return this ;
         }

@@ -9,8 +9,6 @@ namespace Idasen.BluetoothLE.Linak.Tests
     [ TestClass ]
     public class HasReachedTargetHeightCalculatorTests
     {
-        private ILogger _logger ;
-
         [ DataRow ( 2000u ,
                     1000u ,
                     10 ,
@@ -326,15 +324,17 @@ namespace Idasen.BluetoothLE.Linak.Tests
                .Be ( delta ) ;
         }
 
-        [TestInitialize]
-        public void Initialize()
+        [ TestInitialize ]
+        public void Initialize ( )
         {
-            _logger     = Substitute.For<ILogger>();
+            _logger = Substitute.For < ILogger > ( ) ;
         }
 
         private HasReachedTargetHeightCalculator CreateSut ( )
         {
             return new HasReachedTargetHeightCalculator ( _logger ) ;
         }
+
+        private ILogger _logger ;
     }
 }

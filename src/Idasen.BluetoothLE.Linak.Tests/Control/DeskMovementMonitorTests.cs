@@ -1,32 +1,19 @@
-﻿using System;
-using System.Reactive.Subjects;
-using FluentAssertions;
-using Idasen.BluetoothLE.Linak.Control;
-using Idasen.BluetoothLE.Linak.Interfaces;
-using Microsoft.Reactive.Testing;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NSubstitute;
-using Serilog;
+﻿using System ;
+using System.Reactive.Subjects ;
+using FluentAssertions ;
+using Idasen.BluetoothLE.Linak.Control ;
+using Idasen.BluetoothLE.Linak.Interfaces ;
+using Microsoft.Reactive.Testing ;
+using Microsoft.VisualStudio.TestTools.UnitTesting ;
+using NSubstitute ;
+using Serilog ;
 
 namespace Idasen.BluetoothLE.Linak.Tests.Control
 {
-    [TestClass]
+    [ TestClass ]
     public class DeskMovementMonitorTests
     {
-        private const  int                            DefaultCapacity     = 3;
-
-        private ILogger                        _logger ;
-        private TestScheduler                  _scheduler ;
-        private IDeskHeightAndSpeed            _heightAndSpeed ;
-        private Subject < HeightSpeedDetails > _subjectHeightAndSpeed ;
-        private HeightSpeedDetails             _details1 ;
-        private HeightSpeedDetails             _details2 ;
-        private HeightSpeedDetails             _details3 ;
-        private HeightSpeedDetails             _details4SameHeightAsDetails1 ;
-        private HeightSpeedDetails             _details5SameHeightAsDetails1 ;
-        private HeightSpeedDetails             _details6WithSpeedZero ;
-        private HeightSpeedDetails             _details7WithSpeedZero ;
-        private HeightSpeedDetails             _details8WithSpeedZero ;
+        private const int DefaultCapacity = 3 ;
 
         [ TestInitialize ]
         public void Initialize ( )
@@ -68,62 +55,76 @@ namespace Idasen.BluetoothLE.Linak.Tests.Control
                                                               0 ) ;
         }
 
-        private DeskMovementMonitor CreateSut()
+        private DeskMovementMonitor CreateSut ( )
         {
             var sut = new DeskMovementMonitor ( _logger ,
                                                 _scheduler ,
                                                 _heightAndSpeed ) ;
 
-            sut.Initialize ( DefaultCapacity );
+            sut.Initialize ( DefaultCapacity ) ;
 
-            return sut;
+            return sut ;
         }
 
-        [TestMethod]
-        public void OnHeightAndSpeedChanged_ForThreeEventsWithDifferentHeightAndSpeed_DoesNotThrow()
+        [ TestMethod ]
+        public void OnHeightAndSpeedChanged_ForThreeEventsWithDifferentHeightAndSpeed_DoesNotThrow ( )
         {
-            using var sut = CreateSut();
+            using var sut = CreateSut ( ) ;
 
-            _subjectHeightAndSpeed.OnNext(_details1);
-            _subjectHeightAndSpeed.OnNext(_details2);
-            _subjectHeightAndSpeed.OnNext(_details3);
+            _subjectHeightAndSpeed.OnNext ( _details1 ) ;
+            _subjectHeightAndSpeed.OnNext ( _details2 ) ;
+            _subjectHeightAndSpeed.OnNext ( _details3 ) ;
 
-            Action action = () => _scheduler.Start();
+            Action action = ( ) => _scheduler.Start ( ) ;
 
-            action.Should()
-                  .NotThrow<ApplicationException>();
+            action.Should ( )
+                  .NotThrow < ApplicationException > ( ) ;
         }
 
-        [TestMethod]
-        public void OnHeightAndSpeedChanged_ForThreeEventsWithSameHeight_Throws()
+        [ TestMethod ]
+        public void OnHeightAndSpeedChanged_ForThreeEventsWithSameHeight_Throws ( )
         {
-            using var sut = CreateSut();
+            using var sut = CreateSut ( ) ;
 
-            _subjectHeightAndSpeed.OnNext(_details1);
-            _subjectHeightAndSpeed.OnNext(_details4SameHeightAsDetails1);
-            _subjectHeightAndSpeed.OnNext(_details5SameHeightAsDetails1);
+            _subjectHeightAndSpeed.OnNext ( _details1 ) ;
+            _subjectHeightAndSpeed.OnNext ( _details4SameHeightAsDetails1 ) ;
+            _subjectHeightAndSpeed.OnNext ( _details5SameHeightAsDetails1 ) ;
 
-            Action action = () => _scheduler.Start();
+            Action action = ( ) => _scheduler.Start ( ) ;
 
-            action.Should()
-                  .Throw<ApplicationException>()
-                  .WithMessage(DeskMovementMonitor.HeightDidNotChange);
+            action.Should ( )
+                  .Throw < ApplicationException > ( )
+                  .WithMessage ( DeskMovementMonitor.HeightDidNotChange ) ;
         }
 
-        [TestMethod]
-        public void OnHeightAndSpeedChanged_ForThreeEventsWithSpeedZero_Throws()
+        [ TestMethod ]
+        public void OnHeightAndSpeedChanged_ForThreeEventsWithSpeedZero_Throws ( )
         {
-            using var sut = CreateSut();
+            using var sut = CreateSut ( ) ;
 
-            _subjectHeightAndSpeed.OnNext(_details6WithSpeedZero);
-            _subjectHeightAndSpeed.OnNext(_details7WithSpeedZero);
-            _subjectHeightAndSpeed.OnNext(_details8WithSpeedZero);
+            _subjectHeightAndSpeed.OnNext ( _details6WithSpeedZero ) ;
+            _subjectHeightAndSpeed.OnNext ( _details7WithSpeedZero ) ;
+            _subjectHeightAndSpeed.OnNext ( _details8WithSpeedZero ) ;
 
-            Action action = () => _scheduler.Start();
+            Action action = ( ) => _scheduler.Start ( ) ;
 
-            action.Should()
-                  .Throw<ApplicationException>()
-                  .WithMessage(DeskMovementMonitor.SpeedWasZero);
+            action.Should ( )
+                  .Throw < ApplicationException > ( )
+                  .WithMessage ( DeskMovementMonitor.SpeedWasZero ) ;
         }
+
+        private HeightSpeedDetails  _details1 ;
+        private HeightSpeedDetails  _details2 ;
+        private HeightSpeedDetails  _details3 ;
+        private HeightSpeedDetails  _details4SameHeightAsDetails1 ;
+        private HeightSpeedDetails  _details5SameHeightAsDetails1 ;
+        private HeightSpeedDetails  _details6WithSpeedZero ;
+        private HeightSpeedDetails  _details7WithSpeedZero ;
+        private HeightSpeedDetails  _details8WithSpeedZero ;
+        private IDeskHeightAndSpeed _heightAndSpeed ;
+
+        private ILogger                        _logger ;
+        private TestScheduler                  _scheduler ;
+        private Subject < HeightSpeedDetails > _subjectHeightAndSpeed ;
     }
 }

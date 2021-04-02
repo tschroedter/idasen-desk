@@ -18,11 +18,11 @@ namespace Idasen.Aop.Aspects
         public void Intercept ( IInvocation invocation )
         {
             if ( Log.IsEnabled ( LogEventLevel.Debug ) )
-                _logger.Debug ( "[LogAspect] "                                   +
-                                $"({invocation.InvocationTarget.GetHashCode():D10}) " +
+                _logger.Debug ( "[LogAspect] "                                          +
+                                $"({invocation.InvocationTarget.GetHashCode ( ):D10}) " +
                                 _converter.Convert ( invocation ) ) ;
 
-            invocation.Proceed();
+            invocation.Proceed ( ) ;
         }
 
         private readonly IInvocationToTextConverter _converter ;

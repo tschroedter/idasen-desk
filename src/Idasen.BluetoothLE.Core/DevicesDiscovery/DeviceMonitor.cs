@@ -167,7 +167,7 @@ namespace Idasen.BluetoothLE.Core.DevicesDiscovery
             if ( ! string.IsNullOrEmpty ( device.Name ) )
                 return true ;
 
-            return storedDevice.Name != device.Name;
+            return storedDevice.Name != device.Name ;
         }
 
         private readonly             ISubject < IDevice > _deviceDiscovered ;

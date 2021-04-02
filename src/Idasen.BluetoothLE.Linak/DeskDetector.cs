@@ -155,11 +155,11 @@ namespace Idasen.BluetoothLE.Linak
 
         private IDesk       _desk ;
         private IDisposable _deskFound ;
+        private IDisposable _deskFoundByAddress ;
         private IDisposable _discovered ;
 
         private IDisposable _nameChanged ;
         private IDisposable _refreshedChanged ;
         private IDisposable _updated ;
-        private IDisposable _deskFoundByAddress ;
     }
 }

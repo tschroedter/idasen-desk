@@ -36,7 +36,7 @@ namespace Idasen.BluetoothLE.Core.DevicesDiscovery
 
             BroadcastTime          = broadcastTime ;
             Address                = address ;
-            MacAddress             = address.ToMacAddress () ;
+            MacAddress             = address.ToMacAddress ( ) ;
             Name                   = name ?? string.Empty ;
             RawSignalStrengthInDBm = rawSignalStrengthInDBm ;
         }
@@ -48,7 +48,7 @@ namespace Idasen.BluetoothLE.Core.DevicesDiscovery
         public ulong Address { get ; }
 
         /// <inheritdoc />
-        public string MacAddress { get ;  }
+        public string MacAddress { get ; }
 
         /// <inheritdoc />
         public string Name
@@ -73,9 +73,9 @@ namespace Idasen.BluetoothLE.Core.DevicesDiscovery
                            : Name ;
 
             return
-                $"Name = {name}, "                                                           +
-                $"MacAddress = {MacAddress}, "                                                     +
-                $"Address = {Address}, "                                                        +
+                $"Name = {name}, "                                                                   +
+                $"MacAddress = {MacAddress}, "                                                       +
+                $"Address = {Address}, "                                                             +
                 $"BroadcastTime = {BroadcastTime.ToString ( "O" , CultureInfo.InvariantCulture )}, " +
                 $"RawSignalStrengthInDBm = {RawSignalStrengthInDBm}dB" ;
         }
