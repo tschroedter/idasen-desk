@@ -68,10 +68,8 @@ namespace Idasen.BluetoothLE.Characteristics.Common
 
             using var reader = new StreamReader ( stream ) ;
 
-            var config = new CsvConfiguration ( CultureInfo.InvariantCulture )
-                         {
-                             Delimiter = ","
-                         } ;
+            var config = new CsvConfiguration ( CultureInfo.InvariantCulture ,
+                                                delimiter : "," ) ;
 
             using var csv = new CsvReader ( reader ,
                                             config ) ;
