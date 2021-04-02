@@ -31,9 +31,11 @@ namespace Idasen.BluetoothLE.Core.Tests
         {
             const ulong value = 2546828283860 ;
 
+            // ReSharper disable StringLiteralTypo
             value.ToMacAddress ( )
                  .Should ( )
                  .Be ( "250FACB8FD4" ) ;
+            // ReSharper restore StringLiteralTypo
         }
 
         [ TestMethod ]

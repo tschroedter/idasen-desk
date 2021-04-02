@@ -353,10 +353,8 @@ namespace Idasen.BluetoothLE.Linak.Tests.Control.ConstructorNullTesters
         public void CircularBuffer_SetIndex_ReplacesElement ( )
         {
             var buffer = new CircularBuffer < int > ( 5 ,
-                                                      new [ ] { 0 , 1 , 2 , 3 , 4 } ) ;
+                                                      new [ ] { 0 , 1 , 2 , 3 , 4 } ) { [ 1 ] = 10 , [ 3 ] = 30 } ;
 
-            buffer [ 1 ] = 10 ;
-            buffer [ 3 ] = 30 ;
 
             buffer.ToArray ( )
                   .Should ( )

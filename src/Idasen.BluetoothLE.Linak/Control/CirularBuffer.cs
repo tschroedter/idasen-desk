@@ -137,24 +137,18 @@ namespace Idasen.BluetoothLE.Linak.Control
             get
             {
                 if ( IsEmpty )
-                    throw new IndexOutOfRangeException ( string.Format ( "Cannot access index {0}. Buffer is empty" ,
-                                                                         index ) ) ;
+                    throw new IndexOutOfRangeException ( $"Cannot access index {index}. Buffer is empty" ) ;
                 if ( index >= _size )
-                    throw new IndexOutOfRangeException ( string.Format ( "Cannot access index {0}. Buffer size is {1}" ,
-                                                                         index ,
-                                                                         _size ) ) ;
+                    throw new IndexOutOfRangeException ( $"Cannot access index {index}. Buffer size is {_size}" ) ;
                 var actualIndex = InternalIndex ( index ) ;
                 return _buffer [ actualIndex ] ;
             }
             set
             {
                 if ( IsEmpty )
-                    throw new IndexOutOfRangeException ( string.Format ( "Cannot access index {0}. Buffer is empty" ,
-                                                                         index ) ) ;
+                    throw new IndexOutOfRangeException ( $"Cannot access index {index}. Buffer is empty" ) ;
                 if ( index >= _size )
-                    throw new IndexOutOfRangeException ( string.Format ( "Cannot access index {0}. Buffer size is {1}" ,
-                                                                         index ,
-                                                                         _size ) ) ;
+                    throw new IndexOutOfRangeException ( $"Cannot access index {index}. Buffer size is {_size}" ) ;
                 var actualIndex = InternalIndex ( index ) ;
                 _buffer [ actualIndex ] = value ;
             }
@@ -340,8 +334,10 @@ namespace Idasen.BluetoothLE.Linak.Control
         private int _start ;
 
         // doing ArrayOne and ArrayTwo methods returning ArraySegment<T> as seen here:
+        // ReSharper disable CommentTypo
         // http://www.boost.org/doc/libs/1_37_0/libs/circular_buffer/doc/circular_buffer.html#classboost_1_1circular__buffer_1957cccdcb0c4ef7d80a34a990065818d
         // http://www.boost.org/doc/libs/1_37_0/libs/circular_buffer/doc/circular_buffer.html#classboost_1_1circular__buffer_1f5081a54afbc2dfc1a7fb20329df7d5b
+        // ReSharper restore CommentTypo
         // should help a lot with the code.
 
         #region Array items easy access.

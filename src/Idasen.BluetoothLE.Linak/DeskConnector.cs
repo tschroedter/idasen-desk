@@ -142,7 +142,7 @@ namespace Idasen.BluetoothLE.Linak
         }
 
         /// <inheritdoc />
-        public async Task < bool > MoveDown ( ) // todo check test for asyn
+        public async Task < bool > MoveDown ( ) // todo check test for async
         {
             if ( ! TryGetDeskMover ( out var deskMover ) )
                 return false ;
@@ -169,7 +169,7 @@ namespace Idasen.BluetoothLE.Linak
         }
 
         /// <inheritdoc />
-        public async Task < bool > MoveStop ( ) // todo check test for asyn
+        public async Task < bool > MoveStop ( ) // todo check test for async
         {
             if ( ! TryGetDeskMover ( out var deskMover ) )
                 return false ;
