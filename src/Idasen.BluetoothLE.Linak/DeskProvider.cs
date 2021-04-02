@@ -45,8 +45,8 @@ namespace Idasen.BluetoothLE.Linak
         /// <inheritdoc />
         public async Task < (bool , IDesk) > TryGetDesk ( CancellationToken token )
         {
-            if ( Desk != null )
-                return ( true , Desk ) ;
+            Desk?.Dispose();
+            Desk = null;
 
             try
             {
@@ -141,6 +141,7 @@ namespace Idasen.BluetoothLE.Linak
         /// <inheritdoc />
         public void Dispose ( )
         {
+            Desk?.Dispose (  ); // todo test
             _deskDetected?.Dispose ( ) ;
             _detector?.Dispose ( ) ;
         }
