@@ -1,5 +1,4 @@
-﻿using System ;
-using Castle.DynamicProxy ;
+﻿using Castle.DynamicProxy ;
 using Idasen.Aop.Interfaces ;
 using JetBrains.Annotations ;
 using Serilog ;
@@ -19,21 +18,11 @@ namespace Idasen.Aop.Aspects
         public void Intercept ( IInvocation invocation )
         {
             if ( Log.IsEnabled ( LogEventLevel.Debug ) )
-                _logger.Debug ( "[LogAspect] " +
+                _logger.Debug ( "[LogAspect] "                                   +
+                                $"({invocation.InvocationTarget.GetHashCode():D10}) " +
                                 _converter.Convert ( invocation ) ) ;
 
-            try
-            {
-                invocation.Proceed ( ) ;
-            }
-            catch ( Exception exception )
-            {
-                if ( Log.IsEnabled ( LogEventLevel.Error ) )
-                    _logger.Error ( _converter.Convert ( invocation ) ,
-                                    exception ) ;
-
-                throw ;
-            }
+            invocation.Proceed();
         }
 
         private readonly IInvocationToTextConverter _converter ;
