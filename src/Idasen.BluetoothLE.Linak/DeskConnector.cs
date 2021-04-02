@@ -114,6 +114,7 @@ namespace Idasen.BluetoothLE.Linak
             _disposableHeight?.Dispose ( ) ;
             _heightAndSpeed?.Dispose ( ) ;
             _subscriber?.Dispose ( ) ;
+            _device?.Dispose();
         }
 
         /// <inheritdoc />
@@ -246,7 +247,6 @@ namespace Idasen.BluetoothLE.Linak
         private readonly ISubject < IEnumerable < byte > > _deviceNameChanged ;
         private readonly IDeskHeightAndSpeedFactory        _heightAndSpeedFactory ;
         private readonly ILogger                           _logger ;
-        private readonly IDeskMovementMonitorFactory       _monitorFactory ;
         private readonly IDeskMoverFactory                 _moverFactory ;
         private readonly IScheduler                        _scheduler ;
         private readonly ISubject < uint >                 _subjectHeight ;
