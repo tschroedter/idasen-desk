@@ -125,6 +125,7 @@ namespace Idasen.BluetoothLE.Core.ServicesDiscovery.Wrappers
         /// <inheritdoc />
         public void Dispose ( )
         {
+            _provider.Dispose ( );
             _gattServicesDictionary.Dispose ( ) ;
             _session.Dispose ( ) ;
             _subscriberConnectionStatus.Dispose ( ) ;
