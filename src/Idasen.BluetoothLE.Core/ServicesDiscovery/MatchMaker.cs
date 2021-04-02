@@ -38,15 +38,18 @@ namespace Idasen.BluetoothLE.Core.ServicesDiscovery
         {
             var device = await _deviceFactory.FromBluetoothAddressAsync ( address ) ;
 
+            var macAddress = address.ToMacAddress ( ) ;
+
             if ( device == null )
             {
-                var message = $"Failed to find device with address '{address}'" ;
+                var message = $"Failed to find device with MAC Address '{macAddress}' " +
+                              $"(Address {address})" ;
 
                 throw new ArgumentNullException ( message ) ;
             }
 
-            _logger.Information ( $"[{device.Id}] DeviceId after FromBluetoothAddressAsync: {device.Id}" ) ;
-            _logger.Information ( $"[{device.Id}] ConnectionStatus after FromBluetoothAddressAsync: {device.ConnectionStatus}" ) ;
+            _logger.Information ( $"[{macAddress}] DeviceId after FromBluetoothAddressAsync: {device.Id}" ) ;
+            _logger.Information ( $"[{macAddress}] ConnectionStatus after FromBluetoothAddressAsync: {device.ConnectionStatus}" ) ;
 
             return device ;
         }
