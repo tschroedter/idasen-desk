@@ -32,7 +32,8 @@ namespace Idasen.BluetoothLE.Linak
             [ NotNull ] IDeskCharacteristics                       deskCharacteristics ,
             [ NotNull ] IDeskHeightAndSpeedFactory                 heightAndSpeedFactory ,
             [ NotNull ] IDeskCommandExecutorFactory                commandExecutorFactory ,
-            [ NotNull ] IDeskMoverFactory                          moverFactory )
+            [ NotNull ] IDeskMoverFactory                          moverFactory ,
+            [ NotNull ] IErrorManager                              errorManager )
         {
             Guard.ArgumentNotNull ( logger ,
                                     nameof ( logger ) ) ;
@@ -58,6 +59,8 @@ namespace Idasen.BluetoothLE.Linak
                                     nameof ( commandExecutorFactory ) ) ;
             Guard.ArgumentNotNull ( moverFactory ,
                                     nameof ( moverFactory ) ) ;
+            Guard.ArgumentNotNull ( errorManager ,
+                                    nameof ( errorManager ) ) ; // todo testing
 
             _logger                 = logger ;
             _scheduler              = scheduler ;
@@ -70,6 +73,7 @@ namespace Idasen.BluetoothLE.Linak
             _heightAndSpeedFactory  = heightAndSpeedFactory ;
             _commandExecutorFactory = commandExecutorFactory ;
             _moverFactory           = moverFactory ;
+            _errorManager           = errorManager ;
 
             _device.GattServicesRefreshed
                    .Throttle ( TimeSpan.FromSeconds ( 1 ) )
@@ -93,10 +97,10 @@ namespace Idasen.BluetoothLE.Linak
         {
             get
             {
-                _logger.Debug ( $"***Finished = {_deskMover?.Finished.GetHashCode ( )}" ) ;
+                _logger.Debug ( $"[{GetHashCode ( )}] *** Finished = {_deskMover?.Finished.GetHashCode ( )}" ) ;
 
                 if ( _deskMover == null )
-                    _logger.Error ( $"{_deskMover} is null\r\n{Environment.StackTrace}" ) ;
+                    _logger.Error ( $"_deskMover is null\r\n{Environment.StackTrace}" ) ;
 
                 return _deskMover?.Finished ;
             }
@@ -195,6 +199,28 @@ namespace Idasen.BluetoothLE.Linak
 
         private async Task OnGattServicesRefreshed ( GattCommunicationStatus status )
         {
+            try
+            {
+                if ( status != GattCommunicationStatus.Success )
+                    _subjectRefreshed.OnNext ( false ) ;
+                else
+                    await DoRefresh ( status ) ;
+            }
+            catch ( Exception e )
+            {
+                const string message = "Failed to refresh Gatt services";
+
+                _logger.Error ( e ,
+                                message ) ;
+
+                _errorManager.PublishForMessage ( message ) ;
+
+                _subjectRefreshed.OnNext ( false ) ;
+            }
+        }
+
+        private async Task DoRefresh ( GattCommunicationStatus status )
+        {
             _logger.Information ( $"[{_device.Id}] "                               +
                                   $"ConnectionStatus: {_device.ConnectionStatus} " +
                                   $"GattCommunicationStatus: {status} "            +
@@ -245,6 +271,7 @@ namespace Idasen.BluetoothLE.Linak
         private readonly IDeskCharacteristics              _deskCharacteristics ;
         private readonly IDevice                           _device ;
         private readonly ISubject < IEnumerable < byte > > _deviceNameChanged ;
+        private readonly IErrorManager                     _errorManager ;
         private readonly IDeskHeightAndSpeedFactory        _heightAndSpeedFactory ;
         private readonly ILogger                           _logger ;
         private readonly IDeskMoverFactory                 _moverFactory ;
