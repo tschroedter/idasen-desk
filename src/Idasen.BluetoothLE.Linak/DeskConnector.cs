@@ -97,10 +97,14 @@ namespace Idasen.BluetoothLE.Linak
         {
             get
             {
-                _logger.Debug ( $"[{GetHashCode ( )}] *** Finished = {_deskMover?.Finished.GetHashCode ( )}" ) ;
-
                 if ( _deskMover == null )
-                    _logger.Error ( $"_deskMover is null\r\n{Environment.StackTrace}" ) ;
+                {
+                    // to do don't know the real reason why _deskMover is null
+                    _logger.Error ( $"_deskMover is null, trying to force refresh" ) ;
+                    DoRefresh ( GattCommunicationStatus.Success ).Wait(TimeSpan.FromSeconds ( 30 )) ;
+                }
+                else
+                    _logger.Debug($"[{GetHashCode()}] *** Finished = {_deskMover?.Finished.GetHashCode()}");
 
                 return _deskMover?.Finished ;
             }
