@@ -55,7 +55,10 @@ namespace Idasen.BluetoothLE.Linak
                 await _taskRunner.Run ( ( ) => DoTryGetDesk ( token ) ,
                                         token ) ;
 
-                return token.IsCancellationRequested
+                if ( token.IsCancellationRequested )
+                    return ( false , null ) ;
+
+                return Desk == null
                            ? ( false , null )
                            : ( true , Desk ) ;
             }
