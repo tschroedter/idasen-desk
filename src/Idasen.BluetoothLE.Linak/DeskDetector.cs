@@ -45,7 +45,6 @@ namespace Idasen.BluetoothLE.Linak
         {
             _refreshedChanged?.Dispose ( ) ;
             _deskFound?.Dispose ( ) ;
-            _deskFoundByAddress?.Dispose ( ) ;
             _nameChanged?.Dispose ( ) ;
             _discovered?.Dispose ( ) ;
             _updated?.Dispose ( ) ;
@@ -77,11 +76,7 @@ namespace Idasen.BluetoothLE.Linak
                                    .ObserveOn ( _scheduler )
                                    .Subscribe ( OnDeviceNameChanged ) ;
 
-            // todo testing
-            _deskFoundByAddress = _monitor.DeviceDiscovered
-                                          .ObserveOn ( _scheduler )
-                                          .Where ( x => x.Address == deviceAddress )
-                                          .Subscribe ( OnDeskDiscovered ) ;
+            // todo find by address if possible
 
             _deskFound = _monitor.DeviceNameUpdated
                                  .ObserveOn ( _scheduler )
@@ -107,6 +102,9 @@ namespace Idasen.BluetoothLE.Linak
 
         private async void OnDeskDiscovered ( IDevice device )
         {
+            if ( _desk != null )
+                return ;
+
             try
             {
                 _logger.Information ( $"[{device.MacAddress}] Desk '{device.Name}' discovered" ) ;
@@ -155,7 +153,6 @@ namespace Idasen.BluetoothLE.Linak
 
         private IDesk       _desk ;
         private IDisposable _deskFound ;
-        private IDisposable _deskFoundByAddress ;
         private IDisposable _discovered ;
 
         private IDisposable _nameChanged ;
