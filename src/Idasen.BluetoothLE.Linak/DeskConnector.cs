@@ -100,11 +100,13 @@ namespace Idasen.BluetoothLE.Linak
                 if ( _deskMover == null )
                 {
                     // to do don't know the real reason why _deskMover is null
-                    _logger.Error ( $"_deskMover is null, trying to force refresh" ) ;
-                    DoRefresh ( GattCommunicationStatus.Success ).Wait(TimeSpan.FromSeconds ( 30 )) ;
+                    _logger.Error ( "_deskMover is null, trying to force refresh" ) ;
+                    DoRefresh ( GattCommunicationStatus.Success ).Wait ( TimeSpan.FromSeconds ( 30 ) ) ;
                 }
                 else
-                    _logger.Debug($"[{GetHashCode()}] *** Finished = {_deskMover?.Finished.GetHashCode()}");
+                {
+                    _logger.Debug ( $"[{GetHashCode ( )}] *** Finished = {_deskMover?.Finished.GetHashCode ( )}" ) ;
+                }
 
                 return _deskMover?.Finished ;
             }
@@ -212,7 +214,7 @@ namespace Idasen.BluetoothLE.Linak
             }
             catch ( Exception e )
             {
-                const string message = "Failed to refresh Gatt services";
+                const string message = "Failed to refresh Gatt services" ;
 
                 _logger.Error ( e ,
                                 message ) ;
