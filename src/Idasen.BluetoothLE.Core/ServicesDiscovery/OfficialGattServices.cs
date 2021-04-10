@@ -91,8 +91,11 @@ namespace Idasen.BluetoothLE.Core.ServicesDiscovery
 
             using var reader = new StreamReader ( stream ) ;
 
-            var config = new CsvConfiguration ( CultureInfo.InvariantCulture ,
-                                                delimiter : "," ) ;
+            var config = new CsvConfiguration ( CultureInfo.InvariantCulture )
+                         {
+                             Delimiter = "," ,
+                             HasHeaderRecord = true
+                         } ;
 
             using var csv = new CsvReader ( reader ,
                                             config ) ;

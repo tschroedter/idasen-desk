@@ -1,4 +1,4 @@
-﻿Name,UniformTypeIdentifier,AssignedNumber,ProfileSpecification
+Name,UniformTypeIdentifier,AssignedNumber,ProfileSpecification
 Generic Access,org.bluetooth.service.generic_access,0x1800,GSS
 Alert Notification Service,org.bluetooth.service.alert_notification,0x1811,GSS
 Automation IO,org.bluetooth.service.automation_io,0x1815,GSS
