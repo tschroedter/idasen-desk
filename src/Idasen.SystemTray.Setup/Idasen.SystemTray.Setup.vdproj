@@ -21,13 +21,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_801687383F254B229EA0C205BED5F3B1"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_B4D40249F691491D99A79C688119D516"
+        "MsmKey" = "8:_EEEA76101125462AACCFBA13AA08C139"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -56,6 +50,14 @@
             "PrerequisitesLocation" = "2:1"
             "Url" = "8:"
             "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.7.2"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.7.2 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.7.2"
+                    }
+                }
             }
         }
         "Release"
@@ -80,6 +82,14 @@
             "PrerequisitesLocation" = "2:1"
             "Url" = "8:"
             "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.7.2"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.7.2 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.7.2"
+                    }
+                }
             }
         }
     }
@@ -116,46 +126,6 @@
             {
             "SourcePath" = "8:..\\Idasen.SystemTray\\Images\\install-cup-xl.ico"
             "TargetName" = "8:install-cup-xl.ico"
-            "Tag" = "8:"
-            "Folder" = "8:_C4F8EF14A9154C2C9A197A0939E875BA"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_801687383F254B229EA0C205BED5F3B1"
-            {
-            "SourcePath" = "8:..\\Idasen.SystemTray\\bin\\publish\\Idasen.SystemTray.exe"
-            "TargetName" = "8:Idasen.SystemTray.exe"
-            "Tag" = "8:"
-            "Folder" = "8:_C4F8EF14A9154C2C9A197A0939E875BA"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B4D40249F691491D99A79C688119D516"
-            {
-            "SourcePath" = "8:..\\Idasen.SystemTray\\bin\\publish\\Idasen.SystemTray.pdb"
-            "TargetName" = "8:Idasen.SystemTray.pdb"
             "Tag" = "8:"
             "Folder" = "8:_C4F8EF14A9154C2C9A197A0939E875BA"
             "Condition" = "8:"
@@ -360,32 +330,32 @@
         }
         "Shortcut"
         {
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_331A8286B990424B98784603BC7E2E45"
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_76564F60C3F344319DD02040299A29F2"
             {
-            "Name" = "8:Idasen System Tray"
+            "Name" = "8:Idasen.SystemTray"
             "Arguments" = "8:"
             "Description" = "8:"
             "ShowCmd" = "3:1"
             "IconIndex" = "3:0"
             "Transitive" = "11:FALSE"
-            "Target" = "8:_801687383F254B229EA0C205BED5F3B1"
-            "Folder" = "8:_0A2E9388E2C44D6CADEE421013EE771E"
-            "WorkingFolder" = "8:_C4F8EF14A9154C2C9A197A0939E875BA"
-            "Icon" = "8:_4CC4A39201FB4659B96E9A626184A35A"
-            "Feature" = "8:"
-            }
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_64AAE36EC0EC474B9BA1F95767C92570"
-            {
-            "Name" = "8:Idasen System Tray"
-            "Arguments" = "8:"
-            "Description" = "8:"
-            "ShowCmd" = "3:1"
-            "IconIndex" = "3:0"
-            "Transitive" = "11:FALSE"
-            "Target" = "8:_801687383F254B229EA0C205BED5F3B1"
+            "Target" = "8:_EEEA76101125462AACCFBA13AA08C139"
             "Folder" = "8:_8D4797BAC14E4C87BE35710BF9604359"
             "WorkingFolder" = "8:_C4F8EF14A9154C2C9A197A0939E875BA"
-            "Icon" = "8:_4CC4A39201FB4659B96E9A626184A35A"
+            "Icon" = "8:"
+            "Feature" = "8:"
+            }
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_790E450915AB4D06A125953FC6725923"
+            {
+            "Name" = "8:Idasen.SystemTray"
+            "Arguments" = "8:"
+            "Description" = "8:"
+            "ShowCmd" = "3:1"
+            "IconIndex" = "3:0"
+            "Transitive" = "11:FALSE"
+            "Target" = "8:_EEEA76101125462AACCFBA13AA08C139"
+            "Folder" = "8:_0A2E9388E2C44D6CADEE421013EE771E"
+            "WorkingFolder" = "8:_C4F8EF14A9154C2C9A197A0939E875BA"
+            "Icon" = "8:"
             "Feature" = "8:"
             }
         }
@@ -787,6 +757,35 @@
         }
         "ProjectOutput"
         {
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_EEEA76101125462AACCFBA13AA08C139"
+            {
+            "SourcePath" = "8:..\\Idasen.SystemTray\\obj\\Debug\\netcoreapp3.1\\apphost.exe"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_C4F8EF14A9154C2C9A197A0939E875BA"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            "ProjectOutputGroupRegister" = "3:1"
+            "OutputConfiguration" = "8:"
+            "OutputGroupCanonicalName" = "8:PublishItems"
+            "OutputProjectGuid" = "8:{44B3BFDF-A5FF-48CD-9C99-33928E660498}"
+            "ShowKeyOutput" = "11:TRUE"
+            "PublishProfilePath" = "8:Properties\\PublishProfiles\\FolderProfile.pubxml"
+                "ExcludeFilters"
+                {
+                }
+            }
         }
     }
 }
