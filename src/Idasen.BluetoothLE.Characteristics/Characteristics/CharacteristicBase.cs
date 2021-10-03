@@ -72,9 +72,20 @@ namespace Idasen.BluetoothLE.Characteristics.Characteristics
                                                                                         GattServiceUuid ) ;
 
             if ( service == null )
+            {
+                foreach ( var service1 in Device.GattServices )
+                {
+                    Logger.Information ( $"Service: DeviceId = {service1.Key.DeviceId}, Uuid = {service1.Key.Uuid}" );
+
+                    foreach ( var characteristic in service1.Value.Characteristics)
+                    {
+                        Logger.Information($"Characteristic: {characteristic.ServiceUuid} {characteristic.Uuid} {characteristic.UserDescription}");
+                    }
+                }
                 throw new ArgumentException ( "Failed, can't find GattDeviceService for " +
                                               $"UUID {GattServiceUuid}" ,
                                               nameof ( GattServiceUuid ) ) ;
+            }
 
             Logger.Information ( $"Found GattDeviceService with UUID {GattServiceUuid}" ) ;
 
