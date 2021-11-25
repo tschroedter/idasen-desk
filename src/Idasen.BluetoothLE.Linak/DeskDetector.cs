@@ -102,8 +102,17 @@ namespace Idasen.BluetoothLE.Linak
 
         private async void OnDeskDiscovered ( IDevice device )
         {
-            if ( _desk != null )
-                return ;
+            lock (this)
+            {
+                if ( _desk != null || IsConnecting )
+                {
+                    _logger.Debug( $"({device.Address}) Already trying to connect to desk" );
+
+                    return;
+                }
+
+                IsConnecting = true ;
+            }
 
             try
             {
@@ -118,10 +127,13 @@ namespace Idasen.BluetoothLE.Linak
             }
             catch ( Exception e )
             {
-                Console.WriteLine ( e ) ;
-                throw ;
+                _logger.Error( $"Failed to connect to desk '{device.Name}' ({e.Message})" );
+
+                IsConnecting = false ;
             }
         }
+
+        public bool IsConnecting { get; private set; }
 
         private void OnDeviceUpdated ( IDevice device )
         {
