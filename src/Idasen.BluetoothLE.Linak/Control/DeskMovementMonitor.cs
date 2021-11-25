@@ -15,6 +15,8 @@ namespace Idasen.BluetoothLE.Linak.Control
     public class DeskMovementMonitor
         : IDeskMovementMonitor
     {
+        internal const int MinimumNumberOfItems = 3;
+
         public DeskMovementMonitor ( [ NotNull ] ILogger             logger ,
                                      [ NotNull ] IScheduler          scheduler ,
                                      [ NotNull ] IDeskHeightAndSpeed heightAndSpeed )
@@ -69,11 +71,11 @@ namespace Idasen.BluetoothLE.Linak.Control
 
             _logger.Debug ( "Good, height changed" ) ;
 
-            var speed        = History [ 0 ].Speed ;
-            var allSameSpeed = History.All ( x => x.Speed == speed ) ;
+            var speed = History [ 0 ].Speed ;
 
-            if ( allSameSpeed )
-                throw new ApplicationException ( SpeedWasZero ) ;
+            if ( History.Count() > MinimumNumberOfItems &&
+                 History.All(x => x.Speed == 0 ) )
+                    throw new ApplicationException(SpeedWasZero);
 
             _logger.Debug ( "Good, speed changed" ) ;
         }
