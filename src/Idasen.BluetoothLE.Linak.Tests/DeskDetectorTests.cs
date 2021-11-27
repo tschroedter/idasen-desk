@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Reactive.Concurrency;
 using System.Reactive.Subjects;
 using FluentAssertions;
 using Idasen.BluetoothLE.Common.Tests;
 using Idasen.BluetoothLE.Core.Interfaces.DevicesDiscovery;
 using Idasen.BluetoothLE.Linak.Interfaces;
+using Microsoft.Reactive.Testing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using Serilog;
@@ -19,7 +19,7 @@ namespace Idasen.BluetoothLE.Linak.Tests
         private const uint DeviceTimeout = 456;
 
         private ILogger _logger;
-        private IScheduler _scheduler;
+        private TestScheduler _scheduler;
         private IDeviceMonitorWithExpiry _monitor;
         private IDeskFactory _factory;
         private ISubject<IDesk> _deskDetected;
@@ -28,12 +28,14 @@ namespace Idasen.BluetoothLE.Linak.Tests
         private Subject<IDevice> _nameChanged;
         private Subject<IDevice> _deskFound;
         private IDesk _desk;
+        private IDevice _device;
+        private IDesk _deskOther;
 
         [TestInitialize]
         public void Initialize()
         {
             _logger = Substitute.For<ILogger>();
-            _scheduler = Substitute.For<IScheduler>();
+            _scheduler = new TestScheduler();
             _monitor = Substitute.For<IDeviceMonitorWithExpiry>();
             _factory = Substitute.For<IDeskFactory>();
             _deskDetected = new Subject<IDesk>();
@@ -50,13 +52,20 @@ namespace Idasen.BluetoothLE.Linak.Tests
             _deskFound = new Subject<IDevice>();
             _monitor.DeviceUpdated.Returns(_deskFound);
 
+            _device = Substitute.For<IDevice>();
+            _device.Name.Returns(DeviceName);
+            _device.Address.Returns(DeviceAddress);
+
             _desk = Substitute.For<IDesk>();
+            _deskOther = Substitute.For<IDesk>();
+            _factory.CreateAsync(_device.Address)
+                .Returns(_desk, _deskOther);
         }
 
         [TestMethod]
         public void Initialize_ForDeviceNameIsNull_Throws()
         {
-            Action action = () => CreateSut().Initialize(null,
+            Action action = () => CreateSut().Initialize(null!,
                     DeviceAddress,
                     DeviceTimeout);
 
@@ -78,13 +87,21 @@ namespace Idasen.BluetoothLE.Linak.Tests
         }
 
         [TestMethod]
-        public void Start_ConnectedToDesk_DisposesDesk()
+        public void Start_ConnectedToAnotherDesk_DisposesOldDesk()
         {
-            CreateSut().Initialize(DeviceName,
+            var sut = CreateSut().Initialize(DeviceName,
                 DeviceAddress,
                 DeviceTimeout);
 
-            // todo connect to desk
+            // connect to desk
+            sut.Start();
+
+            _discovered.OnNext(_device);
+
+            _scheduler.Start();
+
+            // connect to desk again, so that the old one is disposed
+            sut.Start();
 
             _desk.Received()
                 .Dispose();
@@ -101,21 +118,8 @@ namespace Idasen.BluetoothLE.Linak.Tests
                 .Dispose();
         }
 
-        [TestMethod]
-        public void Dispose_Invoked_DisposesUpdated()
-        {
-            // todo
-            var disposable = Substitute.For<IDisposable>();
-            _updated.Subscribe(Arg.Any<Action<IDevice>>())
-                .Returns(disposable);
-
-            var sut = CreateSut();
-
-            sut.Dispose();
-
-            disposable.Received()
-                .Dispose();
-        }
+        // todo figure out how to test disposing of IDisposables of Subjects
+        // todo improve code coverage
 
         private DeskDetector CreateSut()
         {

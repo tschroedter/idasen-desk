@@ -3,7 +3,6 @@ using FluentAssertions ;
 using Idasen.BluetoothLE.Linak.Interfaces ;
 using Microsoft.Reactive.Testing ;
 using Selkie.AutoMocking ;
-using Serilog ;
 
 namespace Idasen.BluetoothLE.Linak.Tests
 {
@@ -15,7 +14,6 @@ namespace Idasen.BluetoothLE.Linak.Tests
         [ AutoDataTestMethod ]
         public void RefreshedChanged_ForEventRaised_GetsNotified (
             Desk                 _ ,
-            ILogger              logger ,
             IDeskConnector       connector ,
             Subject < TSubject > subject ,
             TestScheduler        scheduler )
