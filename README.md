@@ -5,7 +5,7 @@ This repository is about controlling [Ikea's Idasen Desk](https://www.ikea.com/a
 
 # Installation
 ## Idasen.SystemTray.Setup.msi
-Download and run the installer from here: ![Idasen.SystemTray.Setup.msi](https://github.com/tschroedter/idasen-desk/releases/download/V0.0.80/Idasen.SystemTray.Setup.msi) 
+Download and run the installer from here: ![Idasen.SystemTray.Setup.msi](https://github.com/tschroedter/idasen-desk/releases/download/V0.0.84/Idasen.SystemTray.Setup.msi) 
 
 ---
 
