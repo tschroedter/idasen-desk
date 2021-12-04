@@ -129,7 +129,7 @@ namespace Idasen.BluetoothLE.Linak.Tests.Control.ConstructorNullTesters
             foreach ( var item in buffer )
             {
                 item.Should ( )
-                    .IsSameOrEqualTo ( x ) ;
+                    .Be( x );
                 x ++ ;
             }
         }

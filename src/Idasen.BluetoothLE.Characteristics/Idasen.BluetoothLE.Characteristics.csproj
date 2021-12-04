@@ -23,7 +23,7 @@
 
   <ItemGroup>
     <PackageReference Include="Autofac.Extras.DynamicProxy" Version="6.0.0" />
-    <PackageReference Include="CsvHelper" Version="26.1.0" />
+    <PackageReference Include="CsvHelper" Version="27.2.1" />
   </ItemGroup>
 
   <ItemGroup>

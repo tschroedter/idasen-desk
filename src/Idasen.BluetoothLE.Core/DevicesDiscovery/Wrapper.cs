@@ -92,7 +92,7 @@ namespace Idasen.BluetoothLE.Core.DevicesDiscovery
         private void Unsubscribe ( )
         {
             _watcher.Received -= OnReceivedHandler ;
-            _watcher.Stopped  -= OnStoppedHandler ;
+               _watcher.Stopped  -= OnStoppedHandler ;
         }
 
         private void OnStoppedHandler ( AdvertisementWatcher                            sender ,

@@ -38,7 +38,7 @@ namespace Idasen.BluetoothLE.Core.Tests.ServicesDiscovery
                                    } ;
 
             action.Should ( )
-                  .Throw < ArgumentNullException > ( ) ;
+                  .ThrowAsync< ArgumentNullException > ( ) ;
         }
     }
 }

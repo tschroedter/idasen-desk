@@ -17,14 +17,15 @@ namespace Idasen.BluetoothLE.Characteristics.Tests.Common
     public class RawValueReaderTests
     {
         [ AutoDataTestMethod ]
-        public void TryReadValueAsync_ForCharacteristicIsNull_Throws (
+        public async Task TryReadValueAsync_ForCharacteristicIsNull_Throws (
             RawValueReader sut )
         {
             Func < Task > action = async ( ) => { await sut.TryReadValueAsync ( null! ) ; } ;
 
-            action.Should ( )
-                  .Throw < ArgumentNullException > ( )
-                  .WithParameter ( "characteristic" ) ;
+            await action.Should ( )
+                        .ThrowAsync< ArgumentNullException > ( )
+                        .WithParameterAsync ( "characteristic" )
+                        .ConfigureAwait(false) ;
         }
 
         [ AutoDataTestMethod ]
