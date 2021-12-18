@@ -7,7 +7,7 @@ using JetBrains.Annotations ;
 using Polly ;
 using Serilog ;
 
-namespace Idasen.Dapr
+namespace Idasen.RESTAPI
 {
     internal class DeskManager
         : IDeskManager

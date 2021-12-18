@@ -2,7 +2,7 @@
 using Idasen.BluetoothLE.Linak.Interfaces ;
 using JetBrains.Annotations ;
 
-namespace Idasen.Dapr.Dtos.Profiles
+namespace Idasen.RESTAPI.Dtos.Profiles
 {
     [ UsedImplicitly ]
     internal class DeskDtoProfile

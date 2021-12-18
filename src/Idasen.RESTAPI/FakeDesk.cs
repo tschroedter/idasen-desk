@@ -5,7 +5,7 @@ using System.Threading ;
 using System.Threading.Tasks ;
 using Idasen.BluetoothLE.Linak ;
 
-namespace Idasen.Dapr
+namespace Idasen.RESTAPI
 {
     internal class FakeDesk : IRestDesk
     {

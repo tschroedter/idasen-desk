@@ -5,7 +5,7 @@ using Idasen.BluetoothLE.Linak ;
 using Idasen.BluetoothLE.Linak.Interfaces ;
 using Serilog ;
 
-namespace Idasen.Dapr
+namespace Idasen.RESTAPI
 {
     public class RestDesk : IRestDesk
     {

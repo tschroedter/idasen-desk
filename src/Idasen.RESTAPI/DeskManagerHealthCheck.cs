@@ -5,7 +5,7 @@ using Idasen.BluetoothLE.Core ;
 using JetBrains.Annotations ;
 using Microsoft.Extensions.Diagnostics.HealthChecks ;
 
-namespace Idasen.Dapr
+namespace Idasen.RESTAPI
 {
     public class DeskManagerHealthCheck : IHealthCheck
     {

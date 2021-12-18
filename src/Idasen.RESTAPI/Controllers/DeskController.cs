@@ -1,10 +1,10 @@
 ﻿using System.Threading.Tasks ;
 using AutoMapper ;
-using Idasen.Dapr.Dtos ;
+using Idasen.RESTAPI.Dtos ;
 using Microsoft.AspNetCore.Mvc ;
 using Microsoft.Extensions.Logging ;
 
-namespace Idasen.Dapr.Controllers
+namespace Idasen.RESTAPI.Controllers
 {
     [ Route ( "desk/" ) ]
     public class DeskController : ControllerBase

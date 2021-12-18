@@ -1,4 +1,4 @@
-﻿namespace Idasen.Dapr.Dtos
+﻿namespace Idasen.RESTAPI.Dtos
 {
     public class HeightAndSpeedDto
     {

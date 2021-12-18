@@ -1,18 +1,21 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using System ;
+using Microsoft.AspNetCore.Hosting ;
 
-namespace Idasen.RestApi
+namespace Idasen.RESTAPI
 {
     internal class Program
     {
-        static void Main(string[] args)
+        private static void Main ( )
         {
-            var host = new WebHostBuilder()
-                .UseKestrel()
-                .UseUrls("http://*:5000")
-                .UseStartup<Startup>()
-                .Build();
+            Console.WriteLine ( "Hello World!" ) ;
 
-            host.Run();
+            var host = new WebHostBuilder ( )
+                      .UseKestrel ( )
+                      .UseUrls ( "http://*:5000" )
+                      .UseStartup < Startup > ( )
+                      .Build ( ) ;
+
+            host.Run ( ) ;
         }
     }
 }

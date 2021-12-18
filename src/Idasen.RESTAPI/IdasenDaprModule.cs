@@ -3,7 +3,7 @@ using Autofac ;
 using Autofac.Extras.DynamicProxy ;
 using Idasen.Aop ;
 
-namespace Idasen.Dapr
+namespace Idasen.RESTAPI
 {
     // ReSharper disable once InconsistentNaming
     [ ExcludeFromCodeCoverage ]
