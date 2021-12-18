@@ -10,6 +10,8 @@ namespace Idasen.RESTAPI
 {
     public class Startup
     {
+        private const bool UseFakeDeskManager = true ;
+
         [ UsedImplicitly ]
         private static Task < bool > DeskManager => DeskManagerRegistrations.DeskManager ;
 
@@ -21,7 +23,9 @@ namespace Idasen.RESTAPI
             services.AddHealthChecks ( )
                     .AddCheck < DeskManagerHealthCheck > ( "Desk Manager" ) ;
 
-            services.AddSingleton ( c => CreateDeskManager ( true ) ) ;
+            // todo the flag UseFakeDeskManager will come form settings or config file
+            // ReSharper disable once RedundantArgumentDefaultValue
+            services.AddSingleton ( c => CreateDeskManager (UseFakeDeskManager) ) ;
         }
 
         public void Configure ( IApplicationBuilder app )

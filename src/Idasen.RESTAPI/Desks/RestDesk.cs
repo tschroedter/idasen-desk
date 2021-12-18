@@ -1,5 +1,7 @@
 ﻿using System ;
 using System.Collections.Generic ;
+using System.Reactive.Concurrency ;
+using System.Reactive.Linq ;
 using System.Threading.Tasks ;
 using Idasen.BluetoothLE.Linak ;
 using Idasen.BluetoothLE.Linak.Interfaces ;
@@ -10,18 +12,24 @@ namespace Idasen.RESTAPI.Desks
 {
     public class RestDesk : IRestDesk
     {
-        public RestDesk ( ILogger logger ,
-                          IDesk   desk )
+        public RestDesk ( ILogger    logger ,
+                          IScheduler scheduler,
+                          IDesk      desk)
         {
             _logger = logger ;
             _desk   = desk ;
 
             Height = 0u ;
             Speed  = 0 ;
+
+            _disposable = _desk.HeightAndSpeedChanged
+                               .ObserveOn ( scheduler )
+                               .SubscribeAsync ( OnHeightAndSpeedChanged ) ;
         }
 
         public void Dispose ( )
         {
+            _disposable.Dispose ( ) ;
             _desk.Dispose ( ) ;
         }
 
@@ -70,8 +78,8 @@ namespace Idasen.RESTAPI.Desks
             _desk.MoveStop ( ) ;
         }
 
-        public uint Height { get ; }
-        public int  Speed  { get ; }
+        public uint Height { get ; private set ; }
+        public int  Speed  { get ; private set ; }
 
         public Task < bool > MoveToAsync ( uint targetHeight )
         {
@@ -93,6 +101,14 @@ namespace Idasen.RESTAPI.Desks
             return DoAction ( MoveStop ) ;
         }
 
+        private Task OnHeightAndSpeedChanged ( HeightSpeedDetails details )
+        {
+            Height = details.Height ;
+            Speed  = details.Speed ;
+
+            return Task.CompletedTask ;
+        }
+
         private async Task < bool > DoAction ( Action action )
         {
             try
@@ -110,7 +126,8 @@ namespace Idasen.RESTAPI.Desks
             }
         }
 
-        private readonly IDesk _desk ;
+        private readonly IDesk       _desk ;
+        private readonly IDisposable _disposable ;
 
         private readonly ILogger _logger ;
     }
