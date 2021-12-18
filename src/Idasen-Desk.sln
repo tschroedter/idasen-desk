@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30002.166
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31912.275
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Idasen.ConsoleApp", "Idasen.ConsoleApp\Idasen.ConsoleApp.csproj", "{BB7A1771-4B08-439F-B55E-307AC82FB05A}"
 EndProject
@@ -27,7 +27,9 @@ Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Idasen.SystemTray.Setup", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Idasen.BluetoothLE.Common.Tests", "Idasen.BluetoothLE.Common.Tests\Idasen.BluetoothLE.Common.Tests.csproj", "{E363AA7E-28BD-4EF5-B709-3E4DB28BCD04}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Idasen.Aop", "Idasen.Aop\Idasen.Aop.csproj", "{5597EE14-0D54-483A-B3F7-22C739FCEFEF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Idasen.Aop", "Idasen.Aop\Idasen.Aop.csproj", "{5597EE14-0D54-483A-B3F7-22C739FCEFEF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Idasen.Dapr", "Idasen.Dapr\Idasen.Dapr.csproj", "{45C34EF7-AA8A-453C-9A7C-B068DB7A6674}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -81,6 +83,10 @@ Global
 		{5597EE14-0D54-483A-B3F7-22C739FCEFEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5597EE14-0D54-483A-B3F7-22C739FCEFEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5597EE14-0D54-483A-B3F7-22C739FCEFEF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{45C34EF7-AA8A-453C-9A7C-B068DB7A6674}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45C34EF7-AA8A-453C-9A7C-B068DB7A6674}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45C34EF7-AA8A-453C-9A7C-B068DB7A6674}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45C34EF7-AA8A-453C-9A7C-B068DB7A6674}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

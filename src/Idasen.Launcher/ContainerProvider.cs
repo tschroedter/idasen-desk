@@ -10,6 +10,13 @@ namespace Idasen.Launcher
 {
     public static class ContainerProvider
     {
+        static ContainerProvider ( )
+        {
+            Builder = new ContainerBuilder ( ) ;
+        }
+
+        public static ContainerBuilder Builder { get ; private set ; }
+
         public static IContainer Create (
             string                  appName ,
             string                  appLogFileName ,
@@ -18,21 +25,19 @@ namespace Idasen.Launcher
             Log.Logger = LoggerProvider.CreateLogger ( appName ,
                                                        appLogFileName ) ;
 
-            var builder = new ContainerBuilder ( ) ;
-
-            builder.RegisterLogger ( ) ;
-            builder.RegisterModule < BluetoothLECoreModule > ( ) ;
-            builder.RegisterModule < BluetoothLELinakModule > ( ) ;
+            Builder.RegisterLogger ( ) ;
+            Builder.RegisterModule < BluetoothLECoreModule > ( ) ;
+            Builder.RegisterModule < BluetoothLELinakModule > ( ) ;
 
             if ( otherModules == null )
-                return builder.Build ( ) ;
+                return Builder.Build ( ) ;
 
             foreach ( var otherModule in otherModules )
             {
-                builder.RegisterModule ( otherModule ) ;
+                Builder.RegisterModule ( otherModule ) ;
             }
 
-            return builder.Build ( ) ;
+            return Builder.Build ( ) ;
         }
     }
 }
