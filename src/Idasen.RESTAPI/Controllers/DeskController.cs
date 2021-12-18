@@ -114,6 +114,19 @@ namespace Idasen.RESTAPI.Controllers
             return Ok ( ) ;
         }
 
+        [Route( "stop")]
+        [HttpPost]
+        public async Task<IActionResult> Stop()
+        {
+            if (!_manager.IsReady)
+                return StatusCode(500,
+                                  "DeskManger isn't ready");
+
+            await _manager.Desk.MoveStopAsync();
+
+            return Ok();
+        }
+
         private readonly ILogger < DeskController > _logger ;
 
         private readonly IDeskManager _manager ;
