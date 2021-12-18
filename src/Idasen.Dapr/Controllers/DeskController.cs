@@ -2,45 +2,45 @@
 using AutoMapper ;
 using Idasen.Dapr.Dtos ;
 using Microsoft.AspNetCore.Mvc ;
+using Microsoft.Extensions.Logging ;
 
 namespace Idasen.Dapr.Controllers
 {
     [ Route ( "desk/" ) ]
     public class DeskController : ControllerBase
     {
-        public DeskController ( IMapper      mapper ,
-                                IDeskManager manager )
+        public DeskController ( ILogger < DeskController > logger ,
+                                IMapper                    mapper ,
+                                IDeskManager               manager )
         {
+            _logger  = logger ;
             _mapper  = mapper ;
             _manager = manager ;
         }
 
-        [ Route ( "/" ) ]
+        [ Route ( "" ) ]
         public IActionResult GetDesk ( )
         {
-            if ( _manager.IsReady )
-            {
-                var dto = _mapper.Map < DeskDto > ( _manager.Desk ) ;
+            _logger.LogInformation ( "" ) ;
+            if ( ! _manager.IsReady )
+                return StatusCode ( 500 ,
+                                    "DeskManger isn't ready" ) ;
 
-                return Ok ( dto ) ;
-            }
+            var dto = _mapper.Map < DeskDto > ( _manager.Desk ) ;
 
-            return StatusCode ( 500 ,
-                                "DeskManger isn't ready" ) ;
+            return Ok ( dto ) ;
         }
 
         [ Route ( "height" ) ]
         public IActionResult GetHeight ( )
         {
-            if ( _manager.IsReady )
-            {
-                var dto = new HeightDto { Height = _manager.Desk.Height } ;
+            if ( ! _manager.IsReady )
+                return StatusCode ( 500 ,
+                                    "DeskManger isn't ready" ) ;
 
-                return Ok ( dto ) ;
-            }
+            var dto = new HeightDto { Height = _manager.Desk.Height } ;
 
-            return StatusCode ( 500 ,
-                                "DeskManger isn't ready" ) ;
+            return Ok ( dto ) ;
         }
 
         [ Route ( "height" ) ]
@@ -59,40 +59,63 @@ namespace Idasen.Dapr.Controllers
         [ Route ( "speed" ) ]
         public IActionResult GetSpeed ( )
         {
-            if ( _manager.IsReady )
-            {
-                var dto = new SpeedDto
-                          {
-                              Speed = _manager.Desk.Speed
-                          } ;
+            if ( ! _manager.IsReady )
+                return StatusCode ( 500 ,
+                                    "DeskManger isn't ready" ) ;
 
-                return Ok ( dto ) ;
-            }
+            var dto = new SpeedDto
+                      {
+                          Speed = _manager.Desk.Speed
+                      } ;
 
-            return StatusCode ( 500 ,
-                                "DeskManger isn't ready" ) ;
+            return Ok ( dto ) ;
         }
 
         [ Route ( "heightandspeed" ) ]
         public IActionResult GetHeightAndSpeed ( )
         {
-            if ( _manager.IsReady )
-            {
-                var dto = new HeightAndSpeedDto
-                          {
-                              Height = _manager.Desk.Height ,
-                              Speed  = _manager.Desk.Speed
-                          } ;
+            if ( ! _manager.IsReady )
+                return StatusCode ( 500 ,
+                                    "DeskManger isn't ready" ) ;
 
-                return Ok ( dto ) ;
-            }
+            var dto = new HeightAndSpeedDto
+                      {
+                          Height = _manager.Desk.Height ,
+                          Speed  = _manager.Desk.Speed
+                      } ;
 
-            return StatusCode ( 500 ,
-                                "DeskManger isn't ready" ) ;
+            return Ok ( dto ) ;
         }
 
-        private readonly IDeskManager _manager ;
+        [ Route ( "up" ) ]
+        [ HttpPost ]
+        public async Task < IActionResult > Up ( )
+        {
+            if ( ! _manager.IsReady )
+                return StatusCode ( 500 ,
+                                    "DeskManger isn't ready" ) ;
 
-        private readonly IMapper _mapper ;
+            await _manager.Desk.MoveUpAsync ( ) ;
+
+            return Ok ( ) ;
+        }
+
+        [ Route ( "down" ) ]
+        [ HttpPost ]
+        public async Task < IActionResult > Down ( )
+        {
+            if ( ! _manager.IsReady )
+                return StatusCode ( 500 ,
+                                    "DeskManger isn't ready" ) ;
+
+            await _manager.Desk.MoveDownAsync ( ) ;
+
+            return Ok ( ) ;
+        }
+
+        private readonly ILogger < DeskController > _logger ;
+
+        private readonly IDeskManager _manager ;
+        private readonly IMapper      _mapper ;
     }
 }
