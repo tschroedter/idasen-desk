@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks ;
 using AutoMapper ;
 using Idasen.RESTAPI.Dtos ;
+using Idasen.RESTAPI.Interfaces ;
 using Microsoft.AspNetCore.Mvc ;
 using Microsoft.Extensions.Logging ;
 

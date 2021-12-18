@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks ;
+using Idasen.RESTAPI.Interfaces ;
 
-namespace Idasen.RESTAPI
+namespace Idasen.RESTAPI.Desks
 {
     internal class FakeDeskManager : IDeskManager
     {

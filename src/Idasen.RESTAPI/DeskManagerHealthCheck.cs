@@ -2,6 +2,7 @@
 using System.Threading ;
 using System.Threading.Tasks ;
 using Idasen.BluetoothLE.Core ;
+using Idasen.RESTAPI.Interfaces ;
 using JetBrains.Annotations ;
 using Microsoft.Extensions.Diagnostics.HealthChecks ;
 

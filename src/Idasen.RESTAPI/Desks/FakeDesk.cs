@@ -4,8 +4,9 @@ using System.Reactive.Subjects ;
 using System.Threading ;
 using System.Threading.Tasks ;
 using Idasen.BluetoothLE.Linak ;
+using Idasen.RESTAPI.Interfaces ;
 
-namespace Idasen.RESTAPI
+namespace Idasen.RESTAPI.Desks
 {
     internal class FakeDesk : IRestDesk
     {

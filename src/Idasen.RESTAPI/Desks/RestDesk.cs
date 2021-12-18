@@ -3,9 +3,10 @@ using System.Collections.Generic ;
 using System.Threading.Tasks ;
 using Idasen.BluetoothLE.Linak ;
 using Idasen.BluetoothLE.Linak.Interfaces ;
+using Idasen.RESTAPI.Interfaces ;
 using Serilog ;
 
-namespace Idasen.RESTAPI
+namespace Idasen.RESTAPI.Desks
 {
     public class RestDesk : IRestDesk
     {

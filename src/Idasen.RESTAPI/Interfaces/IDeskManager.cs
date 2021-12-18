@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks ;
 
-namespace Idasen.RESTAPI
+namespace Idasen.RESTAPI.Interfaces
 {
     public interface IDeskManager
     {

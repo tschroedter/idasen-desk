@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks ;
 using Idasen.BluetoothLE.Linak.Interfaces ;
 
-namespace Idasen.RESTAPI
+namespace Idasen.RESTAPI.Interfaces
 {
     // todo make IDesk methods async
     public interface IRestDesk : IDesk

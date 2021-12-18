@@ -1,9 +1,10 @@
 ﻿using System.Threading.Tasks ;
 using Autofac ;
 using Idasen.Launcher ;
+using Idasen.RESTAPI.Interfaces ;
 using JetBrains.Annotations ;
 
-namespace Idasen.RESTAPI
+namespace Idasen.RESTAPI.Desks
 {
     public static class DeskManagerRegistrations
     {
@@ -16,7 +17,7 @@ namespace Idasen.RESTAPI
 
         public static IDeskManager CreateRealDeskManager()
         {
-            ContainerProvider.Builder.RegisterModule(new IdasenDaprModule());
+            ContainerProvider.Builder.RegisterModule(new IdasenRESTAPIModule());
 
             var container = ContainerProvider.Create("Idasen.ConsoleDapr",
                                                      "Idasen.ConsoleDapr.log");

@@ -2,12 +2,14 @@
 using Autofac ;
 using Autofac.Extras.DynamicProxy ;
 using Idasen.Aop ;
+using Idasen.RESTAPI.Desks ;
+using Idasen.RESTAPI.Interfaces ;
 
 namespace Idasen.RESTAPI
 {
     // ReSharper disable once InconsistentNaming
     [ ExcludeFromCodeCoverage ]
-    public class IdasenDaprModule
+    public class IdasenRESTAPIModule
         : Module
     {
         protected override void Load ( ContainerBuilder builder )
