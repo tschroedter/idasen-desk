@@ -1,7 +1,5 @@
 ﻿using System.Reflection ;
 using System.Threading.Tasks ;
-using Autofac ;
-using Idasen.Launcher ;
 using JetBrains.Annotations ;
 using Microsoft.AspNetCore.Builder ;
 using Microsoft.Extensions.DependencyInjection ;
@@ -10,7 +8,8 @@ namespace Idasen.RESTAPI
 {
     public class Startup
     {
-        [ UsedImplicitly ] private static Task < bool > DeskManager ;
+        [ UsedImplicitly ]
+        private static Task < bool > DeskManager => DeskManagerRegistrations.DeskManager ;
 
         public void ConfigureServices ( IServiceCollection services )
         {
@@ -33,31 +32,8 @@ namespace Idasen.RESTAPI
         public IDeskManager CreateDeskManager ( bool fakeDeskManager = false )
         {
             return fakeDeskManager
-                       ? CreateFakeDeskManager ( )
-                       : CreateRealDeskManager ( ) ;
-        }
-
-        private IDeskManager CreateFakeDeskManager ( )
-        {
-            return new FakeDeskManager ( ) ;
-        }
-
-        private static IDeskManager CreateRealDeskManager ( )
-        {
-            ContainerProvider.Builder.RegisterModule ( new IdasenDaprModule ( ) ) ;
-
-            var container = ContainerProvider.Create ( "Idasen.ConsoleDapr" ,
-                                                       "Idasen.ConsoleDapr.log" ) ;
-
-            var manager = container.Resolve < IDeskManager > ( ) ;
-
-            while ( ! ( DeskManager is { Result: true } ) )
-            {
-                DeskManager = Task.Run ( async ( ) => await manager.Initialise ( )
-                                                                   .ConfigureAwait ( false ) ) ;
-            }
-
-            return manager ;
+                       ? DeskManagerRegistrations.CreateFakeDeskManager( )
+                       : DeskManagerRegistrations.CreateRealDeskManager( ) ;
         }
     }
 }
