@@ -1,6 +1,8 @@
 ﻿using System.Reflection ;
 using System.Threading.Tasks ;
+using FluentValidation.AspNetCore ;
 using Idasen.RESTAPI.Desks ;
+using Idasen.RESTAPI.Dtos.Validators ;
 using Idasen.RESTAPI.Interfaces ;
 using JetBrains.Annotations ;
 using Microsoft.AspNetCore.Builder ;
@@ -19,7 +21,16 @@ namespace Idasen.RESTAPI
         {
             services.AddAutoMapper ( Assembly.GetExecutingAssembly ( ) ) ;
 
-            services.AddControllers ( ) ;
+            services.AddControllers ( options =>
+                                      {
+                                          options.Filters.Add ( new ValidationFilter ( ) ) ;
+                                      } );
+
+            services.AddFluentValidation ( options =>
+                                           {
+                                               options.RegisterValidatorsFromAssemblyContaining< Startup > ( ) ;
+                                           } ) ;
+
             services.AddHealthChecks ( )
                     .AddCheck < DeskManagerHealthCheck > ( "Desk Manager" ) ;
 
