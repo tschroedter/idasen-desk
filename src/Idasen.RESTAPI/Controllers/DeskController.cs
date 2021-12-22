@@ -1,12 +1,14 @@
 ﻿using System.Threading.Tasks ;
 using AutoMapper ;
 using Idasen.RESTAPI.Dtos ;
+using Idasen.RESTAPI.Filters ;
 using Idasen.RESTAPI.Interfaces ;
 using Microsoft.AspNetCore.Mvc ;
 using Microsoft.Extensions.Logging ;
 
 namespace Idasen.RESTAPI.Controllers
 {
+    [ ApiKeyAuth ]
     [ Route ( "desk/" ) ]
     public class DeskController : ControllerBase
     {
@@ -114,17 +116,17 @@ namespace Idasen.RESTAPI.Controllers
             return Ok ( ) ;
         }
 
-        [Route( "stop")]
-        [HttpPost]
-        public async Task<IActionResult> Stop()
+        [ Route ( "stop" ) ]
+        [ HttpPost ]
+        public async Task < IActionResult > Stop ( )
         {
-            if (!_manager.IsReady)
-                return StatusCode(500,
-                                  "DeskManger isn't ready");
+            if ( ! _manager.IsReady )
+                return StatusCode ( 500 ,
+                                    "DeskManger isn't ready" ) ;
 
-            await _manager.Desk.MoveStopAsync();
+            await _manager.Desk.MoveStopAsync ( ) ;
 
-            return Ok();
+            return Ok ( ) ;
         }
 
         private readonly ILogger < DeskController > _logger ;

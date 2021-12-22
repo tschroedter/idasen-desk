@@ -3,7 +3,7 @@ using Idasen.RESTAPI.Interfaces ;
 
 namespace Idasen.RESTAPI.Desks
 {
-    internal class FakeDeskManager : IDeskManager
+    public class FakeDeskManager : IDeskManager
     {
         public FakeDeskManager ( )
         {
