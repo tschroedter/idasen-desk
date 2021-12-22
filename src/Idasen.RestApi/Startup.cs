@@ -4,14 +4,13 @@ using Idasen.RESTAPI.Desks ;
 using Idasen.RESTAPI.Filters ;
 using Idasen.RESTAPI.Interfaces ;
 using Microsoft.AspNetCore.Builder ;
+using Microsoft.Extensions.Configuration ;
 using Microsoft.Extensions.DependencyInjection ;
 
 namespace Idasen.RESTAPI
 {
     public class Startup
     {
-        private const bool UseFakeDeskManager = true ;
-
         public void ConfigureServices ( IServiceCollection services )
         {
             services.AddAutoMapper ( Assembly.GetExecutingAssembly ( ) ) ;
@@ -28,7 +27,7 @@ namespace Idasen.RESTAPI
 
             // todo the flag UseFakeDeskManager will come form settings or config file
             // ReSharper disable once RedundantArgumentDefaultValue
-            services.AddSingleton ( c => CreateDeskManager ( UseFakeDeskManager ) ) ;
+            services.AddSingleton ( c => CreateDeskManager ( ) ) ;
         }
 
         public void Configure ( IApplicationBuilder builder )
@@ -38,11 +37,24 @@ namespace Idasen.RESTAPI
             builder.UseEndpoints ( endpoints => { endpoints.MapControllers ( ) ; } ) ;
         }
 
-        public IDeskManager CreateDeskManager ( bool fakeDeskManager = false )
+        public IDeskManager CreateDeskManager ( )
         {
-            return fakeDeskManager
+            var useFake = GetUseFakeDeskManager ( ) ;
+
+            return useFake
                        ? DeskManagerRegistrations.CreateFakeDeskManager ( )
                        : DeskManagerRegistrations.CreateRealDeskManager ( ) ;
+        }
+
+        private static bool GetUseFakeDeskManager()
+        {
+            var builder = new ConfigurationBuilder().AddJsonFile("appsettings.json",
+                                                                 optional: true,
+                                                                 reloadOnChange: true);
+
+            var configuration = builder.Build();
+
+            return configuration.GetValue<bool>("use-fake-desk-manager");
         }
     }
 }
