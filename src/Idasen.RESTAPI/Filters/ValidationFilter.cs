@@ -10,13 +10,13 @@ namespace Idasen.RESTAPI.Filters
         {
         }
 
-        public async Task OnActionExecutionAsync ( ActionExecutingContext  context ,
+        public Task OnActionExecutionAsync ( ActionExecutingContext  context ,
                                              ActionExecutionDelegate next )
         {
             if (!context.ModelState.IsValid)
                 context.Result = new BadRequestObjectResult(context.ModelState);
 
-            await next ( ) ;
+            return next();
         }
     }
 }
