@@ -1,6 +1,7 @@
 ﻿using System ;
 using Microsoft.AspNetCore.Hosting ;
 using Microsoft.Extensions.Configuration ;
+using Microsoft.Extensions.Logging ;
 
 namespace Idasen.RESTAPI
 {
@@ -13,6 +14,13 @@ namespace Idasen.RESTAPI
             var host = new WebHostBuilder ( )
                       .UseKestrel ( )
                       .UseUrls ( "http://*:5000" )
+                      .ConfigureLogging ( logging =>
+                                          {
+                                              logging.ClearProviders ( ) ;
+
+                                              logging.AddConsole ( ) ;
+                                              logging.AddDebug ( ) ;
+                                          })
                       .UseStartup < Startup > ( )
                       .ConfigureAppConfiguration ( AddAppSettingsJson ( ) )
                       .Build ( ) ;

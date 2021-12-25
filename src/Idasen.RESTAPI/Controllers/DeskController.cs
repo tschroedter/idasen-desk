@@ -14,11 +14,13 @@ namespace Idasen.RESTAPI.Controllers
     {
         public DeskController ( ILogger < DeskController > logger ,
                                 IMapper                    mapper ,
-                                IDeskManager               manager )
+                                IDeskManager               manager ,
+                                ISettingsRepository        repository )
         {
-            _logger  = logger ;
-            _mapper  = mapper ;
-            _manager = manager ;
+            _logger     = logger ;
+            _mapper     = mapper ;
+            _manager    = manager ;
+            _repository = repository ;
         }
 
         [ Route ( "" ) ]
@@ -54,7 +56,8 @@ namespace Idasen.RESTAPI.Controllers
                 return StatusCode ( 500 ,
                                     "DeskManger isn't ready" ) ;
 
-            await _manager.Desk.MoveToAsync ( dto.Height ) ;
+            await _manager.Desk.MoveToAsync ( dto.Height )
+                          .ConfigureAwait ( false ) ;
 
             return Ok ( _manager.Desk.Height ) ;
         }
@@ -98,7 +101,8 @@ namespace Idasen.RESTAPI.Controllers
                 return StatusCode ( 500 ,
                                     "DeskManger isn't ready" ) ;
 
-            await _manager.Desk.MoveUpAsync ( ) ;
+            await _manager.Desk.MoveUpAsync ( )
+                          .ConfigureAwait ( false ) ;
 
             return Ok ( ) ;
         }
@@ -111,7 +115,8 @@ namespace Idasen.RESTAPI.Controllers
                 return StatusCode ( 500 ,
                                     "DeskManger isn't ready" ) ;
 
-            await _manager.Desk.MoveDownAsync ( ) ;
+            await _manager.Desk.MoveDownAsync ( )
+                          .ConfigureAwait ( false ) ;
 
             return Ok ( ) ;
         }
@@ -124,14 +129,76 @@ namespace Idasen.RESTAPI.Controllers
                 return StatusCode ( 500 ,
                                     "DeskManger isn't ready" ) ;
 
-            await _manager.Desk.MoveStopAsync ( ) ;
+            await _manager.Desk.MoveStopAsync ( )
+                          .ConfigureAwait ( false ) ;
+
+            return Ok ( ) ;
+        }
+
+        [Route( "settings")]
+        [HttpGet]
+        public async Task<IActionResult> SettingsGet(string id)
+        {
+            if (!_manager.IsReady)
+                return StatusCode(500,
+                                  "DeskManger isn't ready");
+
+            // todo general settings
+            var settings = await _repository.GetDefaultSettings(id)
+                                            .ConfigureAwait(false);
+
+            if (settings == null)
+                return BadRequest($"Failed to get settings for key '{id}'");
+
+            return Ok(settings);
+        }
+
+        [Route ( "settings/{id}" ) ]
+        [ HttpGet ]
+        public async Task < IActionResult > SettingsGetById ( string id )
+        {
+            if ( ! _manager.IsReady )
+                return StatusCode ( 500 ,
+                                    "DeskManger isn't ready" ) ;
+
+            // todo general settings
+            var settings = await _repository.GetSettingsById ( id )
+                                            .ConfigureAwait ( false ) ;
+
+            if ( settings == null )
+                return BadRequest ( $"Failed to get settings for key '{id}'" ) ;
+
+            return Ok ( settings ) ;
+        }
+
+        [ Route ( "settings/{id}" ) ]
+        [ HttpPost ]
+        public async Task < IActionResult > SettingsPost ( string                   id ,
+                                                           [ FromBody ] SettingsDto dto )
+        {
+            // todo general settings
+
+            if ( ! _manager.IsReady )
+                return StatusCode ( 500 ,
+                                    "DeskManger isn't ready" ) ;
+
+            if ( id != dto.Id )
+                return BadRequest ( $"Failed Ids must match ('{id}' != '{dto.Id}')" ) ;
+
+            var result = await _repository.InsertSettings ( dto )
+                                          .ConfigureAwait ( false ) ;
+
+            if ( ! result )
+                return StatusCode ( 500 ,
+                                    $"Failed to store settings {dto}" ) ;
 
             return Ok ( ) ;
         }
 
         private readonly ILogger < DeskController > _logger ;
 
-        private readonly IDeskManager _manager ;
-        private readonly IMapper      _mapper ;
+        private readonly IDeskManager        _manager ;
+        private readonly IMapper             _mapper ;
+        private readonly ISettingsRepository _repository ;
     }
 }

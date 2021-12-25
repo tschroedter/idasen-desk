@@ -16,6 +16,10 @@ namespace Idasen.Launcher
 
         private static ILogger Logger ;
 
+        public static string LogFile { get ; private set ; }
+
+        public static string LogFolder { get ; private set ; }
+
         public static ILogger CreateLogger (
             [ NotNull ] string appName ,
             [ NotNull ] string appLogFileName )
@@ -35,8 +39,6 @@ namespace Idasen.Launcher
             Logger = DoCreateLogger ( appName ,
                                       appLogFileName ) ;
 
-            Logger.Debug ( $"Created logger for '{appName}' in folder '{appLogFileName}'" ) ;
-
             return Logger ;
         }
 
@@ -44,26 +46,32 @@ namespace Idasen.Launcher
             string appName ,
             string appLogFileName )
         {
-            var logFolder = CreateFullPathApplicationFolderName ( appName ) ;
-            var logFile = CreateFullPathLogFileName ( appName ,
-                                                      appLogFileName ) ;
+            LogFolder = CreateFullPathApplicationFolderName ( appName ) ;
+            LogFile = CreateFullPathLogFileName ( appName ,
+                                                  appLogFileName ) ;
 
-            if ( ! Directory.Exists ( logFolder ) )
-                Directory.CreateDirectory ( logFolder ) ;
+            if ( ! Directory.Exists ( LogFolder ) )
+                Directory.CreateDirectory ( LogFolder ) ;
 
-            return new LoggerConfiguration ( )
-                  .MinimumLevel
-                  .Debug ( )
-                  .Enrich
-                  .WithCaller ( )
-                  .WriteTo.Console ( LogEventLevel.Debug ,
-                                     LogTemplate ,
-                                     theme : AnsiConsoleTheme.Code )
-                  .WriteTo
-                  .File ( logFile ,
-                          LogEventLevel.Debug ,
-                          LogTemplate )
-                  .CreateLogger ( ) ;
+            var logger = new LoggerConfiguration ( )
+                        .MinimumLevel
+                        .Debug ( )
+                        .Enrich
+                        .WithCaller ( )
+                        .WriteTo.Console ( LogEventLevel.Debug ,
+                                           LogTemplate ,
+                                           theme : AnsiConsoleTheme.Code )
+                        .WriteTo
+                        .File ( LogFile ,
+                                LogEventLevel.Debug ,
+                                LogTemplate )
+                        .CreateLogger ( ) ;
+
+            var message = $"Created logger for '{appName}' in folder '{LogFile}'" ;
+
+            Logger.Information ( message ) ;
+
+            return logger ;
         }
 
 #pragma warning disable SecurityIntelliSenseCS // MS Security rules violation

@@ -25,6 +25,8 @@ namespace Idasen.RESTAPI
             services.AddHealthChecks ( )
                     .AddCheck < DeskManagerHealthCheck > ( "Desk Manager" ) ;
 
+            services.AddTransient < ISettingsRepository , SettingsRepository > ( ) ;
+
             // todo the flag UseFakeDeskManager will come form settings or config file
             // ReSharper disable once RedundantArgumentDefaultValue
             services.AddSingleton ( c => CreateDeskManager ( ) ) ;
