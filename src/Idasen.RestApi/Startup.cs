@@ -6,6 +6,7 @@ using Idasen.RESTAPI.Interfaces ;
 using Microsoft.AspNetCore.Builder ;
 using Microsoft.Extensions.Configuration ;
 using Microsoft.Extensions.DependencyInjection ;
+using Microsoft.Extensions.Logging ;
 
 namespace Idasen.RESTAPI
 {
@@ -24,6 +25,8 @@ namespace Idasen.RESTAPI
 
             services.AddHealthChecks ( )
                     .AddCheck < DeskManagerHealthCheck > ( "Desk Manager" ) ;
+
+            services.AddLogging ( config => config.AddConfiguration ( GetLoggingConfiguration ( ) ) );
 
             services.AddTransient < ISettingsRepository , SettingsRepository > ( ) ;
 
@@ -50,13 +53,22 @@ namespace Idasen.RESTAPI
 
         private static bool GetUseFakeDeskManager()
         {
+            return GetConfiguration().GetValue<bool>("use-fake-desk-manager");
+        }
+
+        private static IConfiguration GetLoggingConfiguration()
+        {
+            return GetConfiguration().GetSection ("Logging");
+        }
+
+        private static IConfigurationRoot GetConfiguration()
+        {
             var builder = new ConfigurationBuilder().AddJsonFile("appsettings.json",
                                                                  optional: true,
                                                                  reloadOnChange: true);
 
             var configuration = builder.Build();
-
-            return configuration.GetValue<bool>("use-fake-desk-manager");
+            return configuration;
         }
     }
 }

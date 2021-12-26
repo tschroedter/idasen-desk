@@ -26,7 +26,6 @@ namespace Idasen.RESTAPI.Controllers
         [ Route ( "" ) ]
         public IActionResult GetDesk ( )
         {
-            _logger.LogInformation ( "" ) ;
             if ( ! _manager.IsReady )
                 return StatusCode ( 500 ,
                                     "DeskManger isn't ready" ) ;
