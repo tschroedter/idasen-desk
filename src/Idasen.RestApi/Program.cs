@@ -5,6 +5,12 @@ using Microsoft.Extensions.Logging ;
 
 namespace Idasen.RESTAPI
 {
+    /// <summary>
+    /// This Program needs to be started with DAPR. The RESTAPI is using the
+    /// DAPR statestore and will be called from DAPR.
+    /// How to start?
+    /// dapr run --app-id IdasenRESTAPI --app-port 5000 --dapr-http-port 3500 .\Idasen.RESTAPI.exe
+    /// </summary>
     internal class Program
     {
         private static void Main ( )
@@ -19,7 +25,7 @@ namespace Idasen.RESTAPI
                                               logging.ClearProviders ( ) ;
                                               logging.AddConsole ( ) ;
                                               logging.AddDebug ( ) ;
-                                          })
+                                          } )
                       .UseStartup < Startup > ( )
                       .ConfigureAppConfiguration ( AddAppSettingsJson ( ) )
                       .Build ( ) ;
@@ -33,7 +39,7 @@ namespace Idasen.RESTAPI
                      builder ) =>
                    {
                        builder.AddJsonFile ( "appsettings.json" ,
-                                             optional : true ) ;
+                                             true ) ;
                    } ;
         }
     }

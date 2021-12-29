@@ -6,17 +6,17 @@ namespace Idasen.RESTAPI.Filters
 {
     public class ValidationFilter : IAsyncActionFilter
     {
-        public void OnActionExecuted ( ActionExecutedContext context )
-        {
-        }
-
         public Task OnActionExecutionAsync ( ActionExecutingContext  context ,
                                              ActionExecutionDelegate next )
         {
-            if (!context.ModelState.IsValid)
-                context.Result = new BadRequestObjectResult(context.ModelState);
+            if ( ! context.ModelState.IsValid )
+                context.Result = new BadRequestObjectResult ( context.ModelState ) ;
 
-            return next();
+            return next ( ) ;
+        }
+
+        public void OnActionExecuted ( ActionExecutedContext context )
+        {
         }
     }
 }

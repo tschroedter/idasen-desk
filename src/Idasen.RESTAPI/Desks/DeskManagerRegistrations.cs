@@ -8,29 +8,29 @@ namespace Idasen.RESTAPI.Desks
 {
     public static class DeskManagerRegistrations
     {
-        [UsedImplicitly] public static Task<bool> DeskManager;
+        [ UsedImplicitly ] public static Task < bool > DeskManager ;
 
-        public static IDeskManager CreateFakeDeskManager()
+        public static IDeskManager CreateFakeDeskManager ( )
         {
-            return new FakeDeskManager();
+            return new FakeDeskManager ( ) ;
         }
 
-        public static IDeskManager CreateRealDeskManager()
+        public static IDeskManager CreateRealDeskManager ( )
         {
-            ContainerProvider.Builder.RegisterModule(new IdasenRESTAPIModule());
+            ContainerProvider.Builder.RegisterModule ( new IdasenRESTAPIModule ( ) ) ;
 
-            var container = ContainerProvider.Create("Idasen.ConsoleDapr",
-                                                     "Idasen.ConsoleDapr.log");
+            var container = ContainerProvider.Create ( "Idasen.ConsoleDapr" ,
+                                                       "Idasen.ConsoleDapr.log" ) ;
 
-            var manager = container.Resolve<IDeskManager>();
+            var manager = container.Resolve < IDeskManager > ( ) ;
 
-            while (!(DeskManager is { Result: true }))
+            while ( ! ( DeskManager is { Result: true } ) )
             {
-                DeskManager = Task.Run(async () => await manager.Initialise()
-                                                                .ConfigureAwait(false));
+                DeskManager = Task.Run ( async ( ) => await manager.Initialise ( )
+                                                                   .ConfigureAwait ( false ) ) ;
             }
 
-            return manager;
+            return manager ;
         }
     }
 }

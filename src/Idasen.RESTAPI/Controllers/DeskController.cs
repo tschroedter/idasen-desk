@@ -134,25 +134,25 @@ namespace Idasen.RESTAPI.Controllers
             return Ok ( ) ;
         }
 
-        [Route( "settings")]
-        [HttpGet]
-        public async Task<IActionResult> SettingsGet(string id)
+        [ Route ( "settings" ) ]
+        [ HttpGet ]
+        public async Task < IActionResult > SettingsGet ( string id )
         {
-            if (!_manager.IsReady)
-                return StatusCode(500,
-                                  "DeskManger isn't ready");
+            if ( ! _manager.IsReady )
+                return StatusCode ( 500 ,
+                                    "DeskManger isn't ready" ) ;
 
             // todo general settings
-            var settings = await _repository.GetDefaultSettings(id)
-                                            .ConfigureAwait(false);
+            var settings = await _repository.GetDefaultSettings ( id )
+                                            .ConfigureAwait ( false ) ;
 
-            if (settings == null)
-                return BadRequest($"Failed to get settings for key '{id}'");
+            if ( settings == null )
+                return BadRequest ( $"Failed to get settings for key '{id}'" ) ;
 
-            return Ok(settings);
+            return Ok ( settings ) ;
         }
 
-        [Route ( "settings/{id}" ) ]
+        [ Route ( "settings/{id}" ) ]
         [ HttpGet ]
         public async Task < IActionResult > SettingsGetById ( string id )
         {

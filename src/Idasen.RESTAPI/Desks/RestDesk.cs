@@ -13,8 +13,8 @@ namespace Idasen.RESTAPI.Desks
     public class RestDesk : IRestDesk
     {
         public RestDesk ( ILogger    logger ,
-                          IScheduler scheduler,
-                          IDesk      desk)
+                          IScheduler scheduler ,
+                          IDesk      desk )
         {
             _logger = logger ;
             _desk   = desk ;

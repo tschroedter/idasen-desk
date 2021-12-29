@@ -3,7 +3,6 @@ using FluentValidation.AspNetCore ;
 using Idasen.RESTAPI.Desks ;
 using Idasen.RESTAPI.Filters ;
 using Idasen.RESTAPI.Interfaces ;
-using Idasen.RESTAPI.Repositories ;
 using Microsoft.AspNetCore.Builder ;
 using Microsoft.Extensions.Configuration ;
 using Microsoft.Extensions.DependencyInjection ;

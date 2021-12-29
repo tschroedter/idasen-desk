@@ -15,19 +15,19 @@ namespace Idasen.RESTAPI.Desks
         : IDeskManager
     {
         public DeskManager ( [ NotNull ] ILogger       logger ,
-                             [ NotNull ] IScheduler    scheduler,
+                             [ NotNull ] IScheduler    scheduler ,
                              [ NotNull ] IDeskProvider provider )
         {
             Guard.ArgumentNotNull ( logger ,
                                     nameof ( logger ) ) ;
             Guard.ArgumentNotNull ( provider ,
                                     nameof ( provider ) ) ;
-            Guard.ArgumentNotNull(scheduler,
-                                  nameof(scheduler));
+            Guard.ArgumentNotNull ( scheduler ,
+                                    nameof ( scheduler ) ) ;
 
-            _logger = logger ;
+            _logger    = logger ;
             _scheduler = scheduler ;
-            _provider       = provider ;
+            _provider  = provider ;
         }
 
         public async Task < bool > Initialise ( )
@@ -41,7 +41,8 @@ namespace Idasen.RESTAPI.Desks
             var desk = await Policy.Handle < Exception > ( )
                                    .WaitAndRetryForeverAsync ( retryAttempt => TimeSpan.FromSeconds ( Math.Pow ( 2 ,
                                                                                                                  retryAttempt ) ) ,
-                                                               ( exception , sleepDuration ) =>
+                                                               ( exception ,
+                                                                 sleepDuration ) =>
                                                                {
                                                                    HandleException ( sleepDuration ) ;
                                                                } )
@@ -51,7 +52,7 @@ namespace Idasen.RESTAPI.Desks
                 return false ;
 
             Desk = new RestDesk ( _logger ,
-                                  _scheduler,
+                                  _scheduler ,
                                   desk ) ;
 
             return true ;
@@ -89,7 +90,7 @@ namespace Idasen.RESTAPI.Desks
         }
 
         private readonly ILogger       _logger ;
-        private readonly IScheduler    _scheduler ;
         private readonly IDeskProvider _provider ;
+        private readonly IScheduler    _scheduler ;
     }
 }

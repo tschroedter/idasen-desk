@@ -5,7 +5,7 @@ using Idasen.RESTAPI.Dtos ;
 using Idasen.RESTAPI.Interfaces ;
 using Microsoft.Extensions.Logging ;
 
-namespace Idasen.RESTAPI
+namespace Idasen.RESTAPI.Repositories
 {
     public class SettingsRepository
         : ISettingsRepository
@@ -40,14 +40,14 @@ namespace Idasen.RESTAPI
             {
                 var dto = new SettingsDto ( ) ;
 
-                return Task.FromResult ( dto );
+                return Task.FromResult ( dto ) ;
             }
-            catch (Exception e)
+            catch ( Exception e )
             {
-                _logger.LogError(e,
-                                 $"Failed to get settings for Id '{id}'");
+                _logger.LogError ( e ,
+                                   $"Failed to get default settings for Id '{id}'" ) ;
 
-                return null;
+                return null ;
             }
         }
 
@@ -74,7 +74,6 @@ namespace Idasen.RESTAPI
         private const string StoreName = "statestore" ;
 
         private readonly DaprClient _client ;
-
 
         private readonly ILogger < SettingsRepository > _logger ;
     }

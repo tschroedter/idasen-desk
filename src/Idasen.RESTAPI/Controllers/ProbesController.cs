@@ -19,7 +19,7 @@ namespace Idasen.RESTAPI.Controllers
         [ Route ( "liveness" ) ]
         public IActionResult GetLiveness ( )
         {
-            _logger.LogInformation($"Liveness: {_manager.IsReady}");
+            _logger.LogInformation ( $"Liveness: {_manager.IsReady}" ) ;
 
             return Ok ( true ) ;
         }
@@ -27,7 +27,7 @@ namespace Idasen.RESTAPI.Controllers
         [ Route ( "readiness" ) ]
         public IActionResult GetReadiness ( )
         {
-            _logger.LogInformation ( $"Readiness: {_manager.IsReady}" );
+            _logger.LogInformation ( $"Readiness: {_manager.IsReady}" ) ;
 
             return Ok ( _manager.IsReady ) ;
         }
