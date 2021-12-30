@@ -12,7 +12,7 @@
 
         public override string ToString ( )
         {
-            return $"Id: {Id}, Seating: {Seating}, Standing: {Standing}" ;
+            return $"[Id: {Id}, Seating: {Seating}, Standing: {Standing}]" ;
         }
     }
 }

@@ -26,6 +26,8 @@ namespace Idasen.RESTAPI.Controllers
         [ Route ( "" ) ]
         public IActionResult GetDesk ( )
         {
+            _logger.LogInformation ( "DeskController.GetDesk()" ) ;
+
             if ( ! _manager.IsReady )
                 return StatusCode ( 500 ,
                                     "DeskManger isn't ready" ) ;
@@ -38,6 +40,8 @@ namespace Idasen.RESTAPI.Controllers
         [ Route ( "height" ) ]
         public IActionResult GetHeight ( )
         {
+            _logger.LogInformation ( "DeskController.GetHeight()" ) ;
+
             if ( ! _manager.IsReady )
                 return StatusCode ( 500 ,
                                     "DeskManger isn't ready" ) ;
@@ -51,6 +55,8 @@ namespace Idasen.RESTAPI.Controllers
         [ HttpPost ]
         public async Task < IActionResult > SetHeight ( [ FromBody ] HeightDto dto )
         {
+            _logger.LogInformation ( $"DeskController.SetHeight({dto})" ) ;
+
             if ( ! _manager.IsReady )
                 return StatusCode ( 500 ,
                                     "DeskManger isn't ready" ) ;
@@ -64,6 +70,8 @@ namespace Idasen.RESTAPI.Controllers
         [ Route ( "speed" ) ]
         public IActionResult GetSpeed ( )
         {
+            _logger.LogInformation ( "DeskController.GetSpeed()" ) ;
+
             if ( ! _manager.IsReady )
                 return StatusCode ( 500 ,
                                     "DeskManger isn't ready" ) ;
@@ -79,6 +87,8 @@ namespace Idasen.RESTAPI.Controllers
         [ Route ( "heightandspeed" ) ]
         public IActionResult GetHeightAndSpeed ( )
         {
+            _logger.LogInformation ( "DeskController.GetHeightAndSpeed()" ) ;
+
             if ( ! _manager.IsReady )
                 return StatusCode ( 500 ,
                                     "DeskManger isn't ready" ) ;
@@ -96,6 +106,8 @@ namespace Idasen.RESTAPI.Controllers
         [ HttpPost ]
         public async Task < IActionResult > Up ( )
         {
+            _logger.LogInformation ( "DeskController.Up()" ) ;
+
             if ( ! _manager.IsReady )
                 return StatusCode ( 500 ,
                                     "DeskManger isn't ready" ) ;
@@ -110,6 +122,8 @@ namespace Idasen.RESTAPI.Controllers
         [ HttpPost ]
         public async Task < IActionResult > Down ( )
         {
+            _logger.LogInformation ( "DeskController.Down()" ) ;
+
             if ( ! _manager.IsReady )
                 return StatusCode ( 500 ,
                                     "DeskManger isn't ready" ) ;
@@ -124,11 +138,14 @@ namespace Idasen.RESTAPI.Controllers
         [ HttpPost ]
         public async Task < IActionResult > Stop ( )
         {
+            _logger.LogInformation ( "DeskController.Stop()" ) ;
+
             if ( ! _manager.IsReady )
                 return StatusCode ( 500 ,
                                     "DeskManger isn't ready" ) ;
 
-            await _manager.Desk.MoveStopAsync ( )
+            await _manager.Desk
+                          .MoveStopAsync ( )
                           .ConfigureAwait ( false ) ;
 
             return Ok ( ) ;
@@ -138,11 +155,13 @@ namespace Idasen.RESTAPI.Controllers
         [ HttpGet ]
         public async Task < IActionResult > SettingsGet ( string id )
         {
+            _logger.LogInformation ( $"DeskController.SettingsGet({id})" ) ;
+
             if ( ! _manager.IsReady )
                 return StatusCode ( 500 ,
                                     "DeskManger isn't ready" ) ;
 
-            // todo general settings
+            // todo general settings, general input validation
             var settings = await _repository.GetDefaultSettings ( id )
                                             .ConfigureAwait ( false ) ;
 
@@ -156,6 +175,8 @@ namespace Idasen.RESTAPI.Controllers
         [ HttpGet ]
         public async Task < IActionResult > SettingsGetById ( string id )
         {
+            _logger.LogInformation ( $"DeskController.SettingsGetById({id})" ) ;
+
             if ( ! _manager.IsReady )
                 return StatusCode ( 500 ,
                                     "DeskManger isn't ready" ) ;
@@ -176,6 +197,7 @@ namespace Idasen.RESTAPI.Controllers
                                                            [ FromBody ] SettingsDto dto )
         {
             // todo general settings
+            _logger.LogInformation ( $"DeskController.SettingsPost({id}, {dto})" ) ;
 
             if ( ! _manager.IsReady )
                 return StatusCode ( 500 ,

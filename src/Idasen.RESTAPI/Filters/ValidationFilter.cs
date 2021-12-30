@@ -14,9 +14,5 @@ namespace Idasen.RESTAPI.Filters
 
             return next ( ) ;
         }
-
-        public void OnActionExecuted ( ActionExecutedContext context )
-        {
-        }
     }
 }
