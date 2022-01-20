@@ -72,4 +72,23 @@
 
     </Style>
 
+    <Style x:Key="TextBox"
+           TargetType="{x:Type TextBox}">
+        <Setter Property="Foreground" Value="{StaticResource BrushYellow}" />
+        <Setter Property="Margin" Value="5,0,5,0" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontFamily" Value="Verdana" />
+        <Setter Property="TextAlignment" Value="Left" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="BorderBrush" Value="{StaticResource BrushDarkYellow}"/>
+        <Setter Property="Background">
+            <Setter.Value>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <GradientStop Color="{StaticResource ColorDarkBlue}" Offset="0" />
+                    <GradientStop Color="{StaticResource ColorLightBlue}" Offset="1" />
+                </LinearGradientBrush>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
 </ResourceDictionary>

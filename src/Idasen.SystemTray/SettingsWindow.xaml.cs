@@ -55,6 +55,8 @@ namespace Idasen.SystemTray
                                                                      Constants.DefaultHeightStandingInCm ) ;
             settings.SeatingHeightInCm = _converter.ConvertToUInt ( Seating.Value ,
                                                                     Constants.DefaultHeightSeatingInCm ) ;
+            settings.DeviceName = DeskName.Text ;
+
             Task.Run ( async ( ) => await _manager.Save ( ) ) ;
         }
 
@@ -77,6 +79,7 @@ namespace Idasen.SystemTray
 
             Standing.Value = settings.StandingHeightInCm ;
             Seating.Value  = settings.SeatingHeightInCm ;
+            DeskName.Text  = settings.DeviceName ;
         }
 
         private readonly IDoubleToUIntConverter _converter = new DoubleToUIntConverter ( ) ;
