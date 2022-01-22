@@ -29,12 +29,21 @@ namespace Idasen.SystemTray
 
             InitializeComponent ( ) ;
 
-            Task.Run ( new Action ( async ( ) =>
-                                    {
-                                        await _manager.Load ( ) ;
+            Task.Run ( Initialize ) ;
+        }
 
-                                        Update ( _manager.CurrentSettings ) ;
-                                    } ) ) ;
+        private async void Initialize ( )
+        {
+            try
+            {
+                await _manager.Load();
+
+                Update(_manager.CurrentSettings);
+            }
+            catch ( Exception e )
+            {
+                _logger.Error ( e, "Failed to initialize" );
+            }
         }
 
         private void ImageClose_MouseDown ( object               sender ,
@@ -51,11 +60,14 @@ namespace Idasen.SystemTray
 
             _logger.Debug ( $"Storing new settings: {settings}" ) ;
 
-            settings.StandingHeightInCm = _converter.ConvertToUInt ( Standing.Value ,
+            settings.StandingHeightInCm = _doubleConverter.ConvertToUInt ( Standing.Value ,
                                                                      Constants.DefaultHeightStandingInCm ) ;
-            settings.SeatingHeightInCm = _converter.ConvertToUInt ( Seating.Value ,
+            settings.SeatingHeightInCm = _doubleConverter.ConvertToUInt ( Seating.Value ,
                                                                     Constants.DefaultHeightSeatingInCm ) ;
             settings.DeviceName = DeskName.Text ;
+
+            settings.DeviceAddress = _stringConverter.ConvertToULong ( DeskAddress.Text ,
+                                                                       Constants.DefaultDeviceAddress ) ;
 
             Task.Run ( async ( ) => await _manager.Save ( ) ) ;
         }
@@ -80,9 +92,11 @@ namespace Idasen.SystemTray
             Standing.Value = settings.StandingHeightInCm ;
             Seating.Value  = settings.SeatingHeightInCm ;
             DeskName.Text  = settings.DeviceName ;
+            DeskAddress.Text    = settings.DeviceAddress.ToString() ;
         }
 
-        private readonly IDoubleToUIntConverter _converter = new DoubleToUIntConverter ( ) ;
+        private readonly IDoubleToUIntConverter _doubleConverter = new DoubleToUIntConverter ( ) ;
+        private readonly IStringToUIntConverter _stringConverter = new StringToUIntConverter();
         private readonly ILogger                _logger ;
         private readonly ISettingsManager       _manager ;
     }

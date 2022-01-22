@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="MainWindow"
-        Height="100"
-        Width="300"
+        Height="150"
+        Width="370"
         WindowStyle="None"
         WindowStartupLocation="CenterScreen"
         AllowsTransparency="True"
@@ -22,22 +22,17 @@
     </Window.Resources>
     <Grid Style="{StaticResource GridGradientBlue}">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition />
-            <RowDefinition />
-            <RowDefinition />
-            <RowDefinition />
-            <RowDefinition Height="2" />
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <!-- Row 0 -->
         <DockPanel Grid.Row="0"
                    Grid.Column="0"
-                   Grid.ColumnSpan="4"
+                   Grid.ColumnSpan="2"
                    LastChildFill="True">
             <Image DockPanel.Dock="Right"
                    HorizontalAlignment="Right"
@@ -56,57 +51,103 @@
                    Content="Idasen Desk Settings" />
         </DockPanel>
         <!-- Row 1 -->
-        <Label Grid.Row="1"
-               Grid.Column="0"
-               Style="{StaticResource LabelParagraphLeft}"
-               Content="Standing" />
-        <Slider Grid.Row="1"
-                Grid.Column="1"
-                Style="{StaticResource SliderHeightValue}"
-                Name="Standing"
-                Minimum="65"
-                Maximum="120"
-                Value="120"
-                Width="Auto" />
-        <TextBlock Grid.Row="1"
-                   Grid.Column="2"
-                   Style="{StaticResource TextBlockHeightValue}"
-                   Text="{Binding ElementName=Standing, Path=Value, StringFormat='0', UpdateSourceTrigger=LostFocus}" />
-        <Label Grid.Row="1"
-               Grid.Column="3"
-               Style="{StaticResource LabelParagraphLeft}"
-               Content="cm" />
-        <!-- Row 2 -->
-        <Label Grid.Row="2"
-               Grid.Column="0"
-               Style="{StaticResource LabelParagraphLeft}"
-               Content="Seating" />
-        <Slider Grid.Row="2"
-                Grid.Column="1"
-                Style="{StaticResource SliderHeightValue}"
-                Name="Seating"
-                Minimum="65"
-                Maximum="120"
-                Value="65"
-                Width="Auto" />
-        <TextBlock Grid.Row="2"
-                   Grid.Column="2"
-                   Style="{StaticResource TextBlockHeightValue}"
-                   Text="{Binding ElementName=Seating, Path=Value, StringFormat='0',UpdateSourceTrigger=LostFocus}" />
-        <Label Grid.Row="2"
-               Grid.Column="3"
-               Style="{StaticResource LabelParagraphLeft}"
-               Content="cm" />
-        <!-- Row 3 -->
-        <Label Grid.Row="3"
-               Grid.Column="0"
-               Style="{StaticResource LabelParagraphLeft}"
-               Content="Desk Name" />
-        <TextBox Grid.Row="3"
-                 Grid.Column="1"
-                 Style="{StaticResource TextBox}"
-                 Name="DeskName"
-                 Text="{Binding ElementName=DeviceName, Path=Text, UpdateSourceTrigger=LostFocus}"
-                 Width="Auto" />
+        <TabControl Grid.Row="1"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="2">
+            <TabItem Header="General"
+                     IsSelected="True">
+                <Grid Style="{StaticResource GridGradientBlue}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition Height="2" />
+                    </Grid.RowDefinitions>
+                    <Label Grid.Row="0"
+                           Grid.Column="0"
+                           Style="{StaticResource LabelParagraphLeft}"
+                           Content="Standing" />
+                    <Slider Grid.Row="0"
+                            Grid.Column="1"
+                            Style="{StaticResource SliderHeightValue}"
+                            Name="Standing"
+                            Minimum="65"
+                            Maximum="120"
+                            Value="120"
+                            Width="120" />
+                    <TextBlock Grid.Row="0"
+                               Grid.Column="2"
+                               Style="{StaticResource TextBlockHeightValue}"
+                               Text="{Binding ElementName=Standing, Path=Value, StringFormat='0', UpdateSourceTrigger=LostFocus}" />
+                    <Label Grid.Row="0"
+                           Grid.Column="3"
+                           Style="{StaticResource LabelParagraphLeft}"
+                           Content="cm" />
+                    <!-- Row 2 -->
+                    <Label Grid.Row="1"
+                           Grid.Column="0"
+                           Style="{StaticResource LabelParagraphLeft}"
+                           Content="Seating" />
+                    <Slider Grid.Row="1"
+                            Grid.Column="1"
+                            Style="{StaticResource SliderHeightValue}"
+                            Name="Seating"
+                            Minimum="65"
+                            Maximum="120"
+                            Value="65"
+                            Width="120" />
+                    <TextBlock Grid.Row="1"
+                               Grid.Column="2"
+                               Style="{StaticResource TextBlockHeightValue}"
+                               Text="{Binding ElementName=Seating, Path=Value, StringFormat='0',UpdateSourceTrigger=LostFocus}" />
+                    <Label Grid.Row="1"
+                           Grid.Column="3"
+                           Style="{StaticResource LabelParagraphLeft}"
+                           Content="cm" />
+                </Grid>
+            </TabItem>
+            <TabItem Header="Advanced">
+                <Grid Style="{StaticResource GridGradientBlue}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition Height="2" />
+                    </Grid.RowDefinitions>
+                    <!-- Row 0 -->
+                    <Label Grid.Row="0"
+                           Grid.Column="0"
+                           Style="{StaticResource LabelParagraphLeft}"
+                           Content="Desk Name"
+                           ToolTip="Discover the desk by it's Bluetooth device name." />
+                    <TextBox Grid.Row="0"
+                             Grid.Column="1"
+                             Style="{StaticResource TextBox}"
+                             Name="DeskName"
+                             Text="{Binding ElementName=DeviceName, Path=Text, UpdateSourceTrigger=LostFocus}"
+                             Width="Auto" />
+                    <!-- Row 1 -->
+                    <Label Grid.Row="1"
+                           Grid.Column="0"
+                           Style="{StaticResource LabelParagraphLeft}"
+                           Content="Desk Address"
+                           ToolTip="Discover the desk by it's Bluetooth device address." />
+                    <TextBox Grid.Row="1"
+                             Grid.Column="1"
+                             Style="{StaticResource TextBox}"
+                             Name="DeskAddress"
+                             Text="{Binding ElementName=DeviceAddress, Path=Text, UpdateSourceTrigger=LostFocus}"
+                             Width="Auto" />
+                </Grid>
+            </TabItem>
+        </TabControl>
     </Grid>
 </Window>
