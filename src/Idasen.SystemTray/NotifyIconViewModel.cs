@@ -192,14 +192,27 @@ namespace Idasen.SystemTray
 
             SettingsWindow = new SettingsWindow ( _logger ,
                                                   _manager ) ;
-            SettingsWindow?.Show ( ) ;
+
+            if ( SettingsWindow == null )
+            {
+                return ;
+            }
+
+            SettingsWindow.Show ( ) ;
+            SettingsWindow.AdvancedSettingsChanged += OnAdvancedSettingsChanged ;
         }
 
         private void DoHideSettings ( )
         {
             _logger.Debug ( $"{nameof ( HideSettingsCommand )}" ) ;
 
-            SettingsWindow?.Close ( ) ;
+            if ( SettingsWindow == null )
+            {
+                return;
+            }
+
+            SettingsWindow.AdvancedSettingsChanged -= OnAdvancedSettingsChanged;
+            SettingsWindow.Close ( ) ;
             SettingsWindow = null ;
         }
 
@@ -530,6 +543,27 @@ namespace Idasen.SystemTray
                                             4000 ) ;
         }
 
+        private async void OnAdvancedSettingsChanged ( object    sender ,
+                                                       EventArgs args )
+        {
+            await ReConnect ( ) ;
+        }
+
+        private async Task ReConnect()
+        {
+            try
+            {
+                Disconnect();
+
+                await Connect().ConfigureAwait(false);
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e,
+                              "Failed  to reconnect after advanced settings change.");
+            }
+        }
+
         private readonly IErrorManager _errorManager ;
 
         private readonly IScheduler _scheduler = Scheduler.CurrentThread ;
@@ -544,5 +578,6 @@ namespace Idasen.SystemTray
         private                    Func < IDeskProvider >  _providerFactory ;
         private                    CancellationToken       _token ;
         private                    CancellationTokenSource _tokenSource ;
+        private                    Task                    _reconnect ;
     }
 }

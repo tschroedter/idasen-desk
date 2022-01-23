@@ -32,6 +32,8 @@ namespace Idasen.SystemTray
             Task.Run ( Initialize ) ;
         }
 
+        public event EventHandler AdvancedSettingsChanged;
+
         private async void Initialize ( )
         {
             try
@@ -59,16 +61,29 @@ namespace Idasen.SystemTray
         {
             var settings = _manager.CurrentSettings ;
 
-            _logger.Debug ( $"Storing new settings: {settings}" ) ;
+            var newDeviceName    = _nameConverter.DefaultIfEmpty ( DeskName.Text ) ;
+            var newDeviceAddress = _addressConverter.DefaultIfEmpty ( DeskAddress.Text ) ;
+
+            var advancedChanged = settings.DeviceName    != newDeviceName ||
+                                  settings.DeviceAddress != newDeviceAddress ;
 
             settings.StandingHeightInCm = _doubleConverter.ConvertToUInt ( Standing.Value ,
                                                                            Constants.DefaultHeightStandingInCm ) ;
             settings.SeatingHeightInCm = _doubleConverter.ConvertToUInt ( Seating.Value ,
                                                                           Constants.DefaultHeightSeatingInCm ) ;
-            settings.DeviceName    = _nameConverter.DefaultIfEmpty ( DeskName.Text ) ;
-            settings.DeviceAddress = _addressConverter.DefaultIfEmpty ( DeskAddress.Text ) ;
+            settings.DeviceName    = newDeviceName ;
+            settings.DeviceAddress = newDeviceAddress ;
 
-            Task.Run ( async ( ) => await _manager.Save ( ) ) ;
+            Task.Run ( async ( ) =>
+                       {
+                           _logger.Debug ( $"Storing new settings: {settings}" ) ;
+
+                           await _manager.Save ( ) ;
+
+                           if (advancedChanged)
+                               AdvancedSettingsChanged?.Invoke ( this ,
+                                                                 EventArgs.Empty ) ;
+                       } ) ;
         }
 
         private void SettingsWindow_OnClosed ( object    sender ,
