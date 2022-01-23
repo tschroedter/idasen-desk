@@ -106,6 +106,7 @@ namespace Idasen.SystemTray
             {
                 return new DelegateCommand
                        {
+                           // ReSharper disable once AsyncVoidLambda
                            CommandAction  = async ( ) => await DoConnect ( ) ,
                            CanExecuteFunc = ( ) => _desk == null
                        } ;
@@ -136,6 +137,7 @@ namespace Idasen.SystemTray
             {
                 return new DelegateCommand
                        {
+                           // ReSharper disable once AsyncVoidLambda
                            CommandAction  = async ( ) => await DoStanding ( ) ,
                            CanExecuteFunc = ( ) => _desk != null
                        } ;
@@ -151,6 +153,7 @@ namespace Idasen.SystemTray
             {
                 return new DelegateCommand
                        {
+                           // ReSharper disable once AsyncVoidLambda
                            CommandAction  = async ( ) => await DoSeating ( ) ,
                            CanExecuteFunc = ( ) => _desk != null
                        } ;
@@ -213,8 +216,7 @@ namespace Idasen.SystemTray
                 _logger.Error ( e ,
                                 $"Failed to call {nameof ( DisconnectCommand )}" ) ;
 
-                _errorManager
-                   .PublishForMessage ( $"Failed to call {nameof ( DisconnectCommand )}" ) ;
+                _errorManager.PublishForMessage ( $"Failed to call {nameof ( DisconnectCommand )}" ) ;
             }
         }
 
@@ -233,8 +235,7 @@ namespace Idasen.SystemTray
                 _logger.Error ( e ,
                                 $"Failed to call {nameof ( DoConnect )}" ) ;
 
-                _errorManager
-                   .PublishForMessage ( $"Failed to call {nameof ( DoConnect )}" ) ;
+                _errorManager.PublishForMessage ( $"Failed to call {nameof ( DoConnect )}" ) ;
             }
         }
 
@@ -251,8 +252,7 @@ namespace Idasen.SystemTray
                 _logger.Error ( e ,
                                 $"Failed to call {nameof ( StandingCommand )}" ) ;
 
-                _errorManager
-                   .PublishForMessage ( $"Failed to call {nameof ( StandingCommand )}" ) ;
+                _errorManager.PublishForMessage ( $"Failed to call {nameof ( StandingCommand )}" ) ;
             }
         }
 
@@ -273,8 +273,7 @@ namespace Idasen.SystemTray
                 _logger.Error ( e ,
                                 $"Failed to call {nameof ( SeatingCommand )}" ) ;
 
-                _errorManager
-                   .PublishForMessage ( $"Failed to call {nameof ( SeatingCommand )}" ) ;
+                _errorManager.PublishForMessage ( $"Failed to call {nameof ( SeatingCommand )}" ) ;
             }
         }
 
@@ -489,7 +488,7 @@ namespace Idasen.SystemTray
                                         Visibility visibilityBulbYellow = Visibility.Hidden ,
                                         Visibility visibilityBulbRed    = Visibility.Hidden )
         {
-            _notifyIcon ??= ( TaskbarIcon ) Application.Current.FindResource ( "NotifyIcon" ) ;
+            _notifyIcon ??= ( TaskbarIcon )Application.Current.FindResource ( "NotifyIcon" ) ;
 
             if ( _notifyIcon == null )
             {

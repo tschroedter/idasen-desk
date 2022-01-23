@@ -48,6 +48,7 @@ namespace Idasen.SystemTray
                                _container.Resolve < Func < IDeskProvider > > ( ) ,
                                _container.Resolve < IErrorManager > ( ) ) ;
 
+            // ReSharper disable once AsyncVoidLambda
             Task.Run ( new Action ( async ( ) => await model.AutoConnect ( ) ) ) ;
         }
 
