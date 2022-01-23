@@ -14,8 +14,8 @@ namespace Idasen.SystemTray.Settings
         public override string ToString ( )
         {
             return $"{nameof ( StandingHeightInCm )} = {StandingHeightInCm}, " +
-                   $"{nameof ( SeatingHeightInCm )} = {SeatingHeightInCm}"     +
-                   $"{nameof ( DeviceName )} = {DeviceName}"                   +
+                   $"{nameof ( SeatingHeightInCm )} = {SeatingHeightInCm}, "   +
+                   $"{nameof ( DeviceName )} = {DeviceName}, "                 +
                    $"{nameof ( DeviceAddress )} = {DeviceAddress}" ;
         }
     }
