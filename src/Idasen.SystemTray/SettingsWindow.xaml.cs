@@ -88,6 +88,8 @@ namespace Idasen.SystemTray
                 return ;
             }
 
+            _logger.Debug($"Update settings: {settings}");
+
             Standing.Value   = settings.StandingHeightInCm ;
             Seating.Value    = settings.SeatingHeightInCm ;
             DeskName.Text    = _nameConverter.EmptyIfDefault ( settings.DeviceName ) ;
