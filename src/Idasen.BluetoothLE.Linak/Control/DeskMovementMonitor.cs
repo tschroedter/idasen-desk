@@ -71,8 +71,6 @@ namespace Idasen.BluetoothLE.Linak.Control
 
             _logger.Debug ( "Good, height changed" ) ;
 
-            var speed = History [ 0 ].Speed ;
-
             if ( History.Count() >= MinimumNumberOfItems &&
                  History.All(x => x.Speed == 0 ) )
                     throw new ApplicationException(SpeedWasZero);
