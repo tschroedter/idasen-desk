@@ -34,6 +34,7 @@ namespace Idasen.BluetoothLE.Linak.Tests
             _subjectHeightAndSpeed = new Subject < HeightSpeedDetails > ( ) ;
             _subjectFinished       = new Subject < uint > ( ) ;
             _provider              = Substitute.For < IInitialHeightProvider > ( ) ;
+            _heightMonitor         = Substitute.For < IDeskHeightMonitor > ( ) ;
 
             _providerFactory.Create ( Arg.Any < IDeskCommandExecutor > ( ) ,
                                       Arg.Any < IDeskHeightAndSpeed > ( ) )
@@ -52,6 +53,9 @@ namespace Idasen.BluetoothLE.Linak.Tests
             _details1 = new HeightSpeedDetails ( DateTimeOffset.Now ,
                                                  123u ,
                                                  321 ) ;
+
+            _heightMonitor.IsHeightChanging ( )
+                          .Returns ( true ) ;
         }
 
         private DeskMover CreateSut ( )
@@ -63,7 +67,8 @@ namespace Idasen.BluetoothLE.Linak.Tests
                                    _executor ,
                                    _heightAndSpeed ,
                                    _calculator ,
-                                   _subjectFinished ) ;
+                                   _subjectFinished,
+                                   _heightMonitor) ;
         }
 
         private DeskMover CreateSutInitialized ( )
@@ -363,5 +368,6 @@ namespace Idasen.BluetoothLE.Linak.Tests
         private TestScheduler                         _scheduler ;
         private Subject < uint >                      _subjectFinished ;
         private Subject < HeightSpeedDetails >        _subjectHeightAndSpeed ;
+        private IDeskHeightMonitor                    _heightMonitor ;
     }
 }
