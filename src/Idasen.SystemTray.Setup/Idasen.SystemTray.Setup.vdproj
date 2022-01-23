@@ -211,7 +211,7 @@
         "ProductName" = "8:Idasen.SystemTray"
         "ProductCode" = "8:{83262255-5784-4388-979D-9C3CA994A157}"
         "PackageCode" = "8:{31B3AE06-CB35-4698-82CA-AFEBBBB64B06}"
-        "UpgradeCode" = "8:{798D3A2B-4870-4BB3-9E85-5B0D55E2E249}"
+        "UpgradeCode" = "8:{173C25C5-EF2E-4037-9EC4-D3F864764621}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
