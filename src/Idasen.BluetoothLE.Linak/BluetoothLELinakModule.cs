@@ -108,6 +108,10 @@ namespace Idasen.BluetoothLE.Linak
                    .As < IDeskProvider > ( )
                    .EnableInterfaceInterceptors ( ) ;
 
+            builder.RegisterType<DeskHeightMonitor>()
+                   .As<IDeskHeightMonitor>()
+                   .EnableInterfaceInterceptors();
+
             builder.RegisterType < TaskRunner > ( )
                    .As < ITaskRunner > ( ) ;
 
