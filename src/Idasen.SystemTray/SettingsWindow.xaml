@@ -127,7 +127,7 @@
                            Grid.Column="0"
                            Style="{StaticResource LabelParagraphLeft}"
                            Content="Desk Name"
-                           ToolTip="Discover the desk by it's Bluetooth device name." />
+                           ToolTip="Discover the desk by it's Bluetooth device name. Empty means default value." />
                     <TextBox Grid.Row="0"
                              Grid.Column="1"
                              Style="{StaticResource TextBox}"
@@ -139,7 +139,7 @@
                            Grid.Column="0"
                            Style="{StaticResource LabelParagraphLeft}"
                            Content="Desk Address"
-                           ToolTip="Discover the desk by it's Bluetooth device address." />
+                           ToolTip="Discover the desk by it's Bluetooth device address. Empty means default value." />
                     <TextBox Grid.Row="1"
                              Grid.Column="1"
                              Style="{StaticResource TextBox}"

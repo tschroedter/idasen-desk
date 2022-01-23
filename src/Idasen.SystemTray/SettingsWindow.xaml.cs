@@ -36,13 +36,14 @@ namespace Idasen.SystemTray
         {
             try
             {
-                await _manager.Load();
+                await _manager.Load ( ) ;
 
-                Update(_manager.CurrentSettings);
+                Update ( _manager.CurrentSettings ) ;
             }
             catch ( Exception e )
             {
-                _logger.Error ( e, "Failed to initialize" );
+                _logger.Error ( e ,
+                                "Failed to initialize" ) ;
             }
         }
 
@@ -61,13 +62,11 @@ namespace Idasen.SystemTray
             _logger.Debug ( $"Storing new settings: {settings}" ) ;
 
             settings.StandingHeightInCm = _doubleConverter.ConvertToUInt ( Standing.Value ,
-                                                                     Constants.DefaultHeightStandingInCm ) ;
+                                                                           Constants.DefaultHeightStandingInCm ) ;
             settings.SeatingHeightInCm = _doubleConverter.ConvertToUInt ( Seating.Value ,
-                                                                    Constants.DefaultHeightSeatingInCm ) ;
-            settings.DeviceName = DeskName.Text ;
-
-            settings.DeviceAddress = _stringConverter.ConvertToULong ( DeskAddress.Text ,
-                                                                       Constants.DefaultDeviceAddress ) ;
+                                                                          Constants.DefaultHeightSeatingInCm ) ;
+            settings.DeviceName    = _nameConverter.DefaultIfEmpty ( DeskName.Text ) ;
+            settings.DeviceAddress = _addressConverter.DefaultIfEmpty ( DeskAddress.Text ) ;
 
             Task.Run ( async ( ) => await _manager.Save ( ) ) ;
         }
@@ -89,15 +88,16 @@ namespace Idasen.SystemTray
                 return ;
             }
 
-            Standing.Value = settings.StandingHeightInCm ;
-            Seating.Value  = settings.SeatingHeightInCm ;
-            DeskName.Text  = settings.DeviceName ;
-            DeskAddress.Text    = settings.DeviceAddress.ToString() ;
+            Standing.Value   = settings.StandingHeightInCm ;
+            Seating.Value    = settings.SeatingHeightInCm ;
+            DeskName.Text    = _nameConverter.EmptyIfDefault ( settings.DeviceName ) ;
+            DeskAddress.Text = _addressConverter.EmptyIfDefault ( settings.DeviceAddress ) ;
         }
 
-        private readonly IDoubleToUIntConverter _doubleConverter = new DoubleToUIntConverter ( ) ;
-        private readonly IStringToUIntConverter _stringConverter = new StringToUIntConverter();
-        private readonly ILogger                _logger ;
-        private readonly ISettingsManager       _manager ;
+        private readonly IDoubleToUIntConverter         _doubleConverter  = new DoubleToUIntConverter ( ) ;
+        private readonly IDeviceNameConverter           _nameConverter    = new DeviceNameConverter ( ) ;
+        private readonly IDeviceAddressToULongConverter _addressConverter = new DeviceAddressToULongConverter ( ) ;
+        private readonly ILogger                        _logger ;
+        private readonly ISettingsManager               _manager ;
     }
 }
