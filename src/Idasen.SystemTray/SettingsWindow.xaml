@@ -46,6 +46,12 @@
                    ToolTip="Close Settings"
                    x:Name="ImageClose"
                    MouseDown="ImageClose_MouseDown" />
+            <Label DockPanel.Dock="Right"
+                   Style="{StaticResource LabelVersion}"
+                   Content="V0.0.0.0" 
+                   Name="LabelVersion"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Center"/>
             <Label DockPanel.Dock="Left"
                    Style="{StaticResource LabelHeader}"
                    Content="Idasen Desk Settings" />

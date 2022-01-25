@@ -1,4 +1,5 @@
 ﻿using System ;
+using System.Reflection ;
 using System.Threading.Tasks ;
 using System.Windows.Input ;
 using Idasen.BluetoothLE.Core ;
@@ -29,6 +30,8 @@ namespace Idasen.SystemTray
 
             InitializeComponent ( ) ;
 
+            LabelVersion.Content = GetVersion ( ) ;
+
             Task.Run ( Initialize ) ;
         }
 
@@ -47,6 +50,17 @@ namespace Idasen.SystemTray
                 _logger.Error ( e ,
                                 "Failed to initialize" ) ;
             }
+        }
+
+        private static string GetVersion ( )
+        {
+            var version = Assembly.GetExecutingAssembly ( )
+                                  .GetName ( )
+                                  .Version?
+                                  .ToString ( )
+                       ?? "0.0.0.0" ;
+
+            return "V" + version ;
         }
 
         private void ImageClose_MouseDown ( object               sender ,

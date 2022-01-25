@@ -35,6 +35,13 @@
         <Setter Property="FontWeight" Value="Bold" />
         <Setter Property="FontFamily" Value="Verdana" />
     </Style>
+    <Style x:Key="LabelVersion"
+           TargetType="{x:Type Label}">
+        <Setter Property="Foreground" Value="{StaticResource BrushDarkYellow}" />
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="FontFamily" Value="Verdana" />
+    </Style>
 
     <Style x:Key="LabelParagraph"
            TargetType="{x:Type Label}">
