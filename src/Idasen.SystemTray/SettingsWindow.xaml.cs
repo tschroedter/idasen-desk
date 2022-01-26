@@ -1,5 +1,4 @@
 ﻿using System ;
-using System.Reflection ;
 using System.Threading.Tasks ;
 using System.Windows.Input ;
 using Idasen.BluetoothLE.Core ;
@@ -18,19 +17,22 @@ namespace Idasen.SystemTray
     {
         public SettingsWindow (
             [ NotNull ] ILogger          logger ,
-            [ NotNull ] ISettingsManager manager )
+            [ NotNull ] ISettingsManager manager ,
+            [ NotNull ] IVersionProvider provider )
         {
             Guard.ArgumentNotNull ( logger ,
                                     nameof ( logger ) ) ;
             Guard.ArgumentNotNull ( manager ,
                                     nameof ( manager ) ) ;
+            Guard.ArgumentNotNull ( provider ,
+                                    nameof ( provider ) ) ;
 
             _logger  = logger ;
             _manager = manager ;
 
             InitializeComponent ( ) ;
 
-            LabelVersion.Content = GetVersion ( ) ;
+            LabelVersion.Content = provider.GetVersion ( ) ;
 
             Task.Run ( Initialize ) ;
         }
@@ -52,17 +54,6 @@ namespace Idasen.SystemTray
             }
         }
 
-        private static string GetVersion ( )
-        {
-            var version = Assembly.GetExecutingAssembly ( )
-                                  .GetName ( )
-                                  .Version?
-                                  .ToString ( )
-                       ?? "0.0.0.0" ;
-
-            return "V" + version ;
-        }
-
         private void ImageClose_MouseDown ( object               sender ,
                                             MouseButtonEventArgs e )
         {
@@ -73,6 +64,13 @@ namespace Idasen.SystemTray
 
         private void StoreSettings ( )
         {
+            if ( _storingSettingsTask?.Status == TaskStatus.Running )
+            {
+                _logger.Warning ( "Storing Settings already in progress" );
+
+                return;
+            }
+
             var settings = _manager.CurrentSettings ;
 
             var newDeviceName    = _nameConverter.DefaultIfEmpty ( DeskName.Text ) ;
@@ -88,16 +86,37 @@ namespace Idasen.SystemTray
             settings.DeviceName    = newDeviceName ;
             settings.DeviceAddress = newDeviceAddress ;
 
-            Task.Run ( async ( ) =>
-                       {
-                           _logger.Debug ( $"Storing new settings: {settings}" ) ;
+            _storingSettingsTask = Task.Run ( async ( ) =>
+                                              {
+                                                  await DoStoreSettings ( settings ,
+                                                                          advancedChanged ) ;
+                                              } ) ;
+        }
 
-                           await _manager.Save ( ) ;
+        private async Task DoStoreSettings ( ISettings settings ,
+                                             bool      advancedChanged )
+        {
+            try
+            {
+                _logger.Debug($"Storing new settings: {settings}");
 
-                           if (advancedChanged)
-                               AdvancedSettingsChanged?.Invoke ( this ,
-                                                                 EventArgs.Empty ) ;
-                       } ) ;
+                await _manager.Save();
+
+                if (!advancedChanged)
+                {
+                    return;
+                }
+
+                _logger.Information("Advanced settings have changed, reconnecting...");
+
+                AdvancedSettingsChanged?.Invoke(this,
+                                                EventArgs.Empty);
+            }
+            catch ( Exception e )
+            {
+                _logger.Error(e,
+                              "Failed to store settings");
+            }
         }
 
         private void SettingsWindow_OnClosed ( object    sender ,
@@ -130,5 +149,6 @@ namespace Idasen.SystemTray
         private readonly IDeviceAddressToULongConverter _addressConverter = new DeviceAddressToULongConverter ( ) ;
         private readonly ILogger                        _logger ;
         private readonly ISettingsManager               _manager ;
+        private          Task                           _storingSettingsTask ;
     }
 }

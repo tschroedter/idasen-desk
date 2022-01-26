@@ -43,10 +43,15 @@ namespace Idasen.SystemTray
 
             _logger.Information ( "##### Startup..." ) ;
 
+            var versionProvider = _container.Resolve < IVersionProvider > ( ) ;
+
+            _logger.Information ( $"##### Idasen.SystemTray {versionProvider.GetVersion ( )}" ) ;
+
             model.Initialize ( _container.Resolve < ILogger > ( ) ,
                                _container.Resolve < ISettingsManager > ( ) ,
                                _container.Resolve < Func < IDeskProvider > > ( ) ,
-                               _container.Resolve < IErrorManager > ( ) ) ;
+                               _container.Resolve < IErrorManager > ( ) ,
+                               _container.Resolve < IVersionProvider > ( ) ) ;
 
             // ReSharper disable once AsyncVoidLambda
             Task.Run ( new Action ( async ( ) => await model.AutoConnect ( ) ) ) ;
