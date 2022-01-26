@@ -3,6 +3,7 @@ using Autofac ;
 using Idasen.BluetoothLE.Linak ;
 using Idasen.SystemTray.Interfaces ;
 using Idasen.SystemTray.Settings ;
+using Idasen.SystemTray.Utils ;
 
 namespace Idasen.SystemTray
 {
@@ -17,6 +18,9 @@ namespace Idasen.SystemTray
 
             builder.RegisterType < SettingsManager > ( )
                    .As < ISettingsManager > ( ) ;
+
+            builder.RegisterType < VersionProvider > ( )
+                   .As < IVersionProvider > ( ) ;
         }
     }
 }
