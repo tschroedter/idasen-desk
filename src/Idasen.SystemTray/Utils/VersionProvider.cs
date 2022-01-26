@@ -6,15 +6,15 @@ namespace Idasen.SystemTray.Utils
     public class VersionProvider
     : IVersionProvider
     {
-        public string GetVersion()
+        public string GetVersion ( )
         {
-            var version = Assembly.GetExecutingAssembly()
-                                  .GetName()
-                                  .Version?
-                                  .ToString()
-                       ?? "0.0.0.0";
+            var version = Assembly.GetExecutingAssembly ( )
+                                  .GetName ( )
+                                  .Version ;
 
-            return "V" + version;
+            return version is null
+                       ? "V0.0.0"
+                       : $"V{version.Major}.{version.Minor}.{version.Build}" ;
         }
     }
 }
