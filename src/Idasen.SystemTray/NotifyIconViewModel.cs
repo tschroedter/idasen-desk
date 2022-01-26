@@ -555,15 +555,23 @@ namespace Idasen.SystemTray
         }
 
         private async void OnAdvancedSettingsChanged ( object    sender ,
-                                                       EventArgs args )
+                                                 EventArgs args )
         {
-            await ReConnect ( ) ;
+            if (_reconnect?.Status == TaskStatus.Running)
+                return;
+
+            await ReConnect ( ).ConfigureAwait ( false ) ;
         }
 
         private async Task ReConnect()
         {
             try
             {
+                _tokenSource?.Cancel(false);
+
+                await Task.Delay ( 2000 )
+                          .ConfigureAwait ( false ) ;
+
                 Disconnect();
 
                 await Connect().ConfigureAwait(false);
