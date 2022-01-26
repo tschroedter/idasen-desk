@@ -554,23 +554,16 @@ namespace Idasen.SystemTray
                                             4000 ) ;
         }
 
-        private async void OnAdvancedSettingsChanged ( object    sender ,
-                                                 EventArgs args )
-        {
-            if (_reconnect?.Status == TaskStatus.Running)
-                return;
-
-            await ReConnect ( ).ConfigureAwait ( false ) ;
-        }
-
-        private async Task ReConnect()
+        private async void OnAdvancedSettingsChanged(object    sender,
+                                                     EventArgs args)
         {
             try
             {
                 _tokenSource?.Cancel(false);
 
-                await Task.Delay ( 2000 )
-                          .ConfigureAwait ( false ) ;
+                // ReSharper disable once MethodSupportsCancellation
+                await Task.Delay(3000)
+                          .ConfigureAwait(false);
 
                 Disconnect();
 
@@ -597,6 +590,5 @@ namespace Idasen.SystemTray
         private                    Func < IDeskProvider >  _providerFactory ;
         private                    CancellationToken       _token ;
         private                    CancellationTokenSource _tokenSource ;
-        private                    Task                    _reconnect ;
     }
 }
