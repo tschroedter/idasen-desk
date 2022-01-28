@@ -10,7 +10,11 @@ namespace Idasen.RESTAPI.Filters
                                              ActionExecutionDelegate next )
         {
             if ( ! context.ModelState.IsValid )
+            {
                 context.Result = new BadRequestObjectResult ( context.ModelState ) ;
+
+                return Task.CompletedTask;
+            }
 
             return next ( ) ;
         }
