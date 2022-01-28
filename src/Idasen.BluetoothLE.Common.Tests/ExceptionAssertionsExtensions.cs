@@ -46,28 +46,11 @@ namespace Idasen.BluetoothLE.Common.Tests
         /// <param name="assertions">The assertions.</param>
         /// <param name="parameter">The expected parameter name.</param>
         /// <returns></returns>
-        public static async Task<AndConstraint<FluentAssertions.Primitives.StringAssertions>> WithParameterAsync(
+        public static async Task<AndConstraint<StringAssertions>> WithParameterAsync(
             this Task < ExceptionAssertions < ArgumentNullException> > assertions,
             string parameter)
         {
             return (await assertions).And
-                                     .ParamName
-                                     .Should()
-                                     .Be(parameter);
-        }
-
-        /// <summary>
-        ///     This extension allows to check the parameter of an exception.
-        /// </summary>
-        /// <param name="assertions">The assertions.</param>
-        /// <param name="parameter">The expected parameter name.</param>
-        /// <returns></returns>
-        public static AndConstraint<StringAssertions> WithParameterAsync(
-            this Task<ExceptionAssertions<ArgumentException>> assertions,
-            string                                            parameter)
-        {
-            return (await assertions).Result
-                                     .And
                                      .ParamName
                                      .Should()
                                      .Be(parameter);

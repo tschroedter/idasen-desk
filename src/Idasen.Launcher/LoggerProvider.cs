@@ -69,7 +69,9 @@ namespace Idasen.Launcher
 
             var message = $"Created logger for '{appName}' in folder '{LogFile}'" ;
 
-            Logger.Information ( message ) ;
+            logger.Information ( message ) ;
+
+            Console.WriteLine ( message ) ;
 
             return logger ;
         }
