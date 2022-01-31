@@ -115,6 +115,12 @@ namespace Idasen.BluetoothLE.Linak
             builder.RegisterType < TaskRunner > ( )
                    .As < ITaskRunner > ( ) ;
 
+            builder.RegisterType<DeskLocker>()
+                   .As<IDeskLocker>();
+
+            builder.RegisterType<DeskLockerFactory>()
+                   .As<IDeskLockerFactory>();
+
             builder.RegisterType < ErrorManager > ( )
                    .As < IErrorManager > ( )
                    .SingleInstance ( )
