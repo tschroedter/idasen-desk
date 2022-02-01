@@ -126,6 +126,7 @@
                     <Grid.RowDefinitions>
                         <RowDefinition />
                         <RowDefinition />
+                        <RowDefinition />
                         <RowDefinition Height="2" />
                     </Grid.RowDefinitions>
                     <!-- Row 0 -->
@@ -152,6 +153,21 @@
                              Name="DeskAddress"
                              Text="{Binding ElementName=DeviceAddress, Path=Text, UpdateSourceTrigger=LostFocus}"
                              Width="Auto" />
+                    <!-- Row 2 -->
+                    <Label Grid.Row="2"
+                           Grid.Column="0"
+                           Style="{StaticResource LabelParagraphLeft}"
+                           Content="Parental Lock"
+                           ToolTip="Blocks manual movements when enabled." />
+                    <CheckBox Grid.Row="2"
+                              Grid.Column="1" Content="Enabled"
+                              Style="{StaticResource CheckBoxLeft}"
+                              Name="Locked"
+                              HorizontalAlignment="Left"
+                              VerticalAlignment="Center"
+                              VerticalContentAlignment="Center"
+                              Margin="4,0,0,0"
+                              IsChecked="{Binding ElementName=Locked, Path=Text, UpdateSourceTrigger=LostFocus}"/>
                 </Grid>
             </TabItem>
         </TabControl>

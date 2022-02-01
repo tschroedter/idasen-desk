@@ -75,9 +75,11 @@ namespace Idasen.SystemTray
 
             var newDeviceName    = _nameConverter.DefaultIfEmpty ( DeskName.Text ) ;
             var newDeviceAddress = _addressConverter.DefaultIfEmpty ( DeskAddress.Text ) ;
+            var newDeviceLocked  = Locked.IsChecked ?? false ;
 
             var advancedChanged = settings.DeviceName    != newDeviceName ||
-                                  settings.DeviceAddress != newDeviceAddress ;
+                                  settings.DeviceAddress != newDeviceAddress ||
+                                  settings.DeviceLocked != newDeviceLocked ;
 
             settings.StandingHeightInCm = _doubleConverter.ConvertToUInt ( Standing.Value ,
                                                                            Constants.DefaultHeightStandingInCm ) ;
@@ -85,6 +87,7 @@ namespace Idasen.SystemTray
                                                                           Constants.DefaultHeightSeatingInCm ) ;
             settings.DeviceName    = newDeviceName ;
             settings.DeviceAddress = newDeviceAddress ;
+            settings.DeviceLocked  = newDeviceLocked ;
 
             _storingSettingsTask = Task.Run ( async ( ) =>
                                               {
@@ -142,6 +145,7 @@ namespace Idasen.SystemTray
             Seating.Value    = settings.SeatingHeightInCm ;
             DeskName.Text    = _nameConverter.EmptyIfDefault ( settings.DeviceName ) ;
             DeskAddress.Text = _addressConverter.EmptyIfDefault ( settings.DeviceAddress ) ;
+            Locked.IsChecked = settings.DeviceLocked ;
         }
 
         private readonly IDoubleToUIntConverter         _doubleConverter  = new DoubleToUIntConverter ( ) ;

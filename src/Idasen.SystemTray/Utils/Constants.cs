@@ -11,5 +11,6 @@
         public const string DefaultDeviceName              = "Desk" ;
         public const ulong  DefaultDeviceAddress           = 250635178951455u ;
         public const uint   DefaultDeviceMonitoringTimeout = 600 ; // in seconds
+        public const bool   DefaultLocked                  = false ;
     }
 }
