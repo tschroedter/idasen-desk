@@ -10,13 +10,15 @@ namespace Idasen.SystemTray.Settings
         public string DeviceName              { get ; set ; } = Constants.DefaultDeviceName ;
         public ulong  DeviceAddress           { get ; set ; } = Constants.DefaultDeviceAddress ;
         public uint   DeviceMonitoringTimeout { get ; set ; } = Constants.DefaultDeviceMonitoringTimeout ;
+        public bool   DeviceLocked                  { get ; set ; } = Constants.DefaultLocked ;
 
         public override string ToString ( )
         {
             return $"{nameof ( StandingHeightInCm )} = {StandingHeightInCm}, " +
                    $"{nameof ( SeatingHeightInCm )} = {SeatingHeightInCm}, "   +
                    $"{nameof ( DeviceName )} = {DeviceName}, "                 +
-                   $"{nameof ( DeviceAddress )} = {DeviceAddress}" ;
+                   $"{nameof ( DeviceAddress )} = {DeviceAddress}, "           +
+                   $"{nameof ( DeviceLocked )} = {DeviceLocked}, " ;
         }
     }
 }

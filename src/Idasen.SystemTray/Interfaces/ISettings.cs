@@ -27,5 +27,7 @@
         ///     cache of monitored devices.
         /// </summary>
         uint DeviceMonitoringTimeout { get ; set ; }
+
+        bool DeviceLocked { get ; set ; }
     }
 }

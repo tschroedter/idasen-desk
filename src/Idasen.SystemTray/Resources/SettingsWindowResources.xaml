@@ -28,6 +28,14 @@
         </Setter>
     </Style>
 
+    <Style x:Key="CheckBoxLeft"
+           TargetType="{x:Type CheckBox}">
+        <Setter Property="Foreground" Value="{StaticResource BrushYellow}" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="FontFamily" Value="Verdana" />
+    </Style>
+
     <Style x:Key="LabelHeader"
            TargetType="{x:Type Label}">
         <Setter Property="Foreground" Value="{StaticResource BrushYellow}" />
