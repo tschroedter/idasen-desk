@@ -69,16 +69,31 @@ namespace Idasen.BluetoothLE.Linak.Interfaces
         /// <summary>
         ///     Move the desk up.
         /// </summary>
-        Task < bool > MoveUp ( ) ;
+        /// <returns>'true' if successful otherwise 'false'.</returns>
+        Task< bool > MoveUp ( ) ;
 
         /// <summary>
         ///     Move the desk down.
         /// </summary>
-        Task < bool > MoveDown ( ) ;
+        /// <returns>'true' if successful otherwise 'false'.</returns>
+        Task< bool > MoveDown ( ) ;
 
         /// <summary>
         ///     Stop moving the desk.
         /// </summary>
-        Task < bool > MoveStop ( ) ;
+        /// <returns>'true' if successful otherwise 'false'.</returns>
+        Task< bool > MoveStop ( ) ;
+
+        /// <summary>
+        ///     Lock the desk which means manual movement is blocked.
+        /// </summary>
+        /// <returns>'true' if successful otherwise 'false'.</returns>
+        Task < bool > MoveLock ( ) ;
+
+        /// <summary>
+        ///     Unlock the desk which means manual movement is allowed.
+        /// </summary>
+        /// <returns>'true' if successful otherwise 'false'.</returns>
+        Task< bool > MoveUnlock ( );
     }
 }

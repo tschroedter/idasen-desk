@@ -56,6 +56,22 @@ namespace Idasen.BluetoothLE.Linak.Tests
 
             _heightMonitor.IsHeightChanging ( )
                           .Returns ( true ) ;
+
+            _monitor = Substitute.For < IDeskMovementMonitor > ( ) ;
+
+            _monitorFactory.Create ( _heightAndSpeed )
+                           .Returns ( _monitor ) ;
+
+            _finished = Substitute.For < ISubject < uint > > ( ) ;
+
+            _disposable = Substitute.For < IDisposable > ( ) ;
+
+            _finished.Subscribe ( Arg.Any < IObserver < uint > > ( ) )
+                     .Returns ( _disposable ) ;
+
+            _disposableProvider = Substitute.For < IInitialHeightProvider > ( ) ;
+            _disposableProvider.Finished
+                               .Returns ( _finished ) ;
         }
 
         private DeskMover CreateSut ( )
@@ -67,8 +83,8 @@ namespace Idasen.BluetoothLE.Linak.Tests
                                    _executor ,
                                    _heightAndSpeed ,
                                    _calculator ,
-                                   _subjectFinished,
-                                   _heightMonitor) ;
+                                   _subjectFinished ,
+                                   _heightMonitor ) ;
         }
 
         private DeskMover CreateSutInitialized ( )
@@ -160,6 +176,18 @@ namespace Idasen.BluetoothLE.Linak.Tests
             CreateSutWithIsAllowedToMoveIsTrue ( ).StartMovingIntoDirection
                                                   .Should ( )
                                                   .Be ( _calculator.MoveIntoDirection ) ;
+        }
+
+        [TestMethod]
+        public void Start_Invoked_CallsHeightMonitorResets()
+        {
+            _executor.Up()
+                     .Returns(true);
+
+            using var sut = CreateSutWithIsAllowedToMoveIsTrue();
+
+            _heightMonitor.Received ( )
+                          .Reset ( ) ;
         }
 
         [ TestMethod ]
@@ -356,6 +384,54 @@ namespace Idasen.BluetoothLE.Linak.Tests
                      .Start ( ) ;
         }
 
+        [ TestMethod ]
+        public void Dispose_ForInvoked_DisposesMonitor ( )
+        {
+            var sut = CreateSutInitialized ( ) ;
+
+            sut.Dispose ( ) ;
+
+            _monitor.Received ( )
+                    .Dispose ( ) ;
+        }
+
+        [ TestMethod ]
+        public void Dispose_ForInvoked_DisposesDisposableProvider ( )
+        {
+
+            _providerFactory.Create(_executor,
+                                    _heightAndSpeed)
+                            .Returns(_disposableProvider);
+
+            var sut = CreateSutInitialized ( ) ;
+
+            sut.Dispose ( ) ;
+
+            _disposable.Received ( )
+                       .Dispose ( ) ;
+        }
+
+        [TestMethod]
+        public void Dispose_ForInvoked_DisposalHeightAndSpeed()
+        {
+            IDisposable disposable = Substitute.For<IDisposable>();
+
+            var subject = Substitute.For < ISubject < HeightSpeedDetails > > ( ) ;
+
+            subject.Subscribe ( Arg.Any < IObserver < HeightSpeedDetails > > ( ) )
+                   .Returns ( disposable ) ;
+
+            _heightAndSpeed.HeightAndSpeedChanged
+                           .Returns(subject);
+
+            var sut = CreateSutWithIsAllowedToMoveIsTrue();
+
+            sut.Dispose();
+
+            disposable.Received()
+                      .Dispose();
+        }
+
         private IStoppingHeightCalculator _calculator ;
         private HeightSpeedDetails        _details1 ;
         private IDeskCommandExecutor      _executor ;
@@ -369,5 +445,9 @@ namespace Idasen.BluetoothLE.Linak.Tests
         private Subject < uint >                      _subjectFinished ;
         private Subject < HeightSpeedDetails >        _subjectHeightAndSpeed ;
         private IDeskHeightMonitor                    _heightMonitor ;
+        private IDeskMovementMonitor                  _monitor ;
+        private IInitialHeightProvider                _disposableProvider ;
+        private IObservable < uint >                  _finished ;
+        private IDisposable                           _disposable ;
     }
 }
