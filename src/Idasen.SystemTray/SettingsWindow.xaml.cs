@@ -38,6 +38,7 @@ namespace Idasen.SystemTray
         }
 
         public event EventHandler AdvancedSettingsChanged;
+        public event EventHandler<LockSettingsChangedEventArgs> LockSettingsChanged;
 
         private async void Initialize ( )
         {
@@ -77,9 +78,10 @@ namespace Idasen.SystemTray
             var newDeviceAddress = _addressConverter.DefaultIfEmpty ( DeskAddress.Text ) ;
             var newDeviceLocked  = Locked.IsChecked ?? false ;
 
-            var advancedChanged = settings.DeviceName    != newDeviceName ||
-                                  settings.DeviceAddress != newDeviceAddress ||
-                                  settings.DeviceLocked != newDeviceLocked ;
+            var advancedChanged = settings.DeviceName    != newDeviceName    ||
+                                  settings.DeviceAddress != newDeviceAddress ;
+
+            var lockChanged = settings.DeviceLocked != newDeviceLocked ;
 
             settings.StandingHeightInCm = _doubleConverter.ConvertToUInt ( Standing.Value ,
                                                                            Constants.DefaultHeightStandingInCm ) ;
@@ -92,33 +94,41 @@ namespace Idasen.SystemTray
             _storingSettingsTask = Task.Run ( async ( ) =>
                                               {
                                                   await DoStoreSettings ( settings ,
-                                                                          advancedChanged ) ;
+                                                                          advancedChanged,
+                                                                          lockChanged) ;
                                               } ) ;
         }
 
         private async Task DoStoreSettings ( ISettings settings ,
-                                             bool      advancedChanged )
+                                             bool      advancedChanged,
+                                             bool lockChanged)
         {
             try
             {
-                _logger.Debug($"Storing new settings: {settings}");
+                _logger.Debug ( $"Storing new settings: {settings}" ) ;
 
-                await _manager.Save();
+                await _manager.Save ( ) ;
 
-                if (!advancedChanged)
+                if ( advancedChanged )
                 {
-                    return;
+                    _logger.Information ( "Advanced settings have changed, reconnecting..." ) ;
+
+                    AdvancedSettingsChanged?.Invoke ( this ,
+                                                      EventArgs.Empty ) ;
                 }
 
-                _logger.Information("Advanced settings have changed, reconnecting...");
+                if ( lockChanged )
+                {
+                    _logger.Information("Advanced Locked settings have changed...");
 
-                AdvancedSettingsChanged?.Invoke(this,
-                                                EventArgs.Empty);
+                    LockSettingsChanged?.Invoke(this,
+                                                new LockSettingsChangedEventArgs(settings.DeviceLocked));
+                }
             }
             catch ( Exception e )
             {
-                _logger.Error(e,
-                              "Failed to store settings");
+                _logger.Error ( e ,
+                                "Failed to store settings" ) ;
             }
         }
 

@@ -207,6 +207,7 @@ namespace Idasen.SystemTray
 
             SettingsWindow.Show ( ) ;
             SettingsWindow.AdvancedSettingsChanged += OnAdvancedSettingsChanged ;
+            SettingsWindow.LockSettingsChanged     += OnLockSettingsChanged ;
         }
 
         private void DoHideSettings ( )
@@ -219,6 +220,7 @@ namespace Idasen.SystemTray
             }
 
             SettingsWindow.AdvancedSettingsChanged -= OnAdvancedSettingsChanged;
+            SettingsWindow.LockSettingsChanged     -= OnLockSettingsChanged;
             SettingsWindow.Close ( ) ;
             SettingsWindow = null ;
         }
@@ -573,6 +575,23 @@ namespace Idasen.SystemTray
             {
                 _logger.Error(e,
                               "Failed  to reconnect after advanced settings change.");
+            }
+        }
+
+        private void OnLockSettingsChanged ( object                       sender ,
+                                             LockSettingsChangedEventArgs args )
+        {
+            try
+            {
+                if ( args.IsLocked )
+                    _desk?.MoveLock ( ) ;
+                else
+                    _desk?.MoveUnlock ( ) ;
+            }
+            catch ( Exception e )
+            {
+                _logger.Error ( e ,
+                                "Failed  to lock/unlock after locked settings change." ) ;
             }
         }
 
