@@ -57,6 +57,16 @@ namespace Idasen.RESTAPI.Desks
             DoMoveStop ( ) ;
         }
 
+        public void MoveLock ( )
+        {
+            DoMoveLock ( ) ;
+        }
+
+        public void MoveUnlock ( )
+        {
+            DoMoveUnlock ( ) ;
+        }
+
         public Task < bool > MoveToAsync ( uint targetHeight )
         {
             return DoAction ( ( ) => DoMoveTo ( targetHeight ) ) ;
@@ -75,6 +85,16 @@ namespace Idasen.RESTAPI.Desks
         public Task < bool > MoveStopAsync ( )
         {
             return DoAction ( DoMoveStop ) ;
+        }
+
+        public Task<bool> MoveLockAsync()
+        {
+            return DoAction(DoMoveLock);
+        }
+
+        public Task<bool> MoveUnlockAsync()
+        {
+            return DoAction(DoMoveUnlock);
         }
 
         public uint Height { get ; private set ; } = 6000u ;
@@ -181,6 +201,16 @@ namespace Idasen.RESTAPI.Desks
             Thread.Sleep ( DefaultStepSleep ) ;
 
             FinishedMove ( ) ;
+        }
+
+        private void DoMoveLock()
+        {
+            // nothing to do
+        }
+
+        private void DoMoveUnlock()
+        {
+            // nothing to do
         }
 
         private async Task < bool > DoAction ( Action action )

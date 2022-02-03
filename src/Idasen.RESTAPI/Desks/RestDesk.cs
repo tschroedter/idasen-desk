@@ -78,6 +78,16 @@ namespace Idasen.RESTAPI.Desks
             _desk.MoveStop ( ) ;
         }
 
+        public void MoveLock ( )
+        {
+            _desk.MoveLock (  );
+        }
+
+        public void MoveUnlock ( )
+        {
+            _desk.MoveUnlock (  );
+        }
+
         public uint Height { get ; private set ; }
         public int  Speed  { get ; private set ; }
 

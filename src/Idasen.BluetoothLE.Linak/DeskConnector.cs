@@ -33,6 +33,7 @@ namespace Idasen.BluetoothLE.Linak
             [ NotNull ] IDeskHeightAndSpeedFactory                 heightAndSpeedFactory ,
             [ NotNull ] IDeskCommandExecutorFactory                commandExecutorFactory ,
             [ NotNull ] IDeskMoverFactory                          moverFactory ,
+            [ NotNull ] IDeskLockerFactory                         deskLockerFactory,
             [ NotNull ] IErrorManager                              errorManager )
         {
             Guard.ArgumentNotNull ( logger ,
@@ -59,6 +60,8 @@ namespace Idasen.BluetoothLE.Linak
                                     nameof ( commandExecutorFactory ) ) ;
             Guard.ArgumentNotNull ( moverFactory ,
                                     nameof ( moverFactory ) ) ;
+            Guard.ArgumentNotNull ( deskLockerFactory ,
+                                    nameof ( deskLockerFactory ) ) ;
             Guard.ArgumentNotNull ( errorManager ,
                                     nameof ( errorManager ) ) ; // todo testing
 
@@ -73,6 +76,7 @@ namespace Idasen.BluetoothLE.Linak
             _heightAndSpeedFactory  = heightAndSpeedFactory ;
             _commandExecutorFactory = commandExecutorFactory ;
             _moverFactory           = moverFactory ;
+            _deskLockerFactory = deskLockerFactory ;
             _errorManager           = errorManager ;
 
             _device.GattServicesRefreshed
@@ -118,6 +122,7 @@ namespace Idasen.BluetoothLE.Linak
         /// <inheritdoc />
         public void Dispose ( )
         {
+            _deskLocker?.Dispose ( ) ;
             _deskMover?.Dispose ( ) ;
             _disposableHeightAndSpeed?.Dispose ( ) ;
             _disposableSpeed?.Dispose ( ) ;
@@ -187,6 +192,28 @@ namespace Idasen.BluetoothLE.Linak
             return await deskMover.Stop ( ) ;
         }
 
+        /// <inheritdoc />
+        public Task < bool > MoveLock ( ) // todo check test for async
+        {
+            if ( ! TryGetDeskLocker ( out var deskLocker ) )
+                return Task.FromResult(false);
+
+            deskLocker.Lock();
+
+            return Task.FromResult(true);
+        }
+
+        /// <inheritdoc />
+        public Task < bool > MoveUnlock ( ) // todo check test for async
+        {
+            if ( ! TryGetDeskLocker ( out var deskLocker ) )
+                return Task.FromResult ( false ) ;
+
+            deskLocker.Unlock ( ) ;
+
+            return Task.FromResult ( true ) ;
+        }
+
         private bool TryGetDeskMover ( out IDeskMover deskMover )
         {
             if ( _deskMover == null )
@@ -201,6 +228,22 @@ namespace Idasen.BluetoothLE.Linak
             deskMover = _deskMover ;
 
             return true ;
+        }
+
+        private bool TryGetDeskLocker(out IDeskLocker deskLocker)
+        {
+            if (_deskLocker == null)
+            {
+                _logger.Error("Desk needs to be refreshed first!");
+
+                deskLocker = null;
+
+                return false;
+            }
+
+            deskLocker = _deskLocker;
+
+            return true;
         }
 
         private async Task OnGattServicesRefreshed ( GattCommunicationStatus status )
@@ -265,6 +308,12 @@ namespace Idasen.BluetoothLE.Linak
 
             _deskMover.Initialize ( ) ;
 
+            _deskLocker = _deskLockerFactory.Create ( _deskMover ,
+                                                      _executor ,
+                                                      _heightAndSpeed ) ;
+
+            _deskLocker.Initialize ( ) ;
+
             _subjectRefreshed.OnNext ( true ) ;
         }
 
@@ -281,6 +330,7 @@ namespace Idasen.BluetoothLE.Linak
         private readonly IDeskHeightAndSpeedFactory        _heightAndSpeedFactory ;
         private readonly ILogger                           _logger ;
         private readonly IDeskMoverFactory                 _moverFactory ;
+        private readonly IDeskLockerFactory                _deskLockerFactory ;
         private readonly IScheduler                        _scheduler ;
         private readonly ISubject < uint >                 _subjectHeight ;
         private readonly ISubject < HeightSpeedDetails >   _subjectHeightAndSpeed ;
@@ -295,5 +345,6 @@ namespace Idasen.BluetoothLE.Linak
 
         private IDeskHeightAndSpeed _heightAndSpeed ;
         private IDisposable         _subscriber ;
+        private IDeskLocker         _deskLocker ;
     }
 }

@@ -83,5 +83,15 @@ namespace Idasen.BluetoothLE.Linak.Interfaces
         ///     Stop moving the desk.
         /// </summary>
         void MoveStop ( ) ;
+
+        /// <summary>
+        ///     Lock the desk, stop manual movement.
+        /// </summary>
+        void MoveLock ( ) ;
+
+        /// <summary>
+        ///     Unlock the desk, allow manual movement.
+        /// </summary>
+        void MoveUnlock ( ) ;
     }
 }

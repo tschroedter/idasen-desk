@@ -26,8 +26,8 @@ namespace Idasen.BluetoothLE.Linak.Control
                            [ NotNull ] IDeskCommandExecutor                  executor ,
                            [ NotNull ] IDeskHeightAndSpeed                   heightAndSpeed ,
                            [ NotNull ] IStoppingHeightCalculator             calculator ,
-                           [ NotNull ] ISubject < uint >                     subjectFinished,
-                           [ NotNull ] IDeskHeightMonitor                    heightMonitor)
+                           [ NotNull ] ISubject < uint >                     subjectFinished ,
+                           [ NotNull ] IDeskHeightMonitor                    heightMonitor )
         {
             Guard.ArgumentNotNull ( logger ,
                                     nameof ( logger ) ) ;
@@ -48,15 +48,15 @@ namespace Idasen.BluetoothLE.Linak.Control
             Guard.ArgumentNotNull ( heightMonitor ,
                                     nameof ( heightMonitor ) ) ;
 
-            _logger = logger ;
-            _scheduler          = scheduler ;
-            _providerFactory    = providerFactory ;
-            _monitorFactory     = monitorFactory ;
-            _executor           = executor ;
-            _heightAndSpeed     = heightAndSpeed ;
-            _calculator         = calculator ;
-            _subjectFinished    = subjectFinished ;
-            _heightMonitor = heightMonitor ;
+            _logger          = logger ;
+            _scheduler       = scheduler ;
+            _providerFactory = providerFactory ;
+            _monitorFactory  = monitorFactory ;
+            _executor        = executor ;
+            _heightAndSpeed  = heightAndSpeed ;
+            _calculator      = calculator ;
+            _subjectFinished = subjectFinished ;
+            _heightMonitor   = heightMonitor ;
         }
 
         public uint Height       { get ; private set ; }
@@ -69,7 +69,7 @@ namespace Idasen.BluetoothLE.Linak.Control
         {
             lock ( _padlock )
             {
-                _monitor?.Dispose ( ) ; // todo testing
+                _monitor?.Dispose ( ) ;
                 _monitor = _monitorFactory.Create ( _heightAndSpeed ) ;
                 _monitor.Initialize ( ) ;
 
@@ -135,10 +135,10 @@ namespace Idasen.BluetoothLE.Linak.Control
 
         public void Dispose ( )
         {
-            _monitor?.Dispose ( ) ; // todo testing
+            _monitor?.Dispose ( ) ;
             _disposableProvider?.Dispose ( ) ;
             _disposalHeightAndSpeed?.Dispose ( ) ;
-            _disposableTimer?.Dispose ( ) ;
+            _disposableTimer?.Dispose ( );         // todo testing
         }
 
         public delegate IDeskMover Factory ( IDeskCommandExecutor executor ,
@@ -153,7 +153,11 @@ namespace Idasen.BluetoothLE.Linak.Control
             _logger.Debug ( "Start after refreshed..." ) ;
 
             if ( TargetHeight == 0 )
-                throw new Exception ( "TargetHeight is 0" ) ;
+            {
+                _logger.Warning ( "TargetHeight is 0" ) ;
+
+                return;
+            }
 
             Height = _heightAndSpeed.Height ;
             Speed  = _heightAndSpeed.Speed ;
@@ -173,13 +177,12 @@ namespace Idasen.BluetoothLE.Linak.Control
 
             _disposableTimer?.Dispose ( ) ;
             _disposableTimer = Observable.Interval ( TimerInterval )
-                                         .SubscribeOn ( _scheduler )
-                                         .SubscribeOn ( _scheduler )
+                                         .ObserveOn( _scheduler )
                                          .Subscribe ( OnTimerElapsed ) ;
 
             IsAllowedToMove = true ;
 
-            _heightMonitor.Reset ( ) ; // todo testing
+            _heightMonitor.Reset ( ) ;
         }
 
         internal void OnTimerElapsed ( long time )
