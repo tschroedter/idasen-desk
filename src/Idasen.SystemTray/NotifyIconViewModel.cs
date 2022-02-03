@@ -366,7 +366,7 @@ namespace Idasen.SystemTray
 
                 _logger.Debug ( "Trying to auto connect to Idasen Desk..." ) ;
 
-                await Task.Delay ( TimeSpan.FromSeconds ( 5 ) ,
+                await Task.Delay ( TimeSpan.FromSeconds ( 3 ) ,
                                    _token ) ;
 
                 ShowFancyBalloon ( "Auto Connect" ,
@@ -495,6 +495,13 @@ namespace Idasen.SystemTray
                                Visibility.Visible ) ;
 
             _logger.Debug ( $"[{_desk?.DeviceName}] Connected successful" ) ;
+
+            if ( ! _manager.CurrentSettings.DeviceLocked )
+                return ;
+
+            _logger.Information ( "Locking desk movement" );
+
+            _desk?.MoveLock ( ) ;
         }
 
         private void OnFinishedChanged ( uint height )
