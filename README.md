@@ -34,19 +34,33 @@ The application will automatically connect to the Idasen Desk during start-up. P
 *Show Settings* will display the current settings for the current user and allows to change them:
 - Standing Height
 - Seating Height
-
-![settings](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/settings.PNG)
+- Advanced Settings
 
 _Note:_ The settings are stored per Windows user.
 
 ## Hide Settings
 *Hide Setting* will close the settings window.
 
-## Standing
+## General Settings
+![settings](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/settings.PNG)
+
+### Standing
 *Standing* will move the desk to the standing height specified in the settings.
 
-## Seating
+### Seating
 *Seating* will move the desk to the seating height specified in the settings.
+
+## Advanced Settings
+![settingsadvanced](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/settingsadvanced.PNG)
+
+### Desk Name
+You can specify the desk name in case you changed it from the default name. By default the app is looking for a device/desk with a name starting with 'Desk'.
+
+### Desk Address
+If you know your devices ulong Bluetooth adress you can put it here. By default the app is looking for the Desk Name first and Desk Address second.
+
+### Parental Lock
+This feature allows to lock/unlock the physical desk controller. If this feature is enabled any pushing of the physical controller up or down will be immediately stop.
 
 ## Exit
 *Exit* will close the application.
