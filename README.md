@@ -51,7 +51,7 @@ _Note:_ The settings are stored per Windows user.
 *Seating* will move the desk to the seating height specified in the settings.
 
 ## Advanced Settings
-![settingsadvanced](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/settingsadvanced.PNG)
+![settingsadvanced](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/SettingsAdvanced.PNG)
 
 ### Desk Name
 You can specify the desk name in case you changed it from the default name. By default the app is looking for a device/desk with a name starting with 'Desk'.
