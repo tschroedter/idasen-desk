@@ -14,11 +14,12 @@ namespace Idasen.SystemTray.Settings
 
         public override string ToString ( )
         {
-            return $"{nameof ( StandingHeightInCm )} = {StandingHeightInCm}, " +
-                   $"{nameof ( SeatingHeightInCm )} = {SeatingHeightInCm}, "   +
-                   $"{nameof ( DeviceName )} = {DeviceName}, "                 +
-                   $"{nameof ( DeviceAddress )} = {DeviceAddress}, "           +
-                   $"{nameof ( DeviceLocked )} = {DeviceLocked}, " ;
+            return $"{nameof ( StandingHeightInCm )} = {StandingHeightInCm}, "           +
+                   $"{nameof ( SeatingHeightInCm )} = {SeatingHeightInCm}, "             +
+                   $"{nameof ( DeviceName )} = {DeviceName}, "                           +
+                   $"{nameof ( DeviceAddress )} = {DeviceAddress}, "                     +
+                   $"{nameof ( DeviceMonitoringTimeout )} = {DeviceMonitoringTimeout}, " +
+                   $"{nameof ( DeviceLocked )} = {DeviceLocked}" ;
         }
     }
 }
