@@ -167,7 +167,7 @@
                               VerticalAlignment="Center"
                               VerticalContentAlignment="Center"
                               Margin="4,0,0,0"
-                              IsChecked="{Binding ElementName=Locked, Path=Text, UpdateSourceTrigger=LostFocus}"/>
+                              IsChecked="{Binding ElementName=Locked, Path=Content, UpdateSourceTrigger=LostFocus}"/>
                 </Grid>
             </TabItem>
         </TabControl>

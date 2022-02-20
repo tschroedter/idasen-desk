@@ -7,9 +7,9 @@ namespace Idasen.SystemTray
     {
         public bool IsLocked { get ; }
 
-        public LockSettingsChangedEventArgs ( bool IsLocked )
+        public LockSettingsChangedEventArgs ( bool isLocked )
         {
-            this.IsLocked = IsLocked ;
+            this.IsLocked = isLocked ;
         }
     }
 }
