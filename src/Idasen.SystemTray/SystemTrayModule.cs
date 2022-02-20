@@ -21,6 +21,17 @@ namespace Idasen.SystemTray
 
             builder.RegisterType < VersionProvider > ( )
                    .As < IVersionProvider > ( ) ;
+
+            builder.RegisterType < TaskbarIconProvider > ( )
+                   .As < ITaskbarIconProvider > ( )
+                   .SingleInstance ( ) ;
+
+            builder.RegisterType < TaskbarIconProviderFactory > ( )
+                   .As < ITaskbarIconProviderFactory > ( )
+                   .SingleInstance ( ) ;
+
+            builder.RegisterType < DynamicIconCreator > ( )
+                   .As < IDynamicIconCreator > ( ) ;
         }
     }
 }

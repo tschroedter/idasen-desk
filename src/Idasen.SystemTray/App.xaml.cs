@@ -31,13 +31,14 @@ namespace Idasen.SystemTray
                                                     otherModules ) ;
 
             //create the notifyIcon (it's a resource declared in NotifyIconResources.xaml
-            _notifyIcon = ( TaskbarIcon ) FindResource ( "NotifyIcon" ) ;
+            var factory = _container.Resolve < ITaskbarIconProviderFactory> ( ) ;
+            _provider = factory.Create(this);
 
-            if ( _notifyIcon == null )
+            if ( NotifyIcon == null )
                 throw new ArgumentException ( "Can't find resource: NotifyIcon" ,
-                                              nameof ( _notifyIcon ) ) ;
+                                              nameof ( NotifyIcon ) ) ;
 
-            if ( ! ( _notifyIcon?.DataContext is NotifyIconViewModel model ) )
+            if ( ! ( NotifyIcon?.DataContext is NotifyIconViewModel model ) )
                 throw new ArgumentException ( "Can't find DataContext: NotifyIconViewModel" ,
                                               nameof ( model ) ) ;
 
@@ -51,7 +52,8 @@ namespace Idasen.SystemTray
                                _container.Resolve < ISettingsManager > ( ) ,
                                _container.Resolve < Func < IDeskProvider > > ( ) ,
                                _container.Resolve < IErrorManager > ( ) ,
-                               _container.Resolve < IVersionProvider > ( ) ) ;
+                               _container.Resolve < IVersionProvider > ( ) ,
+                               _container.Resolve < ITaskbarIconProvider > ( ) ) ;
 
             // ReSharper disable once AsyncVoidLambda
             Task.Run ( new Action ( async ( ) => await model.AutoConnect ( ) ) ) ;
@@ -60,7 +62,7 @@ namespace Idasen.SystemTray
         protected override void OnExit ( ExitEventArgs e )
         {
             // the icon would clean up automatically, but this is cleaner
-            _notifyIcon.Dispose ( ) ;
+            NotifyIcon.Dispose ( ) ;
 
             base.OnExit ( e ) ;
         }
@@ -68,7 +70,8 @@ namespace Idasen.SystemTray
         private readonly ILogger _logger = LoggerProvider.CreateLogger ( Constants.ApplicationName ,
                                                                          Constants.LogFilename ) ;
 
-        private IContainer  _container ;
-        private TaskbarIcon _notifyIcon ;
+        private IContainer          _container ;
+        private TaskbarIcon         NotifyIcon => _provider.NotifyIcon ;
+        private ITaskbarIconProvider _provider ;
     }
 }

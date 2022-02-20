@@ -37,7 +37,8 @@ namespace Idasen.SystemTray
             [ NotNull ] Func < IDeskProvider > providerFactory ,
             [ NotNull ] IScheduler             scheduler ,
             [ NotNull ] IErrorManager          errorManager ,
-            [ NotNull ] IVersionProvider       versionProvider )
+            [ NotNull ] IVersionProvider       versionProvider ,
+            [ NotNull ] Func<Application, ITaskbarIconProvider> factory )
         {
             Guard.ArgumentNotNull ( logger ,
                                     nameof ( logger ) ) ;
@@ -51,13 +52,16 @@ namespace Idasen.SystemTray
                                     nameof ( errorManager ) ) ;
             Guard.ArgumentNotNull ( versionProvider ,
                                     nameof ( versionProvider ) ) ;
+            Guard.ArgumentNotNull(factory,
+                                  nameof(factory));
 
-            _scheduler       = scheduler ;
+            _scheduler = scheduler ;
             _manager         = manager ;
             _providerFactory = providerFactory;
             _scheduler       = scheduler ;
             _errorManager    = errorManager;
             _versionProvider = versionProvider;
+            _iconProvider    = factory(null) ;
         }
 
         public void Dispose ( )
@@ -322,8 +326,11 @@ namespace Idasen.SystemTray
             [ NotNull ] ISettingsManager       manager ,
             [ NotNull ] Func < IDeskProvider > providerFactory ,
             [ NotNull ] IErrorManager          errorManager,
-            [ NotNull ] IVersionProvider       versionProvider)
+            [ NotNull ] IVersionProvider       versionProvider,
+            [ NotNull ] ITaskbarIconProvider   iconProvider)
         {
+            Guard.ArgumentNotNull ( iconProvider ,
+                                    nameof ( iconProvider ) ) ;
             Guard.ArgumentNotNull ( logger ,
                                     nameof ( logger ) ) ;
             Guard.ArgumentNotNull ( manager ,
@@ -332,13 +339,14 @@ namespace Idasen.SystemTray
                                     nameof ( providerFactory ) ) ;
             Guard.ArgumentNotNull ( errorManager ,
                                     nameof ( errorManager ) ) ;
-            Guard.ArgumentNotNull(versionProvider,
-                                  nameof(versionProvider));
+            Guard.ArgumentNotNull ( versionProvider ,
+                                    nameof ( versionProvider ) ) ;
 
             _logger          = logger ;
             _manager         = manager ;
             _providerFactory = providerFactory ;
             _versionProvider = versionProvider ;
+            _iconProvider    = iconProvider ;
 
             _logger.Debug ( "Initializing..." ) ;
 
@@ -494,6 +502,8 @@ namespace Idasen.SystemTray
                                $"'{desk.Name}'" ,
                                Visibility.Visible ) ;
 
+            _iconProvider.Initialize ( _desk ) ;
+
             _logger.Debug ( $"[{_desk?.DeviceName}] Connected successful" ) ;
 
             if ( ! _manager.CurrentSettings.DeviceLocked )
@@ -612,6 +622,7 @@ namespace Idasen.SystemTray
         private                    TaskbarIcon             _notifyIcon ;
         [ UsedImplicitly ] private IDisposable             _onErrorChanged ;
         private                    IVersionProvider        _versionProvider;
+        private                    ITaskbarIconProvider    _iconProvider ;
         private                    IDeskProvider           _deskProvider ;
         private                    Func < IDeskProvider >  _providerFactory ;
         private                    CancellationToken       _token ;
