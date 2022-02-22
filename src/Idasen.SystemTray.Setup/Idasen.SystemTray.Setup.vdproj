@@ -209,15 +209,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Idasen.SystemTray"
-        "ProductCode" = "8:{673835FA-E9B9-4A4F-B3E5-53C6A9FB255B}"
-        "PackageCode" = "8:{3D7DFE9A-0412-4CBE-B2D6-8248A1546530}"
+        "ProductCode" = "8:{F71EFE17-40D0-4A01-A880-6171156913AC}"
+        "PackageCode" = "8:{CF6A492B-CD33-4F83-AA07-82CFF49747EA}"
         "UpgradeCode" = "8:{798D3A2B-4870-4BB3-9E85-5B0D55E2E249}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:0.0.97"
+        "ProductVersion" = "8:0.0.100"
         "Manufacturer" = "8:Idasen"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -759,7 +759,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_EEEA76101125462AACCFBA13AA08C139"
             {
-            "SourcePath" = "8:..\\Idasen.SystemTray\\obj\\Debug\\netcoreapp3.1\\apphost.exe"
+            "SourcePath" = "8:..\\Idasen.SystemTray\\bin\\publish\\Idasen.SystemTray.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_C4F8EF14A9154C2C9A197A0939E875BA"
