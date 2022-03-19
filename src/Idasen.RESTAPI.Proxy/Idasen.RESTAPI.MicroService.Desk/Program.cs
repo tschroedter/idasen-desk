@@ -38,20 +38,26 @@ app.MapHealthChecks ( "/healthz/live" ,
                       {
                           Predicate = _ => false
                       } ) ;
+
 app.MapGet ( "/desk" ,
-             async ( ) =>
-             {
-                 using var source = new CancellationTokenSource ( ) ;
-                 using var client = new DaprClientBuilder ( ).Build ( ) ;
+             () => new DeskDto (  ))
+             // async context => await context.Response.WriteAsync ( "<html><body>Hello World!</body></html>" )
+             //                               .ConfigureAwait ( false ) )
+    /*
+     async ( ) =>
+     {
+         using var source = new CancellationTokenSource ( ) ;
+         using var client = new DaprClientBuilder ( ).Build ( ) ;
 
-                 var desk = await client.InvokeMethodAsync < DeskDto > ( HttpMethod.Get ,
-                                                                         "Idasen.RESTAPI" ,
-                                                                         "desk" ,
-                                                                         source.Token )
-                                        .ConfigureAwait ( false ) ;
+         var desk = await client.InvokeMethodAsync < DeskDto > ( HttpMethod.Get ,
+                                                                 "Idasen.RESTAPI" ,
+                                                                 "desk" ,
+                                                                 source.Token )
+                                .ConfigureAwait ( false ) ;
 
-                 return desk ;
-             } )
+         return desk ;
+     } )
+    */
    .WithName ( "GetDesk" ) ;
 
 app.Run ( ) ;

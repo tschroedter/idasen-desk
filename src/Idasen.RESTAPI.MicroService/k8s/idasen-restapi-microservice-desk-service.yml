@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: idasen-restapi-microservice-desk
+  namespace: default
+  labels:
+    app: idasen-restapi-microservice-desk
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:    
+    app: idasen-restapi-microservice-desk
+  type: ClusterIP

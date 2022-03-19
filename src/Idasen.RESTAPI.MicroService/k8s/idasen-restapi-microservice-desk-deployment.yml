@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: idasen-restapi-microservice-desk
+spec:
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: idasen-restapi-microservice-desk
+  replicas: 1 
+  template: 
+    metadata:
+      labels:
+        app: idasen-restapi-microservice-desk
+    spec:
+      containers:
+      - name: idasen-restapi-microservice-desk
+        image: ajoebcool/idasenrestapimicroservicedesk
+        ports:
+        - containerPort: 80
+        livenessProbe:
+          httpGet:
+            path: /healthz/live
+            port: 80
+          initialDelaySeconds: 15
+          timeoutSeconds: 2
+          periodSeconds: 5
+          failureThreshold: 1
+        readinessProbe:
+          httpGet:
+            path: /healthz/ready
+            port: 80
+          initialDelaySeconds: 15
+          timeoutSeconds: 2
+          periodSeconds: 5
+
+      #- image: ajoebcool/idasenrestapimicroservicedesk

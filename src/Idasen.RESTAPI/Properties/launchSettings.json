@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Idasen.RESTAPI": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}
