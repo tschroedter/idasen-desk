@@ -32,6 +32,12 @@ builder.Services.AddTransient<IMicroServiceSettingsProvider, MicroServiceSetting
 builder.Services.AddTransient<ISettingsCaller, SettingsCaller>();
 builder.Services.AddTransient<IMicroServiceCaller, MicroServiceCaller>();
 builder.Services.AddTransient<IRequestForwarder, RequestForwarder>();
+builder.Services.AddTransient<IList<MicroServiceSettings>>(_ =>
+{
+    return builder.Configuration
+    .GetSection(nameof(MicroServicesSettings))
+                            .Get<IList<MicroServiceSettings>>(); ;
+});
 builder.Services.AddHealthChecks()
        .AddCheck<StartupHealthCheck>("Startup",
                                           tags: new[] { "ready" });

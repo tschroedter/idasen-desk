@@ -6,22 +6,18 @@ public class MicroServiceSettingsProvider
     private readonly ILogger < MicroServiceSettingsProvider > _logger ;
 
     public MicroServiceSettingsProvider ( ILogger < MicroServiceSettingsProvider > logger,
-                                          IConfiguration                           configuration)
+                                          IList<MicroServiceSettings> settings)
     {
         _logger = logger ;
 
-        Initialize ( configuration ) ;
+        Initialize (settings) ;
     }
 
     public MicroServiceSettingsDictionary MicroServices { get ; } = new( ) ;
 
-    private MicroServiceSettingsProvider Initialize ( IConfiguration configuration )
+    private MicroServiceSettingsProvider Initialize (IList<MicroServiceSettings> settings)
     {
         _logger.LogInformation ( "Initializing..." ) ;
-
-        var settings = configuration.GetSection ( nameof ( MicroServicesSettings ) )
-                                    .Get < IList < MicroServiceSettings > > ( ) ;
-
 
         MicroServices.Initialize ( settings ) ;
 
