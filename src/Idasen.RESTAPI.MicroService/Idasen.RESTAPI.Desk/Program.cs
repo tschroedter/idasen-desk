@@ -1,6 +1,7 @@
 using Idasen.RESTAPI.Desk ;
-using Idasen.RESTAPI.Desk.RequestProcessing ;
-using Idasen.RESTAPI.Desk.Settings ;
+using Idasen.RESTAPI.MicroService.Shared.Interfaces ;
+using Idasen.RESTAPI.MicroService.Shared.RequestProcessing ;
+using Idasen.RESTAPI.MicroService.Shared.Settings ;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Serilog;
 
@@ -32,12 +33,13 @@ builder.Services.AddTransient<IMicroServiceSettingsProvider, MicroServiceSetting
 builder.Services.AddTransient<ISettingsCaller, SettingsCaller>();
 builder.Services.AddTransient<IMicroServiceCaller, MicroServiceCaller>();
 builder.Services.AddTransient<IRequestForwarder, RequestForwarder>();
+builder.Services.AddTransient<IMicroServiceSettingsDictionary, MicroServiceSettingsDictionary>();
 builder.Services.AddTransient<IList<MicroServiceSettings>>(_ =>
-{
-    return builder.Configuration
-    .GetSection(nameof(MicroServicesSettings))
-                            .Get<IList<MicroServiceSettings>>(); ;
-});
+                                                           {
+                                                               return builder.Configuration
+                                                                             .GetSection(nameof(MicroServicesSettings))
+                                                                             .Get<IList<MicroServiceSettings>>(); ;
+                                                           });
 builder.Services.AddHealthChecks()
        .AddCheck<StartupHealthCheck>("Startup",
                                           tags: new[] { "ready" });

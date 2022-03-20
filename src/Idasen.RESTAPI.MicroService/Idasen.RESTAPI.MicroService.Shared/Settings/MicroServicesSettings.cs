@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations ;
 
-namespace Idasen.RESTAPI.Desk.Settings ;
+namespace Idasen.RESTAPI.MicroService.Shared.Settings ;
 
 public class MicroServicesSettings
 {

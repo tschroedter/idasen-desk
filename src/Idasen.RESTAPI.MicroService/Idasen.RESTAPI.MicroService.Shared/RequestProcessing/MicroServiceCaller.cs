@@ -1,9 +1,11 @@
 using System.Net ;
-using Idasen.RESTAPI.Desk.Settings ;
+using Idasen.RESTAPI.MicroService.Shared.Interfaces ;
+using Idasen.RESTAPI.MicroService.Shared.Settings ;
+using Microsoft.AspNetCore.Http ;
 using Microsoft.AspNetCore.Http.Extensions ;
-using ILogger = Serilog.ILogger ;
+using Serilog ;
 
-namespace Idasen.RESTAPI.Desk.RequestProcessing ;
+namespace Idasen.RESTAPI.MicroService.Shared.RequestProcessing ;
 
 public class MicroServiceCaller
     : IMicroServiceCaller
@@ -34,15 +36,15 @@ public class MicroServiceCaller
             }
 
             // Get the stream containing content returned by the server.
-            Stream dataStream = await response.Content.ReadAsStreamAsync ( )
-                                              .ConfigureAwait ( false ) ;
+            var dataStream = await response.Content.ReadAsStreamAsync ( )
+                                           .ConfigureAwait ( false ) ;
             // Open the stream using a StreamReader for easy access.
-            StreamReader reader = new StreamReader(dataStream);
+            var reader = new StreamReader ( dataStream ) ;
             // Read the content.
-            string responseFromServer = await reader.ReadToEndAsync ( )
-                                                    .ConfigureAwait ( false ) ;
+            var responseFromServer = await reader.ReadToEndAsync ( )
+                                                 .ConfigureAwait ( false ) ;
             // Log the content.
-            _logger.Information ( $"Response from '{httpContext.Request.Path}': '{responseFromServer}'" );
+            _logger.Information ( $"Response from '{httpContext.Request.Path}': '{responseFromServer}'" ) ;
 
             await httpContext.Response
                              .WriteAsync ( responseFromServer )

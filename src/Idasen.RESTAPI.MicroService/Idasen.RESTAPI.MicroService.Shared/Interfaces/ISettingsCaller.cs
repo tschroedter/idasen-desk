@@ -1,6 +1,7 @@
-using Idasen.RESTAPI.Desk.Settings ;
+using Idasen.RESTAPI.MicroService.Shared.Settings ;
+using Microsoft.AspNetCore.Http ;
 
-namespace Idasen.RESTAPI.Desk.RequestProcessing ;
+namespace Idasen.RESTAPI.MicroService.Shared.Interfaces ;
 
 public interface ISettingsCaller
 {

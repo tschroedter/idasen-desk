@@ -16,4 +16,8 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Idasen.RESTAPI.MicroService.Shared\Idasen.RESTAPI.MicroService.Shared.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations ;
 
-namespace Idasen.RESTAPI.Desk.Settings ;
+namespace Idasen.RESTAPI.MicroService.Shared.Settings ;
 
 public class MicroServiceSettings
 {
@@ -23,7 +23,7 @@ public class MicroServiceSettings
               65535 ) ]
     public int Port { get ; set ; } = 80 ;
 
-    [Required]
+    [ Required ]
     public string Readiness { get ; set ; } = string.Empty ;
 
     public override string ToString ( )

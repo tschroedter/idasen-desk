@@ -1,9 +1,11 @@
 using System.Text ;
-using Idasen.RESTAPI.Desk.Settings ;
+using Idasen.RESTAPI.MicroService.Shared.Interfaces ;
+using Idasen.RESTAPI.MicroService.Shared.Settings ;
+using Microsoft.AspNetCore.Http ;
 using Microsoft.AspNetCore.Http.Extensions ;
-using ILogger = Serilog.ILogger ;
+using Serilog ;
 
-namespace Idasen.RESTAPI.Desk.RequestProcessing ;
+namespace Idasen.RESTAPI.MicroService.Shared.RequestProcessing ;
 
 public class SettingsCaller
     : ISettingsCaller

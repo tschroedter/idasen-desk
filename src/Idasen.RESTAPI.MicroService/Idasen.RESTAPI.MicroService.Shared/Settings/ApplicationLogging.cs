@@ -1,4 +1,6 @@
-﻿namespace Idasen.RESTAPI.Desk.Settings ;
+﻿using Microsoft.Extensions.Logging ;
+
+namespace Idasen.RESTAPI.MicroService.Shared.Settings ;
 
 /// <summary>
 ///     Shared logger

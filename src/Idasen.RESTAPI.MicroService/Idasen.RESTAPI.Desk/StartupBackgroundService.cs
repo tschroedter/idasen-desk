@@ -1,17 +1,18 @@
 using System.Net ;
-using Idasen.RESTAPI.Desk.Settings ;
-using ILogger = Serilog.ILogger;
+using Idasen.RESTAPI.MicroService.Shared.Interfaces ;
+using Idasen.RESTAPI.MicroService.Shared.Settings ;
+using ILogger = Serilog.ILogger ;
 
 namespace Idasen.RESTAPI.Desk ;
 
 public class StartupBackgroundService : BackgroundService
 {
+    private readonly StartupHealthCheck            _healthCheck ;
     private readonly ILogger                       _logger ;
     private readonly IMicroServiceSettingsProvider _provider ;
-    private readonly StartupHealthCheck            _healthCheck ;
 
-    public StartupBackgroundService ( ILogger                       logger,
-                                      IMicroServiceSettingsProvider provider,
+    public StartupBackgroundService ( ILogger                       logger ,
+                                      IMicroServiceSettingsProvider provider ,
                                       StartupHealthCheck            healthCheck )
     {
         _logger      = logger ;
@@ -21,7 +22,7 @@ public class StartupBackgroundService : BackgroundService
 
     protected override async Task ExecuteAsync ( CancellationToken stoppingToken )
     {
-        bool allMicroServicesReady;
+        bool allMicroServicesReady ;
 
         do
         {
@@ -29,7 +30,7 @@ public class StartupBackgroundService : BackgroundService
 
             foreach ( var settings in _provider.MicroServices.Values )
             {
-                var result = await CheckReadinessOfService ( settings  ) ;
+                var result = await CheckReadinessOfService ( settings ) ;
 
                 if ( ! result )
                     allMicroServicesReady = false ;
@@ -39,28 +40,28 @@ public class StartupBackgroundService : BackgroundService
                                stoppingToken ) ;
 
             _healthCheck.StartupCompleted = allMicroServicesReady ;
-        } while ( !allMicroServicesReady ) ;
+        } while ( ! allMicroServicesReady ) ;
     }
 
-    private async Task<bool> CheckReadinessOfService ( MicroServiceSettings settings )
+    private async Task < bool > CheckReadinessOfService ( MicroServiceSettings settings )
     {
         try
         {
-            _logger.Information($"Checking readiness for {GetReadinessUri(settings)}...");
+            _logger.Information ( $"Checking readiness for {GetReadinessUri ( settings )}..." ) ;
 
-            using var httpClient = new HttpClient();
+            using var httpClient = new HttpClient ( ) ;
 
-            var result = await httpClient.GetAsync(new Uri ( "https://www.google.com.au" ))//GetReadinessUri(settings))
-                                         .ConfigureAwait(false);
+            var result = await httpClient.GetAsync ( GetReadinessUri ( settings ) )
+                                         .ConfigureAwait ( false ) ;
 
-            _logger.Information($"Result for {GetReadinessUri(settings)}: {result.StatusCode}");
+            _logger.Information ( $"Result for {GetReadinessUri ( settings )}: {result.StatusCode}" ) ;
 
-            return result.StatusCode == HttpStatusCode.OK;
+            return result.StatusCode == HttpStatusCode.OK ;
         }
         catch ( Exception e )
         {
-            _logger.Error ( e,
-                           $"Failed - Checking readiness for {GetReadinessUri(settings)}");
+            _logger.Error ( e ,
+                            $"Failed - Checking readiness for {GetReadinessUri ( settings )}" ) ;
 
             return false ;
         }
@@ -70,8 +71,8 @@ public class StartupBackgroundService : BackgroundService
     {
         var uriString = settings.Protocol +
                         settings.Host     +
-                        settings.Path;
+                        settings.Path ;
 
-        return new Uri(uriString);
+        return new Uri ( uriString ) ;
     }
 }
