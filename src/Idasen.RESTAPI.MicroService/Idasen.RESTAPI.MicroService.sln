@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Idasen.RESTAPI.MicroService
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Idasen.RESTAPI.Desk", "Idasen.RESTAPI.Desk\Idasen.RESTAPI.Desk.csproj", "{FB02E6A6-0238-4A6E-9E31-351210B39981}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Idasen.RestApi", "..\Idasen.RESTAPI\Idasen.RestApi.csproj", "{DD181F12-C58B-4A59-A7CD-BC5E666B2604}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Idasen.RESTAPI.Desk.Emulator", "Idasen.RESTAPI.Desk.Emulator\Idasen.RESTAPI.Desk.Emulator.csproj", "{5DF9C457-A184-4B6E-9D56-3823C60FEADB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +29,10 @@ Global
 		{FB02E6A6-0238-4A6E-9E31-351210B39981}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FB02E6A6-0238-4A6E-9E31-351210B39981}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FB02E6A6-0238-4A6E-9E31-351210B39981}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DD181F12-C58B-4A59-A7CD-BC5E666B2604}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DD181F12-C58B-4A59-A7CD-BC5E666B2604}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DD181F12-C58B-4A59-A7CD-BC5E666B2604}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DD181F12-C58B-4A59-A7CD-BC5E666B2604}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5DF9C457-A184-4B6E-9D56-3823C60FEADB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5DF9C457-A184-4B6E-9D56-3823C60FEADB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5DF9C457-A184-4B6E-9D56-3823C60FEADB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5DF9C457-A184-4B6E-9D56-3823C60FEADB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
