@@ -8,9 +8,9 @@ public class MicroServiceSettingsProvider
 {
     private readonly ILogger _logger ;
 
-    public MicroServiceSettingsProvider ( ILogger                        logger ,
+    public MicroServiceSettingsProvider ( ILogger                         logger ,
                                           IMicroServiceSettingsDictionary dictionary ,
-                                          IList < MicroServiceSettings > settings )
+                                          IList < MicroServiceSettings >  settings )
     {
         _logger       = logger ;
         MicroServices = dictionary ;
@@ -48,6 +48,9 @@ public class MicroServiceSettingsProvider
     private void Initialize ( IList < MicroServiceSettings > settings )
     {
         _logger.Information ( "Initializing..." ) ;
+
+        foreach ( var setting in settings )
+            _logger.Information($"{nameof(MicroServiceSettings)}: {setting}");
 
         MicroServices.Initialize ( settings ) ;
 

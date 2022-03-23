@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: idasen-restapi-desk-emulator
+  namespace: default
+  labels:
+    app: idasen-restapi-desk-emulator
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:    
+    app: idasen-restapi-desk-emulator
+  type: ClusterIP

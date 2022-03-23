@@ -1,5 +1,4 @@
 using Idasen.RESTAPI.MicroService.Shared.Interfaces ;
-using Idasen.RESTAPI.MicroService.Shared.Settings ;
 using Microsoft.AspNetCore.Http ;
 using Microsoft.AspNetCore.Http.Extensions ;
 using Serilog ;

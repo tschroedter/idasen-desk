@@ -1,6 +1,5 @@
 using System.Text ;
 using Idasen.RESTAPI.MicroService.Shared.Interfaces ;
-using Idasen.RESTAPI.MicroService.Shared.Settings ;
 using Microsoft.AspNetCore.Http ;
 using Microsoft.AspNetCore.Http.Extensions ;
 using Serilog ;
@@ -24,8 +23,7 @@ public class SettingsCaller
         {
             _logger.Information ( $"Processing request for path '{httpContext.Request.Path}'" ) ;
 
-            var response = await DoTryCall ( httpContext ,
-                                             provider ) ;
+            var response = await DoTryCall ( provider ) ;
 
             if ( string.IsNullOrWhiteSpace ( response ) )
             {
@@ -50,8 +48,7 @@ public class SettingsCaller
         }
     }
 
-    private static Task < string > DoTryCall ( HttpContext                   context ,
-                                               IMicroServiceSettingsProvider provider )
+    private static Task < string > DoTryCall ( IMicroServiceSettingsProvider provider )
     {
         var stringBuilder = new StringBuilder ( ) ;
 

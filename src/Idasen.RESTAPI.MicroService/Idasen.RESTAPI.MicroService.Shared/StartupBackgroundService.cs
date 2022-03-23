@@ -1,9 +1,10 @@
 using System.Net ;
 using Idasen.RESTAPI.MicroService.Shared.Interfaces ;
 using Idasen.RESTAPI.MicroService.Shared.Settings ;
-using ILogger = Serilog.ILogger ;
+using Microsoft.Extensions.Hosting ;
+using Serilog ;
 
-namespace Idasen.RESTAPI.Desk ;
+namespace Idasen.RESTAPI.MicroService.Shared ;
 
 public class StartupBackgroundService : BackgroundService
 {
@@ -72,6 +73,8 @@ public class StartupBackgroundService : BackgroundService
         var uriString = settings.Protocol +
                         settings.Host     +
                         settings.Path ;
+
+        _logger.Information ( $"{nameof(uriString)}: {uriString}" );
 
         return new Uri ( uriString ) ;
     }

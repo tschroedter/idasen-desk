@@ -1,7 +1,6 @@
-﻿namespace Idasen.RESTAPI.Desk.Emulator.Dtos
+﻿namespace Idasen.RESTAPI.Desk.Emulator.Dtos ;
+
+public class SpeedDto
 {
-    public class SpeedDto
-    {
-        public int Speed { get ; set ; }
-    }
+    public int Speed { get ; set ; }
 }

@@ -15,13 +15,13 @@ internal class FakeDesk : IFakeDesk
     private readonly Subject < HeightSpeedDetails >
         _heightAndSpeedChanged = new( ) ;
 
-    private readonly Subject < uint >        _heightChanged    = new( ) ;
-    private readonly object                  _padlock          = new( ) ;
-    private readonly Subject < bool >        _refreshedChanged = new( ) ;
-    private readonly Subject < int >         _speedChanged     = new( ) ;
+    private readonly Subject < uint > _heightChanged    = new( ) ;
+    private readonly object           _padlock          = new( ) ;
+    private readonly Subject < bool > _refreshedChanged = new( ) ;
+    private readonly Subject < int >  _speedChanged     = new( ) ;
 
-    private          CancellationTokenSource _source           = null! ;
-    private          CancellationToken       _token            = CancellationToken.None ;
+    private CancellationTokenSource _source = null! ;
+    private CancellationToken       _token  = CancellationToken.None ;
 
     public FakeDesk ( )
     {
@@ -37,6 +37,10 @@ internal class FakeDesk : IFakeDesk
     public TimeSpan DefaultStepSleep { get ; set ; } = TimeSpan.FromSeconds ( 0.5 ) ;
 
     public bool IsInUse { get ; private set ; }
+
+    public uint Height { get ; private set ; } = 6000u ;
+
+    public int Speed { get ; private set ; }
 
     public void Dispose ( )
     {
@@ -106,10 +110,6 @@ internal class FakeDesk : IFakeDesk
     {
         return DoAction ( DoMoveStop ) ;
     }
-
-    public uint Height { get ; private set ; } = 6000u ;
-
-    public int Speed { get ; private set ; }
 
     public Task < bool > MoveLockAsync ( )
     {

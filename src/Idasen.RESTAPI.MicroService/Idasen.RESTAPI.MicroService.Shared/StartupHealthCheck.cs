@@ -1,5 +1,7 @@
 using Microsoft.Extensions.Diagnostics.HealthChecks ;
 
+namespace Idasen.RESTAPI.MicroService.Shared ;
+
 public class StartupHealthCheck : IHealthCheck
 {
     private volatile bool _isReady ;

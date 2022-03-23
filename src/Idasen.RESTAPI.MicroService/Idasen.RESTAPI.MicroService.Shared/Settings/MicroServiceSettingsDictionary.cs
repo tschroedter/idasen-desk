@@ -4,7 +4,7 @@ using Serilog ;
 namespace Idasen.RESTAPI.MicroService.Shared.Settings ;
 
 public class MicroServiceSettingsDictionary
-    : Dictionary< string , MicroServiceSettings >,
+    : Dictionary < string , MicroServiceSettings > ,
       IMicroServiceSettingsDictionary
 {
     private readonly ILogger _logger ;

@@ -1,10 +1,9 @@
-﻿namespace Idasen.RESTAPI.Desk.Emulator.Dtos
+﻿namespace Idasen.RESTAPI.Desk.Emulator.Dtos ;
+
+internal class DeskDto
 {
-    internal class DeskDto
-    {
-        public string BluetoothAddress     { get ; set ; }
-        public string BluetoothAddressType { get ; set ; }
-        public string DeviceName           { get ; set ; }
-        public string Name                 { get ; set ; }
-    }
+    public string BluetoothAddress     { get ; set ; } = string.Empty ;
+    public string BluetoothAddressType { get ; set ; } = string.Empty;
+    public string DeviceName           { get ; set ; } = string.Empty;
+    public string Name                 { get ; set ; } = string.Empty;
 }

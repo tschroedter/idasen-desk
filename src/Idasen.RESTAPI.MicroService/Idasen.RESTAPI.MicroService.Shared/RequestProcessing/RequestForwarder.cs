@@ -19,6 +19,8 @@ public class RequestForwarder : IRequestForwarder
 
     public async Task Forward ( HttpContext httpContext )
     {
+        _logger.Information ( $"Trying to forward call for '{httpContext.Request.GetDisplayUrl ( )}'" ) ;
+
         var success = await _caller.TryCall ( httpContext ) ;
 
         _logger.Information ( $"Success: {success} - Forwarding '{httpContext.Request.GetDisplayUrl ( )}'" ) ;

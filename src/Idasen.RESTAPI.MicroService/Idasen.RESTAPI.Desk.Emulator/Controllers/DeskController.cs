@@ -14,8 +14,8 @@ public class DeskController : ControllerBase
     public DeskController ( ILogger < DeskController > logger ,
                             IRestDesk                  desk )
     {
-        _logger     = logger ;
-        _desk       = desk ;
+        _logger = logger ;
+        _desk   = desk ;
     }
 
     [ Route ( "" ) ]
@@ -26,9 +26,9 @@ public class DeskController : ControllerBase
 
         var dto = new DeskDto
                   {
-                      BluetoothAddress     = _desk.BluetoothAddress.ToString(CultureInfo.InvariantCulture),
-                      BluetoothAddressType = _desk.BluetoothAddressType,
-                      DeviceName           = _desk.DeviceName,
+                      BluetoothAddress     = _desk.BluetoothAddress.ToString ( CultureInfo.InvariantCulture ) ,
+                      BluetoothAddressType = _desk.BluetoothAddressType ,
+                      DeviceName           = _desk.DeviceName ,
                       Name                 = _desk.Name
                   } ;
 

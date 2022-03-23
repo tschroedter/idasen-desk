@@ -1,4 +1,3 @@
-using Idasen.RESTAPI.MicroService.Shared.Settings ;
 using Microsoft.AspNetCore.Http ;
 
 namespace Idasen.RESTAPI.MicroService.Shared.Interfaces ;

@@ -11,6 +11,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Idasen.RESTAPI.Desk", "Idas
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Idasen.RESTAPI.Desk.Emulator", "Idasen.RESTAPI.Desk.Emulator\Idasen.RESTAPI.Desk.Emulator.csproj", "{5DF9C457-A184-4B6E-9D56-3823C60FEADB}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Emulator", "Emulator", "{A5771779-EE08-4775-B055-5B7D3644AA6E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{275B6E0E-8B8F-4FE8-9AD9-6E57364A196F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Idasen.RESTAPI.MicroService.Desk.Height", "Idasen.RESTAPI.MicroService.Desk.Height\Idasen.RESTAPI.MicroService.Desk.Height.csproj", "{71328F87-CA4B-4A1A-BFF1-1D6526F7BBE7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,9 +39,17 @@ Global
 		{5DF9C457-A184-4B6E-9D56-3823C60FEADB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5DF9C457-A184-4B6E-9D56-3823C60FEADB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5DF9C457-A184-4B6E-9D56-3823C60FEADB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{71328F87-CA4B-4A1A-BFF1-1D6526F7BBE7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71328F87-CA4B-4A1A-BFF1-1D6526F7BBE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71328F87-CA4B-4A1A-BFF1-1D6526F7BBE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71328F87-CA4B-4A1A-BFF1-1D6526F7BBE7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{8DBCEAE4-A653-490F-8F45-A5A9CAF1BB74} = {275B6E0E-8B8F-4FE8-9AD9-6E57364A196F}
+		{5DF9C457-A184-4B6E-9D56-3823C60FEADB} = {A5771779-EE08-4775-B055-5B7D3644AA6E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6182A15D-1496-48B3-A5BA-F1CE2AEDED30}

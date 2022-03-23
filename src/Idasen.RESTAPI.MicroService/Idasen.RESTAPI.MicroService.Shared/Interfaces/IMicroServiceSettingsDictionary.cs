@@ -2,7 +2,7 @@
 
 namespace Idasen.RESTAPI.MicroService.Shared.Interfaces ;
 
-public interface IMicroServiceSettingsDictionary : IDictionary<string, MicroServiceSettings>
+public interface IMicroServiceSettingsDictionary : IDictionary < string , MicroServiceSettings >
 {
-    IMicroServiceSettingsDictionary Initialize( IList < MicroServiceSettings > settings ) ;
+    IMicroServiceSettingsDictionary Initialize ( IList < MicroServiceSettings > settings ) ;
 }
