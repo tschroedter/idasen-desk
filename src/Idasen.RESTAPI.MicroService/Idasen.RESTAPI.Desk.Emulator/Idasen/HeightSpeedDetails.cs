@@ -17,8 +17,10 @@ public class HeightSpeedDetails
 
     public override string ToString ( )
     {
-        return $"Timestamp = {Timestamp:O}, " +
+        return "["                            +
+               $"Timestamp = {Timestamp:O}, " +
                $"Height = {Height}, "         +
-               $"Speed = {Speed}" ;
+               $"Speed = {Speed}"             +
+               "]" ;
     }
 }

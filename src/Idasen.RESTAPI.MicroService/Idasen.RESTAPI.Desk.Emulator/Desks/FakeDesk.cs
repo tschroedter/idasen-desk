@@ -1,5 +1,6 @@
 ﻿using System.Reactive.Subjects ;
 using Idasen.RESTAPI.Desk.Emulator.Idasen ;
+// ReSharper disable UnusedMember.Global
 
 namespace Idasen.RESTAPI.Desk.Emulator.Desks ;
 
@@ -123,6 +124,7 @@ internal class FakeDesk : IFakeDesk
 
     private void CreateNewSourceAndToken ( )
     {
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalse
         if ( _source != null )
         {
             _source.Cancel ( ) ;

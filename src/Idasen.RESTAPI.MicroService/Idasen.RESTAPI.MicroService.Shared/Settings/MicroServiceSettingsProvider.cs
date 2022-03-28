@@ -6,16 +6,19 @@ namespace Idasen.RESTAPI.MicroService.Shared.Settings ;
 public class MicroServiceSettingsProvider
     : IMicroServiceSettingsProvider
 {
-    private readonly ILogger _logger ;
+    private readonly ILogger                         _logger ;
+    private readonly IMicroServiceSettingsUriCreator _uriCreator ;
 
     public MicroServiceSettingsProvider ( ILogger                         logger ,
                                           IMicroServiceSettingsDictionary dictionary ,
-                                          IList < MicroServiceSettings >  settings )
+                                          IList < MicroServiceSettings >  settings,
+                                          IMicroServiceSettingsUriCreator uriCreator)
     {
         _logger       = logger ;
         MicroServices = dictionary ;
+        _uriCreator   = uriCreator;
 
-        Initialize ( settings ) ;
+        Initialize( settings ) ;
     }
 
     public IMicroServiceSettingsDictionary MicroServices { get ; }
@@ -33,12 +36,7 @@ public class MicroServiceSettingsProvider
             return false ;
         }
 
-
-        var uriString = settings.Protocol +
-                        settings.Host     +
-                        settings.Path ;
-
-        uri = new Uri ( uriString ) ;
+        uri = _uriCreator.GetUri ( settings );
 
         _logger.Information ( $"Create Uri: {uri}" ) ;
 
@@ -47,13 +45,10 @@ public class MicroServiceSettingsProvider
 
     private void Initialize ( IList < MicroServiceSettings > settings )
     {
-        _logger.Information ( "Initializing..." ) ;
-
-        foreach ( var setting in settings )
-            _logger.Information($"{nameof(MicroServiceSettings)}: {setting}");
+        _logger.Information ( $"Initializing {settings.Count}..." ) ;
 
         MicroServices.Initialize ( settings ) ;
 
-        _logger.Information ( $"...finished using settings: {settings}" ) ;
+        _logger.Information ( $"...finished using settings: {settings.ToCsv()}" ) ;
     }
 }

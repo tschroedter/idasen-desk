@@ -17,6 +17,7 @@ public static class WebApplicationBuilderExtensions
         builder.Services.AddTransient < IMicroServiceCaller , MicroServiceCaller > ( ) ;
         builder.Services.AddTransient < IRequestForwarder , RequestForwarder > ( ) ;
         builder.Services.AddTransient < IMicroServiceSettingsDictionary , MicroServiceSettingsDictionary > ( ) ;
+        builder.Services.AddTransient < IMicroServiceSettingsUriCreator , MicroServiceSettingsUriCreator > ( ) ;
         builder.Services.AddTransient ( _ => builder.Configuration
                                                     .GetSection ( nameof ( MicroServicesSettings ) )
                                                     .Get < IList < MicroServiceSettings > > ( ) ) ;
@@ -24,14 +25,10 @@ public static class WebApplicationBuilderExtensions
         // see https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-6.0
         builder.Services.AddHostedService ( serviceProvider =>
 #pragma warning disable CS8604
-                                                new StartupBackgroundService ( serviceProvider
-                                                                                  .GetService < ILogger > ( ) ,
-                                                                               serviceProvider
-                                                                                  .GetService <
-                                                                                       IMicroServiceSettingsProvider > ( ) ,
-                                                                               serviceProvider
-                                                                                  .GetService <
-                                                                                       StartupHealthCheck > ( ) ) ) ;
+                                                new StartupBackgroundService ( serviceProvider.GetService < ILogger > ( ) ,
+                                                                               serviceProvider.GetService < IMicroServiceSettingsProvider > ( ) ,
+                                                                               serviceProvider.GetService < IMicroServiceSettingsUriCreator > ( ),
+                                                                               serviceProvider.GetService < StartupHealthCheck > ( ) ) ) ;
 #pragma warning restore CS8604
         builder.Services.AddSingleton < StartupHealthCheck > ( ) ;
         builder.Services.AddHealthChecks ( )

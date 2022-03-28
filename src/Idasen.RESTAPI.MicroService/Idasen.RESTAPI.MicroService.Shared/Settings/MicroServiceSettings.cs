@@ -19,8 +19,9 @@ public class MicroServiceSettings
     [ Required ]
     public string Host { get ; set ; } = "Unknown" ;
 
-    [ Range ( 0 ,
-              65535 ) ]
+    [ Required ]
+    [Range( 0,
+            65535)]
     public int Port { get ; set ; } = 80 ;
 
     [ Required ]
@@ -28,10 +29,13 @@ public class MicroServiceSettings
 
     public override string ToString ( )
     {
-        return $"{nameof ( Name )}: {Name}, "               +
+        return "["                                          +
+               $"{nameof ( Name )}: {Name}, "               +
                $"{nameof ( Description )}: {Description}, " +
                $"{nameof ( Path )}: {Path}, "               +
                $"{nameof ( Host )}: {Host}, "               +
-               $"{nameof ( Readiness )}: {Readiness}" ;
+               $"{nameof ( Port )}: {Port}, "               +
+               $"{nameof ( Readiness )}: {Readiness}"       +
+               "]" ;
     }
 }

@@ -1,6 +1,5 @@
 using Idasen.RESTAPI.MicroService.Shared.Extensions ;
 using Idasen.RESTAPI.MicroService.Shared.Interfaces ;
-using Idasen.RESTAPI.MicroService.Shared.RequestProcessing ;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks ;
 using Serilog ;
 
@@ -65,8 +64,10 @@ app.MapGet ( "/desk/height/" ,
 app.MapGet ( "/settings" ,
              async httpContext =>
              {
-                 await new SettingsResponseCreator ( ).Response ( app.Services ,
-                                                                  httpContext ) ;
+                 await app.Services
+                          .GetService <ISettingsResponseCreator> (  )!
+                          .Response ( app.Services ,
+                                      httpContext ) ;
              } )
    .WithName ( "GetSettings" ) ;
 

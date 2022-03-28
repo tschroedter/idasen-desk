@@ -8,16 +8,19 @@ namespace Idasen.RESTAPI.MicroService.Shared ;
 
 public class StartupBackgroundService : BackgroundService
 {
-    private readonly StartupHealthCheck            _healthCheck ;
-    private readonly ILogger                       _logger ;
-    private readonly IMicroServiceSettingsProvider _provider ;
+    private readonly StartupHealthCheck              _healthCheck ;
+    private readonly ILogger                         _logger ;
+    private readonly IMicroServiceSettingsProvider   _provider ;
+    private readonly IMicroServiceSettingsUriCreator _uriCreator ;
 
-    public StartupBackgroundService ( ILogger                       logger ,
-                                      IMicroServiceSettingsProvider provider ,
-                                      StartupHealthCheck            healthCheck )
+    public StartupBackgroundService ( ILogger                         logger ,
+                                      IMicroServiceSettingsProvider   provider ,
+                                      IMicroServiceSettingsUriCreator uriCreator ,
+                                      StartupHealthCheck              healthCheck )
     {
         _logger      = logger ;
         _provider    = provider ;
+        _uriCreator  = uriCreator ;
         _healthCheck = healthCheck ;
     }
 
@@ -48,34 +51,27 @@ public class StartupBackgroundService : BackgroundService
     {
         try
         {
-            _logger.Information ( $"Checking readiness for {GetReadinessUri ( settings )}..." ) ;
+            _logger.Information($"Checking readiness for settings: {settings}...");
+
+            var requestUri = _uriCreator.GetUri(settings);
+
+            _logger.Information ( $"Checking readiness for {requestUri}..." ) ;
 
             using var httpClient = new HttpClient ( ) ;
 
-            var result = await httpClient.GetAsync ( GetReadinessUri ( settings ) )
+            var result = await httpClient.GetAsync ( requestUri )
                                          .ConfigureAwait ( false ) ;
 
-            _logger.Information ( $"Result for {GetReadinessUri ( settings )}: {result.StatusCode}" ) ;
+            _logger.Information ( $"Result for {requestUri}: {result.StatusCode}" ) ;
 
             return result.StatusCode == HttpStatusCode.OK ;
         }
         catch ( Exception e )
         {
             _logger.Error ( e ,
-                            $"Failed - Checking readiness for {GetReadinessUri ( settings )}" ) ;
+                            $"Failed - Checking readiness for settings: {settings}" ) ;
 
             return false ;
         }
-    }
-
-    private Uri GetReadinessUri ( MicroServiceSettings settings )
-    {
-        var uriString = settings.Protocol +
-                        settings.Host     +
-                        settings.Path ;
-
-        _logger.Information ( $"{nameof(uriString)}: {uriString}" );
-
-        return new Uri ( uriString ) ;
     }
 }

@@ -19,6 +19,7 @@ public static class RxExtensions
             return Unit.Default ;
         }
 
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalse
         return handler == null
                    ? source.SelectMany ( Wrapped ).Subscribe ( _ => { } )
                    : source.SelectMany ( Wrapped ).Subscribe ( _ => { } ,
@@ -36,6 +37,7 @@ public static class RxExtensions
             return Unit.Default ;
         }
 
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalse
         return handler == null
                    ? source.SelectMany ( Wrapped ).Subscribe ( _ => { } )
                    : source.SelectMany ( Wrapped ).Subscribe ( _ => { } ,
