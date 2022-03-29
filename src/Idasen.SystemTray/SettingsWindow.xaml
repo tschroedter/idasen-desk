@@ -83,7 +83,7 @@
                             Style="{StaticResource SliderHeightValue}"
                             Name="Standing"
                             Minimum="65"
-                            Maximum="120"
+                            Maximum="127"
                             Value="120"
                             Width="120" />
                     <TextBlock Grid.Row="0"
@@ -104,7 +104,7 @@
                             Style="{StaticResource SliderHeightValue}"
                             Name="Seating"
                             Minimum="65"
-                            Maximum="120"
+                            Maximum="127"
                             Value="65"
                             Width="120" />
                     <TextBlock Grid.Row="1"
