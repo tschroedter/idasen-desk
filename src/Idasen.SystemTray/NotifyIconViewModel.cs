@@ -12,8 +12,12 @@ using Idasen.BluetoothLE.Linak.Interfaces ;
 using Idasen.SystemTray.Interfaces ;
 using Idasen.SystemTray.Utils ;
 using JetBrains.Annotations ;
+using NHotkey ;
 using Serilog ;
+using NHotkey.Wpf;
+using Application = System.Windows.Application ;
 using Constants = Idasen.BluetoothLE.Characteristics.Common.Constants ;
+using MessageBox = System.Windows.MessageBox ;
 
 // ReSharper disable UnusedMember.Global
 
@@ -27,6 +31,9 @@ namespace Idasen.SystemTray
     public class NotifyIconViewModel
         : IDisposable
     {
+        private static readonly KeyGesture IncrementGesture = new KeyGesture(Key.Up, ModifierKeys.Control | ModifierKeys.Alt | ModifierKeys.Shift);
+        private static readonly KeyGesture DecrementGesture = new KeyGesture(Key.Down, ModifierKeys.Control | ModifierKeys.Alt | ModifierKeys.Shift);
+
         public NotifyIconViewModel ( )
         {
         }
@@ -62,6 +69,11 @@ namespace Idasen.SystemTray
             _errorManager    = errorManager;
             _versionProvider = versionProvider;
             _iconProvider    = factory(null) ;
+        }
+
+        private void HotkeyManager_HotkeyAlreadyRegistered(object sender, HotkeyAlreadyRegisteredEventArgs e)
+        {
+            MessageBox.Show( $"The hotkey {e.Name} is already registered by another application" );
         }
 
         public void Dispose ( )
@@ -357,6 +369,12 @@ namespace Idasen.SystemTray
                                           .ObserveOn ( _scheduler )
                                           .Subscribe ( OnErrorChanged ) ;
 
+
+            HotkeyManager.HotkeyAlreadyRegistered += HotkeyManager_HotkeyAlreadyRegistered;
+
+            HotkeyManager.Current.AddOrReplace("Increment", IncrementGesture, OnGlobalHotKeyStanding);
+            HotkeyManager.Current.AddOrReplace("Decrement", DecrementGesture, OnGlobalHotKeySeating);
+
             return this ;
         }
 
@@ -611,6 +629,43 @@ namespace Idasen.SystemTray
                                 "Failed  to lock/unlock after locked settings change." ) ;
             }
         }
+
+        private void OnGlobalHotKeyStanding(object sender, HotkeyEventArgs e)
+        {
+            try
+            {
+                _logger.Information("Received global hot key for 'Standing' command...");
+
+                if (!StandingCommand.CanExecute(this))
+                    return;
+
+                var task = Standing().ConfigureAwait(false);
+
+                StandingCommand.Execute(this);
+            }
+            catch (Exception exception)
+            {
+                _logger.Error(exception, "Failed to handle global hot key command for 'Standing'.");
+            }
+        }
+
+        private void OnGlobalHotKeySeating(object sender, HotkeyEventArgs e)
+        {
+            try
+            {
+                _logger.Information("Received global hot key for 'Seating' command...");
+
+                if (!SeatingCommand.CanExecute(this))
+                    return;
+
+                SeatingCommand.Execute(this);
+            }
+            catch (Exception exception)
+            {
+                _logger.Error(exception, "Failed to handle global hot key command for 'Seating'.");
+            }
+        }
+
 
         private readonly IErrorManager    _errorManager ;
         private readonly IScheduler _scheduler = Scheduler.CurrentThread ;
