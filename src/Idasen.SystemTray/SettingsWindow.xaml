@@ -83,7 +83,7 @@
                             Style="{StaticResource SliderHeightValue}"
                             Name="Standing"
                             Minimum="65"
-                            Maximum="120"
+                            Maximum="127"
                             Value="120"
                             Width="120" />
                     <TextBlock Grid.Row="0"
@@ -104,7 +104,7 @@
                             Style="{StaticResource SliderHeightValue}"
                             Name="Seating"
                             Minimum="65"
-                            Maximum="120"
+                            Maximum="127"
                             Value="65"
                             Width="120" />
                     <TextBlock Grid.Row="1"
@@ -168,6 +168,44 @@
                               VerticalContentAlignment="Center"
                               Margin="4,0,0,0"
                               IsChecked="{Binding ElementName=Locked, Path=Content, UpdateSourceTrigger=LostFocus}"/>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Hot Keys">
+                <Grid Style="{StaticResource GridGradientBlue}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition Height="2" />
+                    </Grid.RowDefinitions>
+                    <!-- Row 0 -->
+                    <Label Grid.Row="0"
+                           Grid.Column="0"
+                           Style="{StaticResource LabelParagraphLeft}"
+                           Content="Standing"
+                           ToolTip="The global hot key to move the desk to the standing height." />
+                    <TextBox Grid.Row="0"
+                             Grid.Column="1"
+                             IsEnabled="False"
+                             Style="{StaticResource TextBox}"
+                             Text="Ctrl+Shift+Alt+Cursor Up"
+                             Width="Auto" />
+                    <!-- Row 1 -->
+                    <Label Grid.Row="1"
+                           Grid.Column="0"
+                           Style="{StaticResource LabelParagraphLeft}"
+                           Content="Seating"
+                           ToolTip="The global hot key to move the desk to the seating height." />
+                    <TextBox Grid.Row="1"
+                             Grid.Column="1"
+                             IsEnabled="False"
+                             Style="{StaticResource TextBox}"
+                             Text="Ctrl+Shift+Alt+Cursor Down"
+                             Width="Auto" />
                 </Grid>
             </TabItem>
         </TabControl>

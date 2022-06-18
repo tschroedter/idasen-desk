@@ -62,6 +62,12 @@ If you know your devices ulong Bluetooth adress you can put it here. By default 
 ### Parental Lock
 This feature allows to lock/unlock the physical desk controller. If this feature is enabled any pushing of the physical controller up or down will be immediately stop.
 
+## Hot Keys
+![settingsadvanced](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/SettingsHotKeys.PNG)
+At the moment the application supports the following hot keys:
+- Standing: _Ctrl + Shift + Alt + Cursor Up_
+- Seating: _Ctrl + Shift + Alt + Cursor Down_
+
 ## Exit
 *Exit* will close the application.
 
