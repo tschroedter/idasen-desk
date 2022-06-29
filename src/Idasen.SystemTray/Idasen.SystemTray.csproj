@@ -48,8 +48,7 @@
   </ItemGroup>
 
   <Target Name="CustomActionsAfterPublish" AfterTargets="GenerateNuspec;Publish">
-      <Warning Text="$(PublishDir)\Idasen.SystemTray.exe"/>
-      <Move SourceFiles="$(PublishDir)\Idasen.SystemTray.exe"
-            DestinationFiles="$(PublishDir)\Idasen.SystemTray.Win11.exe" />
+      <Warning Text="$(PublishDir)\Idasen.SystemTray.exe" />
+      <Move SourceFiles="$(PublishDir)\Idasen.SystemTray.exe" DestinationFiles="$(PublishDir)\Idasen.SystemTray.Win11.exe" />
   </Target>
 </Project>
