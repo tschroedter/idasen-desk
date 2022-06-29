@@ -29,7 +29,7 @@
 
   <ItemGroup>
     <PackageReference Include="Hardcodet.Wpf.TaskbarNotification.Core" Version="2.0.0" />
-    <PackageReference Include="Idasen.Desk.Core.Win11" Version="1.0.0" />
+    <PackageReference Include="Idasen.Desk.Core.Win11" Version="0.0.43" />
     <PackageReference Include="JetBrains.Annotations" Version="2022.1.0" />
     <PackageReference Include="NHotkey.Wpf" Version="2.1.0" />
     <PackageReference Include="System.Reactive" Version="5.0.0" />
