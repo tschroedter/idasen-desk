@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31912.275
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Idasen.SystemTray", "Idasen.SystemTray\Idasen.SystemTray.csproj", "{44B3BFDF-A5FF-48CD-9C99-33928E660498}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Idasen.SystemTray.Win11", "Idasen.SystemTray\Idasen.SystemTray.Win11.csproj", "{44B3BFDF-A5FF-48CD-9C99-33928E660498}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
