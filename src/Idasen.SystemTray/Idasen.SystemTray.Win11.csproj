@@ -5,13 +5,9 @@
     <TargetFramework>net6.0-windows10.0.22000.0</TargetFramework> <!-- Win 11 -->
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Images\cup-xl.ico</ApplicationIcon>
-    <AssemblyVersion>0.0.156.0</AssemblyVersion>
-    <FileVersion>0.0.156.0</FileVersion>
-    <Version>0.0.156</Version>
-    <PublishSingleFile>true</PublishSingleFile>
-    <SelfContained>true</SelfContained>
-    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
-    <PublishReadyToRun>true</PublishReadyToRun>
+    <AssemblyVersion>0.0.94.0</AssemblyVersion>
+    <FileVersion>0.0.94.0</FileVersion>
+    <Version>0.0.130</Version>
   </PropertyGroup>
 
   <ItemGroup>
