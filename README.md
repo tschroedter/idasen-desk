@@ -1,11 +1,7 @@
 # Ikea Idasen Desk
-This repository is about controlling [Ikea's Idasen Desk](https://www.ikea.com/au/en/p/idasen-desk-sit-stand-black-dark-grey-s29280991/) using Windows 10 and BluetoothLE. Ikea only provides an Android and IOs app to control the desk. I thought it would be far more convenient to control the desk using a Windows 10 system tray application.  
+This repository is about controlling [Ikea's Idasen Desk](https://www.ikea.com/au/en/p/idasen-desk-sit-stand-black-dark-grey-s29280991/) using Windows 10 and BluetoothLE. Ikea only provides an Android and IOs app to control the desk. I thought it would be far more convenient to control the desk using a Windows 10 or 11. The installation instructions can be found at the end of this document.  
 
 ![taskbar](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/Taskbar.png)
-
-# Installation
-## Idasen.SystemTray.Setup.msi
-Download and run the installer from here: ![Idasen.SystemTray.Setup.msi](https://github.com/tschroedter/idasen-desk/releases/download/V0.0.84/Idasen.SystemTray.Setup.msi) 
 
 ---
 
@@ -70,6 +66,22 @@ At the moment the application supports the following hot keys:
 
 ## Exit
 *Exit* will close the application.
+
+---
+# Installation
+## Windows 10
+Download and run the self-contained application file: ![Idasen.SystemTray.exe](https://github.com/tschroedter/idasen-desk/releases/download/untagged-c4d4eb2fb3dc095f669a/Idasen.SystemTray.exe)
+
+## Windows 11
+Download and run the self-contained application file: ![Idasen.SystemTray.Win11.exe](https://github.com/tschroedter/idasen-desk/releases/download/untagged-e5698e6ca1062db1aec1/Idasen.SystemTray.Win11.exe)
+
+## Additional step for Windows 10 and 11
+Windows will show a pop-up window saying 'Windows protected your PC'. Please, click 'More info' and 'Run anyway' to start the application.
+
+![WindowsProtectedYourPC1](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/WindowsProtectedYourPC1.png)
+
+![WindowsProtectedYourPC2](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/WindowsProtectedYourPC2.png)
+
 
 ---
 
