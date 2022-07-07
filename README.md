@@ -1,5 +1,10 @@
+# Latest Changes
+- Added support for Windows 11
+- Updated to .Net 6.0
+- Replaced Windows installer with self-contained .exe file.
+
 # Ikea Idasen Desk
-This repository is about controlling [Ikea's Idasen Desk](https://www.ikea.com/au/en/p/idasen-desk-sit-stand-black-dark-grey-s29280991/) using Windows 10 and BluetoothLE. Ikea only provides an Android and IOs app to control the desk. I thought it would be far more convenient to control the desk using a Windows 10 or 11. The installation instructions can be found at the end of this document.  
+This repository is about controlling [Ikea's Idasen Desk](https://www.ikea.com/au/en/p/idasen-desk-sit-stand-black-dark-grey-s29280991/) using Windows 10/11 and BluetoothLE. Ikea only provides an Android and IOs app to control the desk. I thought it would be far more convenient to control the desk using a Windows 10/11. The installation instructions can be found at the end of this document.
 
 ![taskbar](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/Taskbar.png)
 
