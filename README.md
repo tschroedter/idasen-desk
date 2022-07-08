@@ -78,7 +78,7 @@ At the moment the application supports the following hot keys:
 Download and run the self-contained application file: ![Idasen.SystemTray.exe](https://github.com/tschroedter/idasen-desk/releases/download/V0.0.156/Idasen.SystemTray.exe)
 
 ## Windows 11
-Download and run the self-contained application file: ![Idasen.SystemTray.Win11.exe](https://github.com/tschroedter/idasen-desk/releases/download/V0.0.143/Idasen.SystemTray.Win11.exe)
+Download and run the self-contained application file: ![Idasen.SystemTray.Win11.exe](https://github.com/tschroedter/idasen-desk/releases/download/V0.0.160/Idasen.SystemTray.Win11.exe)
 
 ## Additional step for Windows 10 and 11
 Windows will show a pop-up window saying 'Windows protected your PC'. Please, click 'More info' and 'Run anyway' to start the application.
