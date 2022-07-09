@@ -7,10 +7,12 @@ namespace Idasen.SystemTray.Settings
     {
         public uint   StandingHeightInCm      { get ; set ; } = Constants.DefaultHeightStandingInCm ;
         public uint   SeatingHeightInCm       { get ; set ; } = Constants.DefaultHeightSeatingInCm ;
+        public uint   DeskMinHeightInCm       { get;  set; }  = Constants.DefaultDeskMinHeightInCm;
+        public uint   DeskMaxHeightInCm       { get;  set; }  = Constants.DefaultDeskMaxHeightInCm;
         public string DeviceName              { get ; set ; } = Constants.DefaultDeviceName ;
         public ulong  DeviceAddress           { get ; set ; } = Constants.DefaultDeviceAddress ;
         public uint   DeviceMonitoringTimeout { get ; set ; } = Constants.DefaultDeviceMonitoringTimeout ;
-        public bool   DeviceLocked                  { get ; set ; } = Constants.DefaultLocked ;
+        public bool   DeviceLocked            { get ; set ; } = Constants.DefaultLocked ;
 
         public override string ToString ( )
         {
