@@ -152,6 +152,8 @@ namespace Idasen.SystemTray
             _logger.Debug($"Update settings: {settings}");
 
             Standing.Value   = settings.StandingHeightInCm ;
+            Standing.Minimum = settings.DeskMinHeightInCm;
+            Standing.Maximum = settings.DeskMaxHeightInCm;
             Seating.Value    = settings.SeatingHeightInCm ;
             DeskName.Text    = _nameConverter.EmptyIfDefault ( settings.DeviceName ) ;
             DeskAddress.Text = _addressConverter.EmptyIfDefault ( settings.DeviceAddress ) ;
