@@ -155,6 +155,8 @@ namespace Idasen.SystemTray
             Standing.Minimum = settings.DeskMinHeightInCm;
             Standing.Maximum = settings.DeskMaxHeightInCm;
             Seating.Value    = settings.SeatingHeightInCm ;
+            Seating.Minimum  = settings.DeskMinHeightInCm;
+            Seating.Maximum  = settings.DeskMaxHeightInCm;
             DeskName.Text    = _nameConverter.EmptyIfDefault ( settings.DeviceName ) ;
             DeskAddress.Text = _addressConverter.EmptyIfDefault ( settings.DeviceAddress ) ;
             Locked.IsChecked = settings.DeviceLocked ;
