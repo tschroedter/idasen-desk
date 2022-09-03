@@ -28,6 +28,8 @@
         /// </summary>
         uint DeviceMonitoringTimeout { get ; set ; }
 
-        bool DeviceLocked { get ; set ; }
+        bool DeviceLocked      { get ; set ; }
+        uint DeskMinHeightInCm { get ; set ; }
+        uint DeskMaxHeightInCm { get ; set ; }
     }
 }

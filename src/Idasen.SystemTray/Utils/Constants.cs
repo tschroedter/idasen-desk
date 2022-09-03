@@ -12,5 +12,7 @@
         public const ulong  DefaultDeviceAddress           = 250635178951455u ;
         public const uint   DefaultDeviceMonitoringTimeout = 600 ; // in seconds
         public const bool   DefaultLocked                  = false ;
+        public const uint   DefaultDeskMinHeightInCm             = 60 ;
+        public const uint   DefaultDeskMaxHeightInCm             = 127 ;
     }
 }

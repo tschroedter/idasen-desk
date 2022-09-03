@@ -93,11 +93,9 @@
         <Setter Property="Margin" Value="5" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="HorizontalAlignment" Value="Stretch" />
-
         <Setter Property="TickPlacement" Value="BottomRight" />
         <Setter Property="TickFrequency" Value="1" />
         <Setter Property="IsSnapToTickEnabled" Value="True" />
-
     </Style>
 
     <Style x:Key="TextBox"
