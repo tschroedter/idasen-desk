@@ -1,50 +1,51 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows10.0.22000.0</TargetFramework> <!-- Win 11 -->
-    <UseWPF>true</UseWPF>
-      <ApplicationIcon>Images\cup-xl.ico</ApplicationIcon>
-    <AssemblyVersion>0.0.157.0</AssemblyVersion>
-    <FileVersion>0.0.157.0</FileVersion>
-    <Version>0.0.157</Version>
-    <PublishSingleFile>true</PublishSingleFile>
-    <SelfContained>true</SelfContained>
-    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
-    <PublishReadyToRun>true</PublishReadyToRun>
-  </PropertyGroup>
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>net6.0-windows10.0.22000.0</TargetFramework> <!-- Win 11 -->
+        <UseWPF>true</UseWPF>
+        <ApplicationIcon>Images\cup-xl.ico</ApplicationIcon>
+        <AssemblyVersion>0.0.163.0</AssemblyVersion>
+        <FileVersion>0.0.163.0</FileVersion>
+        <Version>0.0.163</Version>
+        <PublishSingleFile>true</PublishSingleFile>
+        <SelfContained>true</SelfContained>
+        <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+        <PublishReadyToRun>true</PublishReadyToRun>
+        <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="Images\bulb-green.png" />
-    <None Remove="Images\bulb-red.png" />
-    <None Remove="Images\bulb-yellow.png" />
-    <None Remove="Images\close-window-xxl.png" />
-    <None Remove="Images\cup-xl-16x16.ico" />
-    <None Remove="Images\cup-xl.ico" />
-    <None Remove="Images\cup-xl.png" />
-    <None Remove="Images\install-cup-xl.ico" />
-  </ItemGroup>
+    <ItemGroup>
+        <None Remove="Images\bulb-green.png" />
+        <None Remove="Images\bulb-red.png" />
+        <None Remove="Images\bulb-yellow.png" />
+        <None Remove="Images\close-window-xxl.png" />
+        <None Remove="Images\cup-xl-16x16.ico" />
+        <None Remove="Images\cup-xl.ico" />
+        <None Remove="Images\cup-xl.png" />
+        <None Remove="Images\install-cup-xl.ico" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <Content Include="Images\install-cup-xl.ico">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
+    <ItemGroup>
+        <Content Include="Images\install-cup-xl.ico">
+            <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Hardcodet.Wpf.TaskbarNotification.Core" Version="2.0.0" />
-    <PackageReference Include="Idasen.Desk.Core.Win11" Version="0.0.43" />
-    <PackageReference Include="JetBrains.Annotations" Version="2022.1.0" />
-    <PackageReference Include="NHotkey.Wpf" Version="2.1.0" />
-    <PackageReference Include="System.Reactive" Version="5.0.0" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Hardcodet.Wpf.TaskbarNotification.Core" Version="2.0.0" />
+        <PackageReference Include="Idasen.Desk.Core.Win11" Version="0.0.48" />
+        <PackageReference Include="JetBrains.Annotations" Version="2022.1.0" />
+        <PackageReference Include="NHotkey.Wpf" Version="2.1.0" />
+        <PackageReference Include="System.Reactive" Version="5.0.0" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <Resource Include="Images\bulb-green.png" />
-    <Resource Include="Images\bulb-red.png" />
-    <Resource Include="Images\bulb-yellow.png" />
-    <Resource Include="Images\close-window-xxl.png" />
-    <Resource Include="Images\cup-xl.ico" />
-  </ItemGroup>
+    <ItemGroup>
+        <Resource Include="Images\bulb-green.png" />
+        <Resource Include="Images\bulb-red.png" />
+        <Resource Include="Images\bulb-yellow.png" />
+        <Resource Include="Images\close-window-xxl.png" />
+        <Resource Include="Images\cup-xl.ico" />
+    </ItemGroup>
 
 </Project>
