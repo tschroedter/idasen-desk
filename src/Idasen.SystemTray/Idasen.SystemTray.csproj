@@ -5,9 +5,9 @@
     <TargetFramework>net6.0-windows10.0.19041.0</TargetFramework>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Images\cup-xl.ico</ApplicationIcon>
-    <AssemblyVersion>0.0.164.0</AssemblyVersion>
-    <FileVersion>0.0.164.0</FileVersion>
-    <Version>0.0.164</Version>
+    <AssemblyVersion>0.0.167.0</AssemblyVersion>
+    <FileVersion>0.0.167.0</FileVersion>
+    <Version>0.0.167</Version>
     <PublishSingleFile>true</PublishSingleFile>
     <SelfContained>true</SelfContained>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
@@ -34,7 +34,7 @@
 
   <ItemGroup>
     <PackageReference Include="Hardcodet.Wpf.TaskbarNotification.Core" Version="2.0.0" />
-    <PackageReference Include="Idasen.Desk.Core" Version="0.0.41" />
+    <PackageReference Include="Idasen.Desk.Core" Version="0.0.47" />
     <PackageReference Include="JetBrains.Annotations" Version="2022.1.0" />
     <PackageReference Include="NHotkey.Wpf" Version="2.1.0" />
     <PackageReference Include="System.Reactive" Version="5.0.0" />
