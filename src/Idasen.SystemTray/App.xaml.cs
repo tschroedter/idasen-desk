@@ -1,5 +1,6 @@
 ﻿using System ;
 using System.Collections.Generic ;
+using System.IO ;
 using System.Threading.Tasks ;
 using System.Windows ;
 using Autofac ;
@@ -9,6 +10,7 @@ using Idasen.BluetoothLE.Linak.Interfaces ;
 using Idasen.Launcher ;
 using Idasen.SystemTray.Interfaces ;
 using Idasen.SystemTray.Utils ;
+using Microsoft.Extensions.Configuration ;
 using Serilog ;
 
 namespace Idasen.SystemTray
@@ -26,9 +28,11 @@ namespace Idasen.SystemTray
 
             IEnumerable < IModule > otherModules = new [ ] { new SystemTrayModule ( ) } ;
 
-            _container = ContainerProvider.Create ( Constants.ApplicationName ,
-                                                    Constants.LogFilename ,
-                                                    otherModules ) ;
+            var builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
+                                                    .AddJsonFile("appsettings.json");
+
+            _container = ContainerProvider.Create(builder.Build(),
+                                                  otherModules);
 
             //create the notifyIcon (it's a resource declared in NotifyIconResources.xaml
             var factory = _container.Resolve < ITaskbarIconProviderFactory> ( ) ;
