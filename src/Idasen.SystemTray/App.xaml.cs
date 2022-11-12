@@ -1,5 +1,8 @@
 ﻿using System ;
 using System.Collections.Generic ;
+using System.Diagnostics ;
+using System.IO ;
+using System.Text ;
 using System.Threading.Tasks ;
 using System.Windows ;
 using Autofac ;
@@ -9,69 +12,136 @@ using Idasen.BluetoothLE.Linak.Interfaces ;
 using Idasen.Launcher ;
 using Idasen.SystemTray.Interfaces ;
 using Idasen.SystemTray.Utils ;
+using Microsoft.Extensions.Configuration ;
 using Serilog ;
 
-namespace Idasen.SystemTray
+// ReSharper disable once CheckNamespace
+namespace Idasen.SystemTray ;
+
+/// <summary>
+///     Interaction logic for App.xaml
+/// </summary>
+public partial class App
 {
-    /// <summary>
-    ///     Interaction logic for App.xaml
-    /// </summary>
-    public partial class App
+    private TaskbarIcon NotifyIcon => _provider.NotifyIcon ;
+
+    protected override void OnStartup ( StartupEventArgs e )
     {
-        protected override void OnStartup ( StartupEventArgs e )
-        {
-            base.OnStartup ( e ) ;
+        base.OnStartup ( e ) ;
 
-            UnhandledExceptionsHandler.RegisterGlobalExceptionHandling ( ) ;
+        UnhandledExceptionsHandler.RegisterGlobalExceptionHandling ( ) ;
 
-            IEnumerable < IModule > otherModules = new [ ] { new SystemTrayModule ( ) } ;
+        IEnumerable < IModule > otherModules = new [ ] { new SystemTrayModule ( ) } ;
 
-            _container = ContainerProvider.Create ( Constants.ApplicationName ,
-                                                    Constants.LogFilename ,
-                                                    otherModules ) ;
+        var config = GetConfiguration ( ) ;
 
-            //create the notifyIcon (it's a resource declared in NotifyIconResources.xaml
-            var factory = _container.Resolve < ITaskbarIconProviderFactory> ( ) ;
-            _provider = factory.Create(this);
 
-            if ( NotifyIcon == null )
-                throw new ArgumentException ( "Can't find resource: NotifyIcon" ,
-                                              nameof ( NotifyIcon ) ) ;
+        _container = ContainerProvider.Create ( config ,
+                                                otherModules ) ;
 
-            if ( ! ( NotifyIcon?.DataContext is NotifyIconViewModel model ) )
-                throw new ArgumentException ( "Can't find DataContext: NotifyIconViewModel" ,
-                                              nameof ( model ) ) ;
+        //create the notifyIcon (it's a resource declared in NotifyIconResources.xaml
+        var factory = _container.Resolve < ITaskbarIconProviderFactory > ( ) ;
+        _provider = factory.Create ( this ) ;
 
-            _logger.Information ( "##### Startup..." ) ;
+        if ( NotifyIcon == null )
+            throw new ArgumentException ( "Can't find resource: NotifyIcon" ,
+                                          nameof ( NotifyIcon ) ) ;
 
-            var versionProvider = _container.Resolve < IVersionProvider > ( ) ;
+        if ( ! ( NotifyIcon?.DataContext is NotifyIconViewModel model ) )
+            throw new ArgumentException ( "Can't find DataContext: NotifyIconViewModel" ,
+                                          nameof ( model ) ) ;
 
-            _logger.Information ( $"##### Idasen.SystemTray {versionProvider.GetVersion ( )}" ) ;
+        _logger.Information ( "##### Startup..." ) ;
 
-            model.Initialize ( _container.Resolve < ILogger > ( ) ,
-                               _container.Resolve < ISettingsManager > ( ) ,
-                               _container.Resolve < Func < IDeskProvider > > ( ) ,
-                               _container.Resolve < IErrorManager > ( ) ,
-                               _container.Resolve < IVersionProvider > ( ) ,
-                               _container.Resolve < ITaskbarIconProvider > ( ) ) ;
+        var versionProvider = _container.Resolve < IVersionProvider > ( ) ;
 
-            // ReSharper disable once AsyncVoidLambda
-            Task.Run ( new Action ( async ( ) => await model.AutoConnect ( ) ) ) ;
-        }
+        _logger.Information ( $"##### Idasen.SystemTray {versionProvider.GetVersion ( )}" ) ;
 
-        protected override void OnExit ( ExitEventArgs e )
-        {
-            // the icon would clean up automatically, but this is cleaner
-            NotifyIcon.Dispose ( ) ;
+        model.Initialize ( _container.Resolve < ILogger > ( ) ,
+                           _container.Resolve < ISettingsManager > ( ) ,
+                           _container.Resolve < Func < IDeskProvider > > ( ) ,
+                           _container.Resolve < IErrorManager > ( ) ,
+                           _container.Resolve < IVersionProvider > ( ) ,
+                           _container.Resolve < ITaskbarIconProvider > ( ) ) ;
 
-            base.OnExit ( e ) ;
-        }
-
-        private readonly ILogger _logger = LoggerProvider.CreateLogger ( Constants.ApplicationName ,
-                                                                         Constants.LogFilename ) ;
-
-        private IContainer          _container ;
-        private TaskbarIcon         NotifyIcon => _provider.NotifyIcon ;
-        private ITaskbarIconProvider _provider ;
+        // ReSharper disable once AsyncVoidLambda
+        Task.Run ( new Action ( async ( ) => await model.AutoConnect ( ) ) ) ;
     }
+
+    private static IConfigurationRoot GetConfiguration ( )
+    {
+        const string appsettingsJson = "appsettings.json" ;
+
+        var builder  = new StringBuilder ( ) ;
+        var basePath = GetBasePath ( ) ;
+        var fullPath = Path.Combine ( basePath ,
+                                      appsettingsJson ) ;
+
+        builder.AppendLine ( $"Checking if '{fullPath}' exists..." ) ;
+
+        if ( File.Exists ( fullPath ) )
+        {
+            builder.AppendLine ( $"Loading settings from file '{fullPath}'..." ) ;
+
+            return new ConfigurationBuilder ( ).SetBasePath ( basePath )
+                                               .AddJsonFile ( appsettingsJson )
+                                               .Build ( ) ;
+        }
+        else
+        {
+            builder.AppendLine($"...no, '{fullPath}' does not exists.");
+        }
+
+        builder.AppendLine ( "Using default settings..." ) ;
+
+        LogConfigurationSelection ( basePath ,
+                                    builder ) ;
+
+        return new ConfigurationBuilder ( ).AddJsonFile ( appsettingsJson )
+                                           .Build ( ) ;
+    }
+
+    protected override void OnExit ( ExitEventArgs e )
+    {
+        // the icon would clean up automatically, but this is cleaner
+        NotifyIcon.Dispose ( ) ;
+
+        base.OnExit ( e ) ;
+    }
+
+    private static void LogConfigurationSelection ( string        basePath ,
+                                                    StringBuilder builder )
+    {
+        try
+        {
+            var configLog = Path.Combine ( basePath ,
+                                           "logs" ,
+                                           "config.log" ) ;
+
+            if ( File.Exists ( configLog ) )
+                File.Delete ( configLog ) ;
+
+            File.WriteAllText ( configLog ,
+                                builder.ToString ( ) ) ;
+        }
+        catch ( Exception e )
+        {
+            Console.WriteLine ( $"Failed to create configuration log file because {e.Message}" ) ;
+        }
+    }
+
+    private static string GetBasePath ( )
+    {
+        using var processModule = Process.GetCurrentProcess ( ).MainModule ;
+
+        return Path.GetDirectoryName ( processModule?.FileName ) ;
+
+
+    }
+
+    private readonly ILogger _logger = LoggerProvider.CreateLogger ( Constants.ApplicationName ,
+                                                                     Constants.LogFilename ) ;
+
+    private IContainer           _container ;
+    private ITaskbarIconProvider _provider ;
 }
