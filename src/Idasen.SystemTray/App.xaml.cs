@@ -73,8 +73,8 @@ public partial class App
 
         IConfigurationRoot configurationRoot = null ;
 
-        var                builder  = new StringBuilder ( ) ;
-        var                basePath = GetBasePath ( ) ;
+        var builder  = new StringBuilder ( ) ;
+        var basePath = GetBasePath ( ) ;
         var fullPath = Path.Combine ( basePath ,
                                       appsettingsJson ) ;
 
@@ -90,12 +90,16 @@ public partial class App
         }
         else
         {
-            builder.AppendLine($"...no, '{fullPath}' does not exists.");
-            builder.AppendLine("Using default settings...");
+            builder.AppendLine ( $"...no, '{fullPath}' does not exists." ) ;
+            builder.AppendLine ( "Using default settings..." ) ;
 
             configurationRoot = new ConfigurationBuilder ( ).AddJsonFile ( appsettingsJson )
                                                             .Build ( ) ;
         }
+
+        builder.AppendLine ( "Using the following configuration:" ) ;
+
+        builder.AppendLine ( configurationRoot.GetDebugView ( ) ) ;
 
         LogConfigurationSelection ( basePath ,
                                     builder ) ;
