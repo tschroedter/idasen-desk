@@ -72,8 +72,10 @@ public partial class App
     {
         const string appsettingsJson = "appsettings.json" ;
 
-        var builder  = new StringBuilder ( ) ;
-        var basePath = GetBasePath ( ) ;
+        IConfigurationRoot configurationRoot = null ;
+
+        var                builder  = new StringBuilder ( ) ;
+        var                basePath = GetBasePath ( ) ;
         var fullPath = Path.Combine ( basePath ,
                                       appsettingsJson ) ;
 
@@ -83,22 +85,23 @@ public partial class App
         {
             builder.AppendLine ( $"Loading settings from file '{fullPath}'..." ) ;
 
-            return new ConfigurationBuilder ( ).SetBasePath ( basePath )
-                                               .AddJsonFile ( appsettingsJson )
-                                               .Build ( ) ;
+            configurationRoot = new ConfigurationBuilder ( ).SetBasePath ( basePath )
+                                                            .AddJsonFile ( appsettingsJson )
+                                                            .Build ( ) ;
         }
         else
         {
             builder.AppendLine($"...no, '{fullPath}' does not exists.");
-        }
+            builder.AppendLine("Using default settings...");
 
-        builder.AppendLine ( "Using default settings..." ) ;
+            configurationRoot = new ConfigurationBuilder ( ).AddJsonFile ( appsettingsJson )
+                                                            .Build ( ) ;
+        }
 
         LogConfigurationSelection ( basePath ,
                                     builder ) ;
 
-        return new ConfigurationBuilder ( ).AddJsonFile ( appsettingsJson )
-                                           .Build ( ) ;
+        return configurationRoot ;
     }
 
     protected override void OnExit ( ExitEventArgs e )
@@ -114,8 +117,13 @@ public partial class App
     {
         try
         {
-            var configLog = Path.Combine ( basePath ,
-                                           "logs" ,
+            var logFolder = Path.Combine ( basePath ,
+                                           "logs" ) ;
+
+            if ( ! Directory.Exists ( logFolder ) )
+                Directory.CreateDirectory ( logFolder ) ;
+
+            var configLog = Path.Combine ( logFolder ,
                                            "config.log" ) ;
 
             if ( File.Exists ( configLog ) )
