@@ -31,8 +31,8 @@ namespace Idasen.SystemTray
     public class NotifyIconViewModel
         : IDisposable
     {
-        private static readonly KeyGesture IncrementGesture = new KeyGesture(Key.Up, ModifierKeys.Control | ModifierKeys.Alt | ModifierKeys.Shift);
-        private static readonly KeyGesture DecrementGesture = new KeyGesture(Key.Down, ModifierKeys.Control | ModifierKeys.Alt | ModifierKeys.Shift);
+        private readonly static KeyGesture IncrementGesture = new KeyGesture(Key.Up, ModifierKeys.Control | ModifierKeys.Alt | ModifierKeys.Shift);
+        private readonly static KeyGesture DecrementGesture = new KeyGesture(Key.Down, ModifierKeys.Control | ModifierKeys.Alt | ModifierKeys.Shift);
 
         public NotifyIconViewModel ( )
         {
@@ -549,6 +549,15 @@ namespace Idasen.SystemTray
                                         Visibility visibilityBulbYellow = Visibility.Hidden ,
                                         Visibility visibilityBulbRed    = Visibility.Hidden )
         {
+            if ( ! _manager.CurrentSettings.NotificationsEnabled )
+            {
+                _logger.Information ( $"Notifications are disabled. " +
+                                      $"Title = '{title}' "             +
+                                      $"Text = '{text}'" ) ;
+
+                return ;
+            }
+
             _notifyIcon ??= ( TaskbarIcon )Application.Current.FindResource ( "NotifyIcon" ) ;
 
             if ( _notifyIcon == null )

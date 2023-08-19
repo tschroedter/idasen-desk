@@ -74,9 +74,10 @@ namespace Idasen.SystemTray
 
             var settings = _manager.CurrentSettings ;
 
-            var newDeviceName    = _nameConverter.DefaultIfEmpty ( DeskName.Text ) ;
-            var newDeviceAddress = _addressConverter.DefaultIfEmpty ( DeskAddress.Text ) ;
-            var newDeviceLocked  = Locked.IsChecked ?? false ;
+            var newDeviceName          = _nameConverter.DefaultIfEmpty ( DeskName.Text ) ;
+            var newDeviceAddress       = _addressConverter.DefaultIfEmpty ( DeskAddress.Text ) ;
+            var newDeviceLocked        = Locked.IsChecked ?? false ;
+            var newNotificationsEnabled = Notifications.IsChecked ?? false ;
 
             var advancedChanged = settings.DeviceName    != newDeviceName    ||
                                   settings.DeviceAddress != newDeviceAddress ;
@@ -87,9 +88,10 @@ namespace Idasen.SystemTray
                                                                            Constants.DefaultHeightStandingInCm ) ;
             settings.SeatingHeightInCm = _doubleConverter.ConvertToUInt ( Seating.Value ,
                                                                           Constants.DefaultHeightSeatingInCm ) ;
-            settings.DeviceName    = newDeviceName ;
-            settings.DeviceAddress = newDeviceAddress ;
-            settings.DeviceLocked  = newDeviceLocked ;
+            settings.DeviceName           = newDeviceName ;
+            settings.DeviceAddress        = newDeviceAddress ;
+            settings.DeviceLocked         = newDeviceLocked ;
+            settings.NotificationsEnabled = newNotificationsEnabled ;
 
             _storingSettingsTask = Task.Run ( async ( ) =>
                                               {
@@ -151,15 +153,16 @@ namespace Idasen.SystemTray
 
             _logger.Debug($"Update settings: {settings}");
 
-            Standing.Value   = settings.StandingHeightInCm ;
-            Standing.Minimum = settings.DeskMinHeightInCm;
-            Standing.Maximum = settings.DeskMaxHeightInCm;
-            Seating.Value    = settings.SeatingHeightInCm ;
-            Seating.Minimum  = settings.DeskMinHeightInCm;
-            Seating.Maximum  = settings.DeskMaxHeightInCm;
-            DeskName.Text    = _nameConverter.EmptyIfDefault ( settings.DeviceName ) ;
-            DeskAddress.Text = _addressConverter.EmptyIfDefault ( settings.DeviceAddress ) ;
-            Locked.IsChecked = settings.DeviceLocked ;
+            Standing.Value          = settings.StandingHeightInCm ;
+            Standing.Minimum        = settings.DeskMinHeightInCm;
+            Standing.Maximum        = settings.DeskMaxHeightInCm;
+            Seating.Value           = settings.SeatingHeightInCm ;
+            Seating.Minimum         = settings.DeskMinHeightInCm;
+            Seating.Maximum         = settings.DeskMaxHeightInCm;
+            DeskName.Text           = _nameConverter.EmptyIfDefault ( settings.DeviceName ) ;
+            DeskAddress.Text        = _addressConverter.EmptyIfDefault ( settings.DeviceAddress ) ;
+            Locked.IsChecked        = settings.DeviceLocked ;
+            Notifications.IsChecked = settings.NotificationsEnabled ;
         }
 
         private readonly IDoubleToUIntConverter         _doubleConverter  = new DoubleToUIntConverter ( ) ;
