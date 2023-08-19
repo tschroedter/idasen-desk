@@ -1,27 +1,30 @@
-﻿using System ;
-using System.IO ;
-using System.Text.Json ;
-using System.Threading.Tasks ;
-using Idasen.BluetoothLE.Core ;
-using Idasen.SystemTray.Interfaces ;
-using Idasen.SystemTray.Utils ;
-using JetBrains.Annotations ;
-using Serilog ;
+﻿using System;
+using System.IO;
+using System.Text.Json;
+using System.Threading.Tasks;
+using Idasen.BluetoothLE.Core;
+using Idasen.SystemTray.Interfaces;
+using Idasen.SystemTray.Utils;
+using JetBrains.Annotations;
+using Serilog;
 
 namespace Idasen.SystemTray.Settings
 {
     public class SettingsManager
         : ISettingsManager
     {
-        public SettingsManager ( [ NotNull ] ILogger logger )
+        public SettingsManager ( [ NotNull ] ILogger            logger ,
+                                 [ NotNull ] ICommonApplicationData commonApplicationData )
         {
             Guard.ArgumentNotNull ( logger ,
                                     nameof ( logger ) ) ;
+            Guard.ArgumentNotNull ( commonApplicationData ,
+                                    nameof ( commonApplicationData ) ) ;
 
             _logger = logger ;
 
-            _settingsFolderName = CreateFullPathSettingsFolderName ( ) ;
-            _settingsFileName   = CreateFullPathSettingsFileName ( ) ;
+            _settingsFolderName = commonApplicationData.FolderName ( ) ;
+            _settingsFileName   = commonApplicationData.ToFullPath ( Constants.SettingsFileName ) ;
         }
 
         public ISettings CurrentSettings => _current ;
@@ -108,30 +111,12 @@ namespace Idasen.SystemTray.Settings
             await Save ( ) ;
         }
 
-        private readonly ILogger _logger ;
+        private readonly ILogger            _logger ;
 
         private readonly string _settingsFileName ;
 
         private readonly string _settingsFolderName ;
 
         private Settings _current = new Settings ( ) ;
-
-#pragma warning disable SecurityIntelliSenseCS // MS Security rules violation
-        public string CreateFullPathSettingsFileName ( )
-        {
-            var fileName = Path.Combine ( CreateFullPathSettingsFolderName ( ) ,
-                                          Constants.SettingsFileName ) ;
-            return fileName ;
-        }
-
-        private string CreateFullPathSettingsFolderName ( )
-        {
-            var appData = Environment.GetFolderPath ( Environment.SpecialFolder.CommonApplicationData ) ;
-            var folderName = Path.Combine ( appData ,
-                                            Constants.ApplicationName ) ;
-
-            return folderName ;
-        }
-#pragma warning restore SecurityIntelliSenseCS // MS Security rules violation
     }
 }
