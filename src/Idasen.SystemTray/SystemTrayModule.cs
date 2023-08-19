@@ -19,6 +19,9 @@ namespace Idasen.SystemTray
             builder.RegisterType < SettingsManager > ( )
                    .As < ISettingsManager > ( ) ;
 
+            builder.RegisterType < CommonApplicationData > ( )
+                   .As < ICommonApplicationData > ( ) ;
+
             builder.RegisterType < VersionProvider > ( )
                    .As < IVersionProvider > ( ) ;
 
