@@ -48,7 +48,7 @@
                    MouseDown="ImageClose_MouseDown" />
             <Label DockPanel.Dock="Right"
                    Style="{StaticResource LabelVersion}"
-                   Content="V0.0.0.0" 
+                   Content="V0.0.0.0"
                    Name="LabelVersion"
                    VerticalAlignment="Center"
                    HorizontalAlignment="Center"/>
@@ -127,6 +127,7 @@
                         <RowDefinition />
                         <RowDefinition />
                         <RowDefinition />
+                        <RowDefinition />
                         <RowDefinition Height="2" />
                     </Grid.RowDefinitions>
                     <!-- Row 0 -->
@@ -168,6 +169,21 @@
                               VerticalContentAlignment="Center"
                               Margin="4,0,0,0"
                               IsChecked="{Binding ElementName=Locked, Path=Content, UpdateSourceTrigger=LostFocus}"/>
+                    <!-- Row 3 -->
+                    <Label Grid.Row="3"
+                           Grid.Column="0"
+                           Style="{StaticResource LabelParagraphLeft}"
+                           Content="Notifications"
+                           ToolTip="Show or hide all notifications." />
+                    <CheckBox Grid.Row="3"
+                              Grid.Column="1" Content="Enabled"
+                              Style="{StaticResource CheckBoxLeft}"
+                              Name="Notifications"
+                              HorizontalAlignment="Left"
+                              VerticalAlignment="Center"
+                              VerticalContentAlignment="Center"
+                              Margin="4,0,0,0"
+                              IsChecked="{Binding ElementName=Notifications, Path=Content, UpdateSourceTrigger=LostFocus}"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Hot Keys">

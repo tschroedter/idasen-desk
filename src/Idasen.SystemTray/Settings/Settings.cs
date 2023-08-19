@@ -13,6 +13,7 @@ namespace Idasen.SystemTray.Settings
         public ulong  DeviceAddress           { get ; set ; } = Constants.DefaultDeviceAddress ;
         public uint   DeviceMonitoringTimeout { get ; set ; } = Constants.DefaultDeviceMonitoringTimeout ;
         public bool   DeviceLocked            { get ; set ; } = Constants.DefaultLocked ;
+        public bool   NotificationsEnabled    { get ; set ; } = Constants.NotificationsEnabled;
 
         public override string ToString ( )
         {
