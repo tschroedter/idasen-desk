@@ -79,9 +79,6 @@ namespace Idasen.SystemTray
             var newDeviceLocked        = Locked.IsChecked ?? false ;
             var newNotificationsEnabled = Notifications.IsChecked ?? false ;
 
-            var advancedChanged = settings.DeviceName    != newDeviceName    ||
-                                  settings.DeviceAddress != newDeviceAddress ;
-
             var lockChanged = settings.DeviceLocked != newDeviceLocked ;
 
             settings.StandingHeightInCm = _doubleConverter.ConvertToUInt ( Standing.Value ,
@@ -92,6 +89,10 @@ namespace Idasen.SystemTray
             settings.DeviceAddress        = newDeviceAddress ;
             settings.DeviceLocked         = newDeviceLocked ;
             settings.NotificationsEnabled = newNotificationsEnabled ;
+
+            var advancedChanged = settings.DeviceName           != newDeviceName    ||
+                                  settings.DeviceAddress        != newDeviceAddress ||
+                                  settings.NotificationsEnabled != newNotificationsEnabled;
 
             _storingSettingsTask = Task.Run ( async ( ) =>
                                               {
