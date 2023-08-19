@@ -140,7 +140,6 @@
                              Grid.Column="1"
                              Style="{StaticResource TextBox}"
                              Name="DeskName"
-                             Text="{Binding ElementName=DeviceName, Path=Text, UpdateSourceTrigger=LostFocus}"
                              Width="Auto" />
                     <!-- Row 1 -->
                     <Label Grid.Row="1"
@@ -152,7 +151,6 @@
                              Grid.Column="1"
                              Style="{StaticResource TextBox}"
                              Name="DeskAddress"
-                             Text="{Binding ElementName=DeviceAddress, Path=Text, UpdateSourceTrigger=LostFocus}"
                              Width="Auto" />
                     <!-- Row 2 -->
                     <Label Grid.Row="2"
@@ -167,8 +165,7 @@
                               HorizontalAlignment="Left"
                               VerticalAlignment="Center"
                               VerticalContentAlignment="Center"
-                              Margin="4,0,0,0"
-                              IsChecked="{Binding ElementName=Locked, Path=Content, UpdateSourceTrigger=LostFocus}"/>
+                              Margin="4,0,0,0"/>
                     <!-- Row 3 -->
                     <Label Grid.Row="3"
                            Grid.Column="0"
@@ -176,14 +173,14 @@
                            Content="Notifications"
                            ToolTip="Show or hide all notifications." />
                     <CheckBox Grid.Row="3"
-                              Grid.Column="1" Content="Enabled"
+                              Grid.Column="1"
+                              Content="Enabled"
                               Style="{StaticResource CheckBoxLeft}"
                               Name="Notifications"
                               HorizontalAlignment="Left"
                               VerticalAlignment="Center"
                               VerticalContentAlignment="Center"
-                              Margin="4,0,0,0"
-                              IsChecked="{Binding ElementName=Notifications, Path=Content, UpdateSourceTrigger=LostFocus}"/>
+                              Margin="4,0,0,0"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Hot Keys">
