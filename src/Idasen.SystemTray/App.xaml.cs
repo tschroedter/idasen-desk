@@ -64,7 +64,11 @@ public partial class App
                            _container.Resolve < ITaskbarIconProvider > ( ) ) ;
 
         // ReSharper disable once AsyncVoidLambda
-        Task.Run ( new Action ( async ( ) => await model.AutoConnect ( ) ) ) ;
+        Task.Run ( new Action ( async ( ) =>
+                                {
+                                    await _container.Resolve<ISettingsManager>().UpgradeSettings();
+                                    await model.AutoConnect ( ) ;
+                                } ) ) ;
     }
 
     private static IConfigurationRoot GetConfiguration ( )

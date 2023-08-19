@@ -69,6 +69,45 @@ namespace Idasen.SystemTray.Settings
             }
         }
 
+        public async Task UpgradeSettings ( )
+        {
+            _logger.Debug($"Check current setting from '{_settingsFileName}'");
+
+            try
+            {
+                if(!File.Exists (_settingsFileName))
+                    return;
+
+                var settings = await File.ReadAllTextAsync ( _settingsFileName )
+                                         .ConfigureAwait ( false ) ;
+
+                if (!settings.Contains ( nameof(Settings.NotificationsEnabled) ) )
+                {
+                    await AddMissingSettingsNotificationsEnabled ( ) ;
+                }
+
+                _logger.Debug($"Upgrade check completed for current setting from '{_settingsFileName}'");
+            }
+            catch ( Exception e )
+            {
+                _logger.Error(e,
+                              "Failed to upgrade settings");
+            }
+        }
+
+        private async Task AddMissingSettingsNotificationsEnabled ( )
+        {
+            _logger.Debug ( $"Add missing setting "                        +
+                            $"{nameof ( Settings.NotificationsEnabled )} " +
+                            $"to current settings from '{_settingsFileName}'" ) ;
+
+            await Load ( ).ConfigureAwait ( false ) ;
+
+            _current.NotificationsEnabled = Constants.NotificationsEnabled ;
+
+            await Save ( ) ;
+        }
+
         private readonly ILogger _logger ;
 
         private readonly string _settingsFileName ;

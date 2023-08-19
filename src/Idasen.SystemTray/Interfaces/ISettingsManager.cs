@@ -8,5 +8,6 @@ namespace Idasen.SystemTray.Interfaces
 
         Task Save ( ) ;
         Task Load ( ) ;
+        Task UpgradeSettings ( ) ;
     }
 }
