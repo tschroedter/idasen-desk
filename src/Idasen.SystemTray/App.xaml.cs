@@ -11,6 +11,7 @@ using Hardcodet.Wpf.TaskbarNotification ;
 using Idasen.BluetoothLE.Linak.Interfaces ;
 using Idasen.Launcher ;
 using Idasen.SystemTray.Interfaces ;
+using Idasen.SystemTray.Settings ;
 using Idasen.SystemTray.Utils ;
 using Microsoft.Extensions.Configuration ;
 using Serilog ;
@@ -57,7 +58,7 @@ public partial class App
         _logger.Information ( $"##### Idasen.SystemTray {versionProvider.GetVersion ( )}" ) ;
 
         model.Initialize ( _container.Resolve < ILogger > ( ) ,
-                           _container.Resolve < ISettingsManager > ( ) ,
+                           _container.Resolve < ILoggingSettingsManager > ( ) ,
                            _container.Resolve < Func < IDeskProvider > > ( ) ,
                            _container.Resolve < IErrorManager > ( ) ,
                            _container.Resolve < IVersionProvider > ( ) ,

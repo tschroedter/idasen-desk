@@ -1,13 +1,11 @@
-﻿using System;
-using System.IO;
-using System.Text.Json;
-using System.Text.Json.Serialization ;
-using System.Threading.Tasks;
-using Idasen.BluetoothLE.Core;
-using Idasen.SystemTray.Interfaces;
-using Idasen.SystemTray.Utils;
-using JetBrains.Annotations;
-using Serilog;
+﻿using System ;
+using System.IO ;
+using System.Threading.Tasks ;
+using Idasen.BluetoothLE.Core ;
+using Idasen.SystemTray.Interfaces ;
+using Idasen.SystemTray.Utils ;
+using JetBrains.Annotations ;
+using Serilog ;
 
 namespace Idasen.SystemTray.Settings
 {
@@ -16,7 +14,7 @@ namespace Idasen.SystemTray.Settings
     {
         public SettingsManager ( [ NotNull ] ILogger                logger ,
                                  [ NotNull ] ICommonApplicationData commonApplicationData ,
-                                 [ NotNull ] ISettingsStorage        settingsStorage)
+                                 [ NotNull ] ISettingsStorage       settingsStorage )
         {
             Guard.ArgumentNotNull ( logger ,
                                     nameof ( logger ) ) ;
@@ -25,85 +23,56 @@ namespace Idasen.SystemTray.Settings
             Guard.ArgumentNotNull ( settingsStorage ,
                                     nameof ( settingsStorage ) ) ;
 
-            _logger          = logger ;
-            _settingsStorage = settingsStorage ;
+            _logger           = logger ;
+            _settingsStorage  = settingsStorage ;
 
-            _settingsFolderName = commonApplicationData.FolderName ( ) ;
-            _settingsFileName   = commonApplicationData.ToFullPath ( Constants.SettingsFileName ) ;
-
-            _jsonOptions = new JsonSerializerOptions
-                           {
-                               DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull ,
-                               PropertyNamingPolicy   = JsonNamingPolicy.CamelCase ,
-                           } ;
+            SettingsFileName = commonApplicationData.ToFullPath ( Constants.SettingsFileName ) ;
         }
 
-        public ISettings CurrentSettings => _current ?? new Settings (  );
+        public ISettings CurrentSettings
+        {
+            get => _current ?? new Settings ( ) ;
+        }
+
+        public string SettingsFileName { get ; }
 
         public async Task Save ( )
         {
-            try
-            {
-                _logger.Debug ( $"Saving current setting [{_current}] to '{_settingsFileName}'" ) ;
-
-                await _settingsStorage.SaveSettingsAsync (_settingsFileName,
-                                                          _current) ;
-            }
-            catch ( Exception e )
-            {
-                _logger.Error ( e ,
-                                $"Failed to save settings in file '{_settingsFileName}'" ) ;
-            }
+            await _settingsStorage.SaveSettingsAsync ( SettingsFileName ,
+                                                       _current ) ;
         }
 
         public async Task Load ( )
         {
-            _logger.Debug ( $"Loading setting from '{_settingsFileName}'" ) ;
-
-            try
-            {
-                _current = await _settingsStorage.LoadSettingsAsync ( _settingsFileName ) ;
-                
-                _logger.Debug($"Settings loaded: {_current}");
-            }
-            catch ( Exception e )
-            {
-                _logger.Error ( e ,
-                                "Failed to load settings" ) ;
-            }
+            _current = await _settingsStorage.LoadSettingsAsync ( SettingsFileName ) ;
         }
 
-        public async Task UpgradeSettings ( )
+        public Task < bool > UpgradeSettings ( )
         {
-            _logger.Debug($"Check current setting from '{_settingsFileName}'");
+            return DoUpgradeSettings ( ) ;
+        }
 
-            try
+        private async Task < bool > DoUpgradeSettings ( )
+        {
+            if ( ! File.Exists ( SettingsFileName ) )
+                return true ;
+
+            var settings = await File.ReadAllTextAsync ( SettingsFileName )
+                                     .ConfigureAwait ( false ) ;
+
+            if ( ! settings.Contains ( nameof ( Settings.NotificationsEnabled ) ) )
             {
-                if(!File.Exists (_settingsFileName))
-                    return;
-
-                var settings = await File.ReadAllTextAsync ( _settingsFileName )
-                                               .ConfigureAwait ( false ) ;
-
-                if (!settings.Contains ( nameof(Settings.NotificationsEnabled) ) )
-                {
-                    await AddMissingSettingsNotificationsEnabled ( ) ;
-                }
-
-                _logger.Debug($"Upgrade check completed for current setting from '{_settingsFileName}'");
+                await AddMissingSettingsNotificationsEnabled ( ) ;
             }
-            catch ( Exception e )
-            {
-                _logger.Error(e,
-                              "Failed to upgrade settings");
-            }
+            
+            return false ;
         }
 
         private async Task AddMissingSettingsNotificationsEnabled ( )
         {
             _logger.Debug ( $"Add missing setting "                        +
                             $"{nameof ( Settings.NotificationsEnabled )} " +
-                            $"to current settings from '{_settingsFileName}'" ) ;
+                            $"to current settings from '{SettingsFileName}'" ) ;
 
             await Load ( ).ConfigureAwait ( false ) ;
 
@@ -112,18 +81,9 @@ namespace Idasen.SystemTray.Settings
             await Save ( ) ;
         }
 
-        private void CreateDirectoryIfNotExist ( )
-        {
-            if ( ! Directory.Exists ( _settingsFolderName ) )
-                Directory.CreateDirectory ( _settingsFolderName ) ;
-        }
+        private readonly ILogger          _logger ;
+        private readonly ISettingsStorage _settingsStorage ;
 
-        private readonly ILogger               _logger ;
-        private readonly ISettingsStorage       _settingsStorage ;
-        private readonly string                _settingsFileName ;
-        private readonly string                _settingsFolderName ;
-        private readonly JsonSerializerOptions _jsonOptions ;
-
-        private          Settings              _current = new Settings ( ) ;
+        private Settings _current = new Settings ( ) ;
     }
 }
