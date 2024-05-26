@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text.Json;
+using System.Text.Json.Serialization ;
 using System.Threading.Tasks;
 using Idasen.BluetoothLE.Core;
 using Idasen.SystemTray.Interfaces;
@@ -13,35 +14,40 @@ namespace Idasen.SystemTray.Settings
     public class SettingsManager
         : ISettingsManager
     {
-        public SettingsManager ( [ NotNull ] ILogger            logger ,
-                                 [ NotNull ] ICommonApplicationData commonApplicationData )
+        public SettingsManager ( [ NotNull ] ILogger                logger ,
+                                 [ NotNull ] ICommonApplicationData commonApplicationData ,
+                                 [ NotNull ] ISettingsStorage        settingsStorage)
         {
             Guard.ArgumentNotNull ( logger ,
                                     nameof ( logger ) ) ;
             Guard.ArgumentNotNull ( commonApplicationData ,
                                     nameof ( commonApplicationData ) ) ;
+            Guard.ArgumentNotNull ( settingsStorage ,
+                                    nameof ( settingsStorage ) ) ;
 
-            _logger = logger ;
+            _logger          = logger ;
+            _settingsStorage = settingsStorage ;
 
             _settingsFolderName = commonApplicationData.FolderName ( ) ;
             _settingsFileName   = commonApplicationData.ToFullPath ( Constants.SettingsFileName ) ;
+
+            _jsonOptions = new JsonSerializerOptions
+                           {
+                               DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull ,
+                               PropertyNamingPolicy   = JsonNamingPolicy.CamelCase ,
+                           } ;
         }
 
-        public ISettings CurrentSettings => _current ;
+        public ISettings CurrentSettings => _current ?? new Settings (  );
 
         public async Task Save ( )
         {
-            _logger.Debug ( $"Saving current setting [{_current}] to '{_settingsFileName}'" ) ;
-
             try
             {
-                if ( ! Directory.Exists ( _settingsFolderName ) )
-                    Directory.CreateDirectory ( _settingsFolderName ) ;
+                _logger.Debug ( $"Saving current setting [{_current}] to '{_settingsFileName}'" ) ;
 
-                await using var stream = File.Create ( _settingsFileName ) ;
-
-                await JsonSerializer.SerializeAsync ( stream ,
-                                                      _current ) ;
+                await _settingsStorage.SaveSettingsAsync (_settingsFileName,
+                                                          _current) ;
             }
             catch ( Exception e )
             {
@@ -56,17 +62,9 @@ namespace Idasen.SystemTray.Settings
 
             try
             {
-                if ( ! File.Exists ( _settingsFileName ) )
-                    return ;
-
-                await using var openStream = File.OpenRead ( _settingsFileName ) ;
-
-                _current = await JsonSerializer.DeserializeAsync < Settings > ( openStream ) ;
-
-                _current.DeviceSettings ??= new DeviceSettings ( ) ;
-                _current.HeightSettings ??= new HeightSettings ( ) ;
-
-                _logger.Debug ( $"Settings loaded: {_current}" ) ;
+                _current = await _settingsStorage.LoadSettingsAsync ( _settingsFileName ) ;
+                
+                _logger.Debug($"Settings loaded: {_current}");
             }
             catch ( Exception e )
             {
@@ -114,12 +112,18 @@ namespace Idasen.SystemTray.Settings
             await Save ( ) ;
         }
 
-        private readonly ILogger            _logger ;
+        private void CreateDirectoryIfNotExist ( )
+        {
+            if ( ! Directory.Exists ( _settingsFolderName ) )
+                Directory.CreateDirectory ( _settingsFolderName ) ;
+        }
 
-        private readonly string _settingsFileName ;
+        private readonly ILogger               _logger ;
+        private readonly ISettingsStorage       _settingsStorage ;
+        private readonly string                _settingsFileName ;
+        private readonly string                _settingsFolderName ;
+        private readonly JsonSerializerOptions _jsonOptions ;
 
-        private readonly string _settingsFolderName ;
-
-        private Settings _current = new Settings ( ) ;
+        private          Settings              _current = new Settings ( ) ;
     }
 }
