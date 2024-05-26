@@ -1,28 +1,23 @@
-﻿using Idasen.SystemTray.Interfaces ;
+﻿using System ;
+using Idasen.SystemTray.Interfaces ;
 using Idasen.SystemTray.Utils ;
 
 namespace Idasen.SystemTray.Settings
 {
     public class Settings : ISettings
     {
-        public uint   StandingHeightInCm      { get ; set ; } = Constants.DefaultHeightStandingInCm ;
-        public uint   SeatingHeightInCm       { get ; set ; } = Constants.DefaultHeightSeatingInCm ;
-        public uint   DeskMinHeightInCm       { get;  set; }  = Constants.DefaultDeskMinHeightInCm;
-        public uint   DeskMaxHeightInCm       { get;  set; }  = Constants.DefaultDeskMaxHeightInCm;
-        public string DeviceName              { get ; set ; } = Constants.DefaultDeviceName ;
-        public ulong  DeviceAddress           { get ; set ; } = Constants.DefaultDeviceAddress ;
-        public uint   DeviceMonitoringTimeout { get ; set ; } = Constants.DefaultDeviceMonitoringTimeout ;
-        public bool   DeviceLocked            { get ; set ; } = Constants.DefaultLocked ;
+        public DeviceSettings DeviceSettings { get ; set ; } = new DeviceSettings();
+        
+        public HeightSettings HeightSettings { get ; set ; } = new HeightSettings();
+        
         public bool   NotificationsEnabled    { get ; set ; } = Constants.NotificationsEnabled;
-
+        
         public override string ToString ( )
         {
-            return $"{nameof ( StandingHeightInCm )} = {StandingHeightInCm}, "           +
-                   $"{nameof ( SeatingHeightInCm )} = {SeatingHeightInCm}, "             +
-                   $"{nameof ( DeviceName )} = {DeviceName}, "                           +
-                   $"{nameof ( DeviceAddress )} = {DeviceAddress}, "                     +
-                   $"{nameof ( DeviceMonitoringTimeout )} = {DeviceMonitoringTimeout}, " +
-                   $"{nameof ( DeviceLocked )} = {DeviceLocked}" ;
+            return $"{nameof ( DeviceSettings )} = {DeviceSettings}, " +
+                   Environment.NewLine                                 +
+                   $"{nameof ( HeightSettings )} = {HeightSettings}, " +
+                   $"{nameof ( NotificationsEnabled )} = {NotificationsEnabled}" ;
         }
     }
 }

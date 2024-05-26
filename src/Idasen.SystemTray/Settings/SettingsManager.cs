@@ -63,6 +63,9 @@ namespace Idasen.SystemTray.Settings
 
                 _current = await JsonSerializer.DeserializeAsync < Settings > ( openStream ) ;
 
+                _current.DeviceSettings ??= new DeviceSettings ( ) ;
+                _current.HeightSettings ??= new HeightSettings ( ) ;
+
                 _logger.Debug ( $"Settings loaded: {_current}" ) ;
             }
             catch ( Exception e )
@@ -82,7 +85,7 @@ namespace Idasen.SystemTray.Settings
                     return;
 
                 var settings = await File.ReadAllTextAsync ( _settingsFileName )
-                                         .ConfigureAwait ( false ) ;
+                                               .ConfigureAwait ( false ) ;
 
                 if (!settings.Contains ( nameof(Settings.NotificationsEnabled) ) )
                 {
