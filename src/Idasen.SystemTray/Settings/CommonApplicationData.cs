@@ -1,29 +1,29 @@
-﻿using System;
-using System.IO;
+﻿using System ;
+using System.IO ;
 using Idasen.SystemTray.Interfaces ;
-using Idasen.SystemTray.Utils;
+using Idasen.SystemTray.Utils ;
 
-namespace Idasen.SystemTray.Settings
+namespace Idasen.SystemTray.Settings ;
+
+public class CommonApplicationData : ICommonApplicationData
 {
-    public class CommonApplicationData : ICommonApplicationData
+    private readonly Lazy<string> _folderName;
+    
+    public CommonApplicationData()
     {
-#pragma warning disable SecurityIntelliSenseCS // MS Security rules violation
-        public string ToFullPath(string fileName)
-        {
-            var fullPath = Path.Combine(FolderName(),
-                                        fileName);
-            return fullPath;
-        }
+        _folderName = new Lazy < string > ( FolderName ) ;
+    }
+    
+    public string ToFullPath(string fileName)
+    {
+        return Path.Combine ( _folderName.Value ,
+                                           fileName ) ;
+    }
 
-        public string FolderName()
-        {
-            var appData = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+    public string FolderName ( )
+    {
+        var appData = Environment.GetFolderPath ( Environment.SpecialFolder.CommonApplicationData ) ;
 
-            var folderName = Path.Combine(appData,
-                                          Constants.ApplicationName);
-
-            return folderName;
-        }
-#pragma warning restore SecurityIntelliSenseCS // MS Security rules violation
+        return Path.Combine ( appData , Constants.ApplicationName ) ;
     }
 }

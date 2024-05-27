@@ -1,5 +1,4 @@
-﻿using System ;
-using System.IO ;
+﻿using System.IO ;
 using System.Threading.Tasks ;
 using Idasen.BluetoothLE.Core ;
 using Idasen.SystemTray.Interfaces ;
@@ -47,12 +46,7 @@ namespace Idasen.SystemTray.Settings
             _current = await _settingsStorage.LoadSettingsAsync ( SettingsFileName ) ;
         }
 
-        public Task < bool > UpgradeSettings ( )
-        {
-            return DoUpgradeSettings ( ) ;
-        }
-
-        private async Task < bool > DoUpgradeSettings ( )
+        public async Task < bool > UpgradeSettings ( )
         {
             if ( ! File.Exists ( SettingsFileName ) )
                 return true ;

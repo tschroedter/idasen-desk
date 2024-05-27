@@ -19,6 +19,6 @@
         /// <returns>
         ///     The 'ProgramData' folder for the application.
         /// </returns>
-        string FolderName();
+        string FolderName ( ) ;
     }
 }
