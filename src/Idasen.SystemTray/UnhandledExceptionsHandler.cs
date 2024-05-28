@@ -13,6 +13,8 @@ namespace Idasen.SystemTray
     [ ExcludeFromCodeCoverage ]
     public static class UnhandledExceptionsHandler
     {
+        private static readonly ErrorHandler ErrorHandler = new ErrorHandler ( ) ;
+
         public static void RegisterGlobalExceptionHandling ( )
         {
             var logger = LoggerProvider.CreateLogger ( Constants.ApplicationName ,
@@ -22,7 +24,7 @@ namespace Idasen.SystemTray
 
             // this is the line you really want
             AppDomain.CurrentDomain.UnhandledException +=
-            ( sender ,
+            ( _ ,
               args ) => CurrentDomainOnUnhandledException ( args ,
                                                             logger ) ;
 
@@ -31,32 +33,23 @@ namespace Idasen.SystemTray
             // schedulers, or applications
 
             Application.Current.Dispatcher.UnhandledException +=
-            ( sender ,
-              args ) => DispatcherOnUnhandledException ( args ,
-                                                         logger ) ;
+                ( _ , args ) => DispatcherOnUnhandledException ( args ,
+                                                                 logger ) ;
 
             Application.Current.DispatcherUnhandledException +=
-            ( sender ,
-              args ) => CurrentOnDispatcherUnhandledException ( args ,
-                                                                logger ) ;
+                ( _ , args ) => CurrentOnDispatcherUnhandledException ( args ,
+                                                                        logger ) ;
 
             TaskScheduler.UnobservedTaskException +=
-            ( sender ,
-              args ) => TaskSchedulerOnUnobservedTaskException ( args ,
-                                                                 logger ) ;
+                ( _ , args ) => TaskSchedulerOnUnobservedTaskException ( args ,
+                                                                         logger ) ;
         }
 
         private static void TaskSchedulerOnUnobservedTaskException (
             UnobservedTaskExceptionEventArgs args ,
             ILogger                          log )
         {
-            if ( args.Exception.IsBluetoothDisabledException ( ) )
-                args.Exception.LogBluetoothStatusException ( log ) ;
-            else
-                log.Error ( args.Exception ,
-                            args.Exception != null
-                                ? args.Exception.Message
-                                : "Message is null" ) ;
+            ErrorHandler.Handle ( args.Exception , log ) ;
 
             args.SetObserved ( ) ;
         }
@@ -67,14 +60,11 @@ namespace Idasen.SystemTray
         {
             if ( args.Exception.IsBluetoothDisabledException ( ) )
             {
-                args.Exception.LogBluetoothStatusException ( log ) ;
-
-                args.Handled = true ;
+                HandleBluetoothDisabledException ( args , log ) ;
             }
             else
             {
-                log.Error ( args.Exception ,
-                            args.Exception.Message ) ;
+                HandleGeneralException ( args , log ) ;
             }
         }
 
@@ -83,15 +73,25 @@ namespace Idasen.SystemTray
         {
             if ( args.Exception.IsBluetoothDisabledException ( ) )
             {
-                args.Exception.LogBluetoothStatusException ( log ) ;
-
-                args.Handled = true ;
+                HandleBluetoothDisabledException ( args , log ) ;
             }
             else
             {
-                log.Error ( args.Exception ,
-                            args.Exception.Message ) ;
+                HandleGeneralException ( args , log ) ;
             }
+        }
+
+        private static void HandleGeneralException ( DispatcherUnhandledExceptionEventArgs args , ILogger log )
+        {
+            log.Error ( args.Exception ,
+                        args.Exception.Message ) ;
+        }
+
+        private static void HandleBluetoothDisabledException ( DispatcherUnhandledExceptionEventArgs args , ILogger log )
+        {
+            args.Exception.LogBluetoothStatusException ( log ) ;
+
+            args.Handled = true ;
         }
 
         private static void CurrentDomainOnUnhandledException ( UnhandledExceptionEventArgs args ,
