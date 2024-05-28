@@ -1,35 +1,18 @@
 ﻿using System ;
 using Idasen.SystemTray.Interfaces ;
 
-namespace Idasen.SystemTray.Utils
+namespace Idasen.SystemTray.Utils ;
+
+public class StringToUIntConverter
+    : IStringToUIntConverter
 {
-    public class StringToUIntConverter
-        : IStringToUIntConverter
+    public ulong ConvertStringToUlongOrDefault ( string text ,
+                                       ulong  defaultValue )
     {
-        public ulong ConvertToULong(string text,
-                                   ulong  defaultValue)
-        {
-            return !TryConvertToULong(text,
-                                     out var uintValue)
-                       ? defaultValue
-                       : uintValue;
-        }
+        var isValid = ulong.TryParse ( text , out var value ) ;
 
-        public bool TryConvertToULong(string   text,
-                                     out ulong uintValue)
-        {
-            try
-            {
-                uintValue = Convert.ToUInt64(text);
-
-                return true;
-            }
-            catch (Exception)
-            {
-                uintValue = 0;
-
-                return false;
-            }
-        }
+        return isValid
+                   ? value
+                   : defaultValue ;
     }
 }
