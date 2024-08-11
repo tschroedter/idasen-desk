@@ -89,7 +89,7 @@ namespace Idasen.SystemTray
 
         private static void HandleBluetoothDisabledException ( DispatcherUnhandledExceptionEventArgs args , ILogger log )
         {
-            args.Exception.LogBluetoothStatusException ( log ) ;
+            args.Exception.LogBluetoothStatusException ( log, string.Empty ) ;
 
             args.Handled = true ;
         }
@@ -106,7 +106,7 @@ namespace Idasen.SystemTray
                                           terminatingMessage ) ;
 
             if ( exception.IsBluetoothDisabledException ( ) )
-                exception.LogBluetoothStatusException ( log ) ;
+                exception.LogBluetoothStatusException ( log, string.Empty) ;
             else
                 log.Error ( exception ,
                             message ) ;

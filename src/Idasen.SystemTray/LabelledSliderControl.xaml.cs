@@ -6,7 +6,6 @@ namespace Idasen.SystemTray
     {
         public LabelledSliderControl ( )
         {
-            InitializeComponent ( ) ;
         }
     }
 }
