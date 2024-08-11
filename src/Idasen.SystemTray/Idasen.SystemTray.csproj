@@ -36,7 +36,7 @@
     <PackageReference Include="Hardcodet.Wpf.TaskbarNotification.Core" Version="2.0.0" />
     <PackageReference Include="Idasen.Desk.Core" Version="0.0.56" />
     <PackageReference Include="NHotkey.Wpf" Version="3.0.0" />
-    <PackageReference Include="System.Drawing.Common" Version="4.7.3" />
+    <PackageReference Include="System.Drawing.Common" Version="8.0.7" />
     <PackageReference Include="System.Reactive" Version="6.0.1" />
     <PackageReference Include="JetBrains.Annotations" Version="2024.2.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="8.0.0" />
