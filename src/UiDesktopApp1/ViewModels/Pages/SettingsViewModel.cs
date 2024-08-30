@@ -1,37 +1,17 @@
 ﻿using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
 
-namespace Idasen.SystemTray.Win11.ViewModels.Pages
+namespace UiDesktopApp1.ViewModels.Pages
 {
     public partial class SettingsViewModel : ObservableObject, INavigationAware
     {
-        private bool _isInitialized ;
+        private bool _isInitialized = false;
 
         [ObservableProperty]
-        private string _appVersion = string.Empty;
+        private string _appVersion = String.Empty;
 
         [ObservableProperty]
         private ApplicationTheme _currentTheme = ApplicationTheme.Unknown;
-
-        // General Settings
-        [ObservableProperty]
-        private uint _standing = 100;
-
-        [ObservableProperty]
-        private uint _seating = 90;
-
-        // Advanced Settings
-        [ObservableProperty]
-        private string _deskName = string.Empty;
-
-        [ObservableProperty]
-        private string _deskAddress = string.Empty;
-
-        [ObservableProperty]
-        private bool _parentalLock ;
-
-        [ObservableProperty]
-        private bool _notifications = true;
 
         public void OnNavigatedTo()
         {
@@ -69,30 +49,12 @@ namespace Idasen.SystemTray.Win11.ViewModels.Pages
 
                     break;
 
-                case "theme_dark":
+                default:
                     if (CurrentTheme == ApplicationTheme.Dark)
                         break;
 
                     ApplicationThemeManager.Apply(ApplicationTheme.Dark);
                     CurrentTheme = ApplicationTheme.Dark;
-
-                    break;
-
-                case "theme_high_contrast":
-                    if (CurrentTheme == ApplicationTheme.HighContrast)
-                        break;
-
-                    ApplicationThemeManager.Apply(ApplicationTheme.HighContrast);
-                    CurrentTheme = ApplicationTheme.HighContrast;
-
-                    break;
-
-                default:
-                    if (CurrentTheme == ApplicationTheme.Unknown)
-                        break;
-
-                    ApplicationThemeManager.Apply(ApplicationTheme.Unknown);
-                    CurrentTheme = ApplicationTheme.Unknown;
 
                     break;
             }

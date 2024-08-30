@@ -21,31 +21,226 @@
     </Page.Resources>
 
     <StackPanel>
-        <TextBlock
-            FontSize="20"
-            FontWeight="Medium"
-            Text="Personalization" />
-        <TextBlock Margin="0,12,0,0" Text="Theme" />
-        <RadioButton
-            Margin="0,12,0,0"
-            Command="{Binding ViewModel.ChangeThemeCommand, Mode=OneWay}"
-            CommandParameter="theme_light"
-            Content="Light"
-            GroupName="themeSelect"
-            IsChecked="{Binding ViewModel.CurrentTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Light, Mode=OneWay}" />
-        <RadioButton
-            Margin="0,8,0,0"
-            Command="{Binding ViewModel.ChangeThemeCommand, Mode=OneWay}"
-            CommandParameter="theme_dark"
-            Content="Dark"
-            GroupName="themeSelect"
-            IsChecked="{Binding ViewModel.CurrentTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Dark, Mode=OneWay}" />
+        <!-- Todo add icons-->
+        <ui:CardExpander
+            CornerRadius="0,0,8,8"
+            Header="Advanced">
+            <StackPanel>
+                <TextBlock Margin="0,12,0,0"
+                           Text="Settings" />
+                <Grid Margin="0,12,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition Height="5" />
+                        <RowDefinition />
+                        <RowDefinition Height="5" />
+                        <RowDefinition />
+                        <RowDefinition Height="5" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <!-- Row 0 -->
+                    <Label Grid.Row="0"
+                   Grid.Column="0"
+                   Content="Desk Name"
+                   ToolTip="Discover the desk by it's Bluetooth device name. Empty means default value."
+                   VerticalContentAlignment="Center"
+                   Padding="5,0,5,0" />
+                    <TextBox Grid.Row="0"
+                     Grid.Column="1"
+                     Name="DeskName"
+                     Width="Auto"
+                     Text="{Binding ViewModel.DeskName}" />
+                    <!-- Row 1 Blank -->
+                    <!-- Row 2 -->
+                    <Label Grid.Row="2"
+                   Grid.Column="0"
+                   Content="Desk Address"
+                   ToolTip="Discover the desk by it's Bluetooth device address. Empty means default value."
+                   VerticalContentAlignment="Center"
+                   Padding="5,0,5,0" />
+                    <TextBox Grid.Row="2"
+                     Grid.Column="1"
+                     Name="DeskAddress"
+                     Width="Auto"
+                     Text="{Binding ViewModel.DeskAddress}" />
+                    <!-- Row 3 Blank -->
+                    <!-- Row 4 -->
+                    <Label Grid.Row="4"
+                   Grid.Column="0"
+                   Content="Parental Lock"
+                   ToolTip="Blocks manual movements when enabled."
+                   VerticalContentAlignment="Center"
+                   Padding="5,0,5,0" />
+                    <CheckBox Grid.Row="4"
+                      Grid.Column="1" Content="Enabled"
+                      Name="Locked"
+                      HorizontalAlignment="Left"
+                      VerticalAlignment="Center"
+                      VerticalContentAlignment="Center"
+                      Margin="4,0,0,0"
+                      IsChecked="{Binding ViewModel.ParentalLock}" />
+                    <!-- Row 5 Blank -->
+                    <!-- Row 6 -->
+                    <Label Grid.Row="6"
+                   Grid.Column="0"
+                   Content="Notifications"
+                   ToolTip="Show or hide all notifications."
+                   VerticalContentAlignment="Center"
+                   Padding="5,0,5,0" />
+                    <CheckBox Grid.Row="6"
+                      Grid.Column="1"
+                      Content="Enabled"
+                      Name="Notifications"
+                      HorizontalAlignment="Left"
+                      VerticalAlignment="Center"
+                      VerticalContentAlignment="Center"
+                      Margin="4,0,0,0"
+                      IsChecked="{Binding ViewModel.Notifications}" />
+                </Grid>
+            </StackPanel>
+        </ui:CardExpander>
+        <ui:CardExpander
+            CornerRadius="0,0,8,8"
+            Header="Appearance">
+            <StackPanel>
+                <TextBlock Margin="0,12,0,0"
+                           Text="Theme" />
+                <RadioButton
+                    Margin="0,12,0,0"
+                    Command="{Binding ViewModel.ChangeThemeCommand, Mode=OneWay}"
+                    CommandParameter="theme_light"
+                    Content="Light"
+                    GroupName="themeSelect"
+                    IsChecked="{Binding ViewModel.CurrentTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Light, Mode=OneWay}" />
+                <RadioButton
+                    Margin="0,8,0,0"
+                    Command="{Binding ViewModel.ChangeThemeCommand, Mode=OneWay}"
+                    CommandParameter="theme_dark"
+                    Content="Dark"
+                    GroupName="themeSelect"
+                    IsChecked="{Binding ViewModel.CurrentTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Dark, Mode=OneWay}" />
+                <RadioButton
+                    Margin="0,8,0,0"
+                    Command="{Binding ViewModel.ChangeThemeCommand, Mode=OneWay}"
+                    CommandParameter="theme_high_contrast"
+                    Content="High Contrast"
+                    GroupName="themeSelect"
+                    IsChecked="{Binding ViewModel.CurrentTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=HighContrast, Mode=OneWay}" />
+            </StackPanel>
+        </ui:CardExpander>
 
-        <TextBlock
-            Margin="0,24,0,0"
-            FontSize="20"
-            FontWeight="Medium"
-            Text="About Idasen.SystemTray.Win11" />
-        <TextBlock Margin="0,12,0,0" Text="{Binding ViewModel.AppVersion, Mode=OneWay}" />
+        <ui:CardExpander
+            CornerRadius="0,0,8,8"
+            Header="General"
+            IsExpanded="True">
+            <StackPanel>
+                <TextBlock Margin="0,12,0,0"
+                           Text="Positions" />
+                <Grid Margin="0,12,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="50" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition Height="5" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <!-- Row 0 -->
+                    <Label Grid.Row="0"
+                   Grid.Column="0"
+                   Content="Standing"
+                   Padding="5,0,5,0" />
+                    <Slider Grid.Row="0"
+                    Grid.Column="1"
+                    Name="Standing"
+                    Minimum="65"
+                    Maximum="127"
+                    Value="{Binding ViewModel.Standing}"
+                    TickPlacement="BottomRight" />
+                    <TextBlock Grid.Row="0"
+                       Grid.Column="2"
+                       HorizontalAlignment="Right"
+                       Text="{Binding ElementName=Standing, Path=Value, StringFormat='0', UpdateSourceTrigger=LostFocus}"
+                       Padding="5,0,5,0" />
+                    <Label Grid.Row="0"
+                   Grid.Column="3"
+                   HorizontalAlignment="Right"
+                   Content="cm" />
+                    <!-- Row 1 - Blank -->
+                    <!-- Row 2 -->
+                    <Label Grid.Row="2"
+                   Grid.Column="0"
+                   Content="Seating"
+                   Padding="5,0,5,0" />
+                    <Slider Grid.Row="2"
+                    Grid.Column="1"
+                    Name="Seating"
+                    Minimum="65"
+                    Maximum="127"
+                    Value="{Binding ViewModel.Seating}"
+                    TickPlacement="BottomRight" />
+                    <TextBlock Grid.Row="2"
+                       Grid.Column="2"
+                       HorizontalAlignment="Right"
+                       Text="{Binding ElementName=Seating, Path=Value, StringFormat='0',UpdateSourceTrigger=LostFocus}"
+                       Padding="5,0,5,0" />
+                    <Label Grid.Row="2"
+                   Grid.Column="3"
+                   HorizontalAlignment="Right"
+                   Content="cm" />
+                </Grid>
+            </StackPanel>
+        </ui:CardExpander>
+
+        <ui:CardExpander
+            CornerRadius="0,0,8,8"
+            Header="Hot Keys">
+            <StackPanel>
+                <TextBlock Margin="0,12,0,0"
+                           Text="Definitions" />
+                <Grid Margin="0,12,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition Height="5" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <!-- Row 0 -->
+                    <Label Grid.Row="0"
+                           Grid.Column="0"
+                           Content="Standing"
+                           ToolTip="The global hot key to move the desk to the standing height."
+                           VerticalAlignment="Center"
+                           Padding="5,0,5,0" />
+                    <TextBox Grid.Row="0"
+                             Grid.Column="1"
+                             IsEnabled="False"
+                             Text="Ctrl+Shift+Alt+Cursor Up"
+                             Width="Auto" />
+                    <!-- Row 2 -->
+                    <Label Grid.Row="2"
+                           Grid.Column="0"
+                           Content="Seating"
+                           ToolTip="The global hot key to move the desk to the seating height."
+                           VerticalAlignment="Center"
+                           Padding="5,0,5,0" />
+                    <TextBox Grid.Row="2"
+                             Grid.Column="1"
+                             IsEnabled="False"
+                             Text="Ctrl+Shift+Alt+Cursor Down"
+                             Width="Auto" />
+                </Grid>
+            </StackPanel>
+        </ui:CardExpander>
     </StackPanel>
 </Page>

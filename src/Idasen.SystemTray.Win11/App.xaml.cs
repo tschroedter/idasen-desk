@@ -23,44 +23,48 @@ namespace Idasen.SystemTray.Win11
         // https://docs.microsoft.com/dotnet/core/extensions/dependency-injection
         // https://docs.microsoft.com/dotnet/core/extensions/configuration
         // https://docs.microsoft.com/dotnet/core/extensions/logging
-        private static readonly IHost _host = Host
-            .CreateDefaultBuilder()
-            .ConfigureAppConfiguration(c => { c.SetBasePath(Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location)); })
-            .ConfigureServices((context, services) =>
-            {
-                services.AddHostedService<ApplicationHostService>();
+        private static readonly IHost Host = Microsoft.Extensions.Hosting.Host
+                                                      .CreateDefaultBuilder ( )
+                                                      .ConfigureAppConfiguration ( GetBasePath )
+                                                      .ConfigureServices ( ( _ , services ) =>
+                                                                           {
+                                                                               services.AddHostedService < ApplicationHostService > ( ) ;
 
-                // Page resolver service
-                services.AddSingleton<IPageService, PageService>();
+                                                                               // Page resolver service
+                                                                               services.AddSingleton < IPageService , PageService > ( ) ;
 
-                // Theme manipulation
-                services.AddSingleton<IThemeService, ThemeService>();
+                                                                               // Theme manipulation
+                                                                               services.AddSingleton < IThemeService , ThemeService > ( ) ;
 
-                // TaskBar manipulation
-                services.AddSingleton<ITaskBarService, TaskBarService>();
+                                                                               // TaskBar manipulation
+                                                                               services.AddSingleton < ITaskBarService , TaskBarService > ( ) ;
 
-                // Service containing navigation, same as INavigationWindow... but without window
-                services.AddSingleton<INavigationService, NavigationService>();
+                                                                               // Service containing navigation, same as INavigationWindow... but without window
+                                                                               services.AddSingleton < INavigationService , NavigationService > ( ) ;
 
-                // Main window with navigation
-                services.AddSingleton<INavigationWindow, MainWindow>();
-                services.AddSingleton<MainWindowViewModel>();
+                                                                               // Main window with navigation
+                                                                               services.AddSingleton < INavigationWindow , MainWindow > ( ) ;
+                                                                               services.AddSingleton < MainWindowViewModel > ( ) ;
 
-                services.AddSingleton<DashboardPage>();
-                services.AddSingleton<DashboardViewModel>();
-                services.AddSingleton<SettingsPage>();
-                services.AddSingleton<SettingsViewModel>();
-            }).Build();
+                                                                               services.AddSingleton < DashboardPage > ( ) ;
+                                                                               services.AddSingleton < DashboardViewModel > ( ) ;
+                                                                               services.AddSingleton < SettingsPage > ( ) ;
+                                                                               services.AddSingleton < SettingsViewModel > ( ) ;
+                                                                           } ).Build ( ) ;
+
+        private static void GetBasePath ( IConfigurationBuilder c ) =>
+            c.SetBasePath ( basePath : Path.GetDirectoryName ( Assembly.GetEntryAssembly ( )!.Location ) ??
+                                       throw new InvalidOperationException ( "Couldn't get directory name from entry assembly" ) ) ;
 
         /// <summary>
         /// Gets registered service.
         /// </summary>
         /// <typeparam name="T">Type of the service to get.</typeparam>
         /// <returns>Instance of the service or <see langword="null"/>.</returns>
-        public static T GetService<T>()
+        public static T? GetService<T>()
             where T : class
         {
-            return _host.Services.GetService(typeof(T)) as T;
+            return Host.Services.GetService(typeof(T)) as T;
         }
 
         /// <summary>
@@ -68,7 +72,7 @@ namespace Idasen.SystemTray.Win11
         /// </summary>
         private void OnStartup(object sender, StartupEventArgs e)
         {
-            _host.Start();
+            Host.Start();
         }
 
         /// <summary>
@@ -76,9 +80,9 @@ namespace Idasen.SystemTray.Win11
         /// </summary>
         private async void OnExit(object sender, ExitEventArgs e)
         {
-            await _host.StopAsync();
+            await Host.StopAsync();
 
-            _host.Dispose();
+            Host.Dispose();
         }
 
         /// <summary>

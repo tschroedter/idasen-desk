@@ -16,21 +16,36 @@
     Foreground="{DynamicResource TextFillColorPrimaryBrush}"
     mc:Ignorable="d">
 
-    <Grid VerticalAlignment="Top">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="Auto" />
-        </Grid.ColumnDefinitions>
-
-        <ui:Button
-            Grid.Column="0"
-            Command="{Binding ViewModel.CounterIncrementCommand, Mode=OneWay}"
-            Content="Click me!"
-            Icon="Fluent24" />
+    <StackPanel VerticalAlignment="Top">
         <TextBlock
-            Grid.Column="1"
-            Margin="12,0,0,0"
-            VerticalAlignment="Center"
-            Text="{Binding ViewModel.Counter, Mode=OneWay}" />
-    </Grid>
+            Margin="0,12,0,0"
+            HorizontalAlignment="Left"
+            TextWrapping="Wrap"
+            FontWeight="Bold"
+            Text="Idasen Desk Application" />
+        <TextBlock
+            Margin="0,12,0,0"
+            HorizontalAlignment="Left"
+            TextWrapping="Wrap"
+            FontWeight="Medium"
+            Text="Overview" />
+        <TextBlock
+            Margin="0,12,0,0"
+            HorizontalAlignment="Left"
+            TextWrapping="Wrap"
+            Text="This application is controlling Ikea's Idasen Desk using Windows 10/11 and BluetoothLE. Ikea only provides an Android and IOs app to control the desk. I thought it would be far more convenient to control the desk using a Windows 10/11." />
+        <TextBlock
+            Margin="0, 12,0,0"
+            HorizontalAlignment="Left"
+            TextWrapping="Wrap"
+            Text="At the moment the application is a work in progress. It supports the following features:"/>
+        <ui:ListView Margin="0, 12,0,0">
+            <ui:ListViewItem>- Detect Desk</ui:ListViewItem>
+            <ui:ListViewItem>- Show Settings</ui:ListViewItem>
+            <ui:ListViewItem>- Hide Settings</ui:ListViewItem>
+            <ui:ListViewItem>- Standing</ui:ListViewItem>
+            <ui:ListViewItem>- Seating</ui:ListViewItem>
+            <ui:ListViewItem>- Exit</ui:ListViewItem>
+        </ui:ListView>
+    </StackPanel>
 </Page>
