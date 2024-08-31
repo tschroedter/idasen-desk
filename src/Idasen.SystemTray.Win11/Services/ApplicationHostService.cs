@@ -50,7 +50,7 @@ namespace Idasen.SystemTray.Win11.Services
                 )!;
                 _navigationWindow!.ShowWindow();
 
-                _navigationWindow.Navigate(typeof(Views.Pages.DashboardPage));
+                _navigationWindow.Navigate(typeof(Views.Pages.SettingsPage));
             }
 
             await Task.CompletedTask;

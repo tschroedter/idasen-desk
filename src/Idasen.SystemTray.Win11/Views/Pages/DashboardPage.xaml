@@ -34,18 +34,5 @@
             HorizontalAlignment="Left"
             TextWrapping="Wrap"
             Text="This application is controlling Ikea's Idasen Desk using Windows 10/11 and BluetoothLE. Ikea only provides an Android and IOs app to control the desk. I thought it would be far more convenient to control the desk using a Windows 10/11." />
-        <TextBlock
-            Margin="0, 12,0,0"
-            HorizontalAlignment="Left"
-            TextWrapping="Wrap"
-            Text="At the moment the application is a work in progress. It supports the following features:"/>
-        <ui:ListView Margin="0, 12,0,0">
-            <ui:ListViewItem>- Detect Desk</ui:ListViewItem>
-            <ui:ListViewItem>- Show Settings</ui:ListViewItem>
-            <ui:ListViewItem>- Hide Settings</ui:ListViewItem>
-            <ui:ListViewItem>- Standing</ui:ListViewItem>
-            <ui:ListViewItem>- Seating</ui:ListViewItem>
-            <ui:ListViewItem>- Exit</ui:ListViewItem>
-        </ui:ListView>
     </StackPanel>
 </Page>

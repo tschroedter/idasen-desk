@@ -1,39 +1,40 @@
-﻿using System.Collections.ObjectModel;
-using Wpf.Ui.Controls;
+﻿using System.Collections.ObjectModel ;
+using Idasen.SystemTray.Win11.Views.Pages ;
+using Wpf.Ui.Controls ;
 
-namespace Idasen.SystemTray.Win11.ViewModels.Windows
+namespace Idasen.SystemTray.Win11.ViewModels.Windows ;
+
+public partial class MainWindowViewModel : ObservableObject
 {
-    public partial class MainWindowViewModel : ObservableObject
-    {
-        [ObservableProperty]
-        private string _applicationTitle = "WPF UI - Idasen.SystemTray.Win11";
+    [ ObservableProperty ]
+    private string _applicationTitle = "Idasen Desk" ;
 
-        [ObservableProperty]
-        private ObservableCollection<object> _menuItems = new()
+    [ ObservableProperty ]
+    private ObservableCollection < object > _menuItems =
+    [
+        new NavigationViewItem
         {
-            new NavigationViewItem()
+            Content = "Home" ,
+            Icon = new SymbolIcon
             {
-                Content = "Home",
-                Icon = new SymbolIcon { Symbol = SymbolRegular.Home24 },
-                TargetPageType = typeof(Views.Pages.DashboardPage)
-            }
-        };
+                Symbol = SymbolRegular.Home24
+            } ,
+            TargetPageType = typeof ( DashboardPage )
+        }
+    ] ;
 
-        [ObservableProperty]
-        private ObservableCollection<object> _footerMenuItems = new()
+    [ ObservableProperty ]
+    private ObservableCollection < object > _footerMenuItems =
+    [
+        new NavigationViewItem
         {
-            new NavigationViewItem()
-            {
-                Content = "Settings",
-                Icon = new SymbolIcon { Symbol = SymbolRegular.Settings24 },
-                TargetPageType = typeof(Views.Pages.SettingsPage)
-            }
-        };
+            Content        = "Settings" ,
+            Icon           = new SymbolIcon { Symbol = SymbolRegular.Settings24 } ,
+            TargetPageType = typeof ( SettingsPage )
+        }
+    ] ;
 
-        [ObservableProperty]
-        private ObservableCollection<MenuItem> _trayMenuItems = new()
-        {
-            new MenuItem { Header = "Home", Tag = "tray_home" }
-        };
-    }
+    [ ObservableProperty ]
+    private ObservableCollection < MenuItem > _trayMenuItems =
+        [new MenuItem { Header = "Home" , Tag = "tray_home" }] ;
 }
