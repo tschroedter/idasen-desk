@@ -44,62 +44,62 @@
                     </Grid.RowDefinitions>
                     <!-- Row 0 -->
                     <Label Grid.Row="0"
-                   Grid.Column="0"
-                   Content="Desk Name"
-                   ToolTip="Discover the desk by it is Bluetooth device name. Empty means default value."
-                   VerticalContentAlignment="Center"
-                   Padding="5,0,5,0" />
+                           Grid.Column="0"
+                           Content="Desk Name"
+                           ToolTip="Discover the desk by it is Bluetooth device name. Empty means default value."
+                           VerticalContentAlignment="Center"
+                           Padding="5,0,5,0" />
                     <TextBox Grid.Row="0"
-                     Grid.Column="1"
-                     Name="DeskName"
-                     Width="Auto"
-                     Text="{Binding ViewModel.DeskName}" />
+                             Grid.Column="1"
+                             Name="DeskName"
+                             Width="Auto"
+                             Text="{Binding ViewModel.DeskName}" />
                     <!-- Row 1 Blank -->
                     <!-- Row 2 -->
                     <Label Grid.Row="2"
-                   Grid.Column="0"
-                   Content="Desk Address"
-                   ToolTip="Discover the desk by it is Bluetooth device address. Empty means default value."
-                   VerticalContentAlignment="Center"
-                   Padding="5,0,5,0" />
+                           Grid.Column="0"
+                           Content="Desk Address"
+                           ToolTip="Discover the desk by it is Bluetooth device address. Empty means default value."
+                           VerticalContentAlignment="Center"
+                           Padding="5,0,5,0" />
                     <TextBox Grid.Row="2"
-                     Grid.Column="1"
-                     Name="DeskAddress"
-                     Width="Auto"
-                     Text="{Binding ViewModel.DeskAddress}" />
+                             Grid.Column="1"
+                             Name="DeskAddress"
+                             Width="Auto"
+                             Text="{Binding ViewModel.DeskAddress}" />
                     <!-- Row 3 Blank -->
                     <!-- Row 4 -->
                     <Label Grid.Row="4"
-                   Grid.Column="0"
-                   Content="Parental Lock"
-                   ToolTip="Blocks manual movements when enabled."
-                   VerticalContentAlignment="Center"
-                   Padding="5,0,5,0" />
+                           Grid.Column="0"
+                           Content="Parental Lock"
+                           ToolTip="Blocks manual movements when enabled."
+                           VerticalContentAlignment="Center"
+                           Padding="5,0,5,0" />
                     <CheckBox Grid.Row="4"
-                      Grid.Column="1" Content="Enabled"
-                      Name="Locked"
-                      HorizontalAlignment="Left"
-                      VerticalAlignment="Center"
-                      VerticalContentAlignment="Center"
-                      Margin="4,0,0,0"
-                      IsChecked="{Binding ViewModel.ParentalLock}" />
+                              Grid.Column="1" Content="Enabled"
+                              Name="Locked"
+                              HorizontalAlignment="Left"
+                              VerticalAlignment="Center"
+                              VerticalContentAlignment="Center"
+                              Margin="4,0,0,0"
+                              IsChecked="{Binding ViewModel.ParentalLock}" />
                     <!-- Row 5 Blank -->
                     <!-- Row 6 -->
                     <Label Grid.Row="6"
-                   Grid.Column="0"
-                   Content="Notifications"
-                   ToolTip="Show or hide all notifications."
-                   VerticalContentAlignment="Center"
-                   Padding="5,0,5,0" />
+                           Grid.Column="0"
+                           Content="Notifications"
+                           ToolTip="Show or hide all notifications."
+                           VerticalContentAlignment="Center"
+                           Padding="5,0,5,0" />
                     <CheckBox Grid.Row="6"
-                      Grid.Column="1"
-                      Content="Enabled"
-                      Name="Notifications"
-                      HorizontalAlignment="Left"
-                      VerticalAlignment="Center"
-                      VerticalContentAlignment="Center"
-                      Margin="4,0,0,0"
-                      IsChecked="{Binding ViewModel.Notifications}" />
+                              Grid.Column="1"
+                              Content="Enabled"
+                              Name="Notifications"
+                              HorizontalAlignment="Left"
+                              VerticalAlignment="Center"
+                              VerticalContentAlignment="Center"
+                              Margin="4,0,0,0"
+                              IsChecked="{Binding ViewModel.Notifications}" />
                 </Grid>
             </StackPanel>
         </ui:CardExpander>
@@ -154,47 +154,47 @@
                     </Grid.RowDefinitions>
                     <!-- Row 0 -->
                     <Label Grid.Row="0"
-                   Grid.Column="0"
-                   Content="Standing"
-                   Padding="5,0,5,0" />
+                           Grid.Column="0"
+                           Content="Standing"
+                           Padding="5,0,5,0" />
                     <Slider Grid.Row="0"
-                    Grid.Column="1"
-                    Name="Standing"
-                    Minimum="65"
-                    Maximum="127"
-                    Value="{Binding ViewModel.Standing}"
-                    TickPlacement="BottomRight" />
+                            Grid.Column="1"
+                            Name="Standing"
+                            Minimum="65"
+                            Maximum="127"
+                            Value="{Binding ViewModel.Standing}"
+                            TickPlacement="BottomRight" />
                     <TextBlock Grid.Row="0"
-                       Grid.Column="2"
-                       HorizontalAlignment="Right"
-                       Text="{Binding ElementName=Standing, Path=Value, StringFormat='0', UpdateSourceTrigger=LostFocus}"
-                       Padding="5,0,5,0" />
+                               Grid.Column="2"
+                               HorizontalAlignment="Right"
+                               Text="{Binding ElementName=Standing, Path=Value, StringFormat='0', UpdateSourceTrigger=LostFocus}"
+                               Padding="5,0,5,0" />
                     <Label Grid.Row="0"
-                   Grid.Column="3"
-                   HorizontalAlignment="Right"
-                   Content="cm" />
+                           Grid.Column="3"
+                           HorizontalAlignment="Right"
+                           Content="cm" />
                     <!-- Row 1 - Blank -->
                     <!-- Row 2 -->
                     <Label Grid.Row="2"
-                   Grid.Column="0"
-                   Content="Seating"
-                   Padding="5,0,5,0" />
+                           Grid.Column="0"
+                           Content="Seating"
+                           Padding="5,0,5,0" />
                     <Slider Grid.Row="2"
-                    Grid.Column="1"
-                    Name="Seating"
-                    Minimum="65"
-                    Maximum="127"
-                    Value="{Binding ViewModel.Seating}"
-                    TickPlacement="BottomRight" />
+                            Grid.Column="1"
+                            Name="Seating"
+                            Minimum="65"
+                            Maximum="127"
+                            Value="{Binding ViewModel.Seating}"
+                            TickPlacement="BottomRight" />
                     <TextBlock Grid.Row="2"
-                       Grid.Column="2"
-                       HorizontalAlignment="Right"
-                       Text="{Binding ElementName=Seating, Path=Value, StringFormat='0',UpdateSourceTrigger=LostFocus}"
-                       Padding="5,0,5,0" />
+                               Grid.Column="2"
+                               HorizontalAlignment="Right"
+                               Text="{Binding ElementName=Seating, Path=Value, StringFormat='0',UpdateSourceTrigger=LostFocus}"
+                               Padding="5,0,5,0" />
                     <Label Grid.Row="2"
-                   Grid.Column="3"
-                   HorizontalAlignment="Right"
-                   Content="cm" />
+                           Grid.Column="3"
+                           HorizontalAlignment="Right"
+                           Content="cm" />
                 </Grid>
             </StackPanel>
         </ui:CardExpander>

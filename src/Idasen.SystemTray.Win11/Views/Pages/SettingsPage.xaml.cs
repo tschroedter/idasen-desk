@@ -1,18 +1,17 @@
-﻿using Idasen.SystemTray.Win11.ViewModels.Pages;
-using Wpf.Ui.Controls;
+﻿using Idasen.SystemTray.Win11.ViewModels.Pages ;
+using Wpf.Ui.Controls ;
 
-namespace Idasen.SystemTray.Win11.Views.Pages
+namespace Idasen.SystemTray.Win11.Views.Pages ;
+
+public partial class SettingsPage : INavigableView < SettingsViewModel >
 {
-    public partial class SettingsPage : INavigableView<SettingsViewModel>
+    public SettingsPage ( SettingsViewModel viewModel )
     {
-        public SettingsViewModel ViewModel { get; }
+        ViewModel   = viewModel ;
+        DataContext = this ;
 
-        public SettingsPage(SettingsViewModel viewModel)
-        {
-            ViewModel = viewModel;
-            DataContext = this;
-
-            InitializeComponent();
-        }
+        InitializeComponent ( ) ;
     }
+
+    public SettingsViewModel ViewModel { get ; }
 }

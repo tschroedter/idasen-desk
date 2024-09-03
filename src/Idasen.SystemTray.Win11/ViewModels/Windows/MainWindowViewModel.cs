@@ -10,6 +10,17 @@ public partial class MainWindowViewModel : ObservableObject
     private string _applicationTitle = "Idasen Desk" ;
 
     [ ObservableProperty ]
+    private ObservableCollection < object > _footerMenuItems =
+    [
+        new NavigationViewItem
+        {
+            Content        = "Settings" ,
+            Icon           = new SymbolIcon { Symbol = SymbolRegular.Settings24 } ,
+            TargetPageType = typeof ( SettingsPage )
+        }
+    ] ;
+
+    [ ObservableProperty ]
     private ObservableCollection < object > _menuItems =
     [
         new NavigationViewItem
@@ -20,17 +31,6 @@ public partial class MainWindowViewModel : ObservableObject
                 Symbol = SymbolRegular.Home24
             } ,
             TargetPageType = typeof ( DashboardPage )
-        }
-    ] ;
-
-    [ ObservableProperty ]
-    private ObservableCollection < object > _footerMenuItems =
-    [
-        new NavigationViewItem
-        {
-            Content        = "Settings" ,
-            Icon           = new SymbolIcon { Symbol = SymbolRegular.Settings24 } ,
-            TargetPageType = typeof ( SettingsPage )
         }
     ] ;
 

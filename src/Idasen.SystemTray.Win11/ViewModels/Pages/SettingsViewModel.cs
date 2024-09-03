@@ -1,101 +1,102 @@
-﻿using Wpf.Ui.Appearance;
-using Wpf.Ui.Controls;
+﻿using System.Reflection ;
+using Wpf.Ui.Appearance ;
+using Wpf.Ui.Controls ;
 
-namespace Idasen.SystemTray.Win11.ViewModels.Pages
+namespace Idasen.SystemTray.Win11.ViewModels.Pages ;
+
+public partial class SettingsViewModel : ObservableObject , INavigationAware
 {
-    public partial class SettingsViewModel : ObservableObject, INavigationAware
+    [ ObservableProperty ]
+    private string _appVersion = string.Empty ;
+
+    [ ObservableProperty ]
+    private ApplicationTheme _currentTheme = ApplicationTheme.Unknown ;
+
+    [ ObservableProperty ]
+    private string _deskAddress = string.Empty ;
+
+    // Advanced Settings
+    [ ObservableProperty ]
+    private string _deskName = string.Empty ;
+
+    private bool _isInitialized ;
+
+    [ ObservableProperty ]
+    private bool _notifications = true ;
+
+    [ ObservableProperty ]
+    private bool _parentalLock ;
+
+    [ ObservableProperty ]
+    private uint _seating = 90 ;
+
+    // General Settings
+    [ ObservableProperty ]
+    private uint _standing = 100 ;
+
+    public void OnNavigatedTo ( )
     {
-        private bool _isInitialized ;
+        if ( ! _isInitialized )
+            InitializeViewModel ( ) ;
+    }
 
-        [ObservableProperty]
-        private string _appVersion = string.Empty;
+    public void OnNavigatedFrom ( )
+    {
+    }
 
-        [ObservableProperty]
-        private ApplicationTheme _currentTheme = ApplicationTheme.Unknown;
+    private void InitializeViewModel ( )
+    {
+        CurrentTheme = ApplicationThemeManager.GetAppTheme ( ) ;
+        AppVersion   = $"UiDesktopApp1 - {GetAssemblyVersion ( )}" ;
 
-        // General Settings
-        [ObservableProperty]
-        private uint _standing = 100;
+        _isInitialized = true ;
+    }
 
-        [ObservableProperty]
-        private uint _seating = 90;
+    private string GetAssemblyVersion ( )
+    {
+        return Assembly.GetExecutingAssembly ( ).GetName ( ).Version?.ToString ( ) ?? string.Empty ;
+    }
 
-        // Advanced Settings
-        [ObservableProperty]
-        private string _deskName = string.Empty;
-
-        [ObservableProperty]
-        private string _deskAddress = string.Empty;
-
-        [ObservableProperty]
-        private bool _parentalLock ;
-
-        [ObservableProperty]
-        private bool _notifications = true;
-
-        public void OnNavigatedTo()
+    [ RelayCommand ]
+    private void OnChangeTheme ( string parameter )
+    {
+        switch ( parameter )
         {
-            if (!_isInitialized)
-                InitializeViewModel();
-        }
+            case "theme_light" :
+                if ( CurrentTheme == ApplicationTheme.Light )
+                    break ;
 
-        public void OnNavigatedFrom() { }
+                ApplicationThemeManager.Apply ( ApplicationTheme.Light ) ;
+                CurrentTheme = ApplicationTheme.Light ;
 
-        private void InitializeViewModel()
-        {
-            CurrentTheme = ApplicationThemeManager.GetAppTheme();
-            AppVersion = $"UiDesktopApp1 - {GetAssemblyVersion()}";
+                break ;
 
-            _isInitialized = true;
-        }
+            case "theme_dark" :
+                if ( CurrentTheme == ApplicationTheme.Dark )
+                    break ;
 
-        private string GetAssemblyVersion()
-        {
-            return System.Reflection.Assembly.GetExecutingAssembly().GetName().Version?.ToString()
-                ?? String.Empty;
-        }
+                ApplicationThemeManager.Apply ( ApplicationTheme.Dark ) ;
+                CurrentTheme = ApplicationTheme.Dark ;
 
-        [RelayCommand]
-        private void OnChangeTheme(string parameter)
-        {
-            switch (parameter)
-            {
-                case "theme_light":
-                    if (CurrentTheme == ApplicationTheme.Light)
-                        break;
+                break ;
 
-                    ApplicationThemeManager.Apply(ApplicationTheme.Light);
-                    CurrentTheme = ApplicationTheme.Light;
+            case "theme_high_contrast" :
+                if ( CurrentTheme == ApplicationTheme.HighContrast )
+                    break ;
 
-                    break;
+                ApplicationThemeManager.Apply ( ApplicationTheme.HighContrast ) ;
+                CurrentTheme = ApplicationTheme.HighContrast ;
 
-                case "theme_dark":
-                    if (CurrentTheme == ApplicationTheme.Dark)
-                        break;
+                break ;
 
-                    ApplicationThemeManager.Apply(ApplicationTheme.Dark);
-                    CurrentTheme = ApplicationTheme.Dark;
+            default :
+                if ( CurrentTheme == ApplicationTheme.Unknown )
+                    break ;
 
-                    break;
+                ApplicationThemeManager.Apply ( ApplicationTheme.Unknown ) ;
+                CurrentTheme = ApplicationTheme.Unknown ;
 
-                case "theme_high_contrast":
-                    if (CurrentTheme == ApplicationTheme.HighContrast)
-                        break;
-
-                    ApplicationThemeManager.Apply(ApplicationTheme.HighContrast);
-                    CurrentTheme = ApplicationTheme.HighContrast;
-
-                    break;
-
-                default:
-                    if (CurrentTheme == ApplicationTheme.Unknown)
-                        break;
-
-                    ApplicationThemeManager.Apply(ApplicationTheme.Unknown);
-                    CurrentTheme = ApplicationTheme.Unknown;
-
-                    break;
-            }
+                break ;
         }
     }
 }
