@@ -46,7 +46,7 @@
                     <Label Grid.Row="0"
                    Grid.Column="0"
                    Content="Desk Name"
-                   ToolTip="Discover the desk by it's Bluetooth device name. Empty means default value."
+                   ToolTip="Discover the desk by it is Bluetooth device name. Empty means default value."
                    VerticalContentAlignment="Center"
                    Padding="5,0,5,0" />
                     <TextBox Grid.Row="0"
@@ -59,7 +59,7 @@
                     <Label Grid.Row="2"
                    Grid.Column="0"
                    Content="Desk Address"
-                   ToolTip="Discover the desk by it's Bluetooth device address. Empty means default value."
+                   ToolTip="Discover the desk by it is Bluetooth device address. Empty means default value."
                    VerticalContentAlignment="Center"
                    Padding="5,0,5,0" />
                     <TextBox Grid.Row="2"
