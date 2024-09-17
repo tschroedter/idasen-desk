@@ -1,6 +1,8 @@
-﻿using System.IO ;
+﻿using System.Drawing ;
+using System.IO ;
 using System.Reflection ;
 using System.Windows.Threading ;
+using Hardcodet.Wpf.TaskbarNotification ;
 using Idasen.SystemTray.Win11.Services ;
 using Idasen.SystemTray.Win11.ViewModels.Pages ;
 using Idasen.SystemTray.Win11.ViewModels.Windows ;
@@ -52,6 +54,8 @@ public partial class App
                                                                            services.AddSingleton < SettingsViewModel > ( ) ;
                                                                        } ).Build ( ) ;
 
+    private TaskbarIcon ? _notifyIcon ;
+
     private static void GetBasePath ( IConfigurationBuilder c )
     {
         c.SetBasePath ( Path.GetDirectoryName ( Assembly.GetEntryAssembly ( )!.Location ) ??
@@ -75,6 +79,44 @@ public partial class App
     private void OnStartup ( object sender , StartupEventArgs e )
     {
         Host.Start ( ) ;
+
+        _notifyIcon = new TaskbarIcon
+        {
+            Icon        = GetIconFromContent("Resources/cup-xl.ico"),                        // Replace with the correct relative path
+            ToolTipText = "Your Application",
+            Visibility  = Visibility.Visible
+        };
+
+        _notifyIcon.TrayMouseDoubleClick += NotifyIcon_DoubleClick;
+    }
+
+    private Icon GetIconFromContent(string relativePath)
+    {
+        var iconPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, relativePath);
+        if (!File.Exists(iconPath))
+            throw new FileNotFoundException($"Icon file '{iconPath}' not found.");
+        return new Icon(iconPath);
+    }
+
+
+    private Icon GetIconFromResource(string resourceName)
+    {
+        var       assembly = Assembly.GetExecutingAssembly();
+        using var stream   = assembly.GetManifestResourceStream(resourceName);
+        if (stream == null)
+            throw new InvalidOperationException($"Resource '{resourceName}' not found.");
+        return new Icon(stream);
+    }
+
+    private void NotifyIcon_DoubleClick(object sender, RoutedEventArgs e)
+    {
+        var mainWindow = GetService<MainWindow>();
+
+        if ( mainWindow == null )
+            return ;
+
+        mainWindow.Show();
+        mainWindow.WindowState = WindowState.Normal;
     }
 
     /// <summary>

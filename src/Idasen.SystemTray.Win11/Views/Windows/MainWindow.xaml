@@ -35,7 +35,7 @@
             Grid.Row="0"
             CloseWindowByDoubleClickOnIcon="True">
             <ui:TitleBar.Icon>
-                <ui:ImageIcon Source="pack://application:,,,/Assets/cup-xxl.png" />
+                <ui:ImageIcon Source="pack://application:,,,/Resources/cup-xl.ico" />
             </ui:TitleBar.Icon>
         </ui:TitleBar>
 

@@ -76,7 +76,7 @@ public partial class App
     {
         const string appsettingsJson = "appsettings.json" ;
 
-        IConfigurationRoot configurationRoot = null ;
+        IConfigurationRoot configurationRoot ;
 
         var builder  = new StringBuilder ( ) ;
         var basePath = GetBasePath ( ) ;
