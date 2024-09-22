@@ -1,4 +1,5 @@
 ﻿using System.Reflection ;
+using Microsoft.Extensions.Logging ;
 using Wpf.Ui.Appearance ;
 using Wpf.Ui.Controls ;
 
@@ -33,6 +34,13 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware
     // General Settings
     [ ObservableProperty ]
     private uint _standing = 100 ;
+
+    public SettingsViewModel()//ILogger          logger,
+                             //ISettingsManager manager,
+                             // Todo IVersionProvider provider)
+    {
+      //   
+    }
 
     public void OnNavigatedTo ( )
     {
