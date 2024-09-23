@@ -57,7 +57,6 @@ public partial class App
                                                                            // Main window with navigation
                                                                            services.AddSingleton < INavigationWindow , MainWindow > ( ) ;
                                                                            services.AddSingleton < MainWindowViewModel > ( ) ;
-
                                                                            services.AddSingleton < DashboardPage > ( ) ;
                                                                            services.AddSingleton < DashboardViewModel > ( ) ;
                                                                            services.AddSingleton < SettingsPage > ( ) ;
@@ -66,6 +65,9 @@ public partial class App
                                                                            services.AddSingleton < ISettingsManager , SettingsManager > ( ) ;
                                                                            services.AddSingleton < ICommonApplicationData , CommonApplicationData > ( ) ;
                                                                            services.AddSingleton < ISettingsStorage , SettingsStorage > ( ) ;
+                                                                           services.AddSingleton < ITaskbarIconProvider , TaskbarIconProvider > ( ) ;
+                                                                           services.AddSingleton < ITaskbarIconProviderFactory , TaskbarIconProviderFactory > ( ) ;
+                                                                           services.AddSingleton < IDynamicIconCreator , DynamicIconCreator > ( ) ;
                                                                        } ).Build ( ) ;
 
     private TaskbarIcon ? _notifyIcon ;
