@@ -2,6 +2,7 @@
 using System.Reactive.Concurrency ;
 using System.Reactive.Linq ;
 using System.Windows.Input ;
+using Autofac ;
 using Hardcodet.Wpf.TaskbarNotification ;
 using Idasen.BluetoothLE.Core ;
 using Idasen.BluetoothLE.Linak.Interfaces ;
@@ -17,14 +18,27 @@ using Wpf.Ui.Controls ;
 using Constants = Idasen.BluetoothLE.Characteristics.Common.Constants ;
 using MessageBox = System.Windows.MessageBox ;
 using ILogger = Serilog.ILogger ;
+using Idasen.Launcher;
+using Castle.Core.Resource;
 
 namespace Idasen.SystemTray.Win11.ViewModels.Windows ;
 
 public partial class MainWindowViewModel : ObservableObject
 {
-    public MainWindowViewModel (Func<Application, ITaskbarIconProvider> iconProvider)
+    public MainWindowViewModel(ISettingsManager                        manager,
+                               IVersionProvider                        versionProvider,
+                               Func<Application, ITaskbarIconProvider> iconProviderFactory) // todp dp I need the factory
     {
-        _iconProvider = iconProvider(null!) ;
+        Guard.ArgumentNotNull(manager,
+                              nameof(manager));
+        Guard.ArgumentNotNull(versionProvider,
+                              nameof(versionProvider));
+        Guard.ArgumentNotNull(iconProviderFactory,
+                              nameof(iconProviderFactory));
+
+        _manager             = manager;
+        _versionProvider     = versionProvider;
+        _iconProvider        = iconProviderFactory ( null ) ;
     }
 
     private static readonly KeyGesture IncrementGesture = new(Key.Up , ModifierKeys.Control | ModifierKeys.Alt | ModifierKeys.Shift) ;
@@ -52,7 +66,7 @@ public partial class MainWindowViewModel : ObservableObject
         }
     ] ;
 
-    private          ITaskbarIconProvider ? _iconProvider ; // todo not sure if this is still needed
+    private          ITaskbarIconProvider   _iconProvider ; // todo not sure if this is still needed
     private          ILogger ?              _logger ;
     private readonly ISettingsManager ?     _manager ;
 
@@ -83,20 +97,7 @@ public partial class MainWindowViewModel : ObservableObject
     private ObservableCollection < MenuItem > _trayMenuItems =
         [new MenuItem { Header = "Home" , Tag = "tray_home" }] ;
 
-    private IVersionProvider ? _versionProvider ;
-
-    public MainWindowViewModel ( ISettingsManager manager ,
-                                 IVersionProvider versionProvider )
-    {
-        Guard.ArgumentNotNull ( manager ,
-                                nameof ( manager ) ) ;
-        Guard.ArgumentNotNull ( versionProvider ,
-                                nameof ( versionProvider ) ) ;
-
-        _manager         = manager ;
-        _versionProvider = versionProvider ;
-    }
-
+    private          IVersionProvider ?                          _versionProvider ;
 
     /// <summary>
     ///     Moves the desk to the standing height.
@@ -132,29 +133,27 @@ public partial class MainWindowViewModel : ObservableObject
 
     public bool IsInitialize => _logger != null && _manager != null ; // todo  && _provider != null ;
 
-    public MainWindowViewModel Initialize ( ILogger                logger ,
-                                            Func < IDeskProvider > providerFactory ,
-                                            IErrorManager          errorManager )
+    public MainWindowViewModel Initialize ( IContainer container , TaskbarIcon taskbarIcon)
     {
-        Guard.ArgumentNotNull ( logger ,
-                                nameof ( logger ) ) ;
-        Guard.ArgumentNotNull ( providerFactory ,
-                                nameof ( providerFactory ) ) ;
-        Guard.ArgumentNotNull ( errorManager ,
-                                nameof ( errorManager ) ) ;
+        Guard.ArgumentNotNull ( container ,
+                                nameof ( container ) ) ;
+        Guard.ArgumentNotNull(taskbarIcon,
+                              nameof(taskbarIcon));
 
-        _logger          = logger ;
-        _providerFactory = providerFactory ;
-        _errorManager    = errorManager ;
+        _notifyIcon = taskbarIcon;
+
+        _logger = container.Resolve<ILogger>();
+        _providerFactory = container.Resolve<Func<IDeskProvider>>(); ;
+        _errorManager    = container.Resolve<IErrorManager>(); ;
 
         _logger?.Debug ( "Initializing..." ) ;
 
         _tokenSource = new CancellationTokenSource ( TimeSpan.FromSeconds ( 60 ) ) ;
         _token       = _tokenSource.Token ;
 
-        _onErrorChanged = errorManager.ErrorChanged
-                                      .ObserveOn ( _scheduler )
-                                      .Subscribe ( OnErrorChanged ) ;
+        _onErrorChanged = _errorManager.ErrorChanged
+                                       .ObserveOn ( _scheduler )
+                                       .Subscribe ( OnErrorChanged ) ;
 
 
         HotkeyManager.HotkeyAlreadyRegistered += HotkeyManager_HotkeyAlreadyRegistered ;
@@ -378,7 +377,7 @@ public partial class MainWindowViewModel : ObservableObject
             return ;
         }
 
-        _notifyIcon ??= (TaskbarIcon)Application.Current.FindResource("NotifyIcon");
+        // _notifyIcon ??= (TaskbarIcon)Application.Current.MainWindow.FindResource("pack://application:,,,/Resources/cup-xl.ico");
 
         if (_notifyIcon == null)
         {
@@ -480,7 +479,7 @@ public partial class MainWindowViewModel : ObservableObject
                            $"'{desk.Name}'" ,
                            Visibility.Visible ) ;
 
-        _iconProvider?.Initialize ( _desk ) ;
+        _iconProvider?.Initialize ( _desk, _notifyIcon ) ;
 
         _logger?.Debug ( $"[{_desk?.DeviceName}] Connected successful" ) ;
 

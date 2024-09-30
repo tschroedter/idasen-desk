@@ -1,7 +1,9 @@
 ﻿using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Reactive.Concurrency ;
 using System.Reflection;
+using System.Reflection.Metadata.Ecma335 ;
 using System.Text ;
 using System.Windows.Threading;
 using Autofac ;
@@ -68,7 +70,24 @@ public partial class App
                                                                            services.AddSingleton < ITaskbarIconProvider , TaskbarIconProvider > ( ) ;
                                                                            services.AddSingleton < ITaskbarIconProviderFactory , TaskbarIconProviderFactory > ( ) ;
                                                                            services.AddSingleton < IDynamicIconCreator , DynamicIconCreator > ( ) ;
+                                                                           services.AddSingleton < IIdasenConfigurationProvider , IdasenConfigurationProvider > ( ) ;
+                                                                           services.AddSingleton<IScheduler>(_ => CreateScheduler());
+                                                                           services.AddSingleton<Func<Application, ITaskbarIconProvider>>(provider => application => CreateTaskbarIconProvider(provider, application));
                                                                        } ).Build ( ) ;
+
+    private static IScheduler CreateScheduler ( )
+    {
+        return TaskPoolScheduler.Default;
+    }
+
+    private static ITaskbarIconProvider CreateTaskbarIconProvider ( IServiceProvider services, Application application )
+    {
+        var scheduler = services.GetRequiredService<IScheduler>();
+        var creator = services.GetRequiredService<IDynamicIconCreator>();
+
+        return new TaskbarIconProvider ( scheduler ,
+                                         creator ) ;
+    }
 
     private TaskbarIcon ? _notifyIcon ;
 
@@ -105,10 +124,8 @@ public partial class App
 
         var config = GetConfiguration ( ) ;
 
-        _container = ContainerProvider.Create ( config ) ;
-
         Host.Start ( ) ;
-
+        
         _notifyIcon = new TaskbarIcon
         {
             Icon        = GetIconFromContent ( "Resources/cup-xl.ico" ) , // Replace with the correct relative path
@@ -120,19 +137,21 @@ public partial class App
 
         _logger.Information ( "##### Startup..." ) ;
 
+        var configurationProvider = GetService<IIdasenConfigurationProvider>(); 
+
+        _container = ContainerProvider.Create(configurationProvider!.GetConfiguration (  )); // todo only use one container
 
         var main = GetService < MainWindowViewModel > ( ) ;
 
-        var settingsManager = GetService<ISettingsManager>() ?? throw new ArgumentNullException(nameof(ISettingsManager));
+        main!.Initialize(_container, _notifyIcon);
 
-        var versionProvider = GetService<IVersionProvider>() ?? throw new ArgumentNullException(nameof(IVersionProvider));
-
-        main.Initialize(_container.Resolve<ILogger>(),
-                        _container.Resolve<Func<IDeskProvider>>(),
-                        _container.Resolve<IErrorManager>());
+        var versionProvider = GetVersionProvider ( );
 
         _logger.Information ( $"##### Idasen.SystemTray {versionProvider!.GetVersion ( )}" ) ;
     }
+
+    private static IVersionProvider GetVersionProvider() =>
+       GetService<IVersionProvider>() ?? throw new ArgumentNullException(nameof(IVersionProvider)) ;
 
     private Icon GetIconFromContent ( string relativePath )
     {

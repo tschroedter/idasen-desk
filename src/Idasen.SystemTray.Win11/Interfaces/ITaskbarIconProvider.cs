@@ -6,6 +6,6 @@ namespace Idasen.SystemTray.Win11.Interfaces
     public interface ITaskbarIconProvider : IDisposable
     {
         TaskbarIcon NotifyIcon { get ; }
-        void        Initialize ( IDesk desk ) ;
+        void        Initialize ( IDesk desk , TaskbarIcon ? notifyIcon ) ;
     }
 }

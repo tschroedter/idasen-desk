@@ -12,6 +12,7 @@
                 <ui:ThemesDictionary Theme="Light" />
                 <ui:ControlsDictionary />
                 <!-- <ResourceDictionary Source="pack://application:,,,/Hardcodet.NotifyIcon.Wpf;component/Themes/NotifyIcon.xaml" /> -->
+                <ResourceDictionary Source="Resources/NotifyIconResources.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

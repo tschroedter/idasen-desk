@@ -6,6 +6,7 @@
     xmlns:local="clr-namespace:Idasen.SystemTray.Win11.Views.Windows"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:tb="http://www.hardcodet.net/taskbar"
     Title="{Binding ViewModel.ApplicationTitle, Mode=OneWay}"
     Width="640"
     Height="520"
@@ -21,6 +22,18 @@
     WindowCornerPreference="Round"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
+    <!--
+    <tb:TaskbarIcon x:Name="myNotifyIcon"
+                    Visibility="Visible"
+                    ToolTipText="Fallback ToolTip for Windows xp"
+                    IconSource="/Resources/cup-xl.ico"
+                    ContextMenu="{StaticResource TrayMenu}"
+                    MenuActivation="LeftOrRightClick"
+                    TrayPopup="{StaticResoure TrayStatusPopup}"
+                    PopupActivation="DoubleClick"
+                    TrayToolTip="{StaticResource TrayToolTip}"
+    />-->
+
     <ui:FluentWindow.InputBindings>
         <KeyBinding
             Key="F"

@@ -11,28 +11,28 @@ namespace Idasen.SystemTray.Win11
 {
     public class TaskbarIconProvider : ITaskbarIconProvider
     {
-        public TaskbarIconProvider ( ILogger                logger ,
-                                     Application            application ,
+        public TaskbarIconProvider ( //ILogger                logger ,
+                                     //Application            application ,
                                      IScheduler             scheduler ,
                                      IDynamicIconCreator creator )
         {
-            Guard.ArgumentNotNull ( logger ,
-                                    nameof ( logger ) ) ;
-            Guard.ArgumentNotNull ( application ,
-                                    nameof ( application ) ) ;
+            // Guard.ArgumentNotNull ( logger ,
+            //                         nameof ( logger ) ) ;
+            // Guard.ArgumentNotNull ( application ,
+            //                         nameof ( application ) ) ;
             Guard.ArgumentNotNull ( scheduler ,
                                     nameof ( scheduler ) ) ;
             Guard.ArgumentNotNull ( creator ,
                                     nameof ( creator ) ) ;
 
-            _logger    = logger ;
+//            _logger    = logger ;
             _scheduler = scheduler ;
             _creator   = creator ;
 
-            NotifyIcon = ( TaskbarIcon ) ( application.FindResource ( "NotifyIcon" ) ) ;
+//            NotifyIcon = ( TaskbarIcon ) ( application.FindResource ( "NotifyIcon" ) ) ;
         }
 
-        public TaskbarIcon ? NotifyIcon { get ; }
+        public TaskbarIcon ? NotifyIcon { get ; private set ; }
 
 
         public void Dispose ( )
@@ -41,10 +41,12 @@ namespace Idasen.SystemTray.Win11
             _disposable?.Dispose ( ) ;
         }
 
-        public void Initialize ( IDesk desk )
+        public void Initialize ( IDesk desk , TaskbarIcon ? notifyIcon )
         {
             Guard.ArgumentNotNull ( desk ,
                                     nameof ( desk ) ) ;
+
+            NotifyIcon = notifyIcon;
 
             _disposable = desk.HeightAndSpeedChanged
                               .ObserveOn ( _scheduler )
@@ -57,7 +59,7 @@ namespace Idasen.SystemTray.Win11
         {
             if (NotifyIcon == null)
             {
-                _logger.Error("NotifyIcon is null");
+                //_logger.Error("NotifyIcon is null");
 
                 return;
             }
@@ -65,11 +67,11 @@ namespace Idasen.SystemTray.Win11
 
             _creator.Update ( NotifyIcon, heightInCm ) ;
 
-            _logger.Debug($"Height: {heightInCm}");
+            //_logger.Debug($"Height: {heightInCm}");
         }
 
         private readonly IDynamicIconCreator _creator ;
-        private readonly ILogger             _logger ;
+        //private readonly ILogger             _logger ;
         private readonly IScheduler          _scheduler ;
 
         private IDisposable ? _disposable ;
