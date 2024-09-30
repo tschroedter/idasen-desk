@@ -25,20 +25,20 @@ namespace Idasen.SystemTray.Win11.ViewModels.Windows ;
 
 public partial class MainWindowViewModel : ObservableObject
 {
-    public MainWindowViewModel(ISettingsManager                        manager,
-                               IVersionProvider                        versionProvider,
-                               Func<Application, ITaskbarIconProvider> iconProviderFactory) // todp dp I need the factory
+    public MainWindowViewModel ( ISettingsManager     manager ,
+                                 IVersionProvider     versionProvider ,
+                                 ITaskbarIconProvider iconProvider )
     {
-        Guard.ArgumentNotNull(manager,
-                              nameof(manager));
-        Guard.ArgumentNotNull(versionProvider,
-                              nameof(versionProvider));
-        Guard.ArgumentNotNull(iconProviderFactory,
-                              nameof(iconProviderFactory));
+        Guard.ArgumentNotNull ( manager ,
+                                nameof ( manager ) ) ;
+        Guard.ArgumentNotNull ( versionProvider ,
+                                nameof ( versionProvider ) ) ;
+        Guard.ArgumentNotNull ( iconProvider ,
+                                nameof ( iconProvider ) ) ;
 
-        _manager             = manager;
-        _versionProvider     = versionProvider;
-        _iconProvider        = iconProviderFactory ( null ) ;
+        _manager         = manager ;
+        _versionProvider = versionProvider ;
+        _iconProvider    = iconProvider ;
     }
 
     private static readonly KeyGesture IncrementGesture = new(Key.Up , ModifierKeys.Control | ModifierKeys.Alt | ModifierKeys.Shift) ;
@@ -97,7 +97,7 @@ public partial class MainWindowViewModel : ObservableObject
     private ObservableCollection < MenuItem > _trayMenuItems =
         [new MenuItem { Header = "Home" , Tag = "tray_home" }] ;
 
-    private          IVersionProvider ?                          _versionProvider ;
+    private IVersionProvider ? _versionProvider ;
 
     /// <summary>
     ///     Moves the desk to the standing height.
@@ -479,7 +479,9 @@ public partial class MainWindowViewModel : ObservableObject
                            $"'{desk.Name}'" ,
                            Visibility.Visible ) ;
 
-        _iconProvider?.Initialize ( _desk, _notifyIcon ) ;
+        _iconProvider?.Initialize ( _logger! ,
+                                    _desk ,
+                                    _notifyIcon ) ;
 
         _logger?.Debug ( $"[{_desk?.DeviceName}] Connected successful" ) ;
 

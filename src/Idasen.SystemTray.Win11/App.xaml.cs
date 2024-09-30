@@ -1,14 +1,10 @@
-﻿using System.Diagnostics;
-using System.Drawing;
+﻿using System.Drawing;
 using System.IO;
 using System.Reactive.Concurrency ;
 using System.Reflection;
-using System.Reflection.Metadata.Ecma335 ;
-using System.Text ;
 using System.Windows.Threading;
 using Autofac ;
 using Hardcodet.Wpf.TaskbarNotification;
-using Idasen.BluetoothLE.Linak.Interfaces ;
 using Idasen.Launcher;
 using Idasen.SystemTray.Win11.Interfaces;
 using Idasen.SystemTray.Win11.Services;
@@ -19,6 +15,7 @@ using Idasen.SystemTray.Win11.ViewModels.Pages;
 using Idasen.SystemTray.Win11.ViewModels.Windows;
 using Idasen.SystemTray.Win11.Views.Pages;
 using Idasen.SystemTray.Win11.Views.Windows;
+using JetBrains.Annotations ;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -68,40 +65,32 @@ public partial class App
                                                                            services.AddSingleton < ICommonApplicationData , CommonApplicationData > ( ) ;
                                                                            services.AddSingleton < ISettingsStorage , SettingsStorage > ( ) ;
                                                                            services.AddSingleton < ITaskbarIconProvider , TaskbarIconProvider > ( ) ;
-                                                                           services.AddSingleton < ITaskbarIconProviderFactory , TaskbarIconProviderFactory > ( ) ;
                                                                            services.AddSingleton < IDynamicIconCreator , DynamicIconCreator > ( ) ;
                                                                            services.AddSingleton < IIdasenConfigurationProvider , IdasenConfigurationProvider > ( ) ;
-                                                                           services.AddSingleton<IScheduler>(_ => CreateScheduler());
-                                                                           services.AddSingleton<Func<Application, ITaskbarIconProvider>>(provider => application => CreateTaskbarIconProvider(provider, application));
+                                                                           services.AddSingleton ( _ => CreateScheduler ( ) ) ;
+                                                                           services.AddSingleton ( CreateTaskbarIconProvider ) ;
                                                                        } ).Build ( ) ;
 
-    private static IScheduler CreateScheduler ( )
+    private static IScheduler CreateScheduler()
     {
         return TaskPoolScheduler.Default;
     }
 
-    private static ITaskbarIconProvider CreateTaskbarIconProvider ( IServiceProvider services, Application application )
+    private static ITaskbarIconProvider CreateTaskbarIconProvider(IServiceProvider services)
     {
         var scheduler = services.GetRequiredService<IScheduler>();
-        var creator = services.GetRequiredService<IDynamicIconCreator>();
+        var creator   = services.GetRequiredService<IDynamicIconCreator>();
 
-        return new TaskbarIconProvider ( scheduler ,
-                                         creator ) ;
+        return new TaskbarIconProvider(scheduler,
+                                       creator);
     }
 
-    private TaskbarIcon ? _notifyIcon ;
+    //private TaskbarIcon ? _notifyIcon ;
 
     private static void GetBasePath ( IConfigurationBuilder c )
     {
         c.SetBasePath ( Path.GetDirectoryName ( Assembly.GetEntryAssembly ( )!.Location ) ??
                         throw new InvalidOperationException ( "Couldn't get directory name from entry assembly" ) ) ;
-    }
-
-    private static string GetBasePath()
-    {
-        using var processModule = Process.GetCurrentProcess().MainModule;
-
-        return Path.GetDirectoryName(processModule?.FileName) ?? throw new InvalidOperationException("Couldn't get directory name from entry assembly") ;
     }
 
     /// <summary>
@@ -122,18 +111,16 @@ public partial class App
     {
         UnhandledExceptionsHandler.RegisterGlobalExceptionHandling ( ) ;
 
-        var config = GetConfiguration ( ) ;
-
         Host.Start ( ) ;
         
-        _notifyIcon = new TaskbarIcon
+        var notifyIcon = new TaskbarIcon
         {
             Icon        = GetIconFromContent ( "Resources/cup-xl.ico" ) , // Replace with the correct relative path
             ToolTipText = "Your Application" ,
             Visibility  = Visibility.Visible
         } ;
 
-        _notifyIcon.TrayMouseDoubleClick += NotifyIcon_DoubleClick ;
+        notifyIcon.TrayMouseDoubleClick += NotifyIcon_DoubleClick ;
 
         _logger.Information ( "##### Startup..." ) ;
 
@@ -143,11 +130,11 @@ public partial class App
 
         var main = GetService < MainWindowViewModel > ( ) ;
 
-        main!.Initialize(_container, _notifyIcon);
+        main!.Initialize(_container, notifyIcon);
 
         var versionProvider = GetVersionProvider ( );
 
-        _logger.Information ( $"##### Idasen.SystemTray {versionProvider!.GetVersion ( )}" ) ;
+        _logger.Information ( $"##### Idasen.SystemTray {versionProvider.GetVersion ( )}" ) ;
     }
 
     private static IVersionProvider GetVersionProvider() =>
@@ -162,6 +149,7 @@ public partial class App
         return new Icon ( iconPath ) ;
     }
 
+    [UsedImplicitly]
     private Icon GetIconFromResource ( string resourceName )
     {
         var       assembly = Assembly.GetExecutingAssembly ( ) ;
@@ -205,70 +193,4 @@ public partial class App
                                                                      Constants.LogFilename ) ;
 
     private IContainer ? _container ;
-
-    private static IConfigurationRoot GetConfiguration()
-    {
-        const string appsettingsJson = "appsettings.json";
-
-        IConfigurationRoot configurationRoot;
-
-        var builder  = new StringBuilder();
-        var basePath = GetBasePath();
-        var fullPath = Path.Combine(basePath,
-                                    appsettingsJson);
-
-        builder.AppendLine($"Checking if '{fullPath}' exists...");
-
-        if (File.Exists(fullPath))
-        {
-            builder.AppendLine($"Loading settings from file '{fullPath}'...");
-
-            configurationRoot = new ConfigurationBuilder().SetBasePath(basePath)
-                                                          .AddJsonFile(appsettingsJson)
-                                                          .Build();
-        }
-        else
-        {
-            builder.AppendLine($"...no, '{fullPath}' does not exists.");
-            builder.AppendLine("Using default settings...");
-
-            configurationRoot = new ConfigurationBuilder().AddJsonFile(appsettingsJson)
-                                                          .Build();
-        }
-
-        builder.AppendLine("Using the following configuration:");
-
-        builder.AppendLine(configurationRoot.GetDebugView());
-
-        LogConfigurationSelection(basePath,
-                                  builder);
-
-        return configurationRoot;
-    }
-
-    private static void LogConfigurationSelection(string        basePath,
-                                                  StringBuilder builder)
-    {
-        try
-        {
-            var logFolder = Path.Combine(basePath,
-                                         "logs");
-
-            if (!Directory.Exists(logFolder))
-                Directory.CreateDirectory(logFolder);
-
-            var configLog = Path.Combine(logFolder,
-                                         "config.log");
-
-            if (File.Exists(configLog))
-                File.Delete(configLog);
-
-            File.WriteAllText(configLog,
-                              builder.ToString());
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine($"Failed to create configuration log file because {e.Message}");
-        }
-    }
 }

@@ -1,11 +1,13 @@
 ﻿using Hardcodet.Wpf.TaskbarNotification ;
 using Idasen.BluetoothLE.Linak.Interfaces ;
+using Serilog ;
 
 namespace Idasen.SystemTray.Win11.Interfaces
 {
     public interface ITaskbarIconProvider : IDisposable
     {
-        TaskbarIcon NotifyIcon { get ; }
-        void        Initialize ( IDesk desk , TaskbarIcon ? notifyIcon ) ;
+        void Initialize ( ILogger       logger ,
+                          IDesk         desk ,
+                          TaskbarIcon ? notifyIcon ) ;
     }
 }
