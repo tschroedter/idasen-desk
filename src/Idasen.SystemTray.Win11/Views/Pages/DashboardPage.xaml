@@ -22,7 +22,7 @@
             HorizontalAlignment="Left"
             TextWrapping="Wrap"
             FontWeight="Bold"
-            Text="Idasen Desk Application" />
+            Text="{Binding ViewModel.Title}" />
         <TextBlock
             Margin="0,12,0,0"
             HorizontalAlignment="Left"

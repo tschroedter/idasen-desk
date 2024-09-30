@@ -2,6 +2,7 @@
 using System.Reactive.Concurrency ;
 using System.Reactive.Linq ;
 using System.Windows.Input ;
+using System.Windows.Threading ;
 using Autofac ;
 using Hardcodet.Wpf.TaskbarNotification ;
 using Idasen.BluetoothLE.Core ;
@@ -18,33 +19,25 @@ using Wpf.Ui.Controls ;
 using Constants = Idasen.BluetoothLE.Characteristics.Common.Constants ;
 using MessageBox = System.Windows.MessageBox ;
 using ILogger = Serilog.ILogger ;
-using Idasen.Launcher;
-using Castle.Core.Resource;
 
 namespace Idasen.SystemTray.Win11.ViewModels.Windows ;
 
-public partial class MainWindowViewModel : ObservableObject
+public partial class MainWindowViewModel : ObservableObject, IDisposable
 {
     public MainWindowViewModel ( ISettingsManager     manager ,
-                                 IVersionProvider     versionProvider ,
                                  ITaskbarIconProvider iconProvider )
     {
         Guard.ArgumentNotNull ( manager ,
                                 nameof ( manager ) ) ;
-        Guard.ArgumentNotNull ( versionProvider ,
-                                nameof ( versionProvider ) ) ;
         Guard.ArgumentNotNull ( iconProvider ,
                                 nameof ( iconProvider ) ) ;
 
         _manager         = manager ;
-        _versionProvider = versionProvider ;
         _iconProvider    = iconProvider ;
     }
 
     private static readonly KeyGesture IncrementGesture = new(Key.Up , ModifierKeys.Control | ModifierKeys.Alt | ModifierKeys.Shift) ;
     private static readonly KeyGesture DecrementGesture = new(Key.Down , ModifierKeys.Control | ModifierKeys.Alt | ModifierKeys.Shift) ;
-
-    private readonly IScheduler _scheduler = Scheduler.CurrentThread ;
 
     [ ObservableProperty ]
     private string _applicationTitle = "Idasen Desk" ;
@@ -66,9 +59,9 @@ public partial class MainWindowViewModel : ObservableObject
         }
     ] ;
 
-    private          ITaskbarIconProvider   _iconProvider ; // todo not sure if this is still needed
-    private          ILogger ?              _logger ;
-    private readonly ISettingsManager ?     _manager ;
+    private readonly ITaskbarIconProvider _iconProvider ;
+    private readonly ISettingsManager?    _manager;
+    private          ILogger ?            _logger ;
 
     [ ObservableProperty ]
     private ObservableCollection < object > _menuItems =
@@ -84,7 +77,7 @@ public partial class MainWindowViewModel : ObservableObject
         }
     ] ;
 
-    private TaskbarIcon ? _notifyIcon ; // todo not sure if this is still needed
+    private TaskbarIcon ? _taskbarIcon ;
 
     [ UsedImplicitly ]
     private IDisposable ? _onErrorChanged ;
@@ -96,8 +89,6 @@ public partial class MainWindowViewModel : ObservableObject
     [ ObservableProperty ]
     private ObservableCollection < MenuItem > _trayMenuItems =
         [new MenuItem { Header = "Home" , Tag = "tray_home" }] ;
-
-    private IVersionProvider ? _versionProvider ;
 
     /// <summary>
     ///     Moves the desk to the standing height.
@@ -140,11 +131,11 @@ public partial class MainWindowViewModel : ObservableObject
         Guard.ArgumentNotNull(taskbarIcon,
                               nameof(taskbarIcon));
 
-        _notifyIcon = taskbarIcon;
+        _taskbarIcon = taskbarIcon;
 
-        _logger = container.Resolve<ILogger>();
-        _providerFactory = container.Resolve<Func<IDeskProvider>>(); ;
-        _errorManager    = container.Resolve<IErrorManager>(); ;
+        _logger          = container.Resolve<ILogger>();
+        _providerFactory = container.Resolve < Func < IDeskProvider > > ( ) ;
+        _errorManager    = container.Resolve < IErrorManager > ( ) ;
 
         _logger?.Debug ( "Initializing..." ) ;
 
@@ -152,7 +143,7 @@ public partial class MainWindowViewModel : ObservableObject
         _token       = _tokenSource.Token ;
 
         _onErrorChanged = _errorManager.ErrorChanged
-                                       .ObserveOn ( _scheduler )
+                                       .ObserveOn ( Scheduler.Default )
                                        .Subscribe ( OnErrorChanged ) ;
 
 
@@ -191,7 +182,7 @@ public partial class MainWindowViewModel : ObservableObject
             if ( ! StandingCommand.CanExecute ( this ) )
                 return ;
 
-            var task = Standing ( ).ConfigureAwait ( false ) ;
+            Standing ( ).ConfigureAwait ( false ) ;
 
             StandingCommand.Execute ( this ) ;
         }
@@ -377,24 +368,15 @@ public partial class MainWindowViewModel : ObservableObject
             return ;
         }
 
-        // _notifyIcon ??= (TaskbarIcon)Application.Current.MainWindow.FindResource("pack://application:,,,/Resources/cup-xl.ico");
-
-        if (_notifyIcon == null)
-        {
-            _logger?.Debug("Failed because NotifyIcon is null");
-
-            return;
-        }
-
-        if (!_notifyIcon.Dispatcher.CheckAccess())
+        if (!Dispatcher.CurrentDispatcher.CheckAccess())
         {
             _logger?.Debug("Dispatching call on UI thread");
 
-            _notifyIcon.Dispatcher.BeginInvoke(new Action(() => ShowFancyBalloon(title,
-                                                                                 text,
-                                                                                 visibilityBulbGreen,
-                                                                                 visibilityBulbYellow,
-                                                                                 visibilityBulbRed)));
+            Dispatcher.CurrentDispatcher.BeginInvoke ( new Action ( ( ) => ShowFancyBalloon ( title ,
+                                                                                              text ,
+                                                                                              visibilityBulbGreen ,
+                                                                                              visibilityBulbYellow ,
+                                                                                              visibilityBulbRed ) ) ) ;
 
             return;
         }
@@ -470,7 +452,7 @@ public partial class MainWindowViewModel : ObservableObject
         _desk = desk ;
 
         _finished = _desk.FinishedChanged
-                         .ObserveOn ( _scheduler )
+                         .ObserveOn ( Scheduler.Default )
                          .Subscribe ( OnFinishedChanged ) ;
 
         ShowFancyBalloon ( "Success" ,
@@ -479,9 +461,9 @@ public partial class MainWindowViewModel : ObservableObject
                            $"'{desk.Name}'" ,
                            Visibility.Visible ) ;
 
-        _iconProvider?.Initialize ( _logger! ,
-                                    _desk ,
-                                    _notifyIcon ) ;
+        _iconProvider.Initialize ( _logger! ,
+                                   _desk ,
+                                   _taskbarIcon ) ;
 
         _logger?.Debug ( $"[{_desk?.DeviceName}] Connected successful" ) ;
 
@@ -513,7 +495,7 @@ public partial class MainWindowViewModel : ObservableObject
         DisposeDesk ( ) ;
 
         _deskProvider?.Dispose ( ) ;
-        _notifyIcon?.Dispose ( ) ;
+        _taskbarIcon?.Dispose ( ) ;
         _tokenSource?.Dispose ( ) ;
     }
 }

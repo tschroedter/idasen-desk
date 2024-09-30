@@ -1,13 +1,18 @@
-﻿namespace Idasen.SystemTray.Win11.ViewModels.Pages ;
+﻿using Idasen.SystemTray.Win11.Interfaces ;
+using Idasen.BluetoothLE.Core;
+
+namespace Idasen.SystemTray.Win11.ViewModels.Pages ;
 
 public partial class DashboardViewModel : ObservableObject
 {
-    [ ObservableProperty ]
-    private int _counter ;
-
-    [ RelayCommand ]
-    private void OnCounterIncrement ( )
+    public DashboardViewModel ( IVersionProvider versionProvider)
     {
-        Counter ++ ;
+        Guard.ArgumentNotNull(versionProvider,
+                              nameof(versionProvider));
+
+        _title = "Idasen Desk Application " + versionProvider.GetVersion (  ) ;
     }
+
+    [ ObservableProperty ]
+    private string _title ;
 }
