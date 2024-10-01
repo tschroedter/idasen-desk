@@ -74,6 +74,42 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
                 Symbol = SymbolRegular.Home24
             } ,
             TargetPageType = typeof ( DashboardPage )
+        } ,
+        new NavigationViewItem
+        {
+            Content = "Connect" ,
+            Icon = new SymbolIcon
+            {
+                Symbol = SymbolRegular.PlugConnected24
+            } ,
+            TargetPageType = typeof ( DashboardPage )
+        } ,
+        new NavigationViewItem
+        {
+            Content = "Disconnect" ,
+            Icon = new SymbolIcon
+            {
+                Symbol = SymbolRegular.PlugDisconnected24
+            } ,
+            TargetPageType = typeof ( DashboardPage )
+        } ,
+        new NavigationViewItem
+        {
+            Content = "Stand" ,
+            Icon = new SymbolIcon
+            {
+                Symbol = SymbolRegular.ArrowCircleUp20
+            } ,
+            TargetPageType = typeof ( DashboardPage )
+        } ,
+        new NavigationViewItem
+        {
+            Content = "Sit" ,
+            Icon = new SymbolIcon
+            {
+                Symbol = SymbolRegular.ArrowCircleDown20
+            } ,
+            TargetPageType = typeof ( DashboardPage )
         }
     ] ;
 
@@ -87,8 +123,8 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
     private CancellationTokenSource ? _tokenSource ;
 
     [ ObservableProperty ]
-    private ObservableCollection < MenuItem > _trayMenuItems =
-        [new MenuItem { Header = "Home" , Tag = "tray_home" }] ;
+    private ObservableCollection < MenuItem > _trayMenuItems = // todo do we need this or does this replace the current notifyicon?
+        [new() { Header = "Home" , Tag = "tray_home" }] ;
 
     /// <summary>
     ///     Moves the desk to the standing height.
