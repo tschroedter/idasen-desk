@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel ;
 using System.Windows.Input ;
+using System.Windows.Threading ;
 using Autofac ;
 using Hardcodet.Wpf.TaskbarNotification ;
 using Idasen.BluetoothLE.Core ;
@@ -22,8 +23,36 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
         Guard.ArgumentNotNull ( uiDeskManager ,
                                 nameof ( uiDeskManager ) ) ;
 
-        _manager       = manager ;
-        _uiDeskManager = uiDeskManager ;
+        _manager           =  manager ;
+        _uiDeskManager     =  uiDeskManager ;
+        SitViewItem.Click += OnClickSitViewItem ;
+    }
+
+    private void OnClickSitViewItem ( object sender , RoutedEventArgs e )
+    {
+        if (!_uiDeskManager.IsInitialize)
+        {
+            return;
+        }
+
+        var uiMessageBox = new Wpf.Ui.Controls.MessageBox
+        {
+            Title             = "Sit ?",
+            Content           = "Do you want to move the desk into the sitting position?",
+            PrimaryButtonText = "Sit",
+        };
+
+        Dispatcher.CurrentDispatcher.InvokeAsync(async () =>
+                                                 {
+                                                     var result = await uiMessageBox.ShowDialogAsync ( ) ;
+
+                                                     if (result != Wpf.Ui.Controls.MessageBoxResult.Primary)
+                                                     {
+                                                         return ;
+                                                     }
+
+                                                     await _uiDeskManager.Sit ( ) ;
+                                                 } );
     }
 
     [ ObservableProperty ]
@@ -43,6 +72,16 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
     private readonly IUiDeskManager       _uiDeskManager ;
     private readonly ISettingsManager?    _manager;
     private          ILogger ?            _logger ;
+
+    private static readonly NavigationViewItem SitViewItem = new NavigationViewItem
+    {
+        Content = "Sit" ,
+        Icon = new SymbolIcon
+        {
+            Symbol = SymbolRegular.ArrowCircleDown20
+        } ,
+        TargetPageType = typeof ( SitPage )
+    } ;
 
     [ ObservableProperty ]
     private ObservableCollection < object > _menuItems =
@@ -83,15 +122,7 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
             } ,
             TargetPageType = typeof ( StandPage )
         } ,
-        new NavigationViewItem
-        {
-            Content = "Sit" ,
-            Icon = new SymbolIcon
-            {
-                Symbol = SymbolRegular.ArrowCircleDown20
-            } ,
-            TargetPageType = typeof ( SitPage )
-        }
+        SitViewItem
     ] ;
 
     private TaskbarIcon ? _taskbarIcon ;
@@ -113,7 +144,7 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
             return new DelegateCommand
             {
                 // ReSharper disable once AsyncVoidLambda
-                CommandAction  = async ( ) => await _uiDeskManager.Standing ( ) ,
+                CommandAction  = async ( ) => await _uiDeskManager.Stand ( ) ,
                 CanExecuteFunc = ( ) => _uiDeskManager.IsInitialize
             } ;
         }
@@ -129,7 +160,7 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
             return new DelegateCommand
             {
                 // ReSharper disable once AsyncVoidLambda
-                CommandAction  = async ( ) => await _uiDeskManager.Seating( ) ,
+                CommandAction  = async ( ) => await _uiDeskManager.Sit( ) ,
                 CanExecuteFunc = ( ) => _uiDeskManager.IsInitialize
             } ;
         }

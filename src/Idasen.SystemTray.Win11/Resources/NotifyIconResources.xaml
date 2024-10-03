@@ -16,8 +16,8 @@
         <MenuItem Header="Show Settings" Command="{Binding ShowSettingsCommand}" />
         <MenuItem Header="Hide Settings" Command="{Binding HideSettingsCommand}" />
         <Separator />
-        <MenuItem Header="Standing" Command="{Binding StandingCommand}" />
-        <MenuItem Header="Seating" Command="{Binding SeatingCommand}" />
+        <MenuItem Header="Stand" Command="{Binding StandingCommand}" />
+        <MenuItem Header="Sit" Command="{Binding SeatingCommand}" />
         <Separator />
         <MenuItem Header="Exit" Command="{Binding ExitApplicationCommand}" />
     </ContextMenu>

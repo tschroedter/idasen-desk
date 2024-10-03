@@ -58,8 +58,6 @@ public class UiDeskManager : IUiDeskManager
     {
         _logger?.Information ( "Disposing..." ) ;
 
-        _tokenSource?.Cancel ( ) ;
-
         DisposeDesk ( ) ;
 
         _deskProvider?.Dispose ( ) ;
@@ -118,7 +116,7 @@ public class UiDeskManager : IUiDeskManager
     {
         try
         {
-            _logger?.Information ( "Received global hot key for 'Standing' command..." ) ;
+            _logger?.Information ( "Received global hot key for 'Stand' command..." ) ;
 
             if ( _desk == null )
                 return ;
@@ -127,7 +125,7 @@ public class UiDeskManager : IUiDeskManager
         }
         catch ( Exception exception )
         {
-            _logger?.Error ( exception , "Failed to handle global hot key command for 'Standing'." ) ;
+            _logger?.Error ( exception , "Failed to handle global hot key command for 'Stand'." ) ;
         }
     }
 
@@ -135,7 +133,7 @@ public class UiDeskManager : IUiDeskManager
     {
         try
         {
-            _logger?.Information ( "Received global hot key for 'Seating' command..." ) ;
+            _logger?.Information ( "Received global hot key for 'Sit' command..." ) ;
 
             if ( _desk == null )
                 return ;
@@ -144,7 +142,7 @@ public class UiDeskManager : IUiDeskManager
         }
         catch ( Exception exception )
         {
-            _logger?.Error ( exception , "Failed to handle global hot key command for 'Seating'." ) ;
+            _logger?.Error ( exception , "Failed to handle global hot key command for 'Sit'." ) ;
         }
     }
 
@@ -154,7 +152,7 @@ public class UiDeskManager : IUiDeskManager
         {
             _logger?.Debug ( $"{nameof ( DoStanding )}" ) ;
 
-            await Standing ( ).ConfigureAwait ( false ) ;
+            await Stand ( ).ConfigureAwait ( false ) ;
         }
         catch ( Exception e )
         {
@@ -165,9 +163,9 @@ public class UiDeskManager : IUiDeskManager
         }
     }
 
-    public async Task Standing ( )
+    public async Task Stand ( )
     {
-        _logger?.Debug ( "Executing Standing..." ) ;
+        _logger?.Debug ( "Executing Stand..." ) ;
 
         if ( _manager != null )
         {
@@ -183,7 +181,7 @@ public class UiDeskManager : IUiDeskManager
         {
             _logger?.Debug ( $"{nameof ( DoSeating )}" ) ;
 
-            await Seating ( ).ConfigureAwait ( false ) ;
+            await Sit ( ).ConfigureAwait ( false ) ;
         }
         catch ( Exception e )
         {
@@ -194,7 +192,7 @@ public class UiDeskManager : IUiDeskManager
         }
     }
 
-    public async Task Seating ( )
+    public async Task Sit ( )
     {
         if ( _manager != null )
         {

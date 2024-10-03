@@ -141,6 +141,10 @@ public partial class App
 
         main!.Initialize(_container, notifyIcon);
 
+        var settings = GetService<SettingsViewModel>();
+
+        settings!.Initialize();
+
         var versionProvider = GetVersionProvider ( );
 
         _logger.Information ( $"##### Idasen.SystemTray {versionProvider.GetVersion ( )}" ) ;

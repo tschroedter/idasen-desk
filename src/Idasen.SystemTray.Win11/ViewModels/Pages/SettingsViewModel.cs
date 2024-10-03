@@ -1,11 +1,12 @@
 ﻿using System.Reflection ;
-using Microsoft.Extensions.Logging ;
+using Idasen.SystemTray.Win11.Settings ;
 using Wpf.Ui.Appearance ;
 using Wpf.Ui.Controls ;
 
 namespace Idasen.SystemTray.Win11.ViewModels.Pages ;
 
-public partial class SettingsViewModel : ObservableObject , INavigationAware
+public partial class SettingsViewModel ( ISettingsManager settingsManager )
+    : ObservableObject , INavigationAware
 {
     [ ObservableProperty ]
     private string _appVersion = string.Empty ;
@@ -31,25 +32,48 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware
     [ ObservableProperty ]
     private uint _seating = 90 ;
 
-    // General Settings
-    [ ObservableProperty ]
-    private uint _standing = 100 ;
+    [ObservableProperty]
+    private uint _minHeight = 90;
 
-    public SettingsViewModel()//ILogger          logger,
-                             //ISettingsManager manager,
-                             // Todo IVersionProvider provider)
-    {
-      //   
-    }
+    [ObservableProperty]
+    private uint _maxHeight = 90;
+
+    // General Settings
+    [ObservableProperty ]
+    private uint _standing = 100 ;
 
     public void OnNavigatedTo ( )
     {
         if ( ! _isInitialized )
             InitializeViewModel ( ) ;
+
+        LoadSettings();
     }
 
     public void OnNavigatedFrom ( )
     {
+    }
+
+    public SettingsViewModel Initialize ( )
+    {
+        LoadSettings ( ) ;
+
+        return this ;
+    }
+
+    public void LoadSettings()
+    {
+        Task.Run ( async ( ) =>
+                   {
+                       await settingsManager.Load ( ) ;
+
+                       Seating      = settingsManager.CurrentSettings.HeightSettings.SeatingHeightInCm ;
+                       Standing     = settingsManager.CurrentSettings.HeightSettings.StandingHeightInCm ;
+                       ParentalLock = settingsManager.CurrentSettings.NotificationsEnabled ;
+                       MinHeight    = settingsManager.CurrentSettings.HeightSettings.DeskMinHeightInCm ;
+                       MaxHeight    = settingsManager.CurrentSettings.HeightSettings.DeskMaxHeightInCm ;
+                   } ).GetAwaiter ( )
+            .GetResult ( ) ; // todo not nice but will do for know
     }
 
     private void InitializeViewModel ( )

@@ -25,7 +25,7 @@ public partial class MainWindow : INavigationWindow
         navigationService.SetNavigationControl ( RootNavigation ) ;
 
         ShownNotification ( [
-                                $"Idasen System Tray V{versionProvider.GetVersion ( )}" ,
+                                $"Idasen System Tray {versionProvider.GetVersion ( )}" ,
                                 "Running..."
                             ] ) ;
     }

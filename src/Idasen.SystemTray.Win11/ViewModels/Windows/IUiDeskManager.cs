@@ -7,8 +7,8 @@ public interface IUiDeskManager : IDisposable
 {
     bool          IsInitialize { get ; }
     UiDeskManager Initialize ( IContainer container, TaskbarIcon taskbarIcon) ;
-    Task          Standing ( ) ;
-    Task          Seating ( ) ;
+    Task          Stand ( ) ;
+    Task          Sit ( ) ;
     Task          AutoConnect ( ) ;
     void          Disconnect ( ) ;
 }
