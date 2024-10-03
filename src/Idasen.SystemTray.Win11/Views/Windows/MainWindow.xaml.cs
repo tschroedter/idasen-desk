@@ -1,4 +1,5 @@
-﻿using Idasen.SystemTray.Win11.ViewModels.Windows ;
+﻿using Idasen.SystemTray.Win11.Interfaces ;
+using Idasen.SystemTray.Win11.ViewModels.Windows ;
 using Microsoft.Toolkit.Uwp.Notifications ;
 using Wpf.Ui ;
 using Wpf.Ui.Appearance ;
@@ -8,11 +9,10 @@ namespace Idasen.SystemTray.Win11.Views.Windows ;
 
 public partial class MainWindow : INavigationWindow
 {
-    public MainWindow (
-        MainWindowViewModel viewModel ,
-        IPageService        pageService ,
-        INavigationService  navigationService
-    )
+    public MainWindow ( MainWindowViewModel viewModel ,
+                        IPageService        pageService ,
+                        INavigationService  navigationService ,
+                        IVersionProvider    versionProvider )
     {
         ViewModel   = viewModel ;
         DataContext = this ;
@@ -24,12 +24,10 @@ public partial class MainWindow : INavigationWindow
 
         navigationService.SetNavigationControl ( RootNavigation ) ;
 
-        ShownNotification (
-                           [
-                               "Idasen System Tray" ,
-                               "Running..."
-                           ]
-                          ) ;
+        ShownNotification ( [
+                                $"Idasen System Tray V{versionProvider.GetVersion ( )}" ,
+                                "Running..."
+                            ] ) ;
     }
 
     public MainWindowViewModel ViewModel { get ; }

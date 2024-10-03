@@ -22,18 +22,6 @@
     WindowCornerPreference="Round"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
-    <!--
-    <tb:TaskbarIcon x:Name="myNotifyIcon"
-                    Visibility="Visible"
-                    ToolTipText="Fallback ToolTip for Windows xp"
-                    IconSource="/Resources/cup-xl.ico"
-                    ContextMenu="{StaticResource TrayMenu}"
-                    MenuActivation="LeftOrRightClick"
-                    TrayPopup="{StaticResoure TrayStatusPopup}"
-                    PopupActivation="DoubleClick"
-                    TrayToolTip="{StaticResource TrayToolTip}"
-    />-->
-
     <ui:FluentWindow.InputBindings>
         <KeyBinding
             Key="F"

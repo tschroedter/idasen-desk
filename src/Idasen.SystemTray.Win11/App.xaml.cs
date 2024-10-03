@@ -58,6 +58,14 @@ public partial class App
                                                                            services.AddSingleton < MainWindowViewModel > ( ) ;
                                                                            services.AddSingleton < DashboardPage > ( ) ;
                                                                            services.AddSingleton < DashboardViewModel > ( ) ;
+                                                                           services.AddSingleton < ConnectPage > ( ) ;
+                                                                           services.AddSingleton < ConnectViewModel > ( ) ;
+                                                                           services.AddSingleton < DisconnectPage > ( ) ;
+                                                                           services.AddSingleton < DisconnectViewModel > ( ) ;
+                                                                           services.AddSingleton < StandPage > ( ) ;
+                                                                           services.AddSingleton < StandViewModel > ( ) ;
+                                                                           services.AddSingleton < SitPage > ( ) ;
+                                                                           services.AddSingleton < SitViewModel > ( ) ;
                                                                            services.AddSingleton < SettingsPage > ( ) ;
                                                                            services.AddSingleton < SettingsViewModel > ( ) ;
                                                                            services.AddSingleton < IVersionProvider , VersionProvider > ( ) ;
@@ -65,6 +73,7 @@ public partial class App
                                                                            services.AddSingleton < ICommonApplicationData , CommonApplicationData > ( ) ;
                                                                            services.AddSingleton < ISettingsStorage , SettingsStorage > ( ) ;
                                                                            services.AddSingleton < ITaskbarIconProvider , TaskbarIconProvider > ( ) ;
+                                                                           services.AddSingleton < IUiDeskManager , UiDeskManager > ( ) ;
                                                                            services.AddSingleton < IDynamicIconCreator , DynamicIconCreator > ( ) ;
                                                                            services.AddSingleton < IIdasenConfigurationProvider , IdasenConfigurationProvider > ( ) ;
                                                                            services.AddSingleton ( _ => CreateScheduler ( ) ) ;
@@ -162,13 +171,13 @@ public partial class App
 
     private static void NotifyIcon_DoubleClick ( object sender , RoutedEventArgs e )
     {
-        var mainWindow = GetService < MainWindow > ( ) ;
+        var mainWindow = GetService < INavigationWindow > ( ) ;
 
         if ( mainWindow == null )
             return ;
 
-        mainWindow.Show ( ) ;
-        mainWindow.WindowState = WindowState.Normal ;
+        mainWindow.ShowWindow (  );
+        //mainWindow.WindowState = WindowState.Normal ;
     }
 
     /// <summary>
