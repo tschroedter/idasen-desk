@@ -1,59 +1,71 @@
 ﻿using System.Collections.ObjectModel ;
-using System.Windows.Input ;
 using System.Windows.Threading ;
 using Autofac ;
 using Hardcodet.Wpf.TaskbarNotification ;
 using Idasen.BluetoothLE.Core ;
 using Idasen.SystemTray.Win11.Settings ;
-using Idasen.SystemTray.Win11.Utils ;
 using Idasen.SystemTray.Win11.Views.Pages ;
 using JetBrains.Annotations ;
 using Wpf.Ui.Controls ;
 using ILogger = Serilog.ILogger ;
+using MessageBox = Wpf.Ui.Controls.MessageBox ;
+using MessageBoxResult = Wpf.Ui.Controls.MessageBoxResult ;
 
 namespace Idasen.SystemTray.Win11.ViewModels.Windows ;
 
-public partial class MainWindowViewModel : ObservableObject, IDisposable
+public partial class MainWindowViewModel : ObservableObject , IDisposable
 {
-    public MainWindowViewModel ( ISettingsManager     manager ,
-                                 IUiDeskManager uiDeskManager)
+    private static readonly NavigationViewItem HomeViewItem = new()
     {
-        Guard.ArgumentNotNull ( manager ,
-                                nameof ( manager ) ) ;
-        Guard.ArgumentNotNull ( uiDeskManager ,
-                                nameof ( uiDeskManager ) ) ;
+        Content = "Home",
+        Icon = new SymbolIcon
+        {
+            Symbol = SymbolRegular.Home20
+        },
+        TargetPageType = typeof(HomePage)
+    };
 
-        _manager           =  manager ;
-        _uiDeskManager     =  uiDeskManager ;
-        SitViewItem.Click += OnClickSitViewItem ;
-    }
-
-    private void OnClickSitViewItem ( object sender , RoutedEventArgs e )
+    private static readonly NavigationViewItem SitViewItem = new( )
     {
-        if (!_uiDeskManager.IsInitialize)
+        Content = "Sit" ,
+        Icon = new SymbolIcon
         {
-            return;
-        }
+            Symbol = SymbolRegular.ArrowCircleDown20
+        } ,
+        TargetPageType = typeof ( SitPage )
+    } ;
 
-        var uiMessageBox = new Wpf.Ui.Controls.MessageBox
+    private static readonly NavigationViewItem StandViewItem = new( )
+    {
+        Content = "Stand" ,
+        Icon = new SymbolIcon
         {
-            Title             = "Sit ?",
-            Content           = "Do you want to move the desk into the sitting position?",
-            PrimaryButtonText = "Sit",
-        };
+            Symbol = SymbolRegular.ArrowCircleUp20
+        } ,
+        TargetPageType = typeof ( StandPage )
+    } ;
 
-        Dispatcher.CurrentDispatcher.InvokeAsync(async () =>
-                                                 {
-                                                     var result = await uiMessageBox.ShowDialogAsync ( ) ;
+    private static readonly NavigationViewItem ConnectViewItem = new()
+    {
+        Content = "Connect",
+        Icon = new SymbolIcon
+        {
+            Symbol = SymbolRegular.PlugConnected24
+        },
+        TargetPageType = typeof(ConnectPage)
+    };
 
-                                                     if (result != Wpf.Ui.Controls.MessageBoxResult.Primary)
-                                                     {
-                                                         return ;
-                                                     }
+    private static readonly NavigationViewItem DisconnectViewItem = new()
+    {
+        Content = "Disconnect",
+        Icon = new SymbolIcon
+        {
+            Symbol = SymbolRegular.PlugDisconnected24
+        },
+        TargetPageType = typeof(DisconnectPage)
+    };
 
-                                                     await _uiDeskManager.Sit ( ) ;
-                                                 } );
-    }
+    private readonly IUiDeskManager _uiDeskManager ;
 
     [ ObservableProperty ]
     private string _applicationTitle = "Idasen Desk" ;
@@ -69,130 +81,175 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
         }
     ] ;
 
-    private readonly IUiDeskManager       _uiDeskManager ;
-    private readonly ISettingsManager?    _manager;
-    private          ILogger ?            _logger ;
-
-    private static readonly NavigationViewItem SitViewItem = new NavigationViewItem
-    {
-        Content = "Sit" ,
-        Icon = new SymbolIcon
-        {
-            Symbol = SymbolRegular.ArrowCircleDown20
-        } ,
-        TargetPageType = typeof ( SitPage )
-    } ;
+    private ILogger ? _logger ;
 
     [ ObservableProperty ]
     private ObservableCollection < object > _menuItems =
     [
-        new NavigationViewItem
-        {
-            Content = "Home" ,
-            Icon = new SymbolIcon
-            {
-                Symbol = SymbolRegular.Home24
-            } ,
-            TargetPageType = typeof ( DashboardPage )
-        } ,
-        new NavigationViewItem
-        {
-            Content = "Connect" ,
-            Icon = new SymbolIcon
-            {
-                Symbol = SymbolRegular.PlugConnected24
-            } ,
-            TargetPageType = typeof ( ConnectPage )
-        } ,
-        new NavigationViewItem
-        {
-            Content = "Disconnect" ,
-            Icon = new SymbolIcon
-            {
-                Symbol = SymbolRegular.PlugDisconnected24
-            } ,
-            TargetPageType = typeof ( DisconnectPage )
-        } ,
-        new NavigationViewItem
-        {
-            Content = "Stand" ,
-            Icon = new SymbolIcon
-            {
-                Symbol = SymbolRegular.ArrowCircleUp20
-            } ,
-            TargetPageType = typeof ( StandPage )
-        } ,
+        HomeViewItem ,
+        ConnectViewItem ,
+        DisconnectViewItem ,
+        StandViewItem ,
         SitViewItem
     ] ;
-
-    private TaskbarIcon ? _taskbarIcon ;
 
     [ UsedImplicitly ]
     private IDisposable ? _onErrorChanged ;
 
+    private TaskbarIcon ? _taskbarIcon ;
+
     [ ObservableProperty ]
     private ObservableCollection < MenuItem > _trayMenuItems = // todo do we need this or does this replace the current notifyicon?
-        [new() { Header = "Home" , Tag = "tray_home" }] ;
+        [new( ) { Header = "Home" , Tag = "tray_home" }] ;
 
-    /// <summary>
-    ///     Moves the desk to the standing height.
-    /// </summary>
-    public ICommand StandingCommand
+    public MainWindowViewModel ( ISettingsManager manager ,
+                                 IUiDeskManager   uiDeskManager )
     {
-        get
-        {
-            return new DelegateCommand
-            {
-                // ReSharper disable once AsyncVoidLambda
-                CommandAction  = async ( ) => await _uiDeskManager.Stand ( ) ,
-                CanExecuteFunc = ( ) => _uiDeskManager.IsInitialize
-            } ;
-        }
-    }
+        Guard.ArgumentNotNull ( manager ,
+                                nameof ( manager ) ) ;
+        Guard.ArgumentNotNull ( uiDeskManager ,
+                                nameof ( uiDeskManager ) ) ;
 
-    /// <summary>
-    ///     Moves the desk to the seating height.
-    /// </summary>
-    public ICommand SeatingCommand
-    {
-        get
-        {
-            return new DelegateCommand
-            {
-                // ReSharper disable once AsyncVoidLambda
-                CommandAction  = async ( ) => await _uiDeskManager.Sit( ) ,
-                CanExecuteFunc = ( ) => _uiDeskManager.IsInitialize
-            } ;
-        }
-    }
+        _uiDeskManager = uiDeskManager ;
 
-    public bool IsInitialize => _logger != null && _manager != null ; // todo  && _provider != null ;
-
-    public MainWindowViewModel Initialize ( IContainer container , TaskbarIcon taskbarIcon)
-    {
-        Guard.ArgumentNotNull ( container ,
-                                nameof ( container ) ) ;
-        Guard.ArgumentNotNull(taskbarIcon,
-                              nameof(taskbarIcon));
-
-        _taskbarIcon = taskbarIcon;
-
-        _logger          = container.Resolve<ILogger>();
-        _logger?.Debug ( $"{nameof(MainWindowViewModel)}: Initializing..." ) ;
-
-        _uiDeskManager.Initialize ( container, taskbarIcon ) ;
-
-        return this ;
+        SitViewItem.Click   += OnClickSitViewItem ;
+        StandViewItem.Click += OnClickStandViewItem ;
+        ConnectViewItem.Click += OnClickConnectViewItem;
+        DisconnectViewItem.Click += OnClickDisconnectViewItem;
     }
 
     public void Dispose ( )
     {
         _logger?.Information ( "Disposing..." ) ;
 
-        _uiDeskManager.Disconnect (  );
+        _uiDeskManager.Disconnect ( ) ;
         _uiDeskManager.Dispose ( ) ;
 
         _taskbarIcon?.Dispose ( ) ;
     }
-}
 
+    private void OnClickSitViewItem ( object sender , RoutedEventArgs e )
+    {
+        if ( ! _uiDeskManager.IsInitialize )
+        {
+            return ;
+        }
+
+        var uiMessageBox = new MessageBox
+        {
+            Title             = "Sit ?" ,
+            Content           = "Do you want to move the desk into the sitting position?" ,
+            PrimaryButtonText = "Sit"
+        } ;
+
+        Dispatcher.CurrentDispatcher.InvokeAsync ( async ( ) =>
+                                                   {
+                                                       var result = await uiMessageBox.ShowDialogAsync ( ) ;
+
+                                                       if ( result != MessageBoxResult.Primary )
+                                                       {
+                                                           return ;
+                                                       }
+
+                                                       await _uiDeskManager.Sit ( ) ;
+                                                   } ) ;
+    }
+
+    private void OnClickStandViewItem ( object sender , RoutedEventArgs e )
+    {
+        if ( ! _uiDeskManager.IsInitialize )
+        {
+            return ;
+        }
+
+        var uiMessageBox = new MessageBox
+        {
+            Title             = "Stand ?" ,
+            Content           = "Do you want to move the desk into the sitting position?" ,
+            PrimaryButtonText = "Stand"
+        } ;
+
+        Dispatcher.CurrentDispatcher.InvokeAsync ( async ( ) =>
+                                                   {
+                                                       var result = await uiMessageBox.ShowDialogAsync ( ) ;
+
+                                                       if ( result != MessageBoxResult.Primary )
+                                                       {
+                                                           return ;
+                                                       }
+
+                                                       await _uiDeskManager.Stand ( ) ;
+                                                   } ) ;
+    }
+
+    private void OnClickConnectViewItem(object sender, RoutedEventArgs e)
+    {
+        if (!_uiDeskManager.IsInitialize)
+        {
+            return;
+        }
+
+        var uiMessageBox = new MessageBox
+        {
+            Title             = "Connect ?",
+            Content           = "Do you want to connect to the desk?",
+            PrimaryButtonText = "Connect"
+        };
+
+        Dispatcher.CurrentDispatcher.InvokeAsync(async () =>
+                                                 {
+                                                     var result = await uiMessageBox.ShowDialogAsync();
+
+                                                     if (result != MessageBoxResult.Primary)
+                                                     {
+                                                         return;
+                                                     }
+
+                                                     await _uiDeskManager.AutoConnect();
+                                                 });
+    }
+
+    private void OnClickDisconnectViewItem(object sender, RoutedEventArgs e)
+    {
+        if (!_uiDeskManager.IsInitialize)
+        {
+            return;
+        }
+
+        var uiMessageBox = new MessageBox
+        {
+            Title             = "Disconnect ?",
+            Content           = "Do you want to disconnect from the desk?",
+            PrimaryButtonText = "Disconnect"
+        };
+
+        Dispatcher.CurrentDispatcher.InvokeAsync(async () =>
+                                                 {
+                                                     var result = await uiMessageBox.ShowDialogAsync();
+
+                                                     if (result != MessageBoxResult.Primary)
+                                                     {
+                                                         return;
+                                                     }
+
+                                                     await _uiDeskManager.Disconnect();
+                                                 });
+    }
+
+    public MainWindowViewModel Initialize ( IContainer container , TaskbarIcon taskbarIcon )
+    {
+        Guard.ArgumentNotNull ( container ,
+                                nameof ( container ) ) ;
+        Guard.ArgumentNotNull ( taskbarIcon ,
+                                nameof ( taskbarIcon ) ) ;
+
+        _taskbarIcon = taskbarIcon ;
+
+        _logger = container.Resolve < ILogger > ( ) ;
+        _logger?.Debug ( $"{nameof ( MainWindowViewModel )}: Initializing..." ) ;
+
+        _uiDeskManager.Initialize ( container , taskbarIcon ) ;
+
+        return this ;
+    }
+}

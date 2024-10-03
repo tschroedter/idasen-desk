@@ -340,7 +340,7 @@ public class UiDeskManager : IUiDeskManager
         builder.Show ( ) ;
     }
 
-    public void Disconnect ( )
+    public Task Disconnect ( )
     {
         try
         {
@@ -359,6 +359,8 @@ public class UiDeskManager : IUiDeskManager
 
             ConnectFailed ( ) ;
         }
+
+        return Task.CompletedTask ;
     }
 
 

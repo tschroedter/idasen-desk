@@ -3,9 +3,9 @@ using Wpf.Ui.Controls ;
 
 namespace Idasen.SystemTray.Win11.Views.Pages ;
 
-public partial class DashboardPage : INavigableView < DashboardViewModel >
+public partial class HomePage : INavigableView < DashboardViewModel >
 {
-    public DashboardPage ( DashboardViewModel viewModel )
+    public HomePage ( DashboardViewModel viewModel )
     {
         ViewModel   = viewModel ;
         DataContext = this ;

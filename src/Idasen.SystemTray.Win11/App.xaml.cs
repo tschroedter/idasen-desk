@@ -56,7 +56,7 @@ public partial class App
                                                                            // Main window with navigation
                                                                            services.AddSingleton < INavigationWindow , MainWindow > ( ) ;
                                                                            services.AddSingleton < MainWindowViewModel > ( ) ;
-                                                                           services.AddSingleton < DashboardPage > ( ) ;
+                                                                           services.AddSingleton < HomePage > ( ) ;
                                                                            services.AddSingleton < DashboardViewModel > ( ) ;
                                                                            services.AddSingleton < ConnectPage > ( ) ;
                                                                            services.AddSingleton < ConnectViewModel > ( ) ;

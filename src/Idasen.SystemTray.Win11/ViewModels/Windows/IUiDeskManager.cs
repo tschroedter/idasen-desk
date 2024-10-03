@@ -10,5 +10,5 @@ public interface IUiDeskManager : IDisposable
     Task          Stand ( ) ;
     Task          Sit ( ) ;
     Task          AutoConnect ( ) ;
-    void          Disconnect ( ) ;
+    Task          Disconnect ( ) ;
 }
