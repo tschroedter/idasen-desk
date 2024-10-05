@@ -15,15 +15,15 @@ namespace Idasen.SystemTray.Win11.ViewModels.Windows ;
 
 public partial class MainWindowViewModel : ObservableObject , IDisposable
 {
-    private static readonly NavigationViewItem HomeViewItem = new()
+    private static readonly NavigationViewItem HomeViewItem = new( )
     {
-        Content = "Home",
+        Content = "Home" ,
         Icon = new SymbolIcon
         {
             Symbol = SymbolRegular.Home20
-        },
-        TargetPageType = typeof(HomePage)
-    };
+        } ,
+        TargetPageType = typeof ( HomePage )
+    } ;
 
     private static readonly NavigationViewItem SitViewItem = new( )
     {
@@ -32,7 +32,7 @@ public partial class MainWindowViewModel : ObservableObject , IDisposable
         {
             Symbol = SymbolRegular.ArrowCircleDown20
         } ,
-        TargetPageType = typeof ( SitPage )
+        TargetPageType = typeof ( StatusPage )
     } ;
 
     private static readonly NavigationViewItem StandViewItem = new( )
@@ -42,28 +42,28 @@ public partial class MainWindowViewModel : ObservableObject , IDisposable
         {
             Symbol = SymbolRegular.ArrowCircleUp20
         } ,
-        TargetPageType = typeof ( StandPage )
+        TargetPageType = typeof ( StatusPage )
     } ;
 
-    private static readonly NavigationViewItem ConnectViewItem = new()
+    private static readonly NavigationViewItem ConnectViewItem = new( )
     {
-        Content = "Connect",
+        Content = "Connect" ,
         Icon = new SymbolIcon
         {
             Symbol = SymbolRegular.PlugConnected24
-        },
-        TargetPageType = typeof(ConnectPage)
-    };
+        } ,
+        TargetPageType = typeof ( StatusPage )
+    } ;
 
-    private static readonly NavigationViewItem DisconnectViewItem = new()
+    private static readonly NavigationViewItem DisconnectViewItem = new( )
     {
-        Content = "Disconnect",
+        Content = "Disconnect" ,
         Icon = new SymbolIcon
         {
             Symbol = SymbolRegular.PlugDisconnected24
-        },
-        TargetPageType = typeof(DisconnectPage)
-    };
+        } ,
+        TargetPageType = typeof ( StatusPage )
+    } ;
 
     private readonly IUiDeskManager _uiDeskManager ;
 
@@ -112,10 +112,10 @@ public partial class MainWindowViewModel : ObservableObject , IDisposable
 
         _uiDeskManager = uiDeskManager ;
 
-        SitViewItem.Click   += OnClickSitViewItem ;
-        StandViewItem.Click += OnClickStandViewItem ;
-        ConnectViewItem.Click += OnClickConnectViewItem;
-        DisconnectViewItem.Click += OnClickDisconnectViewItem;
+        SitViewItem.MouseDoubleClick        += OnClickSitViewItem ;
+        StandViewItem.MouseDoubleClick      += OnClickStandViewItem ;
+        ConnectViewItem.MouseDoubleClick    += OnClickConnectViewItem ;
+        DisconnectViewItem.MouseDoubleClick += OnClickDisconnectViewItem ;
     }
 
     public void Dispose ( )
@@ -123,8 +123,8 @@ public partial class MainWindowViewModel : ObservableObject , IDisposable
         _logger?.Information ( "Disposing..." ) ;
 
         _uiDeskManager.Disconnect ( ) ;
-        _uiDeskManager.Dispose ( ) ;
 
+        _uiDeskManager.Dispose ( ) ;
         _taskbarIcon?.Dispose ( ) ;
     }
 
@@ -182,58 +182,58 @@ public partial class MainWindowViewModel : ObservableObject , IDisposable
                                                    } ) ;
     }
 
-    private void OnClickConnectViewItem(object sender, RoutedEventArgs e)
+    private void OnClickConnectViewItem ( object sender , RoutedEventArgs e )
     {
-        if (!_uiDeskManager.IsInitialize)
+        if ( ! _uiDeskManager.IsInitialize )
         {
-            return;
+            return ;
         }
 
         var uiMessageBox = new MessageBox
         {
-            Title             = "Connect ?",
-            Content           = "Do you want to connect to the desk?",
+            Title             = "Connect ?" ,
+            Content           = "Do you want to connect to the desk?" ,
             PrimaryButtonText = "Connect"
-        };
+        } ;
 
-        Dispatcher.CurrentDispatcher.InvokeAsync(async () =>
-                                                 {
-                                                     var result = await uiMessageBox.ShowDialogAsync();
+        Dispatcher.CurrentDispatcher.InvokeAsync ( async ( ) =>
+                                                   {
+                                                       var result = await uiMessageBox.ShowDialogAsync ( ) ;
 
-                                                     if (result != MessageBoxResult.Primary)
-                                                     {
-                                                         return;
-                                                     }
+                                                       if ( result != MessageBoxResult.Primary )
+                                                       {
+                                                           return ;
+                                                       }
 
-                                                     await _uiDeskManager.AutoConnect();
-                                                 });
+                                                       await _uiDeskManager.AutoConnect ( ) ;
+                                                   } ) ;
     }
 
-    private void OnClickDisconnectViewItem(object sender, RoutedEventArgs e)
+    private void OnClickDisconnectViewItem ( object sender , RoutedEventArgs e )
     {
-        if (!_uiDeskManager.IsInitialize)
+        if ( ! _uiDeskManager.IsInitialize )
         {
-            return;
+            return ;
         }
 
         var uiMessageBox = new MessageBox
         {
-            Title             = "Disconnect ?",
-            Content           = "Do you want to disconnect from the desk?",
+            Title             = "Disconnect ?" ,
+            Content           = "Do you want to disconnect from the desk?" ,
             PrimaryButtonText = "Disconnect"
-        };
+        } ;
 
-        Dispatcher.CurrentDispatcher.InvokeAsync(async () =>
-                                                 {
-                                                     var result = await uiMessageBox.ShowDialogAsync();
+        Dispatcher.CurrentDispatcher.InvokeAsync ( async ( ) =>
+                                                   {
+                                                       var result = await uiMessageBox.ShowDialogAsync ( ) ;
 
-                                                     if (result != MessageBoxResult.Primary)
-                                                     {
-                                                         return;
-                                                     }
+                                                       if ( result != MessageBoxResult.Primary )
+                                                       {
+                                                           return ;
+                                                       }
 
-                                                     await _uiDeskManager.Disconnect();
-                                                 });
+                                                       await _uiDeskManager.Disconnect ( ) ;
+                                                   } ) ;
     }
 
     public MainWindowViewModel Initialize ( IContainer container , TaskbarIcon taskbarIcon )

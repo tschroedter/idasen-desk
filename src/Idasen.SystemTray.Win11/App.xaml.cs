@@ -58,14 +58,8 @@ public partial class App
                                                                            services.AddSingleton < MainWindowViewModel > ( ) ;
                                                                            services.AddSingleton < HomePage > ( ) ;
                                                                            services.AddSingleton < DashboardViewModel > ( ) ;
-                                                                           services.AddSingleton < ConnectPage > ( ) ;
-                                                                           services.AddSingleton < ConnectViewModel > ( ) ;
-                                                                           services.AddSingleton < DisconnectPage > ( ) ;
-                                                                           services.AddSingleton < DisconnectViewModel > ( ) ;
-                                                                           services.AddSingleton < StandPage > ( ) ;
-                                                                           services.AddSingleton < StandViewModel > ( ) ;
-                                                                           services.AddSingleton < SitPage > ( ) ;
-                                                                           services.AddSingleton < SitViewModel > ( ) ;
+                                                                           services.AddSingleton < StatusPage > ( ) ;
+                                                                           services.AddSingleton < StatusViewModel > ( ) ;
                                                                            services.AddSingleton < SettingsPage > ( ) ;
                                                                            services.AddSingleton < SettingsViewModel > ( ) ;
                                                                            services.AddSingleton < IVersionProvider , VersionProvider > ( ) ;

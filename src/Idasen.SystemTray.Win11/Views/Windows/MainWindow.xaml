@@ -63,5 +63,6 @@
         </ui:NavigationView>
 
         <ContentPresenter x:Name="RootContentDialog" Grid.Row="0" />
+
     </Grid>
 </ui:FluentWindow>

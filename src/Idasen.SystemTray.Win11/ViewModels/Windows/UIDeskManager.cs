@@ -1,8 +1,10 @@
 ﻿using System.Reactive.Concurrency ;
 using System.Reactive.Linq ;
+using System.Reactive.Subjects ;
 using System.Windows.Input ;
 using System.Windows.Threading ;
 using Autofac ;
+using Hardcodet.Wpf.TaskbarNotification ;
 using Idasen.BluetoothLE.Core ;
 using Idasen.BluetoothLE.Linak.Interfaces ;
 using Idasen.SystemTray.Win11.Interfaces ;
@@ -14,14 +16,18 @@ using NHotkey.Wpf ;
 using Constants = Idasen.BluetoothLE.Characteristics.Common.Constants ;
 using MessageBox = System.Windows.MessageBox ;
 using ILogger = Serilog.ILogger ;
-using Hardcodet.Wpf.TaskbarNotification;
 
 namespace Idasen.SystemTray.Win11.ViewModels.Windows ;
 
 public class UiDeskManager : IUiDeskManager
 {
-    private static readonly KeyGesture IncrementGesture = new(Key.Up , ModifierKeys.Control   | ModifierKeys.Alt | ModifierKeys.Shift) ;
-    private static readonly KeyGesture DecrementGesture = new(Key.Down , ModifierKeys.Control | ModifierKeys.Alt | ModifierKeys.Shift) ;
+    private static readonly KeyGesture         IncrementGesture = new(Key.Up , ModifierKeys.Control   | ModifierKeys.Alt | ModifierKeys.Shift) ;
+    private static readonly KeyGesture         DecrementGesture = new(Key.Down , ModifierKeys.Control | ModifierKeys.Alt | ModifierKeys.Shift) ;
+    private readonly        Subject < string > _connectSubject ; // todo disconnect
+    private readonly        Subject < string > _errorSubject ;
+    private readonly        Subject < uint >   _finishedSubject ;
+
+    private readonly ISubject < uint > _heightChangedSubject ;
 
     private readonly ITaskbarIconProvider _iconProvider ;
     private readonly ISettingsManager ?   _manager ;
@@ -30,15 +36,16 @@ public class UiDeskManager : IUiDeskManager
     private IDeskProvider ? _deskProvider ;
     private IErrorManager ? _errorManager ;
     private IDisposable ?   _finished ;
+    private IDisposable ?   _heightChanged ;
     private ILogger ?       _logger ;
 
     [ UsedImplicitly ]
     private IDisposable ? _onErrorChanged ;
 
     private Func < IDeskProvider > ?  _providerFactory ;
+    private TaskbarIcon ?             _taskbarIcon ;
     private CancellationToken ?       _token ;
     private CancellationTokenSource ? _tokenSource ;
-    private TaskbarIcon ?             _taskbarIcon ;
 
     public UiDeskManager ( ISettingsManager     manager ,
                            ITaskbarIconProvider iconProvider )
@@ -48,9 +55,15 @@ public class UiDeskManager : IUiDeskManager
         Guard.ArgumentNotNull ( iconProvider ,
                                 nameof ( iconProvider ) ) ;
 
-        _manager      = manager ;
-        _iconProvider = iconProvider ;
+        _manager              = manager ;
+        _iconProvider         = iconProvider ;
+        _heightChangedSubject = new Subject < uint > ( ) ;
+        _finishedSubject      = new Subject < uint > ( ) ;
+        _errorSubject         = new Subject < string > ( ) ;
+        _connectSubject       = new Subject < string > ( ) ;
     }
+
+    public IObservable < string > Error => _errorSubject ;
 
     public bool IsInitialize => _logger != null && _manager != null ; // todo  && _provider != null ;
 
@@ -60,6 +73,10 @@ public class UiDeskManager : IUiDeskManager
 
         DisposeDesk ( ) ;
 
+        _heightChanged?.Dispose ( ) ;
+        _finished?.Dispose ( ) ;
+        _errorSubject?.Dispose ( ) ;
+        _onErrorChanged?.Dispose ( ) ;
         _deskProvider?.Dispose ( ) ;
         _tokenSource?.Dispose ( ) ;
     }
@@ -97,6 +114,108 @@ public class UiDeskManager : IUiDeskManager
         return this ;
     }
 
+    public async Task Stand ( )
+    {
+        _logger?.Debug ( "Executing Stand..." ) ;
+
+        if (!IsDeskConnected())
+            return;
+
+        await _manager!.Load ( ) ;
+
+        _desk?.MoveTo ( _manager.CurrentSettings.HeightSettings.StandingHeightInCm * 100 ) ;
+    }
+
+    public async Task Sit ( )
+    {
+        if ( !IsDeskConnected ( ) )
+            return ;
+
+        await _manager!.Load ( )
+                      .ConfigureAwait ( false ) ;
+
+        _desk?.MoveTo ( _manager.CurrentSettings.HeightSettings.SeatingHeightInCm *
+                        100 ) ; // todo duplicate
+    }
+
+    public async Task AutoConnect ( )
+    {
+        _logger?.Debug ( "Auto connecting..." ) ;
+
+        try
+        {
+            CheckIfInitialized ( ) ;
+
+            _logger?.Debug ( "Trying to load settings..." ) ;
+
+            if ( _manager == null )
+                throw new Exception ( "Manager is null" ) ;
+
+            await _manager.Load ( ) ;
+
+            _logger?.Debug ( "Trying to auto connect to Idasen Desk..." ) ;
+
+            if ( _token == null )
+                throw new Exception ( "Token is null" ) ;
+
+            await Task.Delay ( TimeSpan.FromSeconds ( 3 ) ,
+                               _token.Value ) ;
+
+            ShowFancyBalloon ( "Auto Connect" ,
+                               "Trying to auto connect to Idasen Desk..." ,
+                               visibilityBulbYellow : Visibility.Visible ) ;
+
+            await Connect ( ) ;
+        }
+        catch ( TaskCanceledException )
+        {
+            _logger?.Information ( "Auto connect was canceled" ) ;
+        }
+        catch ( Exception e )
+        {
+            _logger?.Error ( e ,
+                             "Failed to auto connect to desk" ) ;
+
+            ConnectFailed ( ) ;
+        }
+    }
+
+    public Task Disconnect ( )
+    {
+        if ( !IsDeskConnected ( ) )
+        {
+            DoDisconnect ( ) ;
+        }
+
+        return Task.CompletedTask ;
+    }
+
+    private void DoDisconnect ( )
+    {
+        try
+        {
+            _logger?.Debug ( $"[{_desk?.DeviceName}] Trying to disconnect from Idasen Desk..." ) ;
+
+            DisposeDesk ( ) ;
+
+            _tokenSource?.Cancel ( false ) ;
+
+            _logger?.Debug ( $"[{_desk?.DeviceName}] ...disconnected from Idasen Desk" ) ;
+        }
+        catch ( Exception e )
+        {
+            _logger?.Error ( e ,
+                             "Failed to disconnect" ) ;
+
+            ConnectFailed ( ) ;
+        }
+    }
+
+    public IObservable < uint > HeightChanged => _heightChangedSubject ;
+    public IObservable < uint > Finished      => _finishedSubject ;
+
+    public IObservable < string > Connected => _connectSubject ;
+
     private void HotkeyManager_HotkeyAlreadyRegistered ( object ? sender , HotkeyAlreadyRegisteredEventArgs e )
     {
         MessageBox.Show ( $"The hotkey {e.Name} is already registered by another application" ) ;
@@ -109,6 +228,8 @@ public class UiDeskManager : IUiDeskManager
         ShowFancyBalloon ( "Error" ,
                            details.Message ,
                            visibilityBulbRed : Visibility.Visible ) ;
+
+        _errorSubject.OnNext ( details.Message ) ;
     }
 
 
@@ -117,9 +238,6 @@ public class UiDeskManager : IUiDeskManager
         try
         {
             _logger?.Information ( "Received global hot key for 'Stand' command..." ) ;
-
-            if ( _desk == null )
-                return ;
 
             Task.Run ( async ( ) => await DoStanding ( ) ) ;
         }
@@ -134,9 +252,6 @@ public class UiDeskManager : IUiDeskManager
         try
         {
             _logger?.Information ( "Received global hot key for 'Sit' command..." ) ;
-
-            if ( _desk == null )
-                return ;
 
             Task.Run ( async ( ) => await DoSeating ( ) ) ;
         }
@@ -163,18 +278,6 @@ public class UiDeskManager : IUiDeskManager
         }
     }
 
-    public async Task Stand ( )
-    {
-        _logger?.Debug ( "Executing Stand..." ) ;
-
-        if ( _manager != null )
-        {
-            await _manager.Load ( ) ;
-
-            _desk?.MoveTo ( _manager.CurrentSettings.HeightSettings.StandingHeightInCm * 100 ) ;
-        }
-    }
-
     private async Task DoSeating ( )
     {
         try
@@ -192,16 +295,17 @@ public class UiDeskManager : IUiDeskManager
         }
     }
 
-    public async Task Sit ( )
+    private bool IsDeskConnected ( )
     {
-        if ( _manager != null )
-        {
-            await _manager.Load ( )
-                          .ConfigureAwait ( false ) ;
+        if ( _desk    != null ||
+             _manager != null )
+            return true ;
 
-            _desk?.MoveTo ( _manager.CurrentSettings.HeightSettings.SeatingHeightInCm *
-                            100 ) ; // todo duplicate
-        }
+        _logger?.Error ( "Not connected tot desk!" ) ;
+
+        _errorSubject.OnNext ( "Not connected tot desk!" ) ;
+
+        return false ;
     }
 
     private async Task Connect ( )
@@ -242,48 +346,6 @@ public class UiDeskManager : IUiDeskManager
         {
             _logger?.Error ( e ,
                              $"[{_desk?.DeviceName}] Failed to connect" ) ;
-
-            ConnectFailed ( ) ;
-        }
-    }
-
-    public async Task AutoConnect ( )
-    {
-        _logger?.Debug ( "Auto connecting..." ) ;
-
-        try
-        {
-            CheckIfInitialized ( ) ;
-
-            _logger?.Debug ( "Trying to load settings..." ) ;
-
-            if ( _manager == null )
-                throw new Exception ( "Manager is null" ) ;
-
-            await _manager.Load ( ) ;
-
-            _logger?.Debug ( "Trying to auto connect to Idasen Desk..." ) ;
-
-            if ( _token == null )
-                throw new Exception ( "Token is null" ) ;
-
-            await Task.Delay ( TimeSpan.FromSeconds ( 3 ) ,
-                               _token.Value ) ;
-
-            ShowFancyBalloon ( "Auto Connect" ,
-                               "Trying to auto connect to Idasen Desk..." ,
-                               visibilityBulbYellow : Visibility.Visible ) ;
-
-            await Connect ( ) ;
-        }
-        catch ( TaskCanceledException )
-        {
-            _logger?.Information ( "Auto connect was canceled" ) ;
-        }
-        catch ( Exception e )
-        {
-            _logger?.Error ( e ,
-                             "Failed to auto connect to desk" ) ;
 
             ConnectFailed ( ) ;
         }
@@ -340,29 +402,6 @@ public class UiDeskManager : IUiDeskManager
         builder.Show ( ) ;
     }
 
-    public Task Disconnect ( )
-    {
-        try
-        {
-            _logger?.Debug ( $"[{_desk?.DeviceName}] Trying to disconnect from Idasen Desk..." ) ;
-
-            DisposeDesk ( ) ;
-
-            _tokenSource?.Cancel ( false ) ;
-
-            _logger?.Debug ( $"[{_desk?.DeviceName}] ...disconnected from Idasen Desk" ) ;
-        }
-        catch ( Exception e )
-        {
-            _logger?.Error ( e ,
-                             "Failed to disconnect" ) ;
-
-            ConnectFailed ( ) ;
-        }
-
-        return Task.CompletedTask ;
-    }
-
 
     private void ConnectFailed ( )
     {
@@ -373,6 +412,8 @@ public class UiDeskManager : IUiDeskManager
         ShowFancyBalloon ( "Failed to Connect" ,
                            Constants.CheckAndEnableBluetooth ,
                            visibilityBulbRed : Visibility.Visible ) ;
+
+        _errorManager?.PublishForMessage ( "Failed to connect" ) ;
     }
 
     private void DisposeDesk ( )
@@ -400,6 +441,10 @@ public class UiDeskManager : IUiDeskManager
                          .ObserveOn ( Scheduler.Default )
                          .Subscribe ( OnFinishedChanged ) ;
 
+        _heightChanged = _desk.HeightChanged
+                              .ObserveOn ( Scheduler.Default )
+                              .Subscribe ( OnHeightChanged ) ;
+
         ShowFancyBalloon ( "Success" ,
                            "Connected to desk: " +
                            Environment.NewLine   +
@@ -411,6 +456,8 @@ public class UiDeskManager : IUiDeskManager
                                    _taskbarIcon ) ;
 
         _logger?.Debug ( $"[{_desk?.DeviceName}] Connected successful" ) ;
+
+        _connectSubject.OnNext ( $"[{_desk?.DeviceName}] Connected successful" ) ;
 
         if ( ! _manager?.CurrentSettings.DeviceSettings.DeviceLocked ?? true )
             return ;
@@ -429,5 +476,14 @@ public class UiDeskManager : IUiDeskManager
         ShowFancyBalloon ( "Finished" ,
                            $"Desk height is {heightInCm:F0} cm" ,
                            Visibility.Visible ) ;
+
+        _finishedSubject.OnNext ( height ) ;
+    }
+
+    private void OnHeightChanged ( uint height )
+    {
+        _logger?.Debug ( $"Height Changed = {height}" ) ;
+
+        _heightChangedSubject.OnNext ( height ) ;
     }
 }
