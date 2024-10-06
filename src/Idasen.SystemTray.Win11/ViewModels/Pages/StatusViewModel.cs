@@ -10,10 +10,7 @@ namespace Idasen.SystemTray.Win11.ViewModels.Pages ;
 
 public partial class StatusViewModel : ObservableObject , IDisposable
 {
-    private readonly IDisposable _deskConnected ;
-    private readonly IDisposable _deskError ;
-    private readonly IDisposable _deskFinished ;
-    private readonly IDisposable _deskHeightChanged ;
+    private readonly IDisposable _statusBarInfoChanged ;
     private readonly Timer       _timer = new( ) ;
 
     [ ObservableProperty ]
@@ -31,37 +28,27 @@ public partial class StatusViewModel : ObservableObject , IDisposable
 
     public StatusViewModel ( IUiDeskManager manager )
     {
-        _deskHeightChanged = manager.HeightChanged
-                                    .ObserveOn ( Scheduler.Default )
-                                    .Subscribe ( OnDeskHeightChanged ) ;
+        _statusBarInfoChanged = manager.StatusBarInfoChanged
+                                       .ObserveOn ( Scheduler.Default )
+                                       .Subscribe ( OnStatusBarInfoChanged ) ;
 
-        _deskFinished = manager.Finished
-                               .ObserveOn ( Scheduler.Default )
-                               .Subscribe ( OnDeskFinishedChanged ) ;
+        Message          =  manager.LastStatusBarInfo.Message ;
+        Height           =  manager.LastStatusBarInfo.Height;
+        Severity         =  manager.LastStatusBarInfo.Severity;
 
-        _deskConnected = manager.Connected
-                                .ObserveOn ( Scheduler.Default )
-                                .Subscribe ( OnDeskConnected ) ;
-
-        _deskError = manager.Error
-                            .ObserveOn ( Scheduler.Default )
-                            .Subscribe ( OnDeskError ) ;
-
-        _timer.Elapsed += OnElapsed ;
-
-        _timer.Interval  = TimeSpan.FromSeconds ( 10 ).TotalMilliseconds ;
-        _timer.AutoReset = false ;
+        _timer.Elapsed   += OnElapsed;
+        _timer.Interval  =  TimeSpan.FromSeconds(10).TotalMilliseconds;
+        _timer.AutoReset =  false;
+        _timer.Start ( ) ;
     }
 
     public void Dispose ( )
     {
+        _timer.Elapsed -= OnElapsed ;
         _timer.Stop ( ) ;
         _timer.Dispose ( ) ;
 
-        _deskConnected.Dispose ( ) ;
-        _deskHeightChanged.Dispose ( ) ;
-        _deskFinished.Dispose ( ) ;
-        _deskError.Dispose ( ) ;
+        _statusBarInfoChanged.Dispose ( ) ;
     }
 
     private void OnElapsed ( object ? source , ElapsedEventArgs e )
@@ -84,42 +71,11 @@ public partial class StatusViewModel : ObservableObject , IDisposable
         Severity = InfoBarSeverity.Informational ;
     }
 
-    private void OnDeskHeightChanged ( uint height )
+    private void OnStatusBarInfoChanged ( StatusBarInfo info )
     {
-        var heightInCm = ( uint ) Math.Round ( height / 100.0 ) ;
-
-        Height = heightInCm ;
-
-        Message  = $"Moving... {heightInCm} cm" ;
-        Severity = InfoBarSeverity.Warning ;
-
-        _timer.Start ( ) ;
-    }
-
-    private void OnDeskFinishedChanged ( uint height )
-    {
-        var heightInCm = ( uint ) Math.Round ( height / 100.0 ) ;
-
-        Height = heightInCm ;
-
-        Message  = "Finished!" ;
-        Severity = InfoBarSeverity.Success ;
-
-        _timer.Start ( ) ;
-    }
-
-    private void OnDeskConnected ( string message )
-    {
-        Message  = message;
-        Severity = InfoBarSeverity.Success ;
-
-        _timer.Start ( ) ;
-    }
-
-    private void OnDeskError ( string message )
-    {
-        Message  = message;
-        Severity = InfoBarSeverity.Error ;
+        Message  = info.Message ;
+        Severity = info.Severity ;
+        Height   = info.Height ;
 
         _timer.Start ( ) ;
     }

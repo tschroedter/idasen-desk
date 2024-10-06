@@ -13,6 +13,7 @@ using JetBrains.Annotations ;
 using Microsoft.Toolkit.Uwp.Notifications ;
 using NHotkey ;
 using NHotkey.Wpf ;
+using Wpf.Ui.Controls ;
 using Constants = Idasen.BluetoothLE.Characteristics.Common.Constants ;
 using MessageBox = System.Windows.MessageBox ;
 using ILogger = Serilog.ILogger ;
@@ -21,16 +22,12 @@ namespace Idasen.SystemTray.Win11.ViewModels.Windows ;
 
 public class UiDeskManager : IUiDeskManager
 {
-    private static readonly KeyGesture         IncrementGesture = new(Key.Up , ModifierKeys.Control   | ModifierKeys.Alt | ModifierKeys.Shift) ;
-    private static readonly KeyGesture         DecrementGesture = new(Key.Down , ModifierKeys.Control | ModifierKeys.Alt | ModifierKeys.Shift) ;
-    private readonly        Subject < string > _connectSubject ; // todo disconnect
-    private readonly        Subject < string > _errorSubject ;
-    private readonly        Subject < uint >   _finishedSubject ;
+    private static readonly KeyGesture IncrementGesture = new(Key.Up , ModifierKeys.Control   | ModifierKeys.Alt | ModifierKeys.Shift) ;
+    private static readonly KeyGesture DecrementGesture = new(Key.Down , ModifierKeys.Control | ModifierKeys.Alt | ModifierKeys.Shift) ;
 
-    private readonly ISubject < uint > _heightChangedSubject ;
-
-    private readonly ITaskbarIconProvider _iconProvider ;
-    private readonly ISettingsManager ?   _manager ;
+    private readonly ITaskbarIconProvider      _iconProvider ;
+    private readonly ISettingsManager ?        _manager ;
+    private readonly Subject < StatusBarInfo > _statusBarInfoSubject ;
 
     private IDesk ?         _desk ;
     private IDeskProvider ? _deskProvider ;
@@ -57,13 +54,10 @@ public class UiDeskManager : IUiDeskManager
 
         _manager              = manager ;
         _iconProvider         = iconProvider ;
-        _heightChangedSubject = new Subject < uint > ( ) ;
-        _finishedSubject      = new Subject < uint > ( ) ;
-        _errorSubject         = new Subject < string > ( ) ;
-        _connectSubject       = new Subject < string > ( ) ;
+        _statusBarInfoSubject = new Subject < StatusBarInfo > ( ) ;
     }
 
-    public IObservable < string > Error => _errorSubject ;
+    public IObservable < StatusBarInfo > StatusBarInfoChanged => _statusBarInfoSubject ;
 
     public bool IsInitialize => _logger != null && _manager != null ; // todo  && _provider != null ;
 
@@ -75,7 +69,6 @@ public class UiDeskManager : IUiDeskManager
 
         _heightChanged?.Dispose ( ) ;
         _finished?.Dispose ( ) ;
-        _errorSubject?.Dispose ( ) ;
         _onErrorChanged?.Dispose ( ) ;
         _deskProvider?.Dispose ( ) ;
         _tokenSource?.Dispose ( ) ;
@@ -118,8 +111,8 @@ public class UiDeskManager : IUiDeskManager
     {
         _logger?.Debug ( "Executing Stand..." ) ;
 
-        if (!IsDeskConnected())
-            return;
+        if ( ! IsDeskConnected ( ) )
+            return ;
 
         await _manager!.Load ( ) ;
 
@@ -128,11 +121,11 @@ public class UiDeskManager : IUiDeskManager
 
     public async Task Sit ( )
     {
-        if ( !IsDeskConnected ( ) )
+        if ( ! IsDeskConnected ( ) )
             return ;
 
         await _manager!.Load ( )
-                      .ConfigureAwait ( false ) ;
+                       .ConfigureAwait ( false ) ;
 
         _desk?.MoveTo ( _manager.CurrentSettings.HeightSettings.SeatingHeightInCm *
                         100 ) ; // todo duplicate
@@ -182,13 +175,17 @@ public class UiDeskManager : IUiDeskManager
 
     public Task Disconnect ( )
     {
-        if ( !IsDeskConnected ( ) )
+        if ( ! IsDeskConnected ( ) )
         {
             DoDisconnect ( ) ;
         }
 
         return Task.CompletedTask ;
     }
+
+    public StatusBarInfo LastStatusBarInfo { get ; private set ; } = new(0 ,
+                                                                         "Unknown" ,
+                                                                         InfoBarSeverity.Informational) ;
 
     private void DoDisconnect ( )
     {
@@ -211,11 +208,6 @@ public class UiDeskManager : IUiDeskManager
         }
     }
 
-    public IObservable < uint > HeightChanged => _heightChangedSubject ;
-    public IObservable < uint > Finished      => _finishedSubject ;
-
-    public IObservable < string > Connected => _connectSubject ;
-
     private void HotkeyManager_HotkeyAlreadyRegistered ( object ? sender , HotkeyAlreadyRegisteredEventArgs e )
     {
         MessageBox.Show ( $"The hotkey {e.Name} is already registered by another application" ) ;
@@ -229,7 +221,9 @@ public class UiDeskManager : IUiDeskManager
                            details.Message ,
                            visibilityBulbRed : Visibility.Visible ) ;
 
-        _errorSubject.OnNext ( details.Message ) ;
+        OnStatusChanged ( 0 ,
+                          $"[{_desk?.DeviceName}] {details.Message}" ,
+                          InfoBarSeverity.Error ) ;
     }
 
 
@@ -303,7 +297,9 @@ public class UiDeskManager : IUiDeskManager
 
         _logger?.Error ( "Not connected tot desk!" ) ;
 
-        _errorSubject.OnNext ( "Not connected tot desk!" ) ;
+        OnStatusChanged ( 0 ,
+                          "Not connected tot desk!" ,
+                          InfoBarSeverity.Error ) ;
 
         return false ;
     }
@@ -455,9 +451,11 @@ public class UiDeskManager : IUiDeskManager
                                    _desk ,
                                    _taskbarIcon ) ;
 
-        _logger?.Debug ( $"[{_desk?.DeviceName}] Connected successful" ) ;
+        var message = $"Connected successfully to '{_desk?.DeviceName}'.";
 
-        _connectSubject.OnNext ( $"[{_desk?.DeviceName}] Connected successful" ) ;
+        OnStatusChanged ( 0 ,
+                          message ,
+                          InfoBarSeverity.Success ) ;
 
         if ( ! _manager?.CurrentSettings.DeviceSettings.DeviceLocked ?? true )
             return ;
@@ -469,21 +467,40 @@ public class UiDeskManager : IUiDeskManager
 
     private void OnFinishedChanged ( uint height )
     {
-        _logger?.Debug ( $"Height = {height}" ) ;
-
-        var heightInCm = Math.Round ( height / 100.0 ) ;
+        var heightInCm = ( uint ) Math.Round ( height / 100.0 ) ;
 
         ShowFancyBalloon ( "Finished" ,
                            $"Desk height is {heightInCm:F0} cm" ,
                            Visibility.Visible ) ;
 
-        _finishedSubject.OnNext ( height ) ;
+        OnStatusChanged ( heightInCm ,
+                          $"Finished! Desk height is {height} cm" ,
+                          InfoBarSeverity.Success ) ;
     }
 
     private void OnHeightChanged ( uint height )
     {
-        _logger?.Debug ( $"Height Changed = {height}" ) ;
+        var heightInCm = ( uint ) Math.Round ( height / 100.0 ) ;
 
-        _heightChangedSubject.OnNext ( height ) ;
+        var message = $"Moving! Desk height is {heightInCm} cm" ;
+
+        OnStatusChanged ( heightInCm ,
+                          message ,
+                          InfoBarSeverity.Warning ) ;
+    }
+
+    private void OnStatusChanged ( uint            height   = 0 ,
+                                   string          message  = "" ,
+                                   InfoBarSeverity severity = InfoBarSeverity.Informational )
+    {
+        _logger?.Debug ( $"{nameof ( height )} = {height}, " +
+                         $"{nameof ( message )} = {message}, " +
+                         $"{nameof(severity)} = {severity}") ;
+
+        LastStatusBarInfo = new StatusBarInfo ( height ,
+                                                message ,
+                                                severity ) ;
+
+        _statusBarInfoSubject.OnNext ( LastStatusBarInfo ) ;
     }
 }

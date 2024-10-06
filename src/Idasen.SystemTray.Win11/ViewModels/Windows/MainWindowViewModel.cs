@@ -32,7 +32,8 @@ public partial class MainWindowViewModel : ObservableObject , IDisposable
         {
             Symbol = SymbolRegular.ArrowCircleDown20
         } ,
-        TargetPageType = typeof ( StatusPage )
+        TargetPageType = typeof ( StatusPage ),
+        ToolTip        = "Double-Click to move the desk to the sitting position."
     } ;
 
     private static readonly NavigationViewItem StandViewItem = new( )
@@ -42,7 +43,8 @@ public partial class MainWindowViewModel : ObservableObject , IDisposable
         {
             Symbol = SymbolRegular.ArrowCircleUp20
         } ,
-        TargetPageType = typeof ( StatusPage )
+        TargetPageType = typeof ( StatusPage ),
+        ToolTip        = "Double-Click to move the desk to the standing position."
     } ;
 
     private static readonly NavigationViewItem ConnectViewItem = new( )
@@ -52,7 +54,8 @@ public partial class MainWindowViewModel : ObservableObject , IDisposable
         {
             Symbol = SymbolRegular.PlugConnected24
         } ,
-        TargetPageType = typeof ( StatusPage )
+        TargetPageType = typeof ( StatusPage ),
+        ToolTip = "Double-Click to connect to desk."
     } ;
 
     private static readonly NavigationViewItem DisconnectViewItem = new( )
@@ -62,7 +65,8 @@ public partial class MainWindowViewModel : ObservableObject , IDisposable
         {
             Symbol = SymbolRegular.PlugDisconnected24
         } ,
-        TargetPageType = typeof ( StatusPage )
+        TargetPageType = typeof ( StatusPage ),
+        ToolTip = "Double-Click to disconnect desk."
     } ;
 
     private readonly IUiDeskManager _uiDeskManager ;
