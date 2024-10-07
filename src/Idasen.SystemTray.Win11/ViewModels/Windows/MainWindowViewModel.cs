@@ -3,7 +3,6 @@ using System.Windows.Threading ;
 using Autofac ;
 using Hardcodet.Wpf.TaskbarNotification ;
 using Idasen.BluetoothLE.Core ;
-using Idasen.SystemTray.Win11.Settings ;
 using Idasen.SystemTray.Win11.Views.Pages ;
 using JetBrains.Annotations ;
 using Wpf.Ui.Controls ;
@@ -69,7 +68,7 @@ public partial class MainWindowViewModel : ObservableObject , IDisposable
         ToolTip = "Double-Click to disconnect desk."
     } ;
 
-    private readonly IUiDeskManager _uiDeskManager ;
+    private readonly IUiDeskManager   _uiDeskManager ;
 
     [ ObservableProperty ]
     private string _applicationTitle = "Idasen Desk" ;
@@ -106,11 +105,8 @@ public partial class MainWindowViewModel : ObservableObject , IDisposable
     private ObservableCollection < MenuItem > _trayMenuItems = // todo do we need this or does this replace the current notifyicon?
         [new( ) { Header = "Home" , Tag = "tray_home" }] ;
 
-    public MainWindowViewModel ( ISettingsManager manager ,
-                                 IUiDeskManager   uiDeskManager )
+    public MainWindowViewModel ( IUiDeskManager   uiDeskManager )
     {
-        Guard.ArgumentNotNull ( manager ,
-                                nameof ( manager ) ) ;
         Guard.ArgumentNotNull ( uiDeskManager ,
                                 nameof ( uiDeskManager ) ) ;
 

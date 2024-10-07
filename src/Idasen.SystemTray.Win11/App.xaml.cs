@@ -63,6 +63,7 @@ public partial class App
                                                                            services.AddSingleton < SettingsPage > ( ) ;
                                                                            services.AddSingleton < SettingsViewModel > ( ) ;
                                                                            services.AddSingleton < IVersionProvider , VersionProvider > ( ) ;
+                                                                           services.AddSingleton < INotifications , Notifications > ( ) ;
                                                                            services.AddSingleton < ISettingsManager , SettingsManager > ( ) ;
                                                                            services.AddSingleton < ICommonApplicationData , CommonApplicationData > ( ) ;
                                                                            services.AddSingleton < ISettingsStorage , SettingsStorage > ( ) ;

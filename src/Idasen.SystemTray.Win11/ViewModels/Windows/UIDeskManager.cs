@@ -2,7 +2,6 @@
 using System.Reactive.Linq ;
 using System.Reactive.Subjects ;
 using System.Windows.Input ;
-using System.Windows.Threading ;
 using Autofac ;
 using Hardcodet.Wpf.TaskbarNotification ;
 using Idasen.BluetoothLE.Core ;
@@ -10,11 +9,9 @@ using Idasen.BluetoothLE.Linak.Interfaces ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.Settings ;
 using JetBrains.Annotations ;
-using Microsoft.Toolkit.Uwp.Notifications ;
 using NHotkey ;
 using NHotkey.Wpf ;
 using Wpf.Ui.Controls ;
-using Constants = Idasen.BluetoothLE.Characteristics.Common.Constants ;
 using MessageBox = System.Windows.MessageBox ;
 using ILogger = Serilog.ILogger ;
 
@@ -27,6 +24,7 @@ public class UiDeskManager : IUiDeskManager
 
     private readonly ITaskbarIconProvider      _iconProvider ;
     private readonly ISettingsManager ?        _manager ;
+    private readonly INotifications            _notifications ;
     private readonly Subject < StatusBarInfo > _statusBarInfoSubject ;
 
     private IDesk ?         _desk ;
@@ -45,21 +43,25 @@ public class UiDeskManager : IUiDeskManager
     private CancellationTokenSource ? _tokenSource ;
 
     public UiDeskManager ( ISettingsManager     manager ,
-                           ITaskbarIconProvider iconProvider )
+                           ITaskbarIconProvider iconProvider ,
+                           INotifications       notifications )
     {
         Guard.ArgumentNotNull ( manager ,
                                 nameof ( manager ) ) ;
         Guard.ArgumentNotNull ( iconProvider ,
                                 nameof ( iconProvider ) ) ;
+        Guard.ArgumentNotNull ( notifications ,
+                                nameof ( notifications ) ) ;
 
         _manager              = manager ;
         _iconProvider         = iconProvider ;
+        _notifications        = notifications ;
         _statusBarInfoSubject = new Subject < StatusBarInfo > ( ) ;
     }
 
     public IObservable < StatusBarInfo > StatusBarInfoChanged => _statusBarInfoSubject ;
 
-    public bool IsInitialize => _logger != null && _manager != null ; // todo  && _provider != null ;
+    public bool IsInitialize => _logger != null && _manager != null ;
 
     public void Dispose ( )
     {
@@ -100,6 +102,8 @@ public class UiDeskManager : IUiDeskManager
 
         HotkeyManager.Current.AddOrReplace ( "Increment" , IncrementGesture , OnGlobalHotKeyStanding ) ;
         HotkeyManager.Current.AddOrReplace ( "Decrement" , DecrementGesture , OnGlobalHotKeySeating ) ;
+
+        _notifications.Initialize ( container ) ;
 
         // ReSharper disable once AsyncVoidLambda
         Task.Run ( new Action ( async ( ) => { await AutoConnect ( ) ; } ) ) ;
@@ -154,9 +158,9 @@ public class UiDeskManager : IUiDeskManager
             await Task.Delay ( TimeSpan.FromSeconds ( 3 ) ,
                                _token.Value ) ;
 
-            ShowFancyBalloon ( "Auto Connect" ,
-                               "Trying to auto connect to Idasen Desk..." ,
-                               visibilityBulbYellow : Visibility.Visible ) ;
+            _notifications.Show ( "Auto Connect" ,
+                                  "Trying to auto connect to Idasen Desk..." ,
+                                  visibilityBulbYellow : Visibility.Visible ) ;
 
             await Connect ( ) ;
         }
@@ -217,12 +221,9 @@ public class UiDeskManager : IUiDeskManager
     {
         _logger?.Error ( $"[{_desk?.DeviceName}] {details.Message}" ) ;
 
-        ShowFancyBalloon ( "Error" ,
-                           details.Message ,
-                           visibilityBulbRed : Visibility.Visible ) ;
-
         OnStatusChanged ( 0 ,
-                          $"[{_desk?.DeviceName}] {details.Message}" ,
+                          "Error" ,
+                          $"'{_desk?.DeviceName}' {details.Message}" ,
                           InfoBarSeverity.Error ) ;
     }
 
@@ -298,6 +299,7 @@ public class UiDeskManager : IUiDeskManager
         _logger?.Error ( "Not connected tot desk!" ) ;
 
         OnStatusChanged ( 0 ,
+                          "Not Connected" ,
                           "Not connected tot desk!" ,
                           InfoBarSeverity.Error ) ;
 
@@ -353,51 +355,6 @@ public class UiDeskManager : IUiDeskManager
             throw new Exception ( "Initialize needs to be called first!" ) ;
     }
 
-    // todo this ui stuff should ne in MainWindowViewModel
-    private void ShowFancyBalloon ( string     title ,
-                                    string     text ,
-                                    Visibility visibilityBulbGreen  = Visibility.Hidden ,
-                                    Visibility visibilityBulbYellow = Visibility.Hidden ,
-                                    Visibility visibilityBulbRed    = Visibility.Hidden )
-    {
-        if ( _manager is { CurrentSettings.NotificationsEnabled: false } )
-        {
-            _logger?.Information ( $"Notifications are disabled. " +
-                                   $"Title = '{title}' "           +
-                                   $"Text = '{text}'" ) ;
-
-            return ;
-        }
-
-        if ( ! Dispatcher.CurrentDispatcher.CheckAccess ( ) )
-        {
-            _logger?.Debug ( "Dispatching call on UI thread" ) ;
-
-            Dispatcher.CurrentDispatcher.BeginInvoke ( new Action ( ( ) => ShowFancyBalloon ( title ,
-                                                                                              text ,
-                                                                                              visibilityBulbGreen ,
-                                                                                              visibilityBulbYellow ,
-                                                                                              visibilityBulbRed ) ) ) ;
-
-            return ;
-        }
-
-        _logger?.Debug ( $"Title = '{title}', "                              +
-                         $"Text = '{text}', "                                +
-                         $"visibilityBulbGreen = '{visibilityBulbGreen}', "  +
-                         $"visibilityBulbYellow = '{visibilityBulbYellow}' " +
-                         $"visibilityBulbRed = '{visibilityBulbRed}'" ) ;
-
-        // Requires Microsoft.Toolkit.Uwp.Notifications NuGet package version 7.0 or greater
-        var builder = new ToastContentBuilder ( ) ;
-        builder.AddText ( title ) ;
-        builder.AddText ( text ) ; // todo image balloon
-
-        // Not seeing the Show() method? Make sure you have version 7.0, and if you're using .NET 6 (or later), then your TFM must be net6.0-windows10.0.17763.0 or greater
-        // Try running this code and you should see the notification appear!
-        builder.Show ( ) ;
-    }
-
 
     private void ConnectFailed ( )
     {
@@ -405,11 +362,7 @@ public class UiDeskManager : IUiDeskManager
 
         Disconnect ( ) ;
 
-        ShowFancyBalloon ( "Failed to Connect" ,
-                           Constants.CheckAndEnableBluetooth ,
-                           visibilityBulbRed : Visibility.Visible ) ;
-
-        _errorManager?.PublishForMessage ( "Failed to connect" ) ;
+        _errorManager?.PublishForMessage ( "Failed to connect" ) ; // todo
     }
 
     private void DisposeDesk ( )
@@ -441,19 +394,20 @@ public class UiDeskManager : IUiDeskManager
                               .ObserveOn ( Scheduler.Default )
                               .Subscribe ( OnHeightChanged ) ;
 
-        ShowFancyBalloon ( "Success" ,
-                           "Connected to desk: " +
-                           Environment.NewLine   +
-                           $"'{desk.Name}'" ,
-                           Visibility.Visible ) ;
+        _notifications.Show ( "Success" ,
+                              "Connected to desk: " +
+                              Environment.NewLine   +
+                              $"'{desk.Name}'" ,
+                              Visibility.Visible ) ;
 
         _iconProvider.Initialize ( _logger! ,
                                    _desk ,
                                    _taskbarIcon ) ;
 
-        var message = $"Connected successfully to '{_desk?.DeviceName}'.";
+        var message = $"Connected successfully to '{_desk?.DeviceName}'." ;
 
         OnStatusChanged ( 0 ,
+                          "Connected" ,
                           message ,
                           InfoBarSeverity.Success ) ;
 
@@ -469,11 +423,8 @@ public class UiDeskManager : IUiDeskManager
     {
         var heightInCm = ( uint ) Math.Round ( height / 100.0 ) ;
 
-        ShowFancyBalloon ( "Finished" ,
-                           $"Desk height is {heightInCm:F0} cm" ,
-                           Visibility.Visible ) ;
-
         OnStatusChanged ( heightInCm ,
+                          "Finished" ,
                           $"Finished! Desk height is {height} cm" ,
                           InfoBarSeverity.Success ) ;
     }
@@ -482,25 +433,34 @@ public class UiDeskManager : IUiDeskManager
     {
         var heightInCm = ( uint ) Math.Round ( height / 100.0 ) ;
 
-        var message = $"Moving! Desk height is {heightInCm} cm" ;
+        var message = $"Desk height is {heightInCm} cm" ;
 
         OnStatusChanged ( heightInCm ,
+                          "Height Changed" ,
                           message ,
                           InfoBarSeverity.Warning ) ;
     }
 
-    private void OnStatusChanged ( uint            height   = 0 ,
-                                   string          message  = "" ,
-                                   InfoBarSeverity severity = InfoBarSeverity.Informational )
+    private void OnStatusChanged ( uint            height     = 0 ,
+                                   string          title      = "" ,
+                                   string          message    = "" ,
+                                   InfoBarSeverity severity   = InfoBarSeverity.Informational ,
+                                   Visibility      visibility = Visibility.Visible )
     {
-        _logger?.Debug ( $"{nameof ( height )} = {height}, " +
-                         $"{nameof ( message )} = {message}, " +
-                         $"{nameof(severity)} = {severity}") ;
+        _logger?.Debug ( $"{nameof ( height )} = {height}, "     +
+                         $"{nameof ( title )} = {title}, "       +
+                         $"{nameof ( message )} = {message}, "   +
+                         $"{nameof ( severity )} = {severity}, " +
+                         $"{nameof ( visibility )} = {visibility}" ) ;
 
         LastStatusBarInfo = new StatusBarInfo ( height ,
                                                 message ,
                                                 severity ) ;
 
         _statusBarInfoSubject.OnNext ( LastStatusBarInfo ) ;
+
+        _notifications.Show ( title ,
+                              message ,
+                              visibility ) ;
     }
 }
