@@ -1,4 +1,5 @@
 ﻿using Autofac ;
+using Wpf.Ui.Tray.Controls ;
 
 namespace Idasen.SystemTray.Win11.ViewModels.Windows ;
 
@@ -10,5 +11,5 @@ public interface INotifications
                             Visibility visibilityBulbYellow = Visibility.Hidden ,
                             Visibility visibilityBulbRed    = Visibility.Hidden ) ;
 
-    INotifications Initialize ( IContainer container ) ;
+    INotifications Initialize ( IContainer container , NotifyIcon notifyIcon ) ;
 }

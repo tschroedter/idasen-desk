@@ -3,7 +3,6 @@ using System.Reactive.Linq ;
 using System.Reactive.Subjects ;
 using System.Windows.Input ;
 using Autofac ;
-using Hardcodet.Wpf.TaskbarNotification ;
 using Idasen.BluetoothLE.Core ;
 using Idasen.BluetoothLE.Linak.Interfaces ;
 using Idasen.SystemTray.Win11.Interfaces ;
@@ -12,6 +11,7 @@ using JetBrains.Annotations ;
 using NHotkey ;
 using NHotkey.Wpf ;
 using Wpf.Ui.Controls ;
+using Wpf.Ui.Tray.Controls ;
 using MessageBox = System.Windows.MessageBox ;
 using ILogger = Serilog.ILogger ;
 
@@ -30,7 +30,7 @@ public class UiDeskManager : IUiDeskManager
     private IDesk ?         _desk ;
     private IDeskProvider ? _deskProvider ;
     private IErrorManager ? _errorManager ;
-    private IDisposable ?   _finished ;
+    private IDisposable ?   _finished ; 
     private IDisposable ?   _heightChanged ;
     private ILogger ?       _logger ;
 
@@ -38,9 +38,9 @@ public class UiDeskManager : IUiDeskManager
     private IDisposable ? _onErrorChanged ;
 
     private Func < IDeskProvider > ?  _providerFactory ;
-    private TaskbarIcon ?             _taskbarIcon ;
     private CancellationToken ?       _token ;
     private CancellationTokenSource ? _tokenSource ;
+    private NotifyIcon ?              _notifyIcon ;
 
     public UiDeskManager ( ISettingsManager     manager ,
                            ITaskbarIconProvider iconProvider ,
@@ -76,14 +76,15 @@ public class UiDeskManager : IUiDeskManager
         _tokenSource?.Dispose ( ) ;
     }
 
-    public UiDeskManager Initialize ( IContainer container , TaskbarIcon taskbarIcon )
+    public UiDeskManager Initialize ( IContainer container , NotifyIcon notifyIcon )
     {
         Guard.ArgumentNotNull ( container ,
                                 nameof ( container ) ) ;
-        Guard.ArgumentNotNull ( taskbarIcon ,
-                                nameof ( taskbarIcon ) ) ;
+        Guard.ArgumentNotNull ( notifyIcon ,
+                                nameof ( notifyIcon ) ) ;
 
-        _taskbarIcon     = taskbarIcon ;
+        _notifyIcon = notifyIcon ;
+
         _logger          = container.Resolve < ILogger > ( ) ;
         _providerFactory = container.Resolve < Func < IDeskProvider > > ( ) ;
         _errorManager    = container.Resolve < IErrorManager > ( ) ;
@@ -103,7 +104,7 @@ public class UiDeskManager : IUiDeskManager
         HotkeyManager.Current.AddOrReplace ( "Increment" , IncrementGesture , OnGlobalHotKeyStanding ) ;
         HotkeyManager.Current.AddOrReplace ( "Decrement" , DecrementGesture , OnGlobalHotKeySeating ) ;
 
-        _notifications.Initialize ( container ) ;
+        _notifications.Initialize ( container, notifyIcon ) ;
 
         // ReSharper disable once AsyncVoidLambda
         Task.Run ( new Action ( async ( ) => { await AutoConnect ( ) ; } ) ) ;
@@ -402,7 +403,7 @@ public class UiDeskManager : IUiDeskManager
 
         _iconProvider.Initialize ( _logger! ,
                                    _desk ,
-                                   _taskbarIcon ) ;
+                                   _notifyIcon ) ;
 
         var message = $"Connected successfully to '{_desk?.DeviceName}'." ;
 

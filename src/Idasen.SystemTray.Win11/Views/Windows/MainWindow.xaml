@@ -6,7 +6,7 @@
     xmlns:local="clr-namespace:Idasen.SystemTray.Win11.Views.Windows"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-    xmlns:tb="http://www.hardcodet.net/taskbar"
+    xmlns:tray="http://schemas.lepo.co/wpfui/2022/xaml/tray"
     Title="{Binding ViewModel.ApplicationTitle, Mode=OneWay}"
     Width="640"
     Height="520"
@@ -64,5 +64,16 @@
 
         <ContentPresenter x:Name="RootContentDialog" Grid.Row="0" />
 
+        <tray:NotifyIcon
+            Name="IdasenNotifyIcon"
+            Grid.Row="0"
+            FocusOnLeftClick="True"
+            Icon="pack://application:,,,/Assets/cup-xxl.png"
+            MenuOnRightClick="True"
+            TooltipText="WPF UI - MVVM Demo">
+            <tray:NotifyIcon.Menu>
+                <ContextMenu ItemsSource="{Binding ViewModel.TrayMenuItems, Mode=OneWay}" />
+            </tray:NotifyIcon.Menu>
+        </tray:NotifyIcon>
     </Grid>
 </ui:FluentWindow>

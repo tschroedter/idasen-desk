@@ -23,16 +23,18 @@
     </ContextMenu>
 
     <!-- the application's NotifyIcon - started from App.xaml.cs. Declares its own view model. -->
+    <!-- todo mv Notifiicon caml here
     <tb:TaskbarIcon x:Key="NotifyIcon"
                     IconSource="/Resources/cup-xl.ico"
                     ToolTipText="Double-click for window, right-click for menu"
                     DoubleClickCommand="{Binding ShowSettingsCommand}"
                     ContextMenu="{StaticResource SysTrayMenu}">
-
+    -->
         <!-- self-assign a data context (could also be done programmatically) -->
+            <!--
         <tb:TaskbarIcon.DataContext>
             <windows:MainWindowViewModel />
         </tb:TaskbarIcon.DataContext>
     </tb:TaskbarIcon>
-
+    -->
 </ResourceDictionary>

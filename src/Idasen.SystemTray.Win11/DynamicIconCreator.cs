@@ -1,14 +1,13 @@
 ﻿using System.Drawing ;
-using Hardcodet.Wpf.TaskbarNotification ;
 using Idasen.BluetoothLE.Core ;
-using JetBrains.Annotations ;
+using Wpf.Ui.Tray.Controls ;
 
 namespace Idasen.SystemTray.Win11
 {
     public class DynamicIconCreator : IDynamicIconCreator
     {
-        public void Update ( [ NotNull ] TaskbarIcon taskbarIcon ,
-                             int                     height )
+        public void Update ( NotifyIcon taskbarIcon ,
+                             int           height )
         {
             Guard.ArgumentNotNull ( taskbarIcon ,
                                     nameof ( taskbarIcon ) ) ;
@@ -60,9 +59,9 @@ namespace Idasen.SystemTray.Win11
             return Icon.FromHandle ( icon ) ;
         }
 
-        private void PushIcons ( TaskbarIcon taskbarIcon ,
-                                 Icon        icon ,
-                                 int         value )
+        private void PushIcons (NotifyIcon taskbarIcon ,
+                                Icon       icon ,
+                                int        value )
         {
             if ( ! taskbarIcon.Dispatcher.CheckAccess ( ) )
             {
@@ -75,8 +74,8 @@ namespace Idasen.SystemTray.Win11
             }
 
             //push the icons to the system tray
-            taskbarIcon.Icon        = icon ;
-            taskbarIcon.ToolTipText = $"Desk Height: {value}cm" ;
+            taskbarIcon.Icon        = icon.ToImageSource() ;
+            // todo taskbarIcon.ToolTipText = $"Desk Height: {value}cm" ;
         }
 
         private readonly Color _brushDarkBlue  = ColorTranslator.FromHtml ( "#FF0048A3" ) ;

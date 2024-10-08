@@ -4,6 +4,7 @@ using Idasen.BluetoothLE.Core ;
 using Idasen.SystemTray.Win11.Settings ;
 using Microsoft.Toolkit.Uwp.Notifications ;
 using Serilog ;
+using Wpf.Ui.Tray.Controls ;
 
 namespace Idasen.SystemTray.Win11.ViewModels.Windows ;
 
@@ -64,7 +65,7 @@ public class Notifications : INotifications
         builder.Show ( ) ;
     }
 
-    public INotifications Initialize ( IContainer container )
+    public INotifications Initialize ( IContainer container , NotifyIcon notifyIcon )
     {
         Guard.ArgumentNotNull ( container ,
                                 nameof ( container ) ) ;

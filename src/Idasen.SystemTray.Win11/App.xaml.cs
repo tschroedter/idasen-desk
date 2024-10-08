@@ -2,9 +2,10 @@
 using System.IO;
 using System.Reactive.Concurrency ;
 using System.Reflection;
+using System.Windows.Media ;
+using System.Windows.Shell ;
 using System.Windows.Threading;
 using Autofac ;
-using Hardcodet.Wpf.TaskbarNotification;
 using Idasen.Launcher;
 using Idasen.SystemTray.Win11.Interfaces;
 using Idasen.SystemTray.Win11.Services;
@@ -21,6 +22,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Wpf.Ui;
+using Wpf.Ui.Tray.Controls ;
 
 namespace Idasen.SystemTray.Win11;
 
@@ -116,21 +118,14 @@ public partial class App
         UnhandledExceptionsHandler.RegisterGlobalExceptionHandling ( ) ;
 
         Host.Start ( ) ;
-        
-        var notifyIcon = new TaskbarIcon
-        {
-            Icon        = GetIconFromContent ( "Resources/cup-xl.ico" ) , // Replace with the correct relative path
-            ToolTipText = "Your Application" ,
-            Visibility  = Visibility.Visible
-        } ;
-
-        notifyIcon.TrayMouseDoubleClick += NotifyIcon_DoubleClick ;
 
         _logger.Information ( "##### Startup..." ) ;
 
         var configurationProvider = GetService<IIdasenConfigurationProvider>(); 
 
         _container = ContainerProvider.Create(configurationProvider!.GetConfiguration (  )); // todo only use one container
+
+        var notifyIcon = FindNotifyIcon();
 
         var main = GetService < MainWindowViewModel > ( ) ;
 
@@ -201,4 +196,37 @@ public partial class App
                                                                      Constants.LogFilename ) ;
 
     private IContainer ? _container ;
+
+        private static NotifyIcon FindNotifyIcon()
+    {
+        if (Application.Current.MainWindow != null && !Application.Current.MainWindow.CheckAccess())
+        {
+            Application.Current.MainWindow.Dispatcher.BeginInvoke(new Action(() => FindNotifyIcon()));
+        }
+
+        IEnumerable < NotifyIcon > notifyIcons = FindVisualChildren<NotifyIcon> (Application.Current.MainWindow) ;
+
+        return notifyIcons.FirstOrDefault();
+    }
+
+    public static IEnumerable<T> FindVisualChildren<T>(DependencyObject parent)
+        where T : DependencyObject
+    {
+        int childrenCount = VisualTreeHelper.GetChildrenCount(parent);
+        for (int i = 0; i < childrenCount; i++)
+        {
+            var child = VisualTreeHelper.GetChild(parent, i);
+
+            var childType = child as T;
+            if (childType != null)
+            {
+                yield return (T)child;
+            }
+
+            foreach (var other in FindVisualChildren<T>(child))
+            {
+                yield return other;
+            }
+        }
+    }
 }

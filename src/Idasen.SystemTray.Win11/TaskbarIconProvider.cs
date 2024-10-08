@@ -1,11 +1,12 @@
 ﻿using System.Reactive.Concurrency ;
 using System.Reactive.Linq ;
-using Hardcodet.Wpf.TaskbarNotification ;
+using System.Windows.Threading ;
 using Idasen.BluetoothLE.Core ;
 using Idasen.BluetoothLE.Linak ;
 using Idasen.BluetoothLE.Linak.Interfaces ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Serilog ;
+using Wpf.Ui.Tray.Controls ;
 
 namespace Idasen.SystemTray.Win11 ;
 
@@ -28,7 +29,7 @@ public class TaskbarIconProvider : ITaskbarIconProvider
         _creator   = creator ;
     }
 
-    public TaskbarIcon ? NotifyIcon { get ; private set ; }
+    public NotifyIcon ? NotifyIcon { get ; private set ; }
 
 
     public void Dispose ( )
@@ -37,16 +38,16 @@ public class TaskbarIconProvider : ITaskbarIconProvider
         _disposable?.Dispose ( ) ;
     }
 
-    public void Initialize ( ILogger       logger ,
-                             IDesk         desk ,
-                             TaskbarIcon ? notifyIcon )
+    public void Initialize ( ILogger      logger ,
+                             IDesk        desk ,
+                             NotifyIcon ? notifyIcon )
     {
         Guard.ArgumentNotNull ( logger ,
                                 nameof ( logger ) ) ;
         Guard.ArgumentNotNull ( desk ,
                                 nameof ( desk ) ) ;
         _logger    = logger ;
-        NotifyIcon = notifyIcon ;
+        NotifyIcon = notifyIcon;
 
         _disposable = desk.HeightAndSpeedChanged
                           .ObserveOn ( _scheduler )

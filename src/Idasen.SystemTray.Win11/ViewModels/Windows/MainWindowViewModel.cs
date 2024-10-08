@@ -1,11 +1,11 @@
 ﻿using System.Collections.ObjectModel ;
 using System.Windows.Threading ;
 using Autofac ;
-using Hardcodet.Wpf.TaskbarNotification ;
 using Idasen.BluetoothLE.Core ;
 using Idasen.SystemTray.Win11.Views.Pages ;
 using JetBrains.Annotations ;
 using Wpf.Ui.Controls ;
+using Wpf.Ui.Tray.Controls ;
 using ILogger = Serilog.ILogger ;
 using MessageBox = Wpf.Ui.Controls.MessageBox ;
 using MessageBoxResult = Wpf.Ui.Controls.MessageBoxResult ;
@@ -99,8 +99,6 @@ public partial class MainWindowViewModel : ObservableObject , IDisposable
     [ UsedImplicitly ]
     private IDisposable ? _onErrorChanged ;
 
-    private TaskbarIcon ? _taskbarIcon ;
-
     [ ObservableProperty ]
     private ObservableCollection < MenuItem > _trayMenuItems = // todo do we need this or does this replace the current notifyicon?
         [new( ) { Header = "Home" , Tag = "tray_home" }] ;
@@ -125,7 +123,6 @@ public partial class MainWindowViewModel : ObservableObject , IDisposable
         _uiDeskManager.Disconnect ( ) ;
 
         _uiDeskManager.Dispose ( ) ;
-        _taskbarIcon?.Dispose ( ) ;
     }
 
     private void OnClickSitViewItem ( object sender , RoutedEventArgs e )
@@ -236,19 +233,15 @@ public partial class MainWindowViewModel : ObservableObject , IDisposable
                                                    } ) ;
     }
 
-    public MainWindowViewModel Initialize ( IContainer container , TaskbarIcon taskbarIcon )
+    public MainWindowViewModel Initialize ( IContainer container , NotifyIcon notifyIcon )
     {
         Guard.ArgumentNotNull ( container ,
                                 nameof ( container ) ) ;
-        Guard.ArgumentNotNull ( taskbarIcon ,
-                                nameof ( taskbarIcon ) ) ;
-
-        _taskbarIcon = taskbarIcon ;
 
         _logger = container.Resolve < ILogger > ( ) ;
         _logger?.Debug ( $"{nameof ( MainWindowViewModel )}: Initializing..." ) ;
 
-        _uiDeskManager.Initialize ( container , taskbarIcon ) ;
+        _uiDeskManager.Initialize ( container, notifyIcon ) ;
 
         return this ;
     }
