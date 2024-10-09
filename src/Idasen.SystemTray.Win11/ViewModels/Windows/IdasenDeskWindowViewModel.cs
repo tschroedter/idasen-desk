@@ -17,7 +17,7 @@ using NotifyIcon = Wpf.Ui.Tray.Controls.NotifyIcon ;
 
 namespace Idasen.SystemTray.Win11.ViewModels.Windows ;
 
-public partial class MainWindowViewModel : ObservableObject , IDisposable
+public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
 {
     private static readonly NavigationViewItem HomeViewItem = new( )
     {
@@ -108,7 +108,7 @@ public partial class MainWindowViewModel : ObservableObject , IDisposable
     [ ObservableProperty ]
     private ObservableCollection < MenuItem > _trayMenuItems ;
 
-    public MainWindowViewModel (IServiceProvider serviceProvider,
+    public IdasenDeskWindowViewModel (IServiceProvider serviceProvider,
                                 IUiDeskManager uiDeskManager )
     {
         Guard.ArgumentNotNull ( serviceProvider ,
@@ -410,13 +410,13 @@ public partial class MainWindowViewModel : ObservableObject , IDisposable
                                                    } ) ;
     }
 
-    public MainWindowViewModel Initialize ( IContainer container , NotifyIcon notifyIcon )
+    public IdasenDeskWindowViewModel Initialize ( IContainer container , NotifyIcon notifyIcon )
     {
         Guard.ArgumentNotNull ( container ,
                                 nameof ( container ) ) ;
 
         _logger = container.Resolve < ILogger > ( ) ;
-        _logger?.Debug ( $"{nameof ( MainWindowViewModel )}: Initializing..." ) ;
+        _logger?.Debug ( $"{nameof ( IdasenDeskWindowViewModel )}: Initializing..." ) ;
 
         _uiDeskManager.Initialize ( container , notifyIcon ) ;
 

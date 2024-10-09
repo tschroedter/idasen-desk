@@ -7,9 +7,9 @@ using Wpf.Ui.Controls ;
 
 namespace Idasen.SystemTray.Win11.Views.Windows ;
 
-public partial class MainWindow : INavigationWindow
+public partial class IdasenDeskWindow : INavigationWindow
 {
-    public MainWindow ( MainWindowViewModel viewModel ,
+    public IdasenDeskWindow ( IdasenDeskWindowViewModel viewModel ,
                         IPageService        pageService ,
                         INavigationService  navigationService ,
                         IVersionProvider    versionProvider )
@@ -30,7 +30,7 @@ public partial class MainWindow : INavigationWindow
                             ] ) ;
     }
 
-    public MainWindowViewModel ViewModel { get ; }
+    public IdasenDeskWindowViewModel ViewModel { get ; }
 
     INavigationView INavigationWindow.GetNavigation ( )
     {

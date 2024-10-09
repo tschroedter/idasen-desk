@@ -56,8 +56,8 @@ public partial class App
                                                                            services.AddSingleton < INavigationService , NavigationService > ( ) ;
 
                                                                            // Main window with navigation
-                                                                           services.AddSingleton < INavigationWindow , MainWindow > ( ) ;
-                                                                           services.AddSingleton < MainWindowViewModel > ( ) ;
+                                                                           services.AddSingleton < INavigationWindow , IdasenDeskWindow > ( ) ;
+                                                                           services.AddSingleton < IdasenDeskWindowViewModel > ( ) ;
                                                                            services.AddSingleton < HomePage > ( ) ;
                                                                            services.AddSingleton < DashboardViewModel > ( ) ;
                                                                            services.AddSingleton < StatusPage > ( ) ;
@@ -127,7 +127,7 @@ public partial class App
 
         var notifyIcon = FindNotifyIcon();
 
-        var main = GetService < MainWindowViewModel > ( ) ;
+        var main = GetService < IdasenDeskWindowViewModel > ( ) ;
 
         main!.Initialize(_container, notifyIcon);
 

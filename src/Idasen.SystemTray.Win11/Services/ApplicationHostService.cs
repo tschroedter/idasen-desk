@@ -35,7 +35,7 @@ public class ApplicationHostService ( IServiceProvider serviceProvider ) : IHost
     /// </summary>
     private async Task HandleActivationAsync ( )
     {
-        if ( ! Application.Current.Windows.OfType < MainWindow > ( ).Any ( ) )
+        if ( ! Application.Current.Windows.OfType < IdasenDeskWindow > ( ).Any ( ) )
         {
             _navigationWindow = (
                                     serviceProvider.GetService ( typeof ( INavigationWindow ) ) as INavigationWindow
