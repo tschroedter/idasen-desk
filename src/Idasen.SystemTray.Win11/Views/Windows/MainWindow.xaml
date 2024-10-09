@@ -66,14 +66,15 @@
 
         <tray:NotifyIcon
             Name="IdasenNotifyIcon"
-            Grid.Row="0"
             FocusOnLeftClick="True"
             Icon="pack://application:,,,/Assets/cup-xxl.png"
             MenuOnRightClick="True"
-            TooltipText="WPF UI - MVVM Demo">
+            TooltipText="{Binding ViewModel.TrayMenuItems}">
+            <!-- ContextMenu set in code
             <tray:NotifyIcon.Menu>
                 <ContextMenu ItemsSource="{Binding ViewModel.TrayMenuItems, Mode=OneWay}" />
             </tray:NotifyIcon.Menu>
+            -->
         </tray:NotifyIcon>
     </Grid>
 </ui:FluentWindow>
