@@ -5,25 +5,27 @@ namespace Idasen.SystemTray.Win11.Utils
     /// <summary>
     ///     Simplistic delegate command for the demo.
     /// </summary>
-    public class DelegateCommand : ICommand
+    public class DelegateCommand ( Action        commandAction ,
+                                   Func < bool > canExecuteFunc )
+        : ICommand
     {
-        public void Execute ( object parameter )
+        public void Execute ( object ? parameter )
         {
             CommandAction ( ) ;
         }
 
-        public bool CanExecute ( object parameter )
+        public bool CanExecute ( object ? parameter )
         {
-            return CanExecuteFunc == null || CanExecuteFunc ( ) ;
+            return CanExecuteFunc ( ) ;
         }
 
-        public event EventHandler CanExecuteChanged
+        public event EventHandler ? CanExecuteChanged
         {
             add => CommandManager.RequerySuggested += value ;
             remove => CommandManager.RequerySuggested -= value ;
         }
 
-        public Action        CommandAction  { get ; set ; }
-        public Func < bool > CanExecuteFunc { get ; set ; }
+        public Action        CommandAction  { get ; set ; } = commandAction ;
+        public Func < bool > CanExecuteFunc { get ; set ; } = canExecuteFunc ;
     }
 }

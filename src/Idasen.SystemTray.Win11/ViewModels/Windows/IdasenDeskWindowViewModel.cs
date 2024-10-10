@@ -171,94 +171,52 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
     ///     Shows a window, if none is already open.
     /// </summary>
     public ICommand ShowSettingsCommand =>
-        new DelegateCommand
-        {
-            CanExecuteFunc = CanShowSettings ,
-            CommandAction  = DoShowSettings
-        } ;
+        new DelegateCommand ( DoShowSettings , CanShowSettings ) ;
 
     /// <summary>
     ///     Hides the main window. This command is only enabled if a window is open.
     /// </summary>
     public ICommand HideSettingsCommand =>
-        new DelegateCommand
-        {
-            CommandAction  = DoHideSettings ,
-            CanExecuteFunc = CanHideSettings
-        } ;
+        new DelegateCommand(DoHideSettings,CanHideSettings) ;
 
     /// <summary>
     ///     Connects to the Idasen Desk.
     /// </summary>
-    public ICommand ConnectCommand
-    {
-        get
-        {
-            return new DelegateCommand
-            {
-                // ReSharper disable once AsyncVoidLambda
-                CommandAction  = async ( ) => await _uiDeskManager.AutoConnect ( ) ,
-                CanExecuteFunc = ( ) => _uiDeskManager.IsInitialize
-            } ;
-        }
-    }
+    public ICommand ConnectCommand =>
+        // ReSharper disable once AsyncVoidLambda
+        new DelegateCommand ( async ( ) => await _uiDeskManager.AutoConnect ( ) ,
+                              ( ) => _uiDeskManager.IsInitialize ) ;
 
     /// <summary>
     ///     Disconnects from the Idasen Desk.
     /// </summary>
-    public ICommand DisconnectCommand
-    {
-        get
-        {
-            return new DelegateCommand
-            {
-                // ReSharper disable once AsyncVoidLambda
-                CommandAction  = async ( ) => await _uiDeskManager.Disconnect ( ) ,
-                CanExecuteFunc = ( ) => _uiDeskManager.IsInitialize
-            } ;
-        }
-    }
+    public ICommand DisconnectCommand =>
+        // ReSharper disable once AsyncVoidLambda
+        new DelegateCommand ( async ( ) => await _uiDeskManager.Disconnect ( ) ,
+                              ( ) => _uiDeskManager.IsInitialize ) ;
 
     /// <summary>
     ///     Moves the desk to the standing height.
     /// </summary>
-    public ICommand StandingCommand
-    {
-        get
-        {
-            return new DelegateCommand
-            {
-                // ReSharper disable once AsyncVoidLambda
-                CommandAction  = async ( ) => await _uiDeskManager.Stand ( ) ,
-                CanExecuteFunc = ( ) => _uiDeskManager.IsInitialize
-            } ;
-        }
-    }
+    public ICommand StandingCommand =>
+        // ReSharper disable once AsyncVoidLambda
+        new DelegateCommand ( async ( ) => await _uiDeskManager.Stand ( ) ,
+                              ( ) => _uiDeskManager.IsInitialize ) ;
 
     /// <summary>
     ///     Moves the desk to the seating height.
     /// </summary>
-    public ICommand SeatingCommand
-    {
-        get
-        {
-            return new DelegateCommand
-            {
-                // ReSharper disable once AsyncVoidLambda
-                CommandAction  = async ( ) => await _uiDeskManager.Sit ( ) ,
-                CanExecuteFunc = ( ) => _uiDeskManager.IsInitialize
-            } ;
-        }
-    }
+    public ICommand SeatingCommand =>
+        // ReSharper disable once AsyncVoidLambda
+        new DelegateCommand ( async ( ) => await _uiDeskManager.Sit ( ) ,
+                              ( ) => _uiDeskManager.IsInitialize ) ;
 
     /// <summary>
     ///     Shuts down the application.
     /// </summary>
     public ICommand ExitApplicationCommand =>
-        new DelegateCommand
-        {
-            CommandAction = DoExitApplication
-        } ;
+        // ReSharper disable once AsyncVoidLambda
+        new DelegateCommand ( DoExitApplication, ( ) => true ) ;
 
     public void Dispose ( )
     {
