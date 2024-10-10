@@ -154,7 +154,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
 
     private static bool CanShowSettings ( )
     {
-        return Application.Current.MainWindow != null && Application.Current.MainWindow.Visibility == Visibility.Collapsed ;
+        return Application.Current.MainWindow != null && Application.Current.MainWindow.Visibility != Visibility.Visible ;
     }
 
     /// <summary>
@@ -174,7 +174,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
 
     private static bool CanHideSettings ( )
     {
-        return Application.Current.MainWindow != null && Application.Current.MainWindow.Visibility == Visibility.Hidden ;
+        return Application.Current.MainWindow != null && Application.Current.MainWindow.Visibility != Visibility.Hidden ;
     }
 
     /// <summary>
@@ -266,7 +266,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
     {
         _logger?.Debug($"{nameof(HideSettingsCommand)}");
 
-        Application.Current.MainWindow.Visibility = Visibility.Collapsed;
+        Application.Current.MainWindow.Visibility = Visibility.Hidden;
 
         /* todo: implement
         SettingsWindow.AdvancedSettingsChanged -= OnAdvancedSettingsChanged;

@@ -21,7 +21,9 @@
     WindowBackdropType="Mica"
     WindowCornerPreference="Round"
     WindowStartupLocation="CenterScreen"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    ShowInTaskbar="False"
+    WindowStyle="None">
     <ui:FluentWindow.InputBindings>
         <KeyBinding
             Key="F"
@@ -34,7 +36,8 @@
             x:Name="TitleBar"
             Title="{Binding ViewModel.ApplicationTitle}"
             Grid.Row="0"
-            CloseWindowByDoubleClickOnIcon="True">
+            CloseWindowByDoubleClickOnIcon="True"
+            ShowClose="False">
             <ui:TitleBar.Icon>
                 <ui:ImageIcon Source="pack://application:,,,/Resources/cup-xl.ico" />
             </ui:TitleBar.Icon>
