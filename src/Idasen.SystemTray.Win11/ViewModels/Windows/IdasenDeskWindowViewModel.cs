@@ -73,8 +73,40 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
         ToolTip        = "Double-Click to disconnect desk."
     } ;
 
-    private readonly IServiceProvider _serviceProvider ;
-    private readonly IUiDeskManager   _uiDeskManager ;
+    private static readonly NavigationViewItem CloseWindowViewItem = new( )
+    {
+        Content = "Hide" ,
+        Icon = new SymbolIcon
+        {
+            Symbol = SymbolRegular.SlideHide24
+        } ,
+        TargetPageType = typeof ( StatusPage ) ,
+        ToolTip        = "Double-Click to close this window."
+    } ;
+
+    private static readonly NavigationViewItem SettingsViewItem = new( )
+    {
+        Content = "Settings" ,
+        Icon = new SymbolIcon
+        {
+            Symbol = SymbolRegular.Settings24
+        } ,
+        TargetPageType = typeof ( SettingsPage ) ,
+        ToolTip        = "Double-Click to see settings."
+    } ;
+
+    private static readonly NavigationViewItem ExitViewItem = new( )
+    {
+        Content = "Exit" ,
+        Icon = new SymbolIcon
+        {
+            Symbol = SymbolRegular.CallInbound24
+        } ,
+        TargetPageType = typeof ( StatusPage ) ,
+        ToolTip        = "Double-Click to exit the application."
+    } ;
+
+    private readonly IUiDeskManager _uiDeskManager ;
 
     [ ObservableProperty ]
     private string _applicationTitle = "Idasen Desk" ;
@@ -82,12 +114,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
     [ ObservableProperty ]
     private ObservableCollection < object > _footerMenuItems =
     [
-        new NavigationViewItem
-        {
-            Content        = "Settings" ,
-            Icon           = new SymbolIcon { Symbol = SymbolRegular.Settings24 } ,
-            TargetPageType = typeof ( SettingsPage )
-        }
+        ExitViewItem
     ] ;
 
     private ILogger ? _logger ;
@@ -96,10 +123,12 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
     private ObservableCollection < object > _menuItems =
     [
         HomeViewItem ,
+        SettingsViewItem ,
         ConnectViewItem ,
         DisconnectViewItem ,
         StandViewItem ,
-        SitViewItem
+        SitViewItem ,
+        CloseWindowViewItem
     ] ;
 
     [ UsedImplicitly ]
@@ -108,21 +137,22 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
     [ ObservableProperty ]
     private ObservableCollection < MenuItem > _trayMenuItems ;
 
-    public IdasenDeskWindowViewModel (IServiceProvider serviceProvider,
-                                IUiDeskManager uiDeskManager )
+    public IdasenDeskWindowViewModel ( IServiceProvider serviceProvider ,
+                                       IUiDeskManager   uiDeskManager )
     {
         Guard.ArgumentNotNull ( serviceProvider ,
                                 nameof ( serviceProvider ) ) ;
         Guard.ArgumentNotNull ( uiDeskManager ,
                                 nameof ( uiDeskManager ) ) ;
 
-        _serviceProvider = serviceProvider ;
-        _uiDeskManager   = uiDeskManager ;
+        _uiDeskManager = uiDeskManager ;
 
-        SitViewItem.MouseDoubleClick        += OnClickSitViewItem ;
-        StandViewItem.MouseDoubleClick      += OnClickStandViewItem ;
-        ConnectViewItem.MouseDoubleClick    += OnClickConnectViewItem ;
-        DisconnectViewItem.MouseDoubleClick += OnClickDisconnectViewItem ;
+        SitViewItem.MouseDoubleClick         += OnClickSitViewItem ;
+        StandViewItem.MouseDoubleClick       += OnClickStandViewItem ;
+        ConnectViewItem.MouseDoubleClick     += OnClickConnectViewItem ;
+        DisconnectViewItem.MouseDoubleClick  += OnClickDisconnectViewItem ;
+        CloseWindowViewItem.MouseDoubleClick += OnClickCloseViewItem ;
+        ExitViewItem.MouseDoubleClick        += OnClickExit ;
 
         _trayMenuItems =
         [
@@ -140,42 +170,22 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
     /// <summary>
     ///     Shows a window, if none is already open.
     /// </summary>
-    public ICommand ShowSettingsCommand
-    {
-        get
+    public ICommand ShowSettingsCommand =>
+        new DelegateCommand
         {
-            return new DelegateCommand
-            {
-                CanExecuteFunc = CanShowSettings,
-                CommandAction  = DoShowSettings
-            };
-        }
-    }
-
-    private static bool CanShowSettings ( )
-    {
-        return Application.Current.MainWindow != null && Application.Current.MainWindow.Visibility != Visibility.Visible ;
-    }
+            CanExecuteFunc = CanShowSettings ,
+            CommandAction  = DoShowSettings
+        } ;
 
     /// <summary>
     ///     Hides the main window. This command is only enabled if a window is open.
     /// </summary>
-    public ICommand HideSettingsCommand
-    {
-        get
+    public ICommand HideSettingsCommand =>
+        new DelegateCommand
         {
-            return new DelegateCommand
-            {
-                CommandAction  = DoHideSettings,
-                CanExecuteFunc = CanHideSettings
-            };
-        }
-    }
-
-    private static bool CanHideSettings ( )
-    {
-        return Application.Current.MainWindow != null && Application.Current.MainWindow.Visibility != Visibility.Hidden ;
-    }
+            CommandAction  = DoHideSettings ,
+            CanExecuteFunc = CanHideSettings
+        } ;
 
     /// <summary>
     ///     Connects to the Idasen Desk.
@@ -187,9 +197,9 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
             return new DelegateCommand
             {
                 // ReSharper disable once AsyncVoidLambda
-                CommandAction  = async () => await _uiDeskManager.AutoConnect(),
-                CanExecuteFunc = () => _uiDeskManager.IsInitialize
-            };
+                CommandAction  = async ( ) => await _uiDeskManager.AutoConnect ( ) ,
+                CanExecuteFunc = ( ) => _uiDeskManager.IsInitialize
+            } ;
         }
     }
 
@@ -202,9 +212,10 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
         {
             return new DelegateCommand
             {
-                CommandAction  = async () => await _uiDeskManager.Disconnect(),
-                CanExecuteFunc = () => _uiDeskManager.IsInitialize
-            };
+                // ReSharper disable once AsyncVoidLambda
+                CommandAction  = async ( ) => await _uiDeskManager.Disconnect ( ) ,
+                CanExecuteFunc = ( ) => _uiDeskManager.IsInitialize
+            } ;
         }
     }
 
@@ -218,9 +229,9 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
             return new DelegateCommand
             {
                 // ReSharper disable once AsyncVoidLambda
-                CommandAction  = async () => await _uiDeskManager.Stand(),
-                CanExecuteFunc = () => _uiDeskManager.IsInitialize
-            };
+                CommandAction  = async ( ) => await _uiDeskManager.Stand ( ) ,
+                CanExecuteFunc = ( ) => _uiDeskManager.IsInitialize
+            } ;
         }
     }
 
@@ -234,9 +245,9 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
             return new DelegateCommand
             {
                 // ReSharper disable once AsyncVoidLambda
-                CommandAction  = async () => await _uiDeskManager.Sit(),
-                CanExecuteFunc = () => _uiDeskManager.IsInitialize
-            };
+                CommandAction  = async ( ) => await _uiDeskManager.Sit ( ) ,
+                CanExecuteFunc = ( ) => _uiDeskManager.IsInitialize
+            } ;
         }
     }
 
@@ -247,41 +258,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
         new DelegateCommand
         {
             CommandAction = DoExitApplication
-        };
-
-    private void DoShowSettings()
-    {
-        _logger.Debug($"{nameof(ShowSettingsCommand)}");
-
-        Application.Current.MainWindow.Visibility = Visibility.Visible;
-
-        /* todo: implement
-        SettingsWindow.Show();
-        SettingsWindow.AdvancedSettingsChanged += OnAdvancedSettingsChanged;
-        SettingsWindow.LockSettingsChanged     += OnLockSettingsChanged;
-        */
-    }
-
-    private void DoHideSettings()
-    {
-        _logger?.Debug($"{nameof(HideSettingsCommand)}");
-
-        Application.Current.MainWindow.Visibility = Visibility.Hidden;
-
-        /* todo: implement
-        SettingsWindow.AdvancedSettingsChanged -= OnAdvancedSettingsChanged;
-        SettingsWindow.LockSettingsChanged     -= OnLockSettingsChanged;
-        SettingsWindow.Close();
-        SettingsWindow = null;
-        */
-    }
-
-    private void DoExitApplication()
-    {
-        _logger?.Information("##### Exit...");
-
-        Application.Current.Shutdown();
-    }
+        } ;
 
     public void Dispose ( )
     {
@@ -292,14 +269,111 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
         _uiDeskManager.Dispose ( ) ;
     }
 
-    private Task DoHomeCommand ( )
+    private void OnClickExit ( object sender , MouseButtonEventArgs e )
     {
-        throw new NotImplementedException ( ) ;
+        DoExitApplication ( ) ;
     }
 
-    private Task DoSettingsCommand ( )
+    private void OnClickCloseViewItem ( object sender , MouseButtonEventArgs e )
     {
-        throw new NotImplementedException ( ) ;
+        DoHideWindow ( ) ;
+    }
+
+    private void DoHideWindow ( )
+    {
+        if ( ! _uiDeskManager.IsInitialize )
+        {
+            return ;
+        }
+
+        var uiMessageBox = new MessageBox
+        {
+            Title             = "Hide ?" ,
+            Content           = "Do you want to hide this window?" ,
+            PrimaryButtonText = "Hide"
+        } ;
+
+        Dispatcher.CurrentDispatcher.InvokeAsync ( async ( ) =>
+                                                   {
+                                                       var result = await uiMessageBox.ShowDialogAsync ( ) ;
+
+                                                       if ( result != MessageBoxResult.Primary )
+                                                       {
+                                                           return ;
+                                                       }
+
+                                                       await _uiDeskManager.Hide ( ) ;
+                                                   } ) ;
+    }
+
+    private static bool CanShowSettings ( )
+    {
+        return Application.Current.MainWindow != null && Application.Current.MainWindow.Visibility != Visibility.Visible ;
+    }
+
+    private static bool CanHideSettings ( )
+    {
+        return Application.Current.MainWindow != null && Application.Current.MainWindow.Visibility != Visibility.Hidden ;
+    }
+
+    private void DoShowSettings ( )
+    {
+        if ( Application.Current.MainWindow == null )
+            return ;
+
+        _logger?.Debug ( $"{nameof ( ShowSettingsCommand )}" ) ;
+
+        Application.Current.MainWindow.Visibility = Visibility.Visible ;
+
+        /* todo: implement
+        SettingsWindow.Show();
+        SettingsWindow.AdvancedSettingsChanged += OnAdvancedSettingsChanged;
+        SettingsWindow.LockSettingsChanged     += OnLockSettingsChanged;
+        */
+    }
+
+    private void DoHideSettings ( )
+    {
+        if ( Application.Current.MainWindow == null )
+            return ;
+
+        _logger?.Debug ( $"{nameof ( HideSettingsCommand )}" ) ;
+
+        Application.Current.MainWindow.Visibility = Visibility.Hidden ;
+
+        /* todo: implement
+        SettingsWindow.AdvancedSettingsChanged -= OnAdvancedSettingsChanged;
+        SettingsWindow.LockSettingsChanged     -= OnLockSettingsChanged;
+        SettingsWindow.Hide();
+        SettingsWindow = null;
+        */
+    }
+
+    private void DoExitApplication ( )
+    {
+        if ( ! _uiDeskManager.IsInitialize )
+        {
+            return ;
+        }
+
+        var uiMessageBox = new MessageBox
+        {
+            Title             = "Exit ?" ,
+            Content           = "Do you want to exit the application?" ,
+            PrimaryButtonText = "Exit"
+        } ;
+
+        Dispatcher.CurrentDispatcher.InvokeAsync ( async ( ) =>
+                                                   {
+                                                       var result = await uiMessageBox.ShowDialogAsync ( ) ;
+
+                                                       if ( result != MessageBoxResult.Primary )
+                                                       {
+                                                           return ;
+                                                       }
+
+                                                       await _uiDeskManager.Exit ( ) ;
+                                                   } ) ;
     }
 
     private void OnClickSitViewItem ( object sender , RoutedEventArgs e )

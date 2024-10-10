@@ -188,6 +188,21 @@ public class UiDeskManager : IUiDeskManager
         return Task.CompletedTask ;
     }
 
+    public Task Hide ( )
+    {
+        if (Application.Current.MainWindow != null)
+            Application.Current.MainWindow.Visibility = Visibility.Hidden;
+
+        return Task.CompletedTask;
+    }
+
+    public Task Exit()
+    {
+        Application.Current.Shutdown();
+
+        return Task.CompletedTask;
+    }
+
     public StatusBarInfo LastStatusBarInfo { get ; private set ; } = new(0 ,
                                                                          "Unknown" ,
                                                                          InfoBarSeverity.Informational) ;
@@ -393,13 +408,8 @@ public class UiDeskManager : IUiDeskManager
 
         _heightChanged = _desk.HeightChanged
                               .ObserveOn ( Scheduler.Default )
+                              .Throttle ( TimeSpan.FromSeconds ( 5 ) )
                               .Subscribe ( OnHeightChanged ) ;
-
-        _notifications.Show ( "Success" ,
-                              "Connected to desk: " +
-                              Environment.NewLine   +
-                              $"'{desk.Name}'" ,
-                              Visibility.Visible ) ;
 
         _iconProvider.Initialize ( _logger! ,
                                    _desk ,
