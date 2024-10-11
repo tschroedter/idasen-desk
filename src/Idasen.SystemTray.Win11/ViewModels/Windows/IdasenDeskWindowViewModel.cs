@@ -95,6 +95,17 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
         ToolTip        = "Double-Click to see settings."
     } ;
 
+    private static readonly NavigationViewItem StopViewItem = new()
+    {
+        Content = "Stop",
+        Icon = new SymbolIcon
+        {
+            Symbol = SymbolRegular.Stop24
+        },
+        TargetPageType = typeof(StatusPage),
+        ToolTip        = "Double-Click to stop the desk when moving."
+    };
+
     private static readonly NavigationViewItem ExitViewItem = new( )
     {
         Content = "Exit" ,
@@ -128,6 +139,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
         DisconnectViewItem ,
         StandViewItem ,
         SitViewItem ,
+        StopViewItem,
         CloseWindowViewItem
     ] ;
 
@@ -149,6 +161,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
 
         SitViewItem.MouseDoubleClick         += OnClickSitViewItem ;
         StandViewItem.MouseDoubleClick       += OnClickStandViewItem ;
+        StopViewItem.MouseDoubleClick        += OnClickStopViewItem;
         ConnectViewItem.MouseDoubleClick     += OnClickConnectViewItem ;
         DisconnectViewItem.MouseDoubleClick  += OnClickDisconnectViewItem ;
         CloseWindowViewItem.MouseDoubleClick += OnClickCloseViewItem ;
@@ -165,7 +178,6 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
             new MenuItem { Header = "Exit" , Command          = ExitApplicationCommand }
         ] ;
     }
-
 
     /// <summary>
     ///     Shows a window, if none is already open.
@@ -386,6 +398,19 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
 
                                                        await _uiDeskManager.Stand ( ) ;
                                                    } ) ;
+    }
+
+    private void OnClickStopViewItem(object sender, RoutedEventArgs e)
+    {
+        if (!_uiDeskManager.IsInitialize)
+        {
+            return;
+        }
+
+        Dispatcher.CurrentDispatcher.InvokeAsync(async () =>
+                                                 {
+                                                     await _uiDeskManager.Stop();
+                                                 });
     }
 
     private void OnClickConnectViewItem ( object sender , RoutedEventArgs e )

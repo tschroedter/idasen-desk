@@ -161,7 +161,7 @@ public class UiDeskManager : IUiDeskManager
 
             _notifications.Show ( "Auto Connect" ,
                                   "Trying to auto connect to Idasen Desk..." ,
-                                  visibilityBulbYellow : Visibility.Visible ) ;
+                                  Visibility.Visible ) ;
 
             await Connect ( ) ;
         }
@@ -188,6 +188,18 @@ public class UiDeskManager : IUiDeskManager
         return Task.CompletedTask ;
     }
 
+    public Task Stop()
+    {
+        if (!IsDeskConnected())
+        {
+            return Task.CompletedTask;
+        }
+
+        _desk?.MoveStop (  );
+
+        return Task.CompletedTask ;
+    }
+
     public Task Hide ( )
     {
         if (Application.Current.MainWindow != null)
@@ -203,9 +215,11 @@ public class UiDeskManager : IUiDeskManager
         return Task.CompletedTask;
     }
 
-    public StatusBarInfo LastStatusBarInfo { get ; private set ; } = new(0 ,
+    public StatusBarInfo LastStatusBarInfo { get ; private set ; } = new("" ,
+                                                                         0 ,
                                                                          "Unknown" ,
-                                                                         InfoBarSeverity.Informational) ;
+                                                                         InfoBarSeverity.Informational ,
+                                                                         Visibility.Hidden) ;
 
     private void DoDisconnect ( )
     {
@@ -408,7 +422,7 @@ public class UiDeskManager : IUiDeskManager
 
         _heightChanged = _desk.HeightChanged
                               .ObserveOn ( Scheduler.Default )
-                              .Throttle ( TimeSpan.FromSeconds ( 5 ) )
+                              .Throttle ( TimeSpan.FromSeconds ( 1 ))
                               .Subscribe ( OnHeightChanged ) ;
 
         _iconProvider.Initialize ( _logger! ,
@@ -436,7 +450,7 @@ public class UiDeskManager : IUiDeskManager
 
         OnStatusChanged ( heightInCm ,
                           "Finished" ,
-                          $"Finished! Desk height is {height} cm" ,
+                          $"Finished! Desk height is {heightInCm} cm" ,
                           InfoBarSeverity.Success ) ;
     }
 
@@ -464,9 +478,11 @@ public class UiDeskManager : IUiDeskManager
                          $"{nameof ( severity )} = {severity}, " +
                          $"{nameof ( visibility )} = {visibility}" ) ;
 
-        LastStatusBarInfo = new StatusBarInfo ( height ,
+        LastStatusBarInfo = new StatusBarInfo ( title,
+                                                height ,
                                                 message ,
-                                                severity ) ;
+                                                severity ,
+                                                visibility ) ;
 
         _statusBarInfoSubject.OnNext ( LastStatusBarInfo ) ;
 

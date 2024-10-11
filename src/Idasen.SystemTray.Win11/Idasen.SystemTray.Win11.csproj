@@ -9,6 +9,8 @@
         <UseWPF>true</UseWPF>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <!-- <AssemblyName>$(MSBuildProjectName)</AssemblyName> -->
+        <AssemblyName>Idasen Desk</AssemblyName>
     </PropertyGroup>
 
     <ItemGroup>
