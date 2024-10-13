@@ -200,6 +200,30 @@ public class UiDeskManager : IUiDeskManager
         return Task.CompletedTask ;
     }
 
+    public Task MoveLock ( )
+    {
+        if (!IsDeskConnected())
+        {
+            return Task.CompletedTask;
+        }
+
+        _desk?.MoveLock();
+
+        return Task.CompletedTask;
+    }
+
+    public Task MoveUnlock ( )
+    {
+        if (!IsDeskConnected())
+        {
+            return Task.CompletedTask;
+        }
+
+        _desk?.MoveUnlock();
+
+        return Task.CompletedTask;
+    }
+
     public Task Hide ( )
     {
         if (Application.Current.MainWindow != null)

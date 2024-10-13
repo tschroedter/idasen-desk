@@ -2,10 +2,10 @@
 using System.Windows.Threading ;
 using Autofac ;
 using Idasen.BluetoothLE.Core ;
+using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.Settings ;
 using Microsoft.Toolkit.Uwp.Notifications ;
 using Serilog ;
-using Windows.UI.Notifications;
 using Wpf.Ui.Tray.Controls ;
 
 namespace Idasen.SystemTray.Win11.ViewModels.Windows ;
@@ -13,17 +13,17 @@ namespace Idasen.SystemTray.Win11.ViewModels.Windows ;
 public class Notifications : INotifications
 {
     private readonly ISettingsManager                   _manager ;
+    private readonly IVersionProvider                   _version ;
     private          ILogger ?                          _logger ;
     private readonly Subject < NotificationParameters > _showSubject ;
     private readonly IDisposable                        _showSubscribe ;
 
-    public Notifications ( ISettingsManager manager )
+    public Notifications ( ISettingsManager manager,
+                           IVersionProvider version)
     {
-        Guard.ArgumentNotNull ( manager ,
-                                nameof ( manager ) ) ;
-
-        _manager = manager ;
-        _showSubject = new Subject<NotificationParameters>();
+        _manager       = manager ;
+        _version       = version ;
+        _showSubject   = new Subject<NotificationParameters>();
         _showSubscribe = _showSubject.Subscribe(OnShow);
     }
 
@@ -35,7 +35,7 @@ public class Notifications : INotifications
     {
         _showSubject.OnNext(new NotificationParameters(title,
                                                        text,
-                                                       visibilityBulbGreen,
+                                                       visibilityBulbGreen, // todo old style lightbulbs
                                                        visibilityBulbYellow,
                                                        visibilityBulbRed));
     }
@@ -47,13 +47,12 @@ public class Notifications : INotifications
 
     private void OnShow (NotificationParameters parameters )
     {
-        if ( _manager is { CurrentSettings.NotificationsEnabled: false } )
+        if (_manager is { CurrentSettings.DeviceSettings.NotificationsEnabled: false })
         {
-            _logger?.Information ( $"Notifications are disabled. " +
-                                   $"Title = '{parameters.Title}' " +
-                                   $"Text = '{parameters.Text}'" ) ;
+            _logger?.Information($"Notifications are disabled. " +
+                                 $"{nameof(parameters)}: {parameters}");
 
-            return ;
+            return;
         }
 
         if ( ! Dispatcher.CurrentDispatcher.CheckAccess ( ) )
@@ -85,6 +84,14 @@ public class Notifications : INotifications
         _logger = container.Resolve < ILogger > ( ) ;
 
         _logger?.Debug ( "Notifications initializing..." ) ;
+
+        Task.Run ( async ( ) =>
+                   {
+                       await _manager.Load ( ) ;
+
+                       Show ( $"Idasen System Tray {_version.GetVersion ( )}" ,
+                              "Running..." ) ;
+                   } ) ;
 
         return this ;
     }

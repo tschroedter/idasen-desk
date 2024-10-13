@@ -1,11 +1,16 @@
 ﻿using System.Reflection ;
+using Autofac ;
+using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.Settings ;
+using Idasen.SystemTray.Win11.Utils ;
+using Serilog ;
 using Wpf.Ui.Appearance ;
 using Wpf.Ui.Controls ;
 
 namespace Idasen.SystemTray.Win11.ViewModels.Pages ;
 
-public partial class SettingsViewModel ( ISettingsManager settingsManager )
+public partial class SettingsViewModel ( ILoggingSettingsManager settingsManager,
+                                         INotifySettingsChanges settingsChanges)
     : ObservableObject , INavigationAware
 {
     [ ObservableProperty ]
@@ -23,6 +28,14 @@ public partial class SettingsViewModel ( ISettingsManager settingsManager )
 
     private bool _isInitialized ;
 
+    private ILogger ? _logger ;
+
+    [ ObservableProperty ]
+    private uint _maxHeight = 90 ;
+
+    [ ObservableProperty ]
+    private uint _minHeight = 90 ;
+
     [ ObservableProperty ]
     private bool _notifications = true ;
 
@@ -32,48 +45,124 @@ public partial class SettingsViewModel ( ISettingsManager settingsManager )
     [ ObservableProperty ]
     private uint _seating = 90 ;
 
-    [ObservableProperty]
-    private uint _minHeight = 90;
-
-    [ObservableProperty]
-    private uint _maxHeight = 90;
-
     // General Settings
-    [ObservableProperty ]
+    [ ObservableProperty ]
     private uint _standing = 100 ;
 
     public void OnNavigatedTo ( )
     {
         if ( ! _isInitialized )
             InitializeViewModel ( ) ;
-
-        LoadSettings();
     }
 
     public void OnNavigatedFrom ( )
     {
+        StoreSettings (  );
     }
 
-    public SettingsViewModel Initialize ( )
+    public SettingsViewModel Initialize ( IContainer container )
     {
+        _logger = container.Resolve < ILogger > ( ) ;
+
         LoadSettings ( ) ;
 
         return this ;
     }
 
-    public void LoadSettings()
+    public void LoadSettings ( )
     {
         Task.Run ( async ( ) =>
                    {
+                       _logger?.Debug ( "Load settings" ) ;
+
                        await settingsManager.Load ( ) ;
 
-                       Seating      = settingsManager.CurrentSettings.HeightSettings.SeatingHeightInCm ;
-                       Standing     = settingsManager.CurrentSettings.HeightSettings.StandingHeightInCm ;
-                       ParentalLock = settingsManager.CurrentSettings.NotificationsEnabled ;
-                       MinHeight    = settingsManager.CurrentSettings.HeightSettings.DeskMinHeightInCm ;
-                       MaxHeight    = settingsManager.CurrentSettings.HeightSettings.DeskMaxHeightInCm ;
-                   } ).GetAwaiter ( )
+                       var current = settingsManager.CurrentSettings ;
+
+                       Standing      = current.HeightSettings.StandingHeightInCm ;
+                       MinHeight     = current.HeightSettings.DeskMinHeightInCm ;
+                       MaxHeight     = current.HeightSettings.DeskMaxHeightInCm ;
+                       Seating       = current.HeightSettings.SeatingHeightInCm ;
+                       DeskName      = _nameConverter.EmptyIfDefault ( current.DeviceSettings.DeviceName ) ;
+                       DeskAddress   = _addressConverter.EmptyIfDefault ( current.DeviceSettings.DeviceAddress ) ;
+                       ParentalLock  = current.DeviceSettings.DeviceLocked ;
+                       Notifications = current.DeviceSettings.NotificationsEnabled ;
+                       //DeskName      = _nameConverter.EmptyIfDefault(current.DeviceSettings.DeviceName);
+                       //DeskAddress   = _addressConverter.EmptyIfDefault(current.DeviceSettings.DeviceAddress);
+                   }).GetAwaiter ( )
             .GetResult ( ) ; // todo not nice but will do for know
+    }
+
+    private Task ?  _storingSettingsTask;
+
+    public void StoreSettings()
+    {
+        if (_storingSettingsTask?.Status == TaskStatus.Running)
+        {
+            _logger?.Warning("Storing Settings already in progress");
+
+            return;
+        }
+
+        var settings = settingsManager.CurrentSettings;
+
+        var newDeviceName = _nameConverter.DefaultIfEmpty(DeskName);
+        var newDeviceAddress = _addressConverter.DefaultIfEmpty(DeskAddress);
+        var newDeviceLocked = ParentalLock;
+        var newNotificationsEnabled = Notifications;
+
+        var lockChanged = settings.DeviceSettings.DeviceLocked != newDeviceLocked;
+
+        settings.HeightSettings.StandingHeightInCm = _doubleConverter.ConvertToUInt(Standing,
+                                                                       Constants.DefaultHeightStandingInCm);
+        settings.HeightSettings.SeatingHeightInCm = _doubleConverter.ConvertToUInt(Seating,
+                                                                                     Constants.DefaultHeightSeatingInCm);
+        settings.DeviceSettings.DeviceName           = newDeviceName;
+        settings.DeviceSettings.DeviceAddress        = newDeviceAddress;
+        settings.DeviceSettings.DeviceLocked         = newDeviceLocked;
+        settings.DeviceSettings.NotificationsEnabled = newNotificationsEnabled ;
+
+        var advancedChanged = settings.DeviceSettings.DeviceName           != newDeviceName    ||
+                              settings.DeviceSettings.DeviceAddress        != newDeviceAddress ||
+                              settings.DeviceSettings.NotificationsEnabled != newNotificationsEnabled ;
+
+        _storingSettingsTask = Task.Run(async () =>
+        {
+            await DoStoreSettings(settings,
+                                    advancedChanged,
+                                    lockChanged);
+        });
+    }
+
+    private async Task DoStoreSettings ( ISettings settings ,
+                                         bool      advancedChanged ,
+                                         bool      lockChanged )
+    {
+        try
+        {
+            _logger?.Debug ( $"Storing new settings: {settings}" ) ;
+
+            await settingsManager.Save ( ) ;
+
+            if ( advancedChanged )
+            {
+                _logger?.Information ( "Advanced settings have changed, reconnecting..." ) ;
+
+                settingsChanges.AdvancedSettingsChanged.OnNext ( advancedChanged ) ;
+            }
+
+            if ( lockChanged )
+            {
+                _logger?.Information ( "Advanced Locked settings have changed..." ) ;
+
+                settingsChanges.LockSettingsChanged.OnNext ( settings.DeviceSettings.DeviceLocked ) ;
+            }
+        }
+        catch ( Exception e )
+        {
+            _logger?.Error ( e ,
+                             "Failed to store settings" ) ;
+        }
     }
 
     private void InitializeViewModel ( )
@@ -131,4 +220,8 @@ public partial class SettingsViewModel ( ISettingsManager settingsManager )
                 break ;
         }
     }
+
+    private readonly IDoubleToUIntConverter         _doubleConverter  = new DoubleToUIntConverter(); // todo inject
+    private readonly IDeviceNameConverter           _nameConverter    = new DeviceNameConverter();
+    private readonly IDeviceAddressToULongConverter _addressConverter = new DeviceAddressToULongConverter();
 }

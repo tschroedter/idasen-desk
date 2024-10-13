@@ -44,9 +44,12 @@ public class ApplicationHostService ( IServiceProvider serviceProvider ) : IHost
 
             _navigationWindow.Navigate ( typeof ( SettingsPage ) ) ;
 
-            Application.Current.MainWindow.Visibility = Visibility.Hidden ;
+            CurrentWindow.Visibility = Visibility.Hidden ;
         }
 
         await Task.CompletedTask ;
     }
+
+    private static Window CurrentWindow =>
+        Application.Current.MainWindow ?? throw new Exception("Can't find the main window!");
 }

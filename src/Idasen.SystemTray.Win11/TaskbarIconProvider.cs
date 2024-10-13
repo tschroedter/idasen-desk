@@ -1,6 +1,5 @@
 ﻿using System.Reactive.Concurrency ;
 using System.Reactive.Linq ;
-using System.Windows.Threading ;
 using Idasen.BluetoothLE.Core ;
 using Idasen.BluetoothLE.Linak ;
 using Idasen.BluetoothLE.Linak.Interfaces ;

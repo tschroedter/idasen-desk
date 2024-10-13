@@ -9,9 +9,9 @@ public interface INotifications : IDisposable
 
     INotifications Initialize ( IContainer container , NotifyIcon notifyIcon ) ;
 
-    void Show(string     title,
-              string     text,
-              Visibility visibilityBulbGreen  = Visibility.Hidden,
-              Visibility visibilityBulbYellow = Visibility.Hidden,
-              Visibility visibilityBulbRed    = Visibility.Hidden) ;
+    void Show ( string     title ,
+                string     text ,
+                Visibility visibilityBulbGreen  = Visibility.Hidden ,
+                Visibility visibilityBulbYellow = Visibility.Hidden ,
+                Visibility visibilityBulbRed    = Visibility.Hidden ) ;
 }

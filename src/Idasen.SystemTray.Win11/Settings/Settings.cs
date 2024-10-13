@@ -1,14 +1,14 @@
 ﻿using Idasen.SystemTray.Win11.Utils ;
 
-namespace Idasen.SystemTray.Win11.Settings;
+namespace Idasen.SystemTray.Win11.Settings ;
 
 public class Settings : ISettings
 {
-    public DeviceSettings DeviceSettings { get ; set ; } = new DeviceSettings ( ) ;
+    public DeviceSettings DeviceSettings { get ; set ; } = new( ) ;
 
-    public HeightSettings HeightSettings { get ; set ; } = new HeightSettings ( ) ;
+    public HeightSettings HeightSettings { get ; set ; } = new( ) ;
 
-    public bool NotificationsEnabled { get ; set ; } = Constants.NotificationsEnabled ;
+    public bool NotificationsEnabled { get ; set ; } = Constants.NotificationsEnabled ; // todo duplicated in Device Settings
 
     public override string ToString ( )
     {

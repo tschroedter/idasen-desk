@@ -1,6 +1,6 @@
 ﻿using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.ViewModels.Windows ;
-using Microsoft.Toolkit.Uwp.Notifications ;
+using JetBrains.Annotations ;
 using Wpf.Ui ;
 using Wpf.Ui.Appearance ;
 using Wpf.Ui.Controls ;
@@ -23,11 +23,6 @@ public partial class IdasenDeskWindow : INavigationWindow
         SetPageService ( pageService ) ;
 
         navigationService.SetNavigationControl ( RootNavigation ) ;
-
-        ShownNotification ( [
-                                $"Idasen System Tray {versionProvider.GetVersion ( )}" ,
-                                "Running..."
-                            ] ) ;
     }
 
     public IdasenDeskWindowViewModel ViewModel { get ; }
@@ -35,24 +30,6 @@ public partial class IdasenDeskWindow : INavigationWindow
     INavigationView INavigationWindow.GetNavigation ( )
     {
         throw new NotImplementedException ( ) ;
-    }
-
-    public void SetServiceProvider ( IServiceProvider serviceProvider )
-    {
-        throw new NotImplementedException ( ) ;
-    }
-
-    private void ShownNotification ( string [ ] lines )
-    {
-        // Requires Microsoft.Toolkit.Uwp.Notifications NuGet package version 7.0 or greater
-        var builder = new ToastContentBuilder ( ) ;
-
-        foreach ( var line in lines )
-            builder.AddText ( line ) ;
-
-        // Not seeing the Show() method? Make sure you have version 7.0, and if you're using .NET 6 (or later), then your TFM must be net6.0-windows10.0.17763.0 or greater
-        // Try running this code and you should see the notification appear!
-        builder.Show ( ) ;
     }
 
     /// <summary>
@@ -68,6 +45,7 @@ public partial class IdasenDeskWindow : INavigationWindow
 
     #region INavigationWindow methods
 
+    [UsedImplicitly]
     public INavigationView GetNavigation ( )
     {
         return RootNavigation ;
@@ -76,6 +54,11 @@ public partial class IdasenDeskWindow : INavigationWindow
     public bool Navigate ( Type pageType )
     {
         return RootNavigation.Navigate ( pageType ) ;
+    }
+
+    public void SetServiceProvider ( IServiceProvider serviceProvider )
+    {
+        throw new NotImplementedException ( ) ;
     }
 
     public void SetPageService ( IPageService pageService )

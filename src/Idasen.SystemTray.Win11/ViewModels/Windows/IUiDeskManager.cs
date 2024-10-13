@@ -15,5 +15,7 @@ public interface IUiDeskManager : IDisposable
     Task                          Disconnect ( ) ;
     Task                          Hide ( ) ;
     Task                          Exit() ;
-    Task          Stop() ;
+    Task                          Stop() ;
+    Task                          MoveLock ( ) ;
+    Task                          MoveUnlock ( ) ;
 }

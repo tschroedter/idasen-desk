@@ -3,6 +3,6 @@
     internal interface IStringToUIntConverter
     {
         ulong ConvertStringToUlongOrDefault(string text,
-                             ulong  defaultValue);
+                             ulong defaultValue);
     }
 }

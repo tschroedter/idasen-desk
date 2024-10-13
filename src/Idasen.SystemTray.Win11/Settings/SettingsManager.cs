@@ -1,48 +1,31 @@
 ﻿using System.IO ;
-using Idasen.BluetoothLE.Core ;
 using Idasen.Launcher ;
 using Idasen.SystemTray.Win11.Utils ;
-using JetBrains.Annotations ;
 using Serilog ;
 
 namespace Idasen.SystemTray.Win11.Settings
 {
-    public class SettingsManager
+    public class SettingsManager ( ICommonApplicationData commonApplicationData ,
+                                   ISettingsStorage       settingsStorage )
         : ISettingsManager
     {
-        // todo inject ilogger
+        // todo inject ILogger or use _container
         private readonly ILogger _logger = LoggerProvider.CreateLogger(Constants.ApplicationName,
                                                                        Constants.LogFilename);
 
-        public SettingsManager ( [ NotNull ] ICommonApplicationData commonApplicationData ,
-                                 [ NotNull ] ISettingsStorage       settingsStorage )
-        {
-            Guard.ArgumentNotNull ( commonApplicationData ,
-                                    nameof ( commonApplicationData ) ) ;
-            Guard.ArgumentNotNull ( settingsStorage ,
-                                    nameof ( settingsStorage ) ) ;
+        public ISettings CurrentSettings => _current ;
 
-            _settingsStorage  = settingsStorage ;
-
-            SettingsFileName = commonApplicationData.ToFullPath ( Constants.SettingsFileName ) ;
-        }
-
-        public ISettings CurrentSettings
-        {
-            get => _current ?? new Settings ( ) ;
-        }
-
-        public string SettingsFileName { get ; }
+        public string SettingsFileName { get ; } = commonApplicationData.ToFullPath ( Constants.SettingsFileName ) ;
 
         public async Task Save ( )
         {
-            await _settingsStorage.SaveSettingsAsync ( SettingsFileName ,
+            await settingsStorage.SaveSettingsAsync ( SettingsFileName ,
                                                        _current ) ;
         }
 
         public async Task Load ( )
         {
-            _current = await _settingsStorage.LoadSettingsAsync ( SettingsFileName ) ;
+            _current = await settingsStorage.LoadSettingsAsync ( SettingsFileName ) ;
         }
 
         public async Task < bool > UpgradeSettings ( )
@@ -74,8 +57,6 @@ namespace Idasen.SystemTray.Win11.Settings
             await Save ( ) ;
         }
 
-        private readonly ISettingsStorage _settingsStorage ;
-
-        private Settings _current = new Settings ( ) ;
+        private Settings _current = new( ) ;
     }
 }

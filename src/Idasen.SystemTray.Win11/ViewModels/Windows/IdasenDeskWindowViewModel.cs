@@ -1,10 +1,13 @@
 ﻿using System.Collections.ObjectModel ;
+using System.Reactive.Concurrency ;
+using System.Reactive.Linq ;
 using System.Windows.Controls ;
 using System.Windows.Input ;
 using System.Windows.Threading ;
 using Autofac ;
 using Idasen.BluetoothLE.Core ;
 using Idasen.SystemTray.Win11.Utils ;
+using Idasen.SystemTray.Win11.ViewModels.Pages ;
 using Idasen.SystemTray.Win11.Views.Pages ;
 using JetBrains.Annotations ;
 using Wpf.Ui.Controls ;
@@ -117,7 +120,8 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
         ToolTip        = "Double-Click to exit the application."
     } ;
 
-    private readonly IUiDeskManager _uiDeskManager ;
+    private readonly IUiDeskManager          _uiDeskManager ;
+    private readonly IObserveSettingsChanges _settingsChanges ;
 
     [ ObservableProperty ]
     private string _applicationTitle = "Idasen Desk" ;
@@ -149,15 +153,20 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
     [ ObservableProperty ]
     private ObservableCollection < MenuItem > _trayMenuItems ;
 
+    private IDisposable _disposableAdvanced ;
+    private IDisposable _disposableLock ;
+
     public IdasenDeskWindowViewModel ( IServiceProvider serviceProvider ,
-                                       IUiDeskManager   uiDeskManager )
+                                       IUiDeskManager   uiDeskManager,
+                                       IObserveSettingsChanges settingsChanges)
     {
         Guard.ArgumentNotNull ( serviceProvider ,
                                 nameof ( serviceProvider ) ) ;
         Guard.ArgumentNotNull ( uiDeskManager ,
                                 nameof ( uiDeskManager ) ) ;
 
-        _uiDeskManager = uiDeskManager ;
+        _uiDeskManager        = uiDeskManager ;
+        _settingsChanges = settingsChanges ;
 
         SitViewItem.MouseDoubleClick         += OnClickSitViewItem ;
         StandViewItem.MouseDoubleClick       += OnClickStandViewItem ;
@@ -467,7 +476,8 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
                                                    } ) ;
     }
 
-    public IdasenDeskWindowViewModel Initialize ( IContainer container , NotifyIcon notifyIcon )
+    public IdasenDeskWindowViewModel Initialize ( IContainer container ,
+                                                  NotifyIcon notifyIcon )
     {
         Guard.ArgumentNotNull ( container ,
                                 nameof ( container ) ) ;
@@ -482,6 +492,49 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
             ItemsSource = _trayMenuItems
         } ;
 
+        // todo IDisposable right
+        _disposableAdvanced = _settingsChanges.AdvancedSettingsChanged
+                                               .ObserveOn ( Scheduler.Default )
+                                               .Subscribe ( OnAdvancedSettingsChanged ) ;
+        _disposableLock = _settingsChanges.LockSettingsChanged
+                                          .ObserveOn ( Scheduler.Default )
+                                          .Subscribe ( OnLockSettingsChanged ) ;
+
         return this ;
+    }
+
+    private async void OnAdvancedSettingsChanged(bool hasChanged)
+    {
+        try
+        {
+            // ReSharper disable once MethodSupportsCancellation
+            await Task.Delay(3000)
+                      .ConfigureAwait(false);
+
+            await _uiDeskManager.Disconnect ( );
+
+            await _uiDeskManager.AutoConnect (  );
+        }
+        catch (Exception e)
+        {
+            _logger?.Error(e,
+                          "Failed  to reconnect after advanced settings change.");
+        }
+    }
+
+    private async void OnLockSettingsChanged(bool isLocked)
+    {
+        try
+        {
+            if (isLocked)
+                await _uiDeskManager.MoveLock();
+            else
+                await _uiDeskManager.MoveUnlock();
+        }
+        catch (Exception e)
+        {
+            _logger?.Error(e,
+                          "Failed  to lock/unlock after locked settings change.");
+        }
     }
 }
