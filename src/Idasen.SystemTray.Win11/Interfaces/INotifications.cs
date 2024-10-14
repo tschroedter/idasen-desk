@@ -1,12 +1,14 @@
 ﻿using Autofac;
 using Idasen.SystemTray.Win11.Utils;
+using JetBrains.Annotations ;
 using Wpf.Ui.Tray.Controls;
 
 namespace Idasen.SystemTray.Win11.Interfaces;
 
 public interface INotifications : IDisposable
 {
-    void Show(NotificationParameters parameters);
+    [UsedImplicitly]
+    void Show(NotificationParameters parameters); // todo future usage
 
     INotifications Initialize(IContainer container, NotifyIcon notifyIcon);
 

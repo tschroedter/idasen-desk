@@ -71,8 +71,7 @@
             Name="IdasenNotifyIcon"
             FocusOnLeftClick="True"
             Icon="pack://application:,,,/Assets/cup-xxl.png"
-            MenuOnRightClick="True"
-            TooltipText="{Binding ViewModel.TrayMenuItems}">
+            MenuOnRightClick="True">
             <!-- ContextMenu set in code
             <tray:NotifyIcon.Menu>
                 <ContextMenu ItemsSource="{Binding ViewModel.TrayMenuItems, Mode=OneWay}" />

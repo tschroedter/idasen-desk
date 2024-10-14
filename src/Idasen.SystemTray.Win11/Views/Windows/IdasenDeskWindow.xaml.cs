@@ -1,5 +1,4 @@
-﻿using Idasen.SystemTray.Win11.Interfaces ;
-using Idasen.SystemTray.Win11.ViewModels.Windows ;
+﻿using Idasen.SystemTray.Win11.ViewModels.Windows ;
 using JetBrains.Annotations ;
 using Wpf.Ui ;
 using Wpf.Ui.Appearance ;
@@ -10,9 +9,8 @@ namespace Idasen.SystemTray.Win11.Views.Windows ;
 public partial class IdasenDeskWindow : INavigationWindow
 {
     public IdasenDeskWindow ( IdasenDeskWindowViewModel viewModel ,
-                        IPageService        pageService ,
-                        INavigationService  navigationService ,
-                        IVersionProvider    versionProvider )
+                              IPageService              pageService ,
+                              INavigationService        navigationService )
     {
         ViewModel   = viewModel ;
         DataContext = this ;

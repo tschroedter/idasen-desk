@@ -3,7 +3,7 @@ using System.Windows.Interop ;
 using System.Windows.Media ;
 using System.Windows.Media.Imaging ;
 
-namespace Idasen.SystemTray.Win11 ;
+namespace Idasen.SystemTray.Win11.Utils.Icons ;
 
 public static class IconExtensions
 {

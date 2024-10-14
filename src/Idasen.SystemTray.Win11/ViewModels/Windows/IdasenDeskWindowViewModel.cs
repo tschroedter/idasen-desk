@@ -153,8 +153,8 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
     [ ObservableProperty ]
     private ObservableCollection < MenuItem > _trayMenuItems ;
 
-    private IDisposable _disposableAdvanced ;
-    private IDisposable _disposableLock ;
+    private IDisposable ? _advancedSubscription ;
+    private IDisposable ? _lockSubscription ;
 
     public IdasenDeskWindowViewModel ( IServiceProvider serviceProvider ,
                                        IUiDeskManager   uiDeskManager,
@@ -243,8 +243,10 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
     {
         _logger?.Information ( "Disposing..." ) ;
 
-        _uiDeskManager.Disconnect ( ) ;
+        _advancedSubscription?.Dispose (  );
+        _lockSubscription?.Dispose ( ) ;
 
+        _uiDeskManager.Disconnect ( ) ;
         _uiDeskManager.Dispose ( ) ;
     }
 
@@ -493,10 +495,10 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
         } ;
 
         // todo IDisposable right
-        _disposableAdvanced = _settingsChanges.AdvancedSettingsChanged
+        _advancedSubscription = _settingsChanges.AdvancedSettingsChanged
                                                .ObserveOn ( Scheduler.Default )
                                                .Subscribe ( OnAdvancedSettingsChanged ) ;
-        _disposableLock = _settingsChanges.LockSettingsChanged
+        _lockSubscription = _settingsChanges.LockSettingsChanged
                                           .ObserveOn ( Scheduler.Default )
                                           .Subscribe ( OnLockSettingsChanged ) ;
 

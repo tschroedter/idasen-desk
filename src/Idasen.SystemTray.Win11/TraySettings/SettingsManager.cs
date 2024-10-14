@@ -37,7 +37,7 @@ namespace Idasen.SystemTray.Win11.TraySettings
             var settings = await File.ReadAllTextAsync ( SettingsFileName )
                                      .ConfigureAwait ( false ) ;
 
-            if ( ! settings.Contains ( nameof ( Settings.NotificationsEnabled ) ) )
+            if ( ! settings.Contains ( nameof ( Settings.DeviceSettings.NotificationsEnabled ) ) )
             {
                 await AddMissingSettingsNotificationsEnabled ( ) ;
             }
@@ -47,13 +47,13 @@ namespace Idasen.SystemTray.Win11.TraySettings
 
         private async Task AddMissingSettingsNotificationsEnabled ( )
         {
-            _logger.Debug ( $"Add missing setting "                        +
-                            $"{nameof ( Settings.NotificationsEnabled )} " +
+            _logger.Debug ( $"Add missing setting "                                       +
+                            $"{nameof ( Settings.DeviceSettings.NotificationsEnabled )} " +
                             $"to current settings from '{SettingsFileName}'" ) ;
 
             await Load ( ).ConfigureAwait ( false ) ;
 
-            _current.NotificationsEnabled = Constants.NotificationsEnabled ;
+            _current.DeviceSettings.NotificationsEnabled = Constants.NotificationsEnabled ;
 
             await Save ( ) ;
         }

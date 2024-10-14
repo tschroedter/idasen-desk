@@ -1,4 +1,6 @@
-﻿namespace Idasen.SystemTray.Win11.Interfaces
+﻿using JetBrains.Annotations ;
+
+namespace Idasen.SystemTray.Win11.Interfaces
 {
     public interface ICommonApplicationData
     {
@@ -19,6 +21,7 @@
         /// <returns>
         ///     The 'ProgramData' folder for the application.
         /// </returns>
+        [UsedImplicitly]
         string FolderName();
     }
 }
