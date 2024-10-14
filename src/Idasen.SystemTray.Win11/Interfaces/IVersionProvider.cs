@@ -1,7 +1,6 @@
-﻿namespace Idasen.SystemTray.Win11.Interfaces
+﻿namespace Idasen.SystemTray.Win11.Interfaces ;
+
+public interface IVersionProvider
 {
-    public interface IVersionProvider
-    {
-        string GetVersion() ;
-    }
+    string GetVersion ( ) ;
 }

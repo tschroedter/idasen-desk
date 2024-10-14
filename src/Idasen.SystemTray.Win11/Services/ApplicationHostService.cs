@@ -12,6 +12,9 @@ public class ApplicationHostService ( IServiceProvider serviceProvider ) : IHost
 {
     private INavigationWindow ? _navigationWindow ;
 
+    private static Window CurrentWindow =>
+        Application.Current.MainWindow ?? throw new Exception ( "Can't find the main window!" ) ;
+
     /// <summary>
     ///     Triggered when the application host is ready to start the service.
     /// </summary>
@@ -49,7 +52,4 @@ public class ApplicationHostService ( IServiceProvider serviceProvider ) : IHost
 
         await Task.CompletedTask ;
     }
-
-    private static Window CurrentWindow =>
-        Application.Current.MainWindow ?? throw new Exception("Can't find the main window!");
 }

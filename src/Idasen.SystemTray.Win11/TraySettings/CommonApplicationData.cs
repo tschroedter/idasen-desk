@@ -2,21 +2,21 @@
 using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.Utils ;
 
-namespace Idasen.SystemTray.Win11.TraySettings;
+namespace Idasen.SystemTray.Win11.TraySettings ;
 
 public class CommonApplicationData : ICommonApplicationData
 {
-    private readonly Lazy<string> _folderName;
-    
-    public CommonApplicationData()
+    private readonly Lazy < string > _folderName ;
+
+    public CommonApplicationData ( )
     {
         _folderName = new Lazy < string > ( FolderName ) ;
     }
-    
-    public string ToFullPath(string fileName)
+
+    public string ToFullPath ( string fileName )
     {
         return Path.Combine ( _folderName.Value ,
-                                           fileName ) ;
+                              fileName ) ;
     }
 
     public string FolderName ( )

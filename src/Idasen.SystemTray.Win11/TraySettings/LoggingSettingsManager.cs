@@ -2,7 +2,7 @@ using Autofac ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Serilog ;
 
-namespace Idasen.SystemTray.Win11.TraySettings;
+namespace Idasen.SystemTray.Win11.TraySettings ;
 
 /* todo
  *    public interface ISettingsWindow
@@ -75,7 +75,7 @@ public class LoggingSettingsManager ( ISettingsManager settingsManager )
         catch ( Exception e )
         {
             _logger?.Error ( e , "Failed to upgrade settings" ) ;
-            
+
             return false ;
         }
     }

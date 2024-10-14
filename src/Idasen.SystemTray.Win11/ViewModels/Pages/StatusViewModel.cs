@@ -1,13 +1,13 @@
-﻿using System.Reactive.Concurrency;
-using System.Reactive.Linq;
-using System.Timers;
-using System.Windows.Threading;
-using Idasen.SystemTray.Win11.Interfaces;
-using Idasen.SystemTray.Win11.Utils;
-using Wpf.Ui.Controls;
-using Timer = System.Timers.Timer;
+﻿using System.Reactive.Concurrency ;
+using System.Reactive.Linq ;
+using System.Timers ;
+using System.Windows.Threading ;
+using Idasen.SystemTray.Win11.Interfaces ;
+using Idasen.SystemTray.Win11.Utils ;
+using Wpf.Ui.Controls ;
+using Timer = System.Timers.Timer ;
 
-namespace Idasen.SystemTray.Win11.ViewModels.Pages;
+namespace Idasen.SystemTray.Win11.ViewModels.Pages ;
 
 public partial class StatusViewModel : ObservableObject , IDisposable
 {
@@ -33,13 +33,13 @@ public partial class StatusViewModel : ObservableObject , IDisposable
                                        .ObserveOn ( Scheduler.Default )
                                        .Subscribe ( OnStatusBarInfoChanged ) ;
 
-        Message          =  manager.LastStatusBarInfo.Message ;
-        Height           =  manager.LastStatusBarInfo.Height;
-        Severity         =  manager.LastStatusBarInfo.Severity;
+        Message  = manager.LastStatusBarInfo.Message ;
+        Height   = manager.LastStatusBarInfo.Height ;
+        Severity = manager.LastStatusBarInfo.Severity ;
 
-        _timer.Elapsed   += OnElapsed;
-        _timer.Interval  =  TimeSpan.FromSeconds(10).TotalMilliseconds;
-        _timer.AutoReset =  false;
+        _timer.Elapsed   += OnElapsed ;
+        _timer.Interval  =  TimeSpan.FromSeconds ( 10 ).TotalMilliseconds ;
+        _timer.AutoReset =  false ;
         _timer.Start ( ) ;
     }
 

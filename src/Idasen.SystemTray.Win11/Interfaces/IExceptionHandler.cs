@@ -1,10 +1,10 @@
-﻿using Serilog;
+﻿using Serilog ;
 
-namespace Idasen.SystemTray.Win11.Interfaces;
+namespace Idasen.SystemTray.Win11.Interfaces ;
 
-interface IExceptionHandler
+internal interface IExceptionHandler
 {
-    bool CanHandle(Exception exception);
+    bool CanHandle ( Exception exception ) ;
 
-    void Handle(Exception exception, ILogger logger);
+    void Handle ( Exception exception , ILogger logger ) ;
 }

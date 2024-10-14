@@ -13,5 +13,5 @@ public partial class SettingsPage : INavigableView < SettingsViewModel >
         InitializeComponent ( ) ;
     }
 
-    public  SettingsViewModel ViewModel { get ; }
+    public SettingsViewModel ViewModel { get ; }
 }

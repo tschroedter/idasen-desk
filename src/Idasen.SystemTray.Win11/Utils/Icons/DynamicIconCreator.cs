@@ -1,12 +1,15 @@
-﻿using System.Drawing;
-using Idasen.BluetoothLE.Core;
-using Idasen.SystemTray.Win11.Interfaces;
-using Wpf.Ui.Tray.Controls;
+﻿using System.Drawing ;
+using Idasen.BluetoothLE.Core ;
+using Idasen.SystemTray.Win11.Interfaces ;
+using Wpf.Ui.Tray.Controls ;
 
-namespace Idasen.SystemTray.Win11.Utils.Icons;
+namespace Idasen.SystemTray.Win11.Utils.Icons ;
 
 public class DynamicIconCreator : IDynamicIconCreator
 {
+    private readonly Color _brushDarkBlue  = ColorTranslator.FromHtml ( "#FF0048A3" ) ;
+    private readonly Color _brushLightBlue = ColorTranslator.FromHtml ( "#FF0098F3" ) ;
+
     public void Update ( NotifyIcon taskbarIcon ,
                          int        height )
     {
@@ -75,10 +78,7 @@ public class DynamicIconCreator : IDynamicIconCreator
         }
 
         //push the icons to the system tray
-        taskbarIcon.Icon = icon.ToImageSource ( ) ;
-        taskbarIcon.TooltipText = $"Desk Height: {value} cm";
+        taskbarIcon.Icon        = icon.ToImageSource ( ) ;
+        taskbarIcon.TooltipText = $"Desk Height: {value} cm" ;
     }
-
-    private readonly Color _brushDarkBlue  = ColorTranslator.FromHtml ( "#FF0048A3" ) ;
-    private readonly Color _brushLightBlue = ColorTranslator.FromHtml ( "#FF0098F3" ) ;
 }

@@ -43,7 +43,7 @@ public partial class IdasenDeskWindow : INavigationWindow
 
     #region INavigationWindow methods
 
-    [UsedImplicitly]
+    [ UsedImplicitly ]
     public INavigationView GetNavigation ( )
     {
         return RootNavigation ;

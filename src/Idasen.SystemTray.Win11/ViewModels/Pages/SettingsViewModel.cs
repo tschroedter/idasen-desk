@@ -1,18 +1,24 @@
-﻿using System.Reflection;
-using Autofac;
-using Idasen.SystemTray.Win11.Interfaces;
-using Idasen.SystemTray.Win11.Utils;
+﻿using System.Reflection ;
+using Autofac ;
+using Idasen.SystemTray.Win11.Interfaces ;
+using Idasen.SystemTray.Win11.Utils ;
 using Idasen.SystemTray.Win11.Utils.Converters ;
-using Serilog;
-using Wpf.Ui.Appearance;
-using Wpf.Ui.Controls;
+using Serilog ;
+using Wpf.Ui.Appearance ;
+using Wpf.Ui.Controls ;
 
-namespace Idasen.SystemTray.Win11.ViewModels.Pages;
+namespace Idasen.SystemTray.Win11.ViewModels.Pages ;
 
-public partial class SettingsViewModel ( ILoggingSettingsManager settingsManager,
-                                         INotifySettingsChanges settingsChanges)
+public partial class SettingsViewModel (
+    ILoggingSettingsManager settingsManager ,
+    INotifySettingsChanges  settingsChanges )
     : ObservableObject , INavigationAware
 {
+    private readonly IDeviceAddressToULongConverter _addressConverter = new DeviceAddressToULongConverter ( ) ;
+
+    private readonly IDoubleToUIntConverter _doubleConverter = new DoubleToUIntConverter ( ) ; // todo inject
+    private readonly IDeviceNameConverter   _nameConverter   = new DeviceNameConverter ( ) ;
+
     [ ObservableProperty ]
     private string _appVersion = string.Empty ;
 
@@ -49,6 +55,8 @@ public partial class SettingsViewModel ( ILoggingSettingsManager settingsManager
     [ ObservableProperty ]
     private uint _standing = 100 ;
 
+    private Task ? _storingSettingsTask ;
+
     public void OnNavigatedTo ( )
     {
         if ( ! _isInitialized )
@@ -57,7 +65,7 @@ public partial class SettingsViewModel ( ILoggingSettingsManager settingsManager
 
     public void OnNavigatedFrom ( )
     {
-        StoreSettings (  );
+        StoreSettings ( ) ;
     }
 
     public SettingsViewModel Initialize ( IContainer container )
@@ -89,49 +97,47 @@ public partial class SettingsViewModel ( ILoggingSettingsManager settingsManager
                        Notifications = current.DeviceSettings.NotificationsEnabled ;
                        //DeskName      = _nameConverter.EmptyIfDefault(current.DeviceSettings.DeviceName);
                        //DeskAddress   = _addressConverter.EmptyIfDefault(current.DeviceSettings.DeviceAddress);
-                   }).GetAwaiter ( )
+                   } ).GetAwaiter ( )
             .GetResult ( ) ; // todo not nice but will do for know
     }
 
-    private Task ?  _storingSettingsTask;
-
-    public void StoreSettings()
+    public void StoreSettings ( )
     {
-        if (_storingSettingsTask?.Status == TaskStatus.Running)
+        if ( _storingSettingsTask?.Status == TaskStatus.Running )
         {
-            _logger?.Warning("Storing Settings already in progress");
+            _logger?.Warning ( "Storing Settings already in progress" ) ;
 
-            return;
+            return ;
         }
 
-        var settings = settingsManager.CurrentSettings;
+        var settings = settingsManager.CurrentSettings ;
 
-        var newDeviceName = _nameConverter.DefaultIfEmpty(DeskName);
-        var newDeviceAddress = _addressConverter.DefaultIfEmpty(DeskAddress);
-        var newDeviceLocked = ParentalLock;
-        var newNotificationsEnabled = Notifications;
+        var newDeviceName           = _nameConverter.DefaultIfEmpty ( DeskName ) ;
+        var newDeviceAddress        = _addressConverter.DefaultIfEmpty ( DeskAddress ) ;
+        var newDeviceLocked         = ParentalLock ;
+        var newNotificationsEnabled = Notifications ;
 
-        var lockChanged = settings.DeviceSettings.DeviceLocked != newDeviceLocked;
+        var lockChanged = settings.DeviceSettings.DeviceLocked != newDeviceLocked ;
 
-        settings.HeightSettings.StandingHeightInCm = _doubleConverter.ConvertToUInt(Standing,
-                                                                       Constants.DefaultHeightStandingInCm);
-        settings.HeightSettings.SeatingHeightInCm = _doubleConverter.ConvertToUInt(Seating,
-                                                                                     Constants.DefaultHeightSeatingInCm);
-        settings.DeviceSettings.DeviceName           = newDeviceName;
-        settings.DeviceSettings.DeviceAddress        = newDeviceAddress;
-        settings.DeviceSettings.DeviceLocked         = newDeviceLocked;
+        settings.HeightSettings.StandingHeightInCm = _doubleConverter.ConvertToUInt ( Standing ,
+                                                                                      Constants.DefaultHeightStandingInCm ) ;
+        settings.HeightSettings.SeatingHeightInCm = _doubleConverter.ConvertToUInt ( Seating ,
+                                                                                     Constants.DefaultHeightSeatingInCm ) ;
+        settings.DeviceSettings.DeviceName           = newDeviceName ;
+        settings.DeviceSettings.DeviceAddress        = newDeviceAddress ;
+        settings.DeviceSettings.DeviceLocked         = newDeviceLocked ;
         settings.DeviceSettings.NotificationsEnabled = newNotificationsEnabled ;
 
         var advancedChanged = settings.DeviceSettings.DeviceName           != newDeviceName    ||
                               settings.DeviceSettings.DeviceAddress        != newDeviceAddress ||
                               settings.DeviceSettings.NotificationsEnabled != newNotificationsEnabled ;
 
-        _storingSettingsTask = Task.Run(async () =>
-        {
-            await DoStoreSettings(settings,
-                                    advancedChanged,
-                                    lockChanged);
-        });
+        _storingSettingsTask = Task.Run ( async ( ) =>
+                                          {
+                                              await DoStoreSettings ( settings ,
+                                                                      advancedChanged ,
+                                                                      lockChanged ) ;
+                                          } ) ;
     }
 
     private async Task DoStoreSettings ( ISettings settings ,
@@ -220,8 +226,4 @@ public partial class SettingsViewModel ( ILoggingSettingsManager settingsManager
                 break ;
         }
     }
-
-    private readonly IDoubleToUIntConverter         _doubleConverter  = new DoubleToUIntConverter(); // todo inject
-    private readonly IDeviceNameConverter           _nameConverter    = new DeviceNameConverter();
-    private readonly IDeviceAddressToULongConverter _addressConverter = new DeviceAddressToULongConverter();
 }

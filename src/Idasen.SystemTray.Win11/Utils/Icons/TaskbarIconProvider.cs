@@ -1,71 +1,71 @@
-﻿using System.Reactive.Concurrency;
-using System.Reactive.Linq;
-using Idasen.BluetoothLE.Core;
-using Idasen.BluetoothLE.Linak;
-using Idasen.BluetoothLE.Linak.Interfaces;
-using Idasen.SystemTray.Win11.Interfaces;
-using Serilog;
-using Wpf.Ui.Tray.Controls;
+﻿using System.Reactive.Concurrency ;
+using System.Reactive.Linq ;
+using Idasen.BluetoothLE.Core ;
+using Idasen.BluetoothLE.Linak ;
+using Idasen.BluetoothLE.Linak.Interfaces ;
+using Idasen.SystemTray.Win11.Interfaces ;
+using Serilog ;
+using Wpf.Ui.Tray.Controls ;
 
-namespace Idasen.SystemTray.Win11.Utils.Icons;
+namespace Idasen.SystemTray.Win11.Utils.Icons ;
 
 public class TaskbarIconProvider : ITaskbarIconProvider
 {
-    private readonly IDynamicIconCreator _creator;
-    private readonly IScheduler _scheduler;
-    private IDisposable? _disposable;
-    private ILogger? _logger;
+    private readonly IDynamicIconCreator _creator ;
+    private readonly IScheduler          _scheduler ;
+    private          IDisposable ?       _disposable ;
+    private          ILogger ?           _logger ;
 
-    public TaskbarIconProvider(IScheduler scheduler,
-                                 IDynamicIconCreator creator)
+    public TaskbarIconProvider ( IScheduler          scheduler ,
+                                 IDynamicIconCreator creator )
     {
-        Guard.ArgumentNotNull(scheduler,
-                                nameof(scheduler));
-        Guard.ArgumentNotNull(creator,
-                                nameof(creator));
+        Guard.ArgumentNotNull ( scheduler ,
+                                nameof ( scheduler ) ) ;
+        Guard.ArgumentNotNull ( creator ,
+                                nameof ( creator ) ) ;
 
-        _scheduler = scheduler;
-        _creator = creator;
+        _scheduler = scheduler ;
+        _creator   = creator ;
     }
 
-    public NotifyIcon? NotifyIcon { get; private set; }
+    public NotifyIcon ? NotifyIcon { get ; private set ; }
 
 
-    public void Dispose()
+    public void Dispose ( )
     {
-        NotifyIcon?.Dispose();
-        _disposable?.Dispose();
+        NotifyIcon?.Dispose ( ) ;
+        _disposable?.Dispose ( ) ;
     }
 
-    public void Initialize(ILogger logger,
-                             IDesk desk,
-                             NotifyIcon? notifyIcon)
+    public void Initialize ( ILogger      logger ,
+                             IDesk        desk ,
+                             NotifyIcon ? notifyIcon )
     {
-        Guard.ArgumentNotNull(logger,
-                                nameof(logger));
-        Guard.ArgumentNotNull(desk,
-                                nameof(desk));
-        _logger = logger;
-        NotifyIcon = notifyIcon;
+        Guard.ArgumentNotNull ( logger ,
+                                nameof ( logger ) ) ;
+        Guard.ArgumentNotNull ( desk ,
+                                nameof ( desk ) ) ;
+        _logger    = logger ;
+        NotifyIcon = notifyIcon ;
 
         _disposable = desk.HeightAndSpeedChanged
-                          .ObserveOn(_scheduler)
-                          .Subscribe(OnHeightAndSpeedChanged);
+                          .ObserveOn ( _scheduler )
+                          .Subscribe ( OnHeightAndSpeedChanged ) ;
     }
 
-    private void OnHeightAndSpeedChanged(HeightSpeedDetails details)
+    private void OnHeightAndSpeedChanged ( HeightSpeedDetails details )
     {
-        if (NotifyIcon == null)
+        if ( NotifyIcon == null )
         {
-            _logger?.Error("NotifyIcon is null");
+            _logger?.Error ( "NotifyIcon is null" ) ;
 
-            return;
+            return ;
         }
 
-        var heightInCm = Convert.ToInt32(Math.Round(details.Height / 100.0));
+        var heightInCm = Convert.ToInt32 ( Math.Round ( details.Height / 100.0 ) ) ;
 
-        _creator.Update(NotifyIcon, heightInCm);
+        _creator.Update ( NotifyIcon , heightInCm ) ;
 
-        _logger?.Debug($"Height: {heightInCm}");
+        _logger?.Debug ( $"Height: {heightInCm}" ) ;
     }
 }

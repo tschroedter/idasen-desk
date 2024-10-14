@@ -1,9 +1,8 @@
-using Autofac;
+using Autofac ;
 
-namespace Idasen.SystemTray.Win11.Interfaces
+namespace Idasen.SystemTray.Win11.Interfaces ;
+
+public interface ILoggingSettingsManager : ISettingsManager
 {
-    public interface ILoggingSettingsManager : ISettingsManager
-    {
-        void Initialize(IContainer container);
-    }
+    void Initialize ( IContainer container ) ;
 }

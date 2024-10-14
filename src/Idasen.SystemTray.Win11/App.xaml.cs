@@ -1,28 +1,28 @@
-﻿using System.IO;
-using System.Reactive.Concurrency;
-using System.Reflection;
-using System.Windows.Media;
-using System.Windows.Threading;
-using Autofac;
-using Idasen.Launcher;
-using Idasen.SystemTray.Win11.Interfaces;
-using Idasen.SystemTray.Win11.Services;
+﻿using System.IO ;
+using System.Reactive.Concurrency ;
+using System.Reflection ;
+using System.Windows.Media ;
+using System.Windows.Threading ;
+using Autofac ;
+using Idasen.Launcher ;
+using Idasen.SystemTray.Win11.Interfaces ;
+using Idasen.SystemTray.Win11.Services ;
 using Idasen.SystemTray.Win11.TraySettings ;
-using Idasen.SystemTray.Win11.Utils;
-using Idasen.SystemTray.Win11.Utils.Exceptions;
-using Idasen.SystemTray.Win11.Utils.Icons;
-using Idasen.SystemTray.Win11.ViewModels.Pages;
-using Idasen.SystemTray.Win11.ViewModels.Windows;
-using Idasen.SystemTray.Win11.Views.Pages;
-using Idasen.SystemTray.Win11.Views.Windows;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Serilog;
-using Wpf.Ui;
-using Wpf.Ui.Tray.Controls;
+using Idasen.SystemTray.Win11.Utils ;
+using Idasen.SystemTray.Win11.Utils.Exceptions ;
+using Idasen.SystemTray.Win11.Utils.Icons ;
+using Idasen.SystemTray.Win11.ViewModels.Pages ;
+using Idasen.SystemTray.Win11.ViewModels.Windows ;
+using Idasen.SystemTray.Win11.Views.Pages ;
+using Idasen.SystemTray.Win11.Views.Windows ;
+using Microsoft.Extensions.Configuration ;
+using Microsoft.Extensions.DependencyInjection ;
+using Microsoft.Extensions.Hosting ;
+using Serilog ;
+using Wpf.Ui ;
+using Wpf.Ui.Tray.Controls ;
 
-namespace Idasen.SystemTray.Win11;
+namespace Idasen.SystemTray.Win11 ;
 
 /// <summary>
 ///     Interaction logic for App.xaml
@@ -68,22 +68,21 @@ public partial class App
                                                                            services.AddSingleton < IObserveSettingsChanges > ( GetSettingsChanged ) ;
                                                                            services.AddSingleton < INotifySettingsChanges > ( GetSettingsChanged ) ;
                                                                            services.AddSingleton < ISettingsManager , SettingsManager > ( ) ;
-                                                                           services.AddSingleton < ILoggingSettingsManager , LoggingSettingsManager > ( ) ;
-                                                                           services.AddSingleton < ICommonApplicationData , CommonApplicationData > ( ) ;
+                                                                           services
+                                                                              .AddSingleton < ILoggingSettingsManager ,
+                                                                                   LoggingSettingsManager > ( ) ;
+                                                                           services
+                                                                              .AddSingleton < ICommonApplicationData , CommonApplicationData > ( ) ;
                                                                            services.AddSingleton < ISettingsStorage , SettingsStorage > ( ) ;
                                                                            services.AddSingleton < ITaskbarIconProvider , TaskbarIconProvider > ( ) ;
                                                                            services.AddSingleton < IUiDeskManager , UiDeskManager > ( ) ;
                                                                            services.AddSingleton < IDynamicIconCreator , DynamicIconCreator > ( ) ;
-                                                                           services.AddSingleton < IIdasenConfigurationProvider , IdasenConfigurationProvider > ( ) ;
+                                                                           services
+                                                                              .AddSingleton < IIdasenConfigurationProvider ,
+                                                                                   IdasenConfigurationProvider > ( ) ;
                                                                            services.AddSingleton ( _ => CreateScheduler ( ) ) ;
                                                                            services.AddSingleton ( CreateTaskbarIconProvider ) ;
                                                                        } ).Build ( ) ;
-
-    private static SettingsChanges GetSettingsChanged ( IServiceProvider provider )
-    {
-        return provider.GetService < SettingsChanges > ( ) ??
-               throw new InvalidOperationException ( $"Failed to resolve {nameof ( SettingsChanges )}" ) ;
-    }
 
     private readonly ILogger _logger = LoggerProvider.CreateLogger ( Constants.ApplicationName ,
                                                                      Constants.LogFilename ) ;
@@ -92,6 +91,12 @@ public partial class App
 
     private static Window CurrentWindow =>
         Current.MainWindow ?? throw new Exception ( "Can't find the main window!" ) ;
+
+    private static SettingsChanges GetSettingsChanged ( IServiceProvider provider )
+    {
+        return provider.GetService < SettingsChanges > ( ) ??
+               throw new InvalidOperationException ( $"Failed to resolve {nameof ( SettingsChanges )}" ) ;
+    }
 
     private static IScheduler CreateScheduler ( )
     {
@@ -149,9 +154,9 @@ public partial class App
 
         settings!.Initialize ( _container ) ;
 
-        var manager = GetService<ILoggingSettingsManager>();
+        var manager = GetService < ILoggingSettingsManager > ( ) ;
 
-        manager!.Initialize(_container);
+        manager!.Initialize ( _container ) ;
 
         var versionProvider = GetVersionProvider ( ) ;
 

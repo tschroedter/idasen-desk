@@ -27,8 +27,8 @@
                     DoubleClickCommand="{Binding ShowSettingsCommand}"
                     ContextMenu="{StaticResource SysTrayMenu}">
     -->
-        <!-- self-assign a data context (could also be done programmatically) -->
-            <!--
+    <!-- self-assign a data context (could also be done programmatically) -->
+    <!--
         <tb:TaskbarIcon.DataContext>
             <windows:MainWindowViewModel />
         </tb:TaskbarIcon.DataContext>

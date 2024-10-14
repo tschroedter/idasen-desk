@@ -4,60 +4,60 @@ using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.Utils ;
 using Serilog ;
 
-namespace Idasen.SystemTray.Win11.TraySettings
+namespace Idasen.SystemTray.Win11.TraySettings ;
+
+public class SettingsManager (
+    ICommonApplicationData commonApplicationData ,
+    ISettingsStorage       settingsStorage )
+    : ISettingsManager
 {
-    public class SettingsManager ( ICommonApplicationData commonApplicationData ,
-                                   ISettingsStorage       settingsStorage )
-        : ISettingsManager
+    // todo inject ILogger or use _container
+    private readonly ILogger _logger = LoggerProvider.CreateLogger ( Constants.ApplicationName ,
+                                                                     Constants.LogFilename ) ;
+
+    private Settings _current = new( ) ;
+
+    public ISettings CurrentSettings => _current ;
+
+    public string SettingsFileName { get ; } = commonApplicationData.ToFullPath ( Constants.SettingsFileName ) ;
+
+    public async Task Save ( )
     {
-        // todo inject ILogger or use _container
-        private readonly ILogger _logger = LoggerProvider.CreateLogger(Constants.ApplicationName,
-                                                                       Constants.LogFilename);
+        await settingsStorage.SaveSettingsAsync ( SettingsFileName ,
+                                                  _current ) ;
+    }
 
-        public ISettings CurrentSettings => _current ;
+    public async Task Load ( )
+    {
+        _current = await settingsStorage.LoadSettingsAsync ( SettingsFileName ) ;
+    }
 
-        public string SettingsFileName { get ; } = commonApplicationData.ToFullPath ( Constants.SettingsFileName ) ;
+    public async Task < bool > UpgradeSettings ( )
+    {
+        if ( ! File.Exists ( SettingsFileName ) )
+            return true ;
 
-        public async Task Save ( )
+        var settings = await File.ReadAllTextAsync ( SettingsFileName )
+                                 .ConfigureAwait ( false ) ;
+
+        if ( ! settings.Contains ( nameof ( Settings.DeviceSettings.NotificationsEnabled ) ) )
         {
-            await settingsStorage.SaveSettingsAsync ( SettingsFileName ,
-                                                       _current ) ;
+            await AddMissingSettingsNotificationsEnabled ( ) ;
         }
 
-        public async Task Load ( )
-        {
-            _current = await settingsStorage.LoadSettingsAsync ( SettingsFileName ) ;
-        }
+        return false ;
+    }
 
-        public async Task < bool > UpgradeSettings ( )
-        {
-            if ( ! File.Exists ( SettingsFileName ) )
-                return true ;
+    private async Task AddMissingSettingsNotificationsEnabled ( )
+    {
+        _logger.Debug ( $"Add missing setting "                                       +
+                        $"{nameof ( Settings.DeviceSettings.NotificationsEnabled )} " +
+                        $"to current settings from '{SettingsFileName}'" ) ;
 
-            var settings = await File.ReadAllTextAsync ( SettingsFileName )
-                                     .ConfigureAwait ( false ) ;
+        await Load ( ).ConfigureAwait ( false ) ;
 
-            if ( ! settings.Contains ( nameof ( Settings.DeviceSettings.NotificationsEnabled ) ) )
-            {
-                await AddMissingSettingsNotificationsEnabled ( ) ;
-            }
-            
-            return false ;
-        }
+        _current.DeviceSettings.NotificationsEnabled = Constants.NotificationsEnabled ;
 
-        private async Task AddMissingSettingsNotificationsEnabled ( )
-        {
-            _logger.Debug ( $"Add missing setting "                                       +
-                            $"{nameof ( Settings.DeviceSettings.NotificationsEnabled )} " +
-                            $"to current settings from '{SettingsFileName}'" ) ;
-
-            await Load ( ).ConfigureAwait ( false ) ;
-
-            _current.DeviceSettings.NotificationsEnabled = Constants.NotificationsEnabled ;
-
-            await Save ( ) ;
-        }
-
-        private Settings _current = new( ) ;
+        await Save ( ) ;
     }
 }
