@@ -1,7 +1,8 @@
-﻿using Idasen.BluetoothLE.Characteristics.Common ;
-using Serilog ;
+﻿using Idasen.BluetoothLE.Characteristics.Common;
+using Idasen.SystemTray.Win11.Interfaces;
+using Serilog;
 
-namespace Idasen.SystemTray.Win11.Utils.Exceptions ;
+namespace Idasen.SystemTray.Win11.Utils.Exceptions;
 
 public class BluetoothDisabledExceptionHandler : IExceptionHandler
 {

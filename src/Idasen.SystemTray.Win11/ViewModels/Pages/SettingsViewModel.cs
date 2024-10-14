@@ -1,13 +1,13 @@
-﻿using System.Reflection ;
-using Autofac ;
-using Idasen.SystemTray.Win11.Interfaces ;
-using Idasen.SystemTray.Win11.Settings ;
-using Idasen.SystemTray.Win11.Utils ;
-using Serilog ;
-using Wpf.Ui.Appearance ;
-using Wpf.Ui.Controls ;
+﻿using System.Reflection;
+using Autofac;
+using Idasen.SystemTray.Win11.Interfaces;
+using Idasen.SystemTray.Win11.Utils;
+using Idasen.SystemTray.Win11.Utils.Converters ;
+using Serilog;
+using Wpf.Ui.Appearance;
+using Wpf.Ui.Controls;
 
-namespace Idasen.SystemTray.Win11.ViewModels.Pages ;
+namespace Idasen.SystemTray.Win11.ViewModels.Pages;
 
 public partial class SettingsViewModel ( ILoggingSettingsManager settingsManager,
                                          INotifySettingsChanges settingsChanges)

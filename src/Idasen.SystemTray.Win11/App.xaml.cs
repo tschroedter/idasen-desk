@@ -1,27 +1,28 @@
-﻿using System.IO ;
-using System.Reactive.Concurrency ;
-using System.Reflection ;
-using System.Windows.Media ;
-using System.Windows.Threading ;
-using Autofac ;
-using Idasen.Launcher ;
-using Idasen.SystemTray.Win11.Interfaces ;
-using Idasen.SystemTray.Win11.Services ;
-using Idasen.SystemTray.Win11.Settings ;
-using Idasen.SystemTray.Win11.Utils ;
-using Idasen.SystemTray.Win11.Utils.Exceptions ;
-using Idasen.SystemTray.Win11.ViewModels.Pages ;
-using Idasen.SystemTray.Win11.ViewModels.Windows ;
-using Idasen.SystemTray.Win11.Views.Pages ;
-using Idasen.SystemTray.Win11.Views.Windows ;
-using Microsoft.Extensions.Configuration ;
-using Microsoft.Extensions.DependencyInjection ;
-using Microsoft.Extensions.Hosting ;
-using Serilog ;
-using Wpf.Ui ;
-using Wpf.Ui.Tray.Controls ;
+﻿using System.IO;
+using System.Reactive.Concurrency;
+using System.Reflection;
+using System.Windows.Media;
+using System.Windows.Threading;
+using Autofac;
+using Idasen.Launcher;
+using Idasen.SystemTray.Win11.Interfaces;
+using Idasen.SystemTray.Win11.Services;
+using Idasen.SystemTray.Win11.TraySettings ;
+using Idasen.SystemTray.Win11.Utils;
+using Idasen.SystemTray.Win11.Utils.Exceptions;
+using Idasen.SystemTray.Win11.Utils.Icons;
+using Idasen.SystemTray.Win11.ViewModels.Pages;
+using Idasen.SystemTray.Win11.ViewModels.Windows;
+using Idasen.SystemTray.Win11.Views.Pages;
+using Idasen.SystemTray.Win11.Views.Windows;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Serilog;
+using Wpf.Ui;
+using Wpf.Ui.Tray.Controls;
 
-namespace Idasen.SystemTray.Win11 ;
+namespace Idasen.SystemTray.Win11;
 
 /// <summary>
 ///     Interaction logic for App.xaml

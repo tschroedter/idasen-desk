@@ -1,24 +1,24 @@
-﻿using System.Collections.ObjectModel ;
-using System.Reactive.Concurrency ;
-using System.Reactive.Linq ;
-using System.Windows.Controls ;
-using System.Windows.Input ;
-using System.Windows.Threading ;
-using Autofac ;
-using Idasen.BluetoothLE.Core ;
-using Idasen.SystemTray.Win11.Utils ;
-using Idasen.SystemTray.Win11.ViewModels.Pages ;
-using Idasen.SystemTray.Win11.Views.Pages ;
-using JetBrains.Annotations ;
-using Wpf.Ui.Controls ;
-using IContainer = Autofac.IContainer ;
-using ILogger = Serilog.ILogger ;
-using MenuItem = Wpf.Ui.Controls.MenuItem ;
-using MessageBox = Wpf.Ui.Controls.MessageBox ;
-using MessageBoxResult = Wpf.Ui.Controls.MessageBoxResult ;
-using NotifyIcon = Wpf.Ui.Tray.Controls.NotifyIcon ;
+﻿using System.Collections.ObjectModel;
+using System.Reactive.Concurrency;
+using System.Reactive.Linq;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Threading;
+using Autofac;
+using Idasen.BluetoothLE.Core;
+using Idasen.SystemTray.Win11.Interfaces;
+using Idasen.SystemTray.Win11.Utils;
+using Idasen.SystemTray.Win11.Views.Pages;
+using JetBrains.Annotations;
+using Wpf.Ui.Controls;
+using IContainer = Autofac.IContainer;
+using ILogger = Serilog.ILogger;
+using MenuItem = Wpf.Ui.Controls.MenuItem;
+using MessageBox = Wpf.Ui.Controls.MessageBox;
+using MessageBoxResult = Wpf.Ui.Controls.MessageBoxResult;
+using NotifyIcon = Wpf.Ui.Tray.Controls.NotifyIcon;
 
-namespace Idasen.SystemTray.Win11.ViewModels.Windows ;
+namespace Idasen.SystemTray.Win11.ViewModels.Windows;
 
 public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
 {
