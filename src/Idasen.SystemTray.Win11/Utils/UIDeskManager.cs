@@ -473,7 +473,7 @@ public class UiDeskManager : IUiDeskManager
 
         OnStatusChanged ( heightInCm ,
                           "Finished" ,
-                          $"Finished! Desk height is {heightInCm} cm" ,
+                          $"Desk height is {heightInCm} cm" ,
                           InfoBarSeverity.Success ) ;
     }
 

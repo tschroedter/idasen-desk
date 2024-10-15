@@ -32,15 +32,24 @@ public class Notifications : INotifications
                        Visibility visibilityBulbYellow = Visibility.Hidden ,
                        Visibility visibilityBulbRed    = Visibility.Hidden )
     {
-        _showSubject.OnNext ( new NotificationParameters ( title ,
-                                                           text ,
-                                                           visibilityBulbGreen , // todo old style lightbulbs
-                                                           visibilityBulbYellow ,
-                                                           visibilityBulbRed ) ) ;
+        var parameters = new NotificationParameters ( title ,
+                                                      text ,
+                                                      visibilityBulbGreen , // todo old style lightbulbs or change to severity
+                                                      visibilityBulbYellow ,
+                                                      visibilityBulbRed ) ;
+        Show( parameters ) ;
     }
 
-    public void Show ( NotificationParameters parameters )
+    public void Show ( NotificationParameters parameters)  // todo maybe just one show method
     {
+        if (_manager is { CurrentSettings.DeviceSettings.NotificationsEnabled: false })
+        {
+            _logger?.Information($"Notifications are disabled. " +
+                                 $"{nameof(parameters)}: {parameters}");
+
+            return;
+        }
+
         _showSubject.OnNext ( parameters ) ;
     }
 

@@ -30,19 +30,6 @@ public partial class IdasenDeskWindow : INavigationWindow
         throw new NotImplementedException ( ) ;
     }
 
-    /// <summary>
-    ///     Raises the closed event.
-    /// </summary>
-    protected override void OnClosed ( EventArgs e )
-    {
-        base.OnClosed ( e ) ;
-
-        // Make sure that closing this window will begin the process of closing the application.
-        Application.Current.Shutdown ( ) ;
-    }
-
-    #region INavigationWindow methods
-
     [ UsedImplicitly ]
     public INavigationView GetNavigation ( )
     {
@@ -73,6 +60,4 @@ public partial class IdasenDeskWindow : INavigationWindow
     {
         Close ( ) ;
     }
-
-    #endregion INavigationWindow methods
 }

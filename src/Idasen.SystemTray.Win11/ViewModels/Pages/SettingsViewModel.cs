@@ -11,7 +11,7 @@ namespace Idasen.SystemTray.Win11.ViewModels.Pages ;
 public partial class SettingsViewModel ( ILoggingSettingsManager        settingsManager ,
                                          INotifySettingsChanges         settingsChanges ,
                                          IDeviceAddressToULongConverter addressConverter ,
-                                         IDoubleToUIntConverter         doubleConverter ,
+                                         IDoubleToUIntConverter         toUIntConverter ,
                                          IDeviceNameConverter           nameConverter )
     : ObservableObject , INavigationAware
 {
@@ -104,43 +104,64 @@ public partial class SettingsViewModel ( ILoggingSettingsManager        settings
             return ;
         }
 
+        var lockChanged     = HasParentalLockChanged ( ) ;
+        var advancedChanged = HaveAdvancedSettingsChanged ( ) ;
+
+        UpdateCurrentSettings ( ) ;
+
+        _storingSettingsTask = Task.Run ( async ( ) =>
+                                          {
+                                              await DoStoreSettingsAsync ( advancedChanged ,
+                                                                           lockChanged ) ;
+                                          } ) ;
+    }
+
+    private bool HasParentalLockChanged ( )
+    {
+        var settings = settingsManager.CurrentSettings;
+
+        return settings.DeviceSettings.DeviceLocked != ParentalLock ;
+    }
+
+    private bool HaveAdvancedSettingsChanged ( )
+    {
         var settings = settingsManager.CurrentSettings ;
 
         var newDeviceName           = nameConverter.DefaultIfEmpty ( DeskName ) ;
         var newDeviceAddress        = addressConverter.DefaultIfEmpty ( DeskAddress ) ;
-        var newDeviceLocked         = ParentalLock ;
         var newNotificationsEnabled = Notifications ;
 
-        var lockChanged = settings.DeviceSettings.DeviceLocked != newDeviceLocked ;
 
-        settings.HeightSettings.StandingHeightInCm = doubleConverter.ConvertToUInt ( Standing ,
+        return settings.DeviceSettings.DeviceName           != newDeviceName    ||
+               settings.DeviceSettings.DeviceAddress        != newDeviceAddress ||
+               settings.DeviceSettings.NotificationsEnabled != newNotificationsEnabled ;
+    }
+
+    private void UpdateCurrentSettings (  )
+    {
+        var settings = settingsManager.CurrentSettings;
+
+        var newDeviceName           = nameConverter.DefaultIfEmpty(DeskName);
+        var newDeviceAddress        = addressConverter.DefaultIfEmpty(DeskAddress);
+        var newDeviceLocked         = ParentalLock;
+        var newNotificationsEnabled = Notifications;
+
+        settings.HeightSettings.StandingHeightInCm = toUIntConverter.ConvertToUInt ( Standing ,
                                                                                      Constants.DefaultHeightStandingInCm ) ;
-        settings.HeightSettings.SeatingHeightInCm = doubleConverter.ConvertToUInt ( Seating ,
+        settings.HeightSettings.SeatingHeightInCm = toUIntConverter.ConvertToUInt ( Seating ,
                                                                                     Constants.DefaultHeightSeatingInCm ) ;
         settings.DeviceSettings.DeviceName           = newDeviceName ;
         settings.DeviceSettings.DeviceAddress        = newDeviceAddress ;
         settings.DeviceSettings.DeviceLocked         = newDeviceLocked ;
         settings.DeviceSettings.NotificationsEnabled = newNotificationsEnabled ;
-
-        var advancedChanged = settings.DeviceSettings.DeviceName           != newDeviceName    ||
-                              settings.DeviceSettings.DeviceAddress        != newDeviceAddress ||
-                              settings.DeviceSettings.NotificationsEnabled != newNotificationsEnabled ;
-
-        _storingSettingsTask = Task.Run ( async ( ) =>
-                                          {
-                                              await DoStoreSettingsAsync ( settings ,
-                                                                           advancedChanged ,
-                                                                           lockChanged ) ;
-                                          } ) ;
     }
 
-    private async Task DoStoreSettingsAsync ( ISettings settings ,
-                                              bool      advancedChanged ,
+    private async Task DoStoreSettingsAsync ( bool      advancedChanged ,
                                               bool      lockChanged )
     {
         try
         {
-            _logger?.Debug ( $"Storing new settings: {settings}" ) ;
+            _logger?.Debug ( $"Storing new settings: {settingsManager.CurrentSettings}" ) ;
 
             await settingsManager.SaveAsync ( ) ;
 
@@ -151,7 +172,7 @@ public partial class SettingsViewModel ( ILoggingSettingsManager        settings
 
             if ( lockChanged )
             {
-                LockChanged ( settings ) ;
+                LockChanged ( settingsManager.CurrentSettings ) ;
             }
         }
         catch ( Exception e )
