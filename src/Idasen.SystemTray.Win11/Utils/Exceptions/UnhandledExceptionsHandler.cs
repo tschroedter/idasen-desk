@@ -77,15 +77,18 @@ public static class UnhandledExceptionsHandler
         }
     }
 
-    private static void HandleGeneralException ( DispatcherUnhandledExceptionEventArgs args , ILogger log )
+    private static void HandleGeneralException ( DispatcherUnhandledExceptionEventArgs args ,
+                                                 ILogger                               log )
     {
         log.Error ( args.Exception ,
                     args.Exception.Message ) ;
     }
 
-    private static void HandleBluetoothDisabledException ( DispatcherUnhandledExceptionEventArgs args , ILogger log )
+    private static void HandleBluetoothDisabledException ( DispatcherUnhandledExceptionEventArgs args ,
+                                                           ILogger                               log )
     {
-        args.Exception.LogBluetoothStatusException ( log , string.Empty ) ;
+        args.Exception.LogBluetoothStatusException ( log ,
+                                                     string.Empty ) ;
 
         args.Handled = true ;
     }
@@ -103,7 +106,8 @@ public static class UnhandledExceptionsHandler
 
         if ( exception != null &&
              exception.IsBluetoothDisabledException ( ) )
-            exception.LogBluetoothStatusException ( log , string.Empty ) ;
+            exception.LogBluetoothStatusException ( log ,
+                                                    string.Empty ) ;
         else
             log.Error ( exception ,
                         message ) ;

@@ -1,10 +1,13 @@
-﻿namespace Idasen.SystemTray.Win11.Interfaces ;
+﻿using Autofac ;
+
+namespace Idasen.SystemTray.Win11.Interfaces ;
 
 public interface ISettingsManager
 {
     ISettings     CurrentSettings  { get ; }
     string        SettingsFileName { get ; }
-    Task          Save ( ) ;
-    Task          Load ( ) ;
-    Task < bool > UpgradeSettings ( ) ;
+    Task          SaveAsync ( ) ;
+    Task          LoadAsync ( ) ;
+    Task < bool > UpgradeSettingsAsync ( ) ;
+    void Initialize ( IContainer container) ;
 }

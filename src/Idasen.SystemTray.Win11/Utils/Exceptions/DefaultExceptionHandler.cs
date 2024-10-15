@@ -12,6 +12,7 @@ public class DefaultExceptionHandler : IExceptionHandler
 
     public void Handle ( Exception exception , ILogger logger )
     {
-        logger.Error ( exception , exception.Message ) ;
+        logger.Error ( exception ,
+                       exception.Message ) ;
     }
 }

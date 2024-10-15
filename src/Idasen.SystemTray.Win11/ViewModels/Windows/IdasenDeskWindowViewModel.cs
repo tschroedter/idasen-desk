@@ -207,7 +207,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
     /// </summary>
     public ICommand ConnectCommand =>
         // ReSharper disable once AsyncVoidLambda
-        new DelegateCommand ( async ( ) => await _uiDeskManager.AutoConnect ( ) ,
+        new DelegateCommand ( async ( ) => await _uiDeskManager.AutoConnectAsync ( ) ,
                               ( ) => _uiDeskManager.IsInitialize ) ;
 
     /// <summary>
@@ -215,7 +215,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
     /// </summary>
     public ICommand DisconnectCommand =>
         // ReSharper disable once AsyncVoidLambda
-        new DelegateCommand ( async ( ) => await _uiDeskManager.Disconnect ( ) ,
+        new DelegateCommand ( async ( ) => await _uiDeskManager.DisconnectAsync ( ) ,
                               ( ) => _uiDeskManager.IsInitialize ) ;
 
     /// <summary>
@@ -223,7 +223,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
     /// </summary>
     public ICommand StandingCommand =>
         // ReSharper disable once AsyncVoidLambda
-        new DelegateCommand ( async ( ) => await _uiDeskManager.Stand ( ) ,
+        new DelegateCommand ( async ( ) => await _uiDeskManager.StandAsync ( ) ,
                               ( ) => _uiDeskManager.IsInitialize ) ;
 
     /// <summary>
@@ -231,7 +231,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
     /// </summary>
     public ICommand SeatingCommand =>
         // ReSharper disable once AsyncVoidLambda
-        new DelegateCommand ( async ( ) => await _uiDeskManager.Sit ( ) ,
+        new DelegateCommand ( async ( ) => await _uiDeskManager.SitAsync ( ) ,
                               ( ) => _uiDeskManager.IsInitialize ) ;
 
     /// <summary>
@@ -248,7 +248,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
         _advancedSubscription?.Dispose ( ) ;
         _lockSubscription?.Dispose ( ) ;
 
-        _uiDeskManager.Disconnect ( ) ;
+        _uiDeskManager.DisconnectAsync ( ) ;
         _uiDeskManager.Dispose ( ) ;
     }
 
@@ -285,7 +285,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
                                                            return ;
                                                        }
 
-                                                       await _uiDeskManager.Hide ( ) ;
+                                                       await _uiDeskManager.HideAsync ( ) ;
                                                    } ) ;
     }
 
@@ -355,7 +355,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
                                                            return ;
                                                        }
 
-                                                       await _uiDeskManager.Exit ( ) ;
+                                                       await _uiDeskManager.ExitAsync ( ) ;
                                                    } ) ;
     }
 
@@ -382,7 +382,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
                                                            return ;
                                                        }
 
-                                                       await _uiDeskManager.Sit ( ) ;
+                                                       await _uiDeskManager.SitAsync ( ) ;
                                                    } ) ;
     }
 
@@ -409,7 +409,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
                                                            return ;
                                                        }
 
-                                                       await _uiDeskManager.Stand ( ) ;
+                                                       await _uiDeskManager.StandAsync ( ) ;
                                                    } ) ;
     }
 
@@ -420,7 +420,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
             return ;
         }
 
-        Dispatcher.CurrentDispatcher.InvokeAsync ( async ( ) => { await _uiDeskManager.Stop ( ) ; } ) ;
+        Dispatcher.CurrentDispatcher.InvokeAsync ( async ( ) => { await _uiDeskManager.StopAsync ( ) ; } ) ;
     }
 
     private void OnClickConnectViewItem ( object sender , RoutedEventArgs e )
@@ -446,7 +446,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
                                                            return ;
                                                        }
 
-                                                       await _uiDeskManager.AutoConnect ( ) ;
+                                                       await _uiDeskManager.AutoConnectAsync ( ) ;
                                                    } ) ;
     }
 
@@ -473,7 +473,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
                                                            return ;
                                                        }
 
-                                                       await _uiDeskManager.Disconnect ( ) ;
+                                                       await _uiDeskManager.DisconnectAsync ( ) ;
                                                    } ) ;
     }
 
@@ -512,9 +512,9 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
             await Task.Delay ( 3000 )
                       .ConfigureAwait ( false ) ;
 
-            await _uiDeskManager.Disconnect ( ) ;
+            await _uiDeskManager.DisconnectAsync ( ) ;
 
-            await _uiDeskManager.AutoConnect ( ) ;
+            await _uiDeskManager.AutoConnectAsync ( ) ;
         }
         catch ( Exception e )
         {
@@ -528,9 +528,9 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
         try
         {
             if ( isLocked )
-                await _uiDeskManager.MoveLock ( ) ;
+                await _uiDeskManager.MoveLockAsync ( ) ;
             else
-                await _uiDeskManager.MoveUnlock ( ) ;
+                await _uiDeskManager.MoveUnlockAsync ( ) ;
         }
         catch ( Exception e )
         {

@@ -20,7 +20,13 @@ public class DeviceSettings
     /// </summary>
     public uint DeviceMonitoringTimeout { get ; set ; } = Constants.DefaultDeviceMonitoringTimeout ;
 
+    /// <summary>
+    ///     Locks the device to prevent any changes using the psychical controller on the desk.
+    /// </summary>
     public bool DeviceLocked { get ; set ; } = Constants.DefaultLocked ;
 
+    /// <summary>
+    ///     Indicates if we should show a notifications.
+    /// </summary>
     public bool NotificationsEnabled { get ; set ; } = Constants.NotificationsEnabled ;
 }

@@ -8,13 +8,13 @@
   -->
     <ContextMenu x:Shared="false" x:Key="SysTrayMenu">
         <MenuItem Header="Connect" Command="{Binding ConnectCommand}" />
-        <MenuItem Header="Disconnect" Command="{Binding DisconnectCommand}" />
+        <MenuItem Header="DisconnectAsync" Command="{Binding DisconnectCommand}" />
         <Separator />
         <MenuItem Header="Show Settings" Command="{Binding ShowSettingsCommand}" />
-        <MenuItem Header="Hide Settings" Command="{Binding HideSettingsCommand}" />
+        <MenuItem Header="HideAsync Settings" Command="{Binding HideSettingsCommand}" />
         <Separator />
-        <MenuItem Header="Stand" Command="{Binding StandingCommand}" />
-        <MenuItem Header="Sit" Command="{Binding SeatingCommand}" />
+        <MenuItem Header="StandAsync" Command="{Binding StandingCommand}" />
+        <MenuItem Header="SitAsync" Command="{Binding SeatingCommand}" />
         <Separator />
         <MenuItem Header="Exit" Command="{Binding ExitApplicationCommand}" />
     </ContextMenu>

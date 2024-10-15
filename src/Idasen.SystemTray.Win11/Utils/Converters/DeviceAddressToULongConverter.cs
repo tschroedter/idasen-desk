@@ -2,17 +2,15 @@
 
 namespace Idasen.SystemTray.Win11.Utils.Converters ;
 
-public class DeviceAddressToULongConverter
+public class DeviceAddressToULongConverter ( IStringToUIntConverter converter )
     : IDeviceAddressToULongConverter
 {
-    private readonly IStringToUIntConverter _stringConverter = new StringToUIntConverter ( ) ;
-
     public ulong DefaultIfEmpty ( string deviceAddress )
     {
         return string.IsNullOrWhiteSpace ( deviceAddress )
                    ? Constants.DefaultDeviceAddress
-                   : _stringConverter.ConvertStringToUlongOrDefault ( deviceAddress ,
-                                                                      Constants.DefaultDeviceAddress ) ;
+                   : converter.ConvertStringToUlongOrDefault ( deviceAddress ,
+                                                               Constants.DefaultDeviceAddress ) ;
     }
 
     public string EmptyIfDefault ( ulong deviceAddress )

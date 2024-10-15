@@ -1,5 +1,5 @@
 ﻿using System.IO ;
-using Idasen.Launcher ;
+using Autofac ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.Utils ;
 using Serilog ;
@@ -12,8 +12,7 @@ public class SettingsManager (
     : ISettingsManager
 {
     // todo inject ILogger or use _container
-    private readonly ILogger _logger = LoggerProvider.CreateLogger ( Constants.ApplicationName ,
-                                                                     Constants.LogFilename ) ;
+    private ILogger ? _logger;
 
     private Settings _current = new( ) ;
 
@@ -21,18 +20,18 @@ public class SettingsManager (
 
     public string SettingsFileName { get ; } = commonApplicationData.ToFullPath ( Constants.SettingsFileName ) ;
 
-    public async Task Save ( )
+    public async Task SaveAsync ( )
     {
         await settingsStorage.SaveSettingsAsync ( SettingsFileName ,
                                                   _current ) ;
     }
 
-    public async Task Load ( )
+    public async Task LoadAsync ( )
     {
         _current = await settingsStorage.LoadSettingsAsync ( SettingsFileName ) ;
     }
 
-    public async Task < bool > UpgradeSettings ( )
+    public async Task < bool > UpgradeSettingsAsync ( )
     {
         if ( ! File.Exists ( SettingsFileName ) )
             return true ;
@@ -48,16 +47,23 @@ public class SettingsManager (
         return false ;
     }
 
+    public void Initialize ( IContainer container)
+    {
+        _logger = container.Resolve<ILogger>();
+
+        _logger?.Debug($"{nameof(SettingsManager)} initializing...");
+    }
+
     private async Task AddMissingSettingsNotificationsEnabled ( )
     {
-        _logger.Debug ( $"Add missing setting "                                       +
+        _logger?.Debug ( $"Add missing setting "                                       +
                         $"{nameof ( Settings.DeviceSettings.NotificationsEnabled )} " +
                         $"to current settings from '{SettingsFileName}'" ) ;
 
-        await Load ( ).ConfigureAwait ( false ) ;
+        await LoadAsync ( ).ConfigureAwait ( false ) ;
 
         _current.DeviceSettings.NotificationsEnabled = Constants.NotificationsEnabled ;
 
-        await Save ( ) ;
+        await SaveAsync ( ) ;
     }
 }

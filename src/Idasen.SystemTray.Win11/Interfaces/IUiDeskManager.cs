@@ -10,13 +10,13 @@ public interface IUiDeskManager : IDisposable
     IObservable < StatusBarInfo > StatusBarInfoChanged { get ; }
     StatusBarInfo                 LastStatusBarInfo    { get ; }
     UiDeskManager                 Initialize ( IContainer container , NotifyIcon notifyIcon ) ;
-    Task                          Stand ( ) ;
-    Task                          Sit ( ) ;
-    Task                          AutoConnect ( ) ;
-    Task                          Disconnect ( ) ;
-    Task                          Hide ( ) ;
-    Task                          Exit ( ) ;
-    Task                          Stop ( ) ;
-    Task                          MoveLock ( ) ;
-    Task                          MoveUnlock ( ) ;
+    Task                          StandAsync ( ) ;
+    Task                          SitAsync ( ) ;
+    Task                          AutoConnectAsync ( ) ;
+    Task                          DisconnectAsync ( ) ;
+    Task                          HideAsync ( ) ;
+    Task                          ExitAsync ( ) ;
+    Task                          StopAsync ( ) ;
+    Task                          MoveLockAsync ( ) ;
+    Task                          MoveUnlockAsync ( ) ;
 }

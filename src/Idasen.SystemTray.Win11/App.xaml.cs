@@ -9,6 +9,7 @@ using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.Services ;
 using Idasen.SystemTray.Win11.TraySettings ;
 using Idasen.SystemTray.Win11.Utils ;
+using Idasen.SystemTray.Win11.Utils.Converters ;
 using Idasen.SystemTray.Win11.Utils.Exceptions ;
 using Idasen.SystemTray.Win11.Utils.Icons ;
 using Idasen.SystemTray.Win11.ViewModels.Pages ;
@@ -82,7 +83,11 @@ public partial class App
                                                                                    IdasenConfigurationProvider > ( ) ;
                                                                            services.AddSingleton ( _ => CreateScheduler ( ) ) ;
                                                                            services.AddSingleton ( CreateTaskbarIconProvider ) ;
-                                                                       } ).Build ( ) ;
+                                                                           services.AddTransient < IDeviceNameConverter , DeviceNameConverter > ( ) ;
+                                                                           services.AddTransient < IDoubleToUIntConverter , DoubleToUIntConverter > ( ) ;
+                                                                           services.AddTransient < IStringToUIntConverter , StringToUIntConverter > ( ) ;
+                                                                           services.AddTransient < IDeviceAddressToULongConverter , DeviceAddressToULongConverter > ( ) ;
+                                                                       }).Build ( ) ;
 
     private readonly ILogger _logger = LoggerProvider.CreateLogger ( Constants.ApplicationName ,
                                                                      Constants.LogFilename ) ;
@@ -200,23 +205,23 @@ public partial class App
         return notifyIcons.FirstOrDefault ( ) ?? throw new Exception ( "Can't find the main notify icon!" ) ;
     }
 
-    public static IEnumerable < T > FindVisualChildren < T > ( DependencyObject parent )
+    public static IEnumerable<T> FindVisualChildren<T>(DependencyObject parent)
         where T : DependencyObject
     {
-        var childrenCount = VisualTreeHelper.GetChildrenCount ( parent ) ;
+        var childrenCount = VisualTreeHelper.GetChildrenCount(parent);
 
-        for ( var i = 0 ; i < childrenCount ; i ++ )
+        for (var i = 0; i < childrenCount; i++)
         {
-            var child = VisualTreeHelper.GetChild ( parent , i ) ;
+            var child = VisualTreeHelper.GetChild(parent, i);
 
-            if ( child is T childType )
+            if (child is T childType)
             {
-                yield return childType ;
+                yield return childType;
             }
 
-            foreach ( var other in FindVisualChildren < T > ( child ) )
+            foreach (var other in FindVisualChildren<T>(child))
             {
-                yield return other ;
+                yield return other;
             }
         }
     }

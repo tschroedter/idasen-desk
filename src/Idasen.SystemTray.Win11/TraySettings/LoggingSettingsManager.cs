@@ -4,30 +4,20 @@ using Serilog ;
 
 namespace Idasen.SystemTray.Win11.TraySettings ;
 
-/* todo
- *    public interface ISettingsWindow
-   {
-       void                                             Show ( ) ;
-       void                                             Close ( ) ;
-
-       event EventHandler                               AdvancedSettingsChanged ;
-       event EventHandler<LockSettingsChangedEventArgs> LockSettingsChanged ;
-   }
- */
 public class LoggingSettingsManager ( ISettingsManager settingsManager )
-    : ILoggingSettingsManager // todo: remove ILoggingSettingsManager
+    : ILoggingSettingsManager
 {
     private ILogger ? _logger ;
     public  ISettings CurrentSettings  => settingsManager.CurrentSettings ;
     public  string    SettingsFileName => settingsManager.SettingsFileName ;
 
-    public async Task Save ( )
+    public async Task SaveAsync ( )
     {
         try
         {
             _logger?.Debug ( $"Saving current setting [{CurrentSettings}] to '{SettingsFileName}'" ) ;
 
-            await settingsManager.Save ( ) ;
+            await settingsManager.SaveAsync ( ) ;
         }
         catch ( Exception e )
         {
@@ -37,13 +27,13 @@ public class LoggingSettingsManager ( ISettingsManager settingsManager )
         }
     }
 
-    public async Task Load ( )
+    public async Task LoadAsync ( )
     {
         try
         {
             _logger?.Debug ( $"Loading setting from '{SettingsFileName}'" ) ;
 
-            await settingsManager.Load ( ) ;
+            await settingsManager.LoadAsync ( ) ;
 
             _logger?.Debug ( $"Settings loaded: {CurrentSettings}" ) ;
         }
@@ -53,13 +43,13 @@ public class LoggingSettingsManager ( ISettingsManager settingsManager )
         }
     }
 
-    public async Task < bool > UpgradeSettings ( )
+    public async Task < bool > UpgradeSettingsAsync ( )
     {
         try
         {
             _logger?.Debug ( $"Check current setting from '{SettingsFileName}'" ) ;
 
-            var success = await settingsManager.UpgradeSettings ( ) ;
+            var success = await settingsManager.UpgradeSettingsAsync ( ) ;
 
             if ( success )
             {
@@ -82,6 +72,10 @@ public class LoggingSettingsManager ( ISettingsManager settingsManager )
 
     public void Initialize ( IContainer container )
     {
-        _logger = container.Resolve < ILogger > ( ) ;
+        settingsManager.Initialize( container ) ;
+
+        _logger = container.Resolve<ILogger>();
+
+        _logger?.Debug($"{nameof(SettingsManager)} initializing...");
     }
 }

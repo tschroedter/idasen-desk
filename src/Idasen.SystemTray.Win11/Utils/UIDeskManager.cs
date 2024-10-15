@@ -106,36 +106,36 @@ public class UiDeskManager : IUiDeskManager
         _notifications.Initialize ( container , notifyIcon ) ;
 
         // ReSharper disable once AsyncVoidLambda
-        Task.Run ( new Action ( async ( ) => { await AutoConnect ( ) ; } ) ) ;
+        Task.Run ( new Action ( async ( ) => { await AutoConnectAsync ( ) ; } ) ) ;
 
         return this ;
     }
 
-    public async Task Stand ( )
+    public async Task StandAsync ( )
     {
         _logger?.Debug ( "Executing Stand..." ) ;
 
         if ( ! IsDeskConnected ( ) )
             return ;
 
-        await _manager!.Load ( ) ;
+        await _manager!.LoadAsync ( ) ;
 
         _desk?.MoveTo ( _manager.CurrentSettings.HeightSettings.StandingHeightInCm * 100 ) ;
     }
 
-    public async Task Sit ( )
+    public async Task SitAsync ( )
     {
         if ( ! IsDeskConnected ( ) )
             return ;
 
-        await _manager!.Load ( )
+        await _manager!.LoadAsync ( )
                        .ConfigureAwait ( false ) ;
 
         _desk?.MoveTo ( _manager.CurrentSettings.HeightSettings.SeatingHeightInCm *
                         100 ) ; // todo duplicate
     }
 
-    public async Task AutoConnect ( )
+    public async Task AutoConnectAsync ( )
     {
         _logger?.Debug ( "Auto connecting..." ) ;
 
@@ -148,7 +148,7 @@ public class UiDeskManager : IUiDeskManager
             if ( _manager == null )
                 throw new Exception ( "Manager is null" ) ;
 
-            await _manager.Load ( ) ;
+            await _manager.LoadAsync ( ) ;
 
             _logger?.Debug ( "Trying to auto connect to Idasen Desk..." ) ;
 
@@ -177,17 +177,17 @@ public class UiDeskManager : IUiDeskManager
         }
     }
 
-    public Task Disconnect ( )
+    public Task DisconnectAsync ( )
     {
         if ( ! IsDeskConnected ( ) )
         {
-            DoDisconnect ( ) ;
+            DoDisconnectAsync ( ) ;
         }
 
         return Task.CompletedTask ;
     }
 
-    public Task Stop ( )
+    public Task StopAsync ( )
     {
         if ( ! IsDeskConnected ( ) )
         {
@@ -199,7 +199,7 @@ public class UiDeskManager : IUiDeskManager
         return Task.CompletedTask ;
     }
 
-    public Task MoveLock ( )
+    public Task MoveLockAsync ( )
     {
         if ( ! IsDeskConnected ( ) )
         {
@@ -211,7 +211,7 @@ public class UiDeskManager : IUiDeskManager
         return Task.CompletedTask ;
     }
 
-    public Task MoveUnlock ( )
+    public Task MoveUnlockAsync ( )
     {
         if ( ! IsDeskConnected ( ) )
         {
@@ -223,17 +223,10 @@ public class UiDeskManager : IUiDeskManager
         return Task.CompletedTask ;
     }
 
-    public Task Hide ( )
+    public Task HideAsync ( )
     {
         if ( Application.Current.MainWindow != null )
             Application.Current.MainWindow.Visibility = Visibility.Hidden ;
-
-        return Task.CompletedTask ;
-    }
-
-    public Task Exit ( )
-    {
-        Application.Current.Shutdown ( ) ;
 
         return Task.CompletedTask ;
     }
@@ -244,7 +237,14 @@ public class UiDeskManager : IUiDeskManager
                                                                          InfoBarSeverity.Informational ,
                                                                          Visibility.Hidden) ;
 
-    private void DoDisconnect ( )
+    public Task ExitAsync ( )
+    {
+        Application.Current.Shutdown ( ) ;
+
+        return Task.CompletedTask ;
+    }
+
+    private void DoDisconnectAsync ( )
     {
         try
         {
@@ -287,7 +287,7 @@ public class UiDeskManager : IUiDeskManager
         {
             _logger?.Information ( "Received global hot key for 'Stand' command..." ) ;
 
-            Task.Run ( async ( ) => await DoStanding ( ) ) ;
+            Task.Run ( async ( ) => await DoStandingAsync ( ) ) ;
         }
         catch ( Exception exception )
         {
@@ -301,7 +301,7 @@ public class UiDeskManager : IUiDeskManager
         {
             _logger?.Information ( "Received global hot key for 'Sit' command..." ) ;
 
-            Task.Run ( async ( ) => await DoSeating ( ) ) ;
+            Task.Run ( async ( ) => await DoSeatingAsync ( ) ) ;
         }
         catch ( Exception exception )
         {
@@ -309,37 +309,37 @@ public class UiDeskManager : IUiDeskManager
         }
     }
 
-    private async Task DoStanding ( )
+    private async Task DoStandingAsync ( )
     {
         try
         {
-            _logger?.Debug ( $"{nameof ( DoStanding )}" ) ;
+            _logger?.Debug ( $"{nameof ( DoStandingAsync )}" ) ;
 
-            await Stand ( ).ConfigureAwait ( false ) ;
+            await StandAsync ( ).ConfigureAwait ( false ) ;
         }
         catch ( Exception e )
         {
             _logger?.Error ( e ,
-                             $"Failed to call {nameof ( DoStanding )}" ) ;
+                             $"Failed to call {nameof ( DoStandingAsync )}" ) ;
 
-            _errorManager?.PublishForMessage ( $"Failed to call {nameof ( DoStanding )}" ) ;
+            _errorManager?.PublishForMessage ( $"Failed to call {nameof ( DoStandingAsync )}" ) ;
         }
     }
 
-    private async Task DoSeating ( )
+    private async Task DoSeatingAsync ( )
     {
         try
         {
-            _logger?.Debug ( $"{nameof ( DoSeating )}" ) ;
+            _logger?.Debug ( $"{nameof ( DoSeatingAsync )}" ) ;
 
-            await Sit ( ).ConfigureAwait ( false ) ;
+            await SitAsync ( ).ConfigureAwait ( false ) ;
         }
         catch ( Exception e )
         {
             _logger?.Error ( e ,
-                             $"Failed to call {nameof ( DoSeating )}" ) ;
+                             $"Failed to call {nameof ( DoSeatingAsync )}" ) ;
 
-            _errorManager?.PublishForMessage ( $"Failed to call {nameof ( DoSeating )}" ) ;
+            _errorManager?.PublishForMessage ( $"Failed to call {nameof ( DoSeatingAsync )}" ) ;
         }
     }
 
@@ -413,7 +413,7 @@ public class UiDeskManager : IUiDeskManager
     {
         _logger?.Debug ( "Connection failed..." ) ;
 
-        Disconnect ( ) ;
+        DisconnectAsync ( ) ;
 
         _errorManager?.PublishForMessage ( "Failed to connect" ) ; // todo
     }

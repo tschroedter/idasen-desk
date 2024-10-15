@@ -18,7 +18,8 @@ public class ErrorHandler
         {
             if ( handler.CanHandle ( exception ) )
             {
-                handler.Handle ( exception , logger ) ;
+                handler.Handle ( exception ,
+                                 logger ) ;
 
                 return ;
             }

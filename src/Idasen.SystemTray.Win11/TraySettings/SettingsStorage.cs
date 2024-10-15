@@ -15,18 +15,38 @@ public class SettingsStorage : ISettingsStorage
 
     public async Task < Settings > LoadSettingsAsync ( string settingsFileName )
     {
-        await using var openStream = File.OpenRead ( settingsFileName ) ;
-        var result = await JsonSerializer.DeserializeAsync < Settings > ( openStream ,
-                                                                          _jsonOptions ) ??
-                     new Settings ( ) ;
+        try
+        {
+            if ( ! File.Exists ( settingsFileName ) )
+                return new Settings ( ) ;
 
-        return result ;
+            await using var openStream = File.OpenRead ( settingsFileName ) ;
+            var             result     = await JsonSerializer.DeserializeAsync < Settings > ( openStream ,
+                                                                                              _jsonOptions ) ;
+
+            return result ?? new Settings ( ) ;
+        }
+        catch ( Exception ex )
+        {
+            throw new IOException ( $"Failed to load settings from {settingsFileName}" ,
+                                    ex ) ;
+        }
     }
 
-    public async Task SaveSettingsAsync ( string   settingsFileName ,
-                                          Settings settings )
+    public async Task SaveSettingsAsync ( string settingsFileName , Settings settings )
     {
-        await using var stream = File.Create ( settingsFileName ) ;
-        await JsonSerializer.SerializeAsync ( stream , settings , _jsonOptions ) ;
+        try
+        {
+            await using var stream = File.Create ( settingsFileName ) ;
+
+            await JsonSerializer.SerializeAsync ( stream ,
+                                                  settings , 
+                                                  _jsonOptions ) ;
+        }
+        catch ( Exception ex )
+        {
+            throw new IOException ( $"Failed to save settings to {settingsFileName}" ,
+                                    ex ) ;
+        }
     }
 }

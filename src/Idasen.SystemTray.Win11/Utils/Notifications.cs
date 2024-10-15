@@ -55,7 +55,7 @@ public class Notifications : INotifications
 
         Task.Run ( async ( ) =>
                    {
-                       await _manager.Load ( ) ;
+                       await _manager.LoadAsync ( ) ;
 
                        Show ( $"Idasen System Tray {_version.GetVersion ( )}" ,
                               "Running..." ) ;

@@ -13,6 +13,7 @@ public class BluetoothDisabledExceptionHandler : IExceptionHandler
 
     public void Handle ( Exception exception , ILogger logger )
     {
-        exception.LogBluetoothStatusException ( logger , string.Empty ) ;
+        exception.LogBluetoothStatusException ( logger ,
+                                                string.Empty ) ;
     }
 }

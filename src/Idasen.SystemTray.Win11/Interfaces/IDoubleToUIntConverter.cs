@@ -1,6 +1,6 @@
 ﻿namespace Idasen.SystemTray.Win11.Interfaces ;
 
-internal interface IDoubleToUIntConverter
+public interface IDoubleToUIntConverter
 {
     uint ConvertToUInt ( double value ,
                          uint   defaultValue ) ;

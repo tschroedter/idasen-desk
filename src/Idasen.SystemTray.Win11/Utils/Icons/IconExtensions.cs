@@ -11,9 +11,8 @@ public static class IconExtensions
     {
         return icon == null
                    ? throw new ArgumentNullException ( nameof ( icon ) )
-                   : Imaging.CreateBitmapSourceFromHIcon (
-                                                          icon.Handle ,
-                                                          Int32Rect.Empty ,
-                                                          BitmapSizeOptions.FromEmptyOptions ( ) ) ;
+                   : Imaging.CreateBitmapSourceFromHIcon ( icon.Handle ,
+                                                           Int32Rect.Empty ,
+                                                           BitmapSizeOptions.FromEmptyOptions ( ) ) ;
     }
 }
