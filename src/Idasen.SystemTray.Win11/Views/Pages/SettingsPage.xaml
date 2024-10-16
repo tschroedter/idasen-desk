@@ -41,6 +41,10 @@
                         <RowDefinition />
                         <RowDefinition Height="5" />
                         <RowDefinition />
+                        <RowDefinition Height="5" />
+                        <RowDefinition />
+                        <RowDefinition Height="5" />
+                        <RowDefinition />
                     </Grid.RowDefinitions>
                     <!-- Row 0 -->
                     <Label Grid.Row="0"
@@ -100,6 +104,32 @@
                               VerticalContentAlignment="Center"
                               Margin="4,0,0,0"
                               IsChecked="{Binding ViewModel.Notifications}" />
+                    <!-- Row 7 Blank -->
+                    <!-- Row 8 -->
+                    <Label Grid.Row="8"
+                           Grid.Column="0"
+                           Content="Log Folder"
+                           ToolTip="Show the location of the log files."
+                           VerticalContentAlignment="Center"
+                           Padding="5,0,5,0" />
+                    <TextBox Grid.Row="8"
+                             Grid.Column="1"
+                             IsEnabled="True"
+                             IsReadOnly="True"
+                             Text="{Binding ViewModel.LogFolderPath}" />
+                    <!-- Row 9 Blank -->
+                    <!-- Row 10 -->
+                    <Label Grid.Row="10"
+                           Grid.Column="0"
+                           Content="Settings File"
+                           ToolTip="Show the location of the settings file."
+                           VerticalContentAlignment="Center"
+                           Padding="5,0,5,0" />
+                    <TextBox Grid.Row="10"
+                             Grid.Column="1"
+                             IsEnabled="True"
+                             IsReadOnly="True"
+                             Text="{Binding ViewModel.SettingsFileFullPath}" />
                 </Grid>
             </StackPanel>
         </ui:CardExpander>

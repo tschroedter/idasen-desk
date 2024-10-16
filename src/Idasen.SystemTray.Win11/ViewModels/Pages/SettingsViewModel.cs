@@ -1,6 +1,7 @@
 ﻿using System.Reflection ;
 using Autofac ;
 using Idasen.SystemTray.Win11.Interfaces ;
+using Idasen.SystemTray.Win11.TraySettings;
 using Idasen.SystemTray.Win11.Utils ;
 using Serilog ;
 using Wpf.Ui.Appearance ;
@@ -9,13 +10,17 @@ using Wpf.Ui.Controls ;
 namespace Idasen.SystemTray.Win11.ViewModels.Pages ;
 
 public partial class SettingsViewModel ( ILoggingSettingsManager        settingsManager ,
+                                         ICommonApplicationData applicationData,
                                          INotifySettingsChanges         settingsChanges ,
                                          IDeviceAddressToULongConverter addressConverter ,
                                          IDoubleToUIntConverter         toUIntConverter ,
                                          IDeviceNameConverter           nameConverter )
     : ObservableObject , INavigationAware
 {
-    [ ObservableProperty ]
+    private bool      _isInitialized;
+    private ILogger ? _logger ;
+
+    [ObservableProperty ]
     private string _appVersion = string.Empty ;
 
     [ ObservableProperty ]
@@ -24,13 +29,14 @@ public partial class SettingsViewModel ( ILoggingSettingsManager        settings
     [ ObservableProperty ]
     private string _deskAddress = string.Empty ;
 
-    // Advanced Settings
     [ ObservableProperty ]
     private string _deskName = string.Empty ;
 
-    private bool _isInitialized ;
+    [ ObservableProperty ]
+    private string _settingsFileFullPath = string.Empty ;
 
-    private ILogger ? _logger ;
+    [ObservableProperty]
+    private string _logFolderPath = string.Empty;
 
     [ ObservableProperty ]
     private uint _maxHeight = 90 ;
@@ -47,7 +53,6 @@ public partial class SettingsViewModel ( ILoggingSettingsManager        settings
     [ ObservableProperty ]
     private uint _seating = 90 ;
 
-    // General Settings
     [ ObservableProperty ]
     private uint _standing = 100 ;
 
@@ -69,6 +74,9 @@ public partial class SettingsViewModel ( ILoggingSettingsManager        settings
         _logger = container.Resolve < ILogger > ( ) ;
 
         LoadSettingsAsync ( ) ;
+
+        SettingsFileFullPath = settingsManager.SettingsFileName;
+        LogFolderPath = Idasen.Launcher.LoggingFile.Path;
 
         return this ;
     }
@@ -129,12 +137,9 @@ public partial class SettingsViewModel ( ILoggingSettingsManager        settings
 
         var newDeviceName           = nameConverter.DefaultIfEmpty ( DeskName ) ;
         var newDeviceAddress        = addressConverter.DefaultIfEmpty ( DeskAddress ) ;
-        var newNotificationsEnabled = Notifications ;
 
-
-        return settings.DeviceSettings.DeviceName           != newDeviceName    ||
-               settings.DeviceSettings.DeviceAddress        != newDeviceAddress ||
-               settings.DeviceSettings.NotificationsEnabled != newNotificationsEnabled ;
+        return settings.DeviceSettings.DeviceName    != newDeviceName ||
+               settings.DeviceSettings.DeviceAddress != newDeviceAddress ;
     }
 
     private void UpdateCurrentSettings (  )
