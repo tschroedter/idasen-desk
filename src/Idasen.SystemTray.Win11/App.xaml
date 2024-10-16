@@ -12,6 +12,8 @@
                 <ui:ThemesDictionary Theme="Light" />
                 <ui:ControlsDictionary />
                 <ResourceDictionary Source="Resources/NotifyIconResources.xaml" />
+                <ResourceDictionary Source="Resources/Other.xaml" />
+                <!-- Add other resource dictionaries here -->
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
