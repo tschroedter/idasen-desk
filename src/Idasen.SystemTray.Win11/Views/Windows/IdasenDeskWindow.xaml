@@ -70,7 +70,7 @@
         <tray:NotifyIcon
             Name="IdasenNotifyIcon"
             FocusOnLeftClick="True"
-            Icon="pack://application:,,,/Assets/cup-xxl.png"
+            Icon="pack://application:,,,/Resources/cup-xl.ico"
             MenuOnRightClick="True">
             <!-- ContextMenu set in code
             <tray:NotifyIcon.Menu>
