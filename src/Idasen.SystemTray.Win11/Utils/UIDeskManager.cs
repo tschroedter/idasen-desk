@@ -160,7 +160,7 @@ public class UiDeskManager : IUiDeskManager
 
             _notifications.Show ( "Auto Connect" ,
                                   "Trying to auto connect to Idasen Desk..." ,
-                                  Visibility.Visible ) ;
+                                  InfoBarSeverity.Informational ) ;
 
             await Connect ( ) ;
         }
@@ -234,8 +234,7 @@ public class UiDeskManager : IUiDeskManager
     public StatusBarInfo LastStatusBarInfo { get ; private set ; } = new("" ,
                                                                          0 ,
                                                                          "Unknown" ,
-                                                                         InfoBarSeverity.Informational ,
-                                                                         Visibility.Hidden) ;
+                                                                         InfoBarSeverity.Informational) ;
 
     public Task ExitAsync ( )
     {
@@ -492,25 +491,22 @@ public class UiDeskManager : IUiDeskManager
     private void OnStatusChanged ( uint            height     = 0 ,
                                    string          title      = "" ,
                                    string          message    = "" ,
-                                   InfoBarSeverity severity   = InfoBarSeverity.Informational ,
-                                   Visibility      visibility = Visibility.Visible )
+                                   InfoBarSeverity severity   = InfoBarSeverity.Informational )
     {
-        _logger?.Debug ( $"{nameof ( height )} = {height}, "     +
-                         $"{nameof ( title )} = {title}, "       +
-                         $"{nameof ( message )} = {message}, "   +
-                         $"{nameof ( severity )} = {severity}, " +
-                         $"{nameof ( visibility )} = {visibility}" ) ;
+        _logger?.Debug ( $"{nameof ( height )} = {height}, "   +
+                         $"{nameof ( title )} = {title}, "     +
+                         $"{nameof ( message )} = {message}, " +
+                         $"{nameof ( severity )} = {severity}" ) ;
 
         LastStatusBarInfo = new StatusBarInfo ( title ,
                                                 height ,
                                                 message ,
-                                                severity ,
-                                                visibility ) ;
+                                                severity ) ;
 
         _statusBarInfoSubject.OnNext ( LastStatusBarInfo ) ;
 
         _notifications.Show ( title ,
                               message ,
-                              visibility ) ;
+                              severity) ;
     }
 }

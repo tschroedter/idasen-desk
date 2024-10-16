@@ -5,6 +5,7 @@ using Idasen.BluetoothLE.Core ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Microsoft.Toolkit.Uwp.Notifications ;
 using Serilog ;
+using Wpf.Ui.Controls ;
 using Wpf.Ui.Tray.Controls ;
 
 namespace Idasen.SystemTray.Win11.Utils ;
@@ -28,15 +29,11 @@ public class Notifications : INotifications
 
     public void Show ( string     title ,
                        string     text ,
-                       Visibility visibilityBulbGreen  = Visibility.Hidden ,
-                       Visibility visibilityBulbYellow = Visibility.Hidden ,
-                       Visibility visibilityBulbRed    = Visibility.Hidden )
+                       InfoBarSeverity serverity)
     {
         var parameters = new NotificationParameters ( title ,
                                                       text ,
-                                                      visibilityBulbGreen , // todo old style lightbulbs or change to severity
-                                                      visibilityBulbYellow ,
-                                                      visibilityBulbRed ) ;
+                                                      serverity ) ;
         Show( parameters ) ;
     }
 
@@ -67,7 +64,8 @@ public class Notifications : INotifications
                        await _manager.LoadAsync ( ) ;
 
                        Show ( $"Idasen System Tray {_version.GetVersion ( )}" ,
-                              "Running..." ) ;
+                              "Running..." ,
+                              InfoBarSeverity.Informational ) ;
                    } ) ;
 
         return this ;
