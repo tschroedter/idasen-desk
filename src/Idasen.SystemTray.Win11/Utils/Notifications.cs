@@ -1,8 +1,11 @@
-﻿using System.Reactive.Subjects ;
+﻿using System.IO ;
+using System.Reactive.Subjects ;
 using System.Windows.Threading ;
 using Autofac ;
 using Idasen.BluetoothLE.Core ;
+using Idasen.BluetoothLE.Linak ;
 using Idasen.SystemTray.Win11.Interfaces ;
+using Idasen.SystemTray.Win11.Views.Pages ;
 using Microsoft.Toolkit.Uwp.Notifications ;
 using Serilog ;
 using Wpf.Ui.Controls ;
@@ -102,6 +105,7 @@ public class Notifications : INotifications
         var builder = new ToastContentBuilder ( ) ;
         builder.AddText ( parameters.Title ) ;
         builder.AddText ( parameters.Text ) ; // todo image balloon
+        builder.SetToastDuration ( ToastDuration.Short ) ;
 
         // Not seeing the Show() method? Make sure you have version 7.0, and if you're using .NET 6 (or later), then your TFM must be net6.0-windows10.0.17763.0 or greater
         // Try running this code, and you should see the notification appear!
