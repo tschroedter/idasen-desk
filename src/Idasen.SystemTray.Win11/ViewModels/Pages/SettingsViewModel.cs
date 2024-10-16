@@ -1,7 +1,6 @@
 ﻿using System.Reflection ;
 using Autofac ;
 using Idasen.SystemTray.Win11.Interfaces ;
-using Idasen.SystemTray.Win11.TraySettings;
 using Idasen.SystemTray.Win11.Utils ;
 using Serilog ;
 using Wpf.Ui.Appearance ;
@@ -10,7 +9,6 @@ using Wpf.Ui.Controls ;
 namespace Idasen.SystemTray.Win11.ViewModels.Pages ;
 
 public partial class SettingsViewModel ( ILoggingSettingsManager        settingsManager ,
-                                         ICommonApplicationData applicationData,
                                          INotifySettingsChanges         settingsChanges ,
                                          IDeviceAddressToULongConverter addressConverter ,
                                          IDoubleToUIntConverter         toUIntConverter ,
@@ -76,7 +74,7 @@ public partial class SettingsViewModel ( ILoggingSettingsManager        settings
         LoadSettingsAsync ( ) ;
 
         SettingsFileFullPath = settingsManager.SettingsFileName;
-        LogFolderPath = Idasen.Launcher.LoggingFile.Path;
+        LogFolderPath = Launcher.LoggingFile.Path;
 
         return this ;
     }

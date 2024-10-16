@@ -1,11 +1,8 @@
-﻿using System.IO ;
-using System.Reactive.Subjects ;
+﻿using System.Reactive.Subjects ;
 using System.Windows.Threading ;
 using Autofac ;
 using Idasen.BluetoothLE.Core ;
-using Idasen.BluetoothLE.Linak ;
 using Idasen.SystemTray.Win11.Interfaces ;
-using Idasen.SystemTray.Win11.Views.Pages ;
 using Microsoft.Toolkit.Uwp.Notifications ;
 using Serilog ;
 using Wpf.Ui.Controls ;
