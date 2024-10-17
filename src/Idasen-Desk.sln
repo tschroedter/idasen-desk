@@ -3,13 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31912.275
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Idasen.SystemTray", "Idasen.SystemTray\Idasen.SystemTray.csproj", "{44B3BFDF-A5FF-48CD-9C99-33928E660498}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Idasen.SystemTray.Tests", "Idasen.SystemTray.Tests\Idasen.SystemTray.Tests.csproj", "{C4E461F5-923C-4ABD-97CC-B679209ADACD}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Idasen.SystemTray.Win11", "Idasen.SystemTray.Win11\Idasen.SystemTray.Win11.csproj", "{ADE2707C-B623-4E75-A42E-C0014E85B2F1}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UiDesktopApp1", "UiDesktopApp1\UiDesktopApp1.csproj", "{B0232E38-DF8F-4B5B-A7A3-17AD63226D8D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,22 +11,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{44B3BFDF-A5FF-48CD-9C99-33928E660498}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{44B3BFDF-A5FF-48CD-9C99-33928E660498}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{44B3BFDF-A5FF-48CD-9C99-33928E660498}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{44B3BFDF-A5FF-48CD-9C99-33928E660498}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C4E461F5-923C-4ABD-97CC-B679209ADACD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C4E461F5-923C-4ABD-97CC-B679209ADACD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C4E461F5-923C-4ABD-97CC-B679209ADACD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C4E461F5-923C-4ABD-97CC-B679209ADACD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{ADE2707C-B623-4E75-A42E-C0014E85B2F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{ADE2707C-B623-4E75-A42E-C0014E85B2F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ADE2707C-B623-4E75-A42E-C0014E85B2F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ADE2707C-B623-4E75-A42E-C0014E85B2F1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B0232E38-DF8F-4B5B-A7A3-17AD63226D8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B0232E38-DF8F-4B5B-A7A3-17AD63226D8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B0232E38-DF8F-4B5B-A7A3-17AD63226D8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B0232E38-DF8F-4B5B-A7A3-17AD63226D8D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
