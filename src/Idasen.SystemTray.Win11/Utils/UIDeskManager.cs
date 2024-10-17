@@ -179,7 +179,7 @@ public class UiDeskManager : IUiDeskManager
 
     public Task DisconnectAsync ( )
     {
-        if ( ! IsDeskConnected ( ) )
+        if ( IsDeskConnected ( ) )
         {
             DoDisconnectAsync ( ) ;
         }
@@ -250,8 +250,6 @@ public class UiDeskManager : IUiDeskManager
             _logger?.Debug ( $"[{_desk?.DeviceName}] Trying to disconnect from Idasen Desk..." ) ;
 
             DisposeDesk ( ) ;
-
-            _tokenSource?.Cancel ( false ) ;
 
             _logger?.Debug ( $"[{_desk?.DeviceName}] ...disconnected from Idasen Desk" ) ;
         }
@@ -344,7 +342,7 @@ public class UiDeskManager : IUiDeskManager
 
     private bool IsDeskConnected ( )
     {
-        if ( _desk    != null ||
+        if ( _desk    != null &&
              _manager != null )
             return true ;
 
@@ -374,13 +372,6 @@ public class UiDeskManager : IUiDeskManager
                                        _manager!.CurrentSettings.DeviceSettings.DeviceMonitoringTimeout ) ;
 
             _logger?.Debug ( $"[{_desk?.DeviceName}] Trying to connect to Idasen Desk..." ) ;
-
-            // DisposeDesk ( ) ;
-
-            _tokenSource?.Cancel ( false ) ;
-
-            _tokenSource = new CancellationTokenSource ( TimeSpan.FromSeconds ( 60 ) ) ;
-            _token       = _tokenSource.Token ;
 
             if ( _token == null )
                 throw new Exception ( "Token is null" ) ;

@@ -74,7 +74,6 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
         } ,
         TargetPageType = typeof ( StatusPage ) ,
         ToolTip        = "Double-Click to disconnect desk.",
-        IsEnabled = false
     } ;
 
     private static readonly NavigationViewItem CloseWindowViewItem = new( )
@@ -187,6 +186,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
             new MenuItem { Header = "Disconnect" , Command    = DisconnectCommand } ,
             new MenuItem { Header = "Stand" , Command         = StandingCommand } ,
             new MenuItem { Header = "Sit" , Command           = SeatingCommand } ,
+            new MenuItem { Header = "Stop" , Command          = StopCommand } ,
             new MenuItem { Header = "Exit" , Command          = ExitApplicationCommand }
         ] ;
     }
@@ -234,6 +234,14 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
         // ReSharper disable once AsyncVoidLambda
         new DelegateCommand ( async ( ) => await _uiDeskManager.SitAsync ( ) ,
                               ( ) => _uiDeskManager.IsInitialize ) ;
+
+    /// <summary>
+    ///     Stop the desk moving.
+    /// </summary>
+    public ICommand StopCommand =>
+        // ReSharper disable once AsyncVoidLambda
+        new DelegateCommand(async () => await _uiDeskManager.StopAsync(),
+                            () => _uiDeskManager.IsInitialize);
 
     /// <summary>
     ///     Shuts down the application.
