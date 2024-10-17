@@ -9,6 +9,7 @@ public interface IUiDeskManager : IDisposable
     bool                          IsInitialize         { get ; }
     IObservable < StatusBarInfo > StatusBarInfoChanged { get ; }
     StatusBarInfo                 LastStatusBarInfo    { get ; }
+    bool                          IsConnected          { get ; }
     UiDeskManager                 Initialize ( IContainer container , NotifyIcon notifyIcon ) ;
     Task                          StandAsync ( ) ;
     Task                          SitAsync ( ) ;

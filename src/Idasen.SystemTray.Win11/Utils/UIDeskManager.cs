@@ -75,6 +75,8 @@ public class UiDeskManager : IUiDeskManager
         _tokenSource?.Dispose ( ) ;
     }
 
+    public bool IsConnected => _desk != null ;
+
     public UiDeskManager Initialize ( IContainer container , NotifyIcon notifyIcon )
     {
         Guard.ArgumentNotNull ( container ,
