@@ -178,7 +178,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
         CloseWindowViewItem.MouseDoubleClick += OnClickCloseViewItem ;
         ExitViewItem.MouseDoubleClick        += OnClickExit ;
 
-        _trayMenuItems =
+        TrayMenuItems =
         [
             new MenuItem { Header = "Show Settings" , Command = ShowSettingsCommand } ,
             new MenuItem { Header = "Hide Settings" , Command = HideSettingsCommand } ,
@@ -524,7 +524,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
 
         notifyIcon.Menu = new ContextMenu
         {
-            ItemsSource = _trayMenuItems
+            ItemsSource = TrayMenuItems
         } ;
 
         // todo IDisposable right
