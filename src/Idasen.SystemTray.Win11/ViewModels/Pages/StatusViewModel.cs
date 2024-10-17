@@ -1,17 +1,15 @@
 ﻿using System.Reactive.Concurrency ;
 using System.Reactive.Linq ;
-using System.Timers ;
-using System.Windows.Threading ;
-using Idasen.SystemTray.Win11.ViewModels.Windows ;
+using Idasen.SystemTray.Win11.Interfaces ;
+using Idasen.SystemTray.Win11.Utils ;
 using Wpf.Ui.Controls ;
-using Timer = System.Timers.Timer ;
 
 namespace Idasen.SystemTray.Win11.ViewModels.Pages ;
 
 public partial class StatusViewModel : ObservableObject , IDisposable
 {
     private readonly IDisposable _statusBarInfoChanged ;
-    private readonly Timer       _timer = new( ) ;
+    private readonly Timer       _timer ;
 
     [ ObservableProperty ]
     private uint _height ;
@@ -22,48 +20,38 @@ public partial class StatusViewModel : ObservableObject , IDisposable
     [ ObservableProperty ]
     private InfoBarSeverity _severity = InfoBarSeverity.Informational ;
 
-
     [ ObservableProperty ]
     private string _title = "Desk Status" ;
 
     public StatusViewModel ( IUiDeskManager manager )
     {
         _statusBarInfoChanged = manager.StatusBarInfoChanged
-                                       .ObserveOn ( Scheduler.Default )
+                                       .ObserveOn ( DispatcherScheduler.Current )
                                        .Subscribe ( OnStatusBarInfoChanged ) ;
 
-        Message          =  manager.LastStatusBarInfo.Message ;
-        Height           =  manager.LastStatusBarInfo.Height;
-        Severity         =  manager.LastStatusBarInfo.Severity;
+        Message  = manager.LastStatusBarInfo.Message ;
+        Height   = manager.LastStatusBarInfo.Height ;
+        Severity = manager.LastStatusBarInfo.Severity ;
 
-        _timer.Elapsed   += OnElapsed;
-        _timer.Interval  =  TimeSpan.FromSeconds(10).TotalMilliseconds;
-        _timer.AutoReset =  false;
-        _timer.Start ( ) ;
+        _timer = new Timer ( OnElapsed , 
+                             null , 
+                             TimeSpan.FromSeconds ( 10 ) , 
+                             Timeout.InfiniteTimeSpan ) ;
     }
 
     public void Dispose ( )
     {
-        _timer.Elapsed -= OnElapsed ;
-        _timer.Stop ( ) ;
         _timer.Dispose ( ) ;
-
         _statusBarInfoChanged.Dispose ( ) ;
     }
 
-    private void OnElapsed ( object ? source , ElapsedEventArgs e )
+    private void OnElapsed ( object ?  state )
     {
-        DefaultInfoBar ( ) ;
+        Application.Current.Dispatcher.BeginInvoke ( DefaultInfoBar ) ;
     }
 
     private void DefaultInfoBar ( )
     {
-        if ( ! Dispatcher.CurrentDispatcher.CheckAccess ( ) )
-        {
-            Dispatcher.CurrentDispatcher.Invoke ( DefaultInfoBar ) ;
-            return ;
-        }
-
         Message = Height == 0
                       ? "Can't determine desk height."
                       : $"Current desk height {Height} cm" ;
@@ -77,6 +65,7 @@ public partial class StatusViewModel : ObservableObject , IDisposable
         Severity = info.Severity ;
         Height   = info.Height ;
 
-        _timer.Start ( ) ;
+        _timer.Change ( TimeSpan.FromSeconds ( 10 ) ,
+                        Timeout.InfiniteTimeSpan ) ;
     }
 }

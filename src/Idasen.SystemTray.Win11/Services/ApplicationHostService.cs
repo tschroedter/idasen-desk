@@ -12,6 +12,9 @@ public class ApplicationHostService ( IServiceProvider serviceProvider ) : IHost
 {
     private INavigationWindow ? _navigationWindow ;
 
+    private static Window CurrentWindow =>
+        Application.Current.MainWindow ?? throw new Exception ( "Can't find the main window!" ) ;
+
     /// <summary>
     ///     Triggered when the application host is ready to start the service.
     /// </summary>
@@ -35,7 +38,7 @@ public class ApplicationHostService ( IServiceProvider serviceProvider ) : IHost
     /// </summary>
     private async Task HandleActivationAsync ( )
     {
-        if ( ! Application.Current.Windows.OfType < MainWindow > ( ).Any ( ) )
+        if ( ! Application.Current.Windows.OfType < IdasenDeskWindow > ( ).Any ( ) )
         {
             _navigationWindow = (
                                     serviceProvider.GetService ( typeof ( INavigationWindow ) ) as INavigationWindow
@@ -43,6 +46,8 @@ public class ApplicationHostService ( IServiceProvider serviceProvider ) : IHost
             _navigationWindow!.ShowWindow ( ) ;
 
             _navigationWindow.Navigate ( typeof ( SettingsPage ) ) ;
+
+            CurrentWindow.Visibility = Visibility.Hidden ;
         }
 
         await Task.CompletedTask ;

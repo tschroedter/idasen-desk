@@ -1,30 +1,29 @@
-﻿using System.Drawing;
-using System.IO;
+﻿using System.IO ;
 using System.Reactive.Concurrency ;
-using System.Reflection;
+using System.Reflection ;
 using System.Windows.Media ;
-using System.Windows.Shell ;
-using System.Windows.Threading;
+using System.Windows.Threading ;
 using Autofac ;
-using Idasen.Launcher;
-using Idasen.SystemTray.Win11.Interfaces;
-using Idasen.SystemTray.Win11.Services;
-using Idasen.SystemTray.Win11.Settings ;
-using Idasen.SystemTray.Win11.Utils;
-using Idasen.SystemTray.Win11.Utils.Exceptions;
-using Idasen.SystemTray.Win11.ViewModels.Pages;
-using Idasen.SystemTray.Win11.ViewModels.Windows;
-using Idasen.SystemTray.Win11.Views.Pages;
-using Idasen.SystemTray.Win11.Views.Windows;
-using JetBrains.Annotations ;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Serilog;
-using Wpf.Ui;
+using Idasen.Launcher ;
+using Idasen.SystemTray.Win11.Interfaces ;
+using Idasen.SystemTray.Win11.Services ;
+using Idasen.SystemTray.Win11.TraySettings ;
+using Idasen.SystemTray.Win11.Utils ;
+using Idasen.SystemTray.Win11.Utils.Converters ;
+using Idasen.SystemTray.Win11.Utils.Exceptions ;
+using Idasen.SystemTray.Win11.Utils.Icons ;
+using Idasen.SystemTray.Win11.ViewModels.Pages ;
+using Idasen.SystemTray.Win11.ViewModels.Windows ;
+using Idasen.SystemTray.Win11.Views.Pages ;
+using Idasen.SystemTray.Win11.Views.Windows ;
+using Microsoft.Extensions.Configuration ;
+using Microsoft.Extensions.DependencyInjection ;
+using Microsoft.Extensions.Hosting ;
+using Serilog ;
+using Wpf.Ui ;
 using Wpf.Ui.Tray.Controls ;
 
-namespace Idasen.SystemTray.Win11;
+namespace Idasen.SystemTray.Win11 ;
 
 /// <summary>
 ///     Interaction logic for App.xaml
@@ -56,8 +55,8 @@ public partial class App
                                                                            services.AddSingleton < INavigationService , NavigationService > ( ) ;
 
                                                                            // Main window with navigation
-                                                                           services.AddSingleton < INavigationWindow , MainWindow > ( ) ;
-                                                                           services.AddSingleton < MainWindowViewModel > ( ) ;
+                                                                           services.AddSingleton < INavigationWindow , IdasenDeskWindow > ( ) ;
+                                                                           services.AddSingleton < IdasenDeskWindowViewModel > ( ) ;
                                                                            services.AddSingleton < HomePage > ( ) ;
                                                                            services.AddSingleton < DashboardViewModel > ( ) ;
                                                                            services.AddSingleton < StatusPage > ( ) ;
@@ -66,7 +65,11 @@ public partial class App
                                                                            services.AddSingleton < SettingsViewModel > ( ) ;
                                                                            services.AddSingleton < IVersionProvider , VersionProvider > ( ) ;
                                                                            services.AddSingleton < INotifications , Notifications > ( ) ;
+                                                                           services.AddSingleton < SettingsChanges > ( ) ;
+                                                                           services.AddSingleton < IObserveSettingsChanges > ( GetSettingsChanged ) ;
+                                                                           services.AddSingleton < INotifySettingsChanges > ( GetSettingsChanged ) ;
                                                                            services.AddSingleton < ISettingsManager , SettingsManager > ( ) ;
+                                                                           services.AddSingleton < ILoggingSettingsManager , LoggingSettingsManager > ( ) ;
                                                                            services.AddSingleton < ICommonApplicationData , CommonApplicationData > ( ) ;
                                                                            services.AddSingleton < ISettingsStorage , SettingsStorage > ( ) ;
                                                                            services.AddSingleton < ITaskbarIconProvider , TaskbarIconProvider > ( ) ;
@@ -75,23 +78,39 @@ public partial class App
                                                                            services.AddSingleton < IIdasenConfigurationProvider , IdasenConfigurationProvider > ( ) ;
                                                                            services.AddSingleton ( _ => CreateScheduler ( ) ) ;
                                                                            services.AddSingleton ( CreateTaskbarIconProvider ) ;
-                                                                       } ).Build ( ) ;
+                                                                           services.AddTransient < IDeviceNameConverter , DeviceNameConverter > ( ) ;
+                                                                           services.AddTransient < IDoubleToUIntConverter , DoubleToUIntConverter > ( ) ;
+                                                                           services.AddTransient < IStringToUIntConverter , StringToUIntConverter > ( ) ;
+                                                                           services.AddTransient < IDeviceAddressToULongConverter , DeviceAddressToULongConverter > ( ) ;
+                                                                       }).Build ( ) ;
 
-    private static IScheduler CreateScheduler()
+    private readonly ILogger _logger = LoggerProvider.CreateLogger ( Constants.ApplicationName ,
+                                                                     Constants.LogFilename ) ;
+
+    private IContainer ? _container ;
+
+    private static Window CurrentWindow =>
+        Current.MainWindow ?? throw new Exception ( "Can't find the main window!" ) ;
+
+    private static SettingsChanges GetSettingsChanged ( IServiceProvider provider )
     {
-        return TaskPoolScheduler.Default;
+        return provider.GetService < SettingsChanges > ( ) ??
+               throw new InvalidOperationException ( $"Failed to resolve {nameof ( SettingsChanges )}" ) ;
     }
 
-    private static ITaskbarIconProvider CreateTaskbarIconProvider(IServiceProvider services)
+    private static IScheduler CreateScheduler ( )
     {
-        var scheduler = services.GetRequiredService<IScheduler>();
-        var creator   = services.GetRequiredService<IDynamicIconCreator>();
-
-        return new TaskbarIconProvider(scheduler,
-                                       creator);
+        return TaskPoolScheduler.Default ;
     }
 
-    //private TaskbarIcon ? _notifyIcon ;
+    private static ITaskbarIconProvider CreateTaskbarIconProvider ( IServiceProvider services )
+    {
+        var scheduler = services.GetRequiredService < IScheduler > ( ) ;
+        var creator   = services.GetRequiredService < IDynamicIconCreator > ( ) ;
+
+        return new TaskbarIconProvider ( scheduler ,
+                                         creator ) ;
+    }
 
     private static void GetBasePath ( IConfigurationBuilder c )
     {
@@ -121,57 +140,32 @@ public partial class App
 
         _logger.Information ( "##### Startup..." ) ;
 
-        var configurationProvider = GetService<IIdasenConfigurationProvider>(); 
+        var configurationProvider = GetService < IIdasenConfigurationProvider > ( ) ;
 
-        _container = ContainerProvider.Create(configurationProvider!.GetConfiguration (  )); // todo only use one container
+        _container = ContainerProvider.Create ( configurationProvider!.GetConfiguration ( ) ) ; // todo only use one container
 
-        var notifyIcon = FindNotifyIcon();
+        var notifyIcon = FindNotifyIcon ( ) ; // todo maybe we can get the icon from the view?
 
-        var main = GetService < MainWindowViewModel > ( ) ;
+        var main = GetService < IdasenDeskWindowViewModel > ( ) ;
 
-        main!.Initialize(_container, notifyIcon);
+        main!.Initialize ( _container , notifyIcon ) ;
 
-        var settings = GetService<SettingsViewModel>();
+        var settings = GetService < SettingsViewModel > ( ) ;
 
-        settings!.Initialize();
+        settings!.Initialize ( _container ) ;
 
-        var versionProvider = GetVersionProvider ( );
+        var manager = GetService < ILoggingSettingsManager > ( ) ;
+
+        manager!.Initialize ( _container ) ;
+
+        var versionProvider = GetVersionProvider ( ) ;
 
         _logger.Information ( $"##### Idasen.SystemTray {versionProvider.GetVersion ( )}" ) ;
     }
 
-    private static IVersionProvider GetVersionProvider() =>
-       GetService<IVersionProvider>() ?? throw new ArgumentNullException(nameof(IVersionProvider)) ;
-
-    private Icon GetIconFromContent ( string relativePath )
+    private static IVersionProvider GetVersionProvider ( )
     {
-        var iconPath = Path.Combine ( AppDomain.CurrentDomain.BaseDirectory , relativePath ) ;
-        if ( ! File.Exists ( iconPath ) )
-            throw new FileNotFoundException ( $"Icon file '{iconPath}' not found." ) ;
-
-        return new Icon ( iconPath ) ;
-    }
-
-    [UsedImplicitly]
-    private Icon GetIconFromResource ( string resourceName )
-    {
-        var       assembly = Assembly.GetExecutingAssembly ( ) ;
-        using var stream   = assembly.GetManifestResourceStream ( resourceName ) ;
-        if ( stream == null )
-            throw new InvalidOperationException ( $"Resource '{resourceName}' not found." ) ;
-
-        return new Icon ( stream ) ;
-    }
-
-    private static void NotifyIcon_DoubleClick ( object sender , RoutedEventArgs e )
-    {
-        var mainWindow = GetService < INavigationWindow > ( ) ;
-
-        if ( mainWindow == null )
-            return ;
-
-        mainWindow.ShowWindow (  );
-        //mainWindow.WindowState = WindowState.Normal ;
+        return GetService < IVersionProvider > ( ) ?? throw new ArgumentNullException ( nameof ( IVersionProvider ) ) ;
     }
 
     /// <summary>
@@ -190,37 +184,34 @@ public partial class App
     private void OnDispatcherUnhandledException ( object sender , DispatcherUnhandledExceptionEventArgs e )
     {
         // For more info see https://docs.microsoft.com/en-us/dotnet/api/system.windows.application.dispatcherunhandledexception?view=windowsdesktop-6.0
+        _logger.Error ( e.Exception ,
+                        "Unhandled exception" ) ;
     }
 
-    private readonly ILogger _logger = LoggerProvider.CreateLogger ( Constants.ApplicationName ,
-                                                                     Constants.LogFilename ) ;
-
-    private IContainer ? _container ;
-
-        private static NotifyIcon FindNotifyIcon()
+    private static NotifyIcon FindNotifyIcon ( )
     {
-        if (Application.Current.MainWindow != null && !Application.Current.MainWindow.CheckAccess())
+        if ( ! CurrentWindow.CheckAccess ( ) )
         {
-            Application.Current.MainWindow.Dispatcher.BeginInvoke(new Action(() => FindNotifyIcon()));
+            CurrentWindow.Dispatcher.BeginInvoke ( new Action ( ( ) => FindNotifyIcon ( ) ) ) ;
         }
 
-        IEnumerable < NotifyIcon > notifyIcons = FindVisualChildren<NotifyIcon> (Application.Current.MainWindow) ;
+        var notifyIcons = FindVisualChildren < NotifyIcon > ( CurrentWindow ) ;
 
-        return notifyIcons.FirstOrDefault();
+        return notifyIcons.FirstOrDefault ( ) ?? throw new Exception ( "Can't find the main notify icon!" ) ;
     }
 
     public static IEnumerable<T> FindVisualChildren<T>(DependencyObject parent)
         where T : DependencyObject
     {
-        int childrenCount = VisualTreeHelper.GetChildrenCount(parent);
-        for (int i = 0; i < childrenCount; i++)
+        var childrenCount = VisualTreeHelper.GetChildrenCount(parent);
+
+        for (var i = 0; i < childrenCount; i++)
         {
             var child = VisualTreeHelper.GetChild(parent, i);
 
-            var childType = child as T;
-            if (childType != null)
+            if (child is T childType)
             {
-                yield return (T)child;
+                yield return childType;
             }
 
             foreach (var other in FindVisualChildren<T>(child))

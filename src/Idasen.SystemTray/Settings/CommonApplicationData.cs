@@ -17,13 +17,14 @@ public class CommonApplicationData : ICommonApplicationData
     public string ToFullPath(string fileName)
     {
         return Path.Combine ( _folderName.Value ,
-                                           fileName ) ;
+                              fileName ) ;
     }
 
     public string FolderName ( )
     {
         var appData = Environment.GetFolderPath ( Environment.SpecialFolder.CommonApplicationData ) ;
 
-        return Path.Combine ( appData , Constants.ApplicationName ) ;
+        return Path.Combine ( appData ,
+                              Constants.ApplicationName ) ;
     }
 }
