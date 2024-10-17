@@ -73,7 +73,8 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
             Symbol = SymbolRegular.PlugDisconnected24
         } ,
         TargetPageType = typeof ( StatusPage ) ,
-        ToolTip        = "Double-Click to disconnect desk."
+        ToolTip        = "Double-Click to disconnect desk.",
+        IsEnabled = false
     } ;
 
     private static readonly NavigationViewItem CloseWindowViewItem = new( )
