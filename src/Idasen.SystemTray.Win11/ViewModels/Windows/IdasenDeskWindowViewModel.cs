@@ -73,7 +73,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
             Symbol = SymbolRegular.PlugDisconnected24
         } ,
         TargetPageType = typeof ( StatusPage ) ,
-        ToolTip        = "Double-Click to disconnect desk.",
+        ToolTip        = "Double-Click to disconnect desk."
     } ;
 
     private static readonly NavigationViewItem CloseWindowViewItem = new( )
@@ -209,7 +209,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
     public ICommand ConnectCommand =>
         // ReSharper disable once AsyncVoidLambda
         new DelegateCommand ( async ( ) => await _uiDeskManager.AutoConnectAsync ( ) ,
-                              ( ) => _uiDeskManager.IsInitialize && !_uiDeskManager.IsConnected ) ;
+                              CanExecuteConnect ) ;
 
     /// <summary>
     ///     Disconnects from the Idasen Desk.
@@ -217,7 +217,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
     public ICommand DisconnectCommand =>
         // ReSharper disable once AsyncVoidLambda
         new DelegateCommand ( async ( ) => await _uiDeskManager.DisconnectAsync ( ) ,
-                              ( ) => _uiDeskManager is { IsInitialize: true , IsConnected: true }) ;
+                              CanExecuteDisconnect ) ;
 
     /// <summary>
     ///     Moves the desk to the standing height.
@@ -225,7 +225,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
     public ICommand StandingCommand =>
         // ReSharper disable once AsyncVoidLambda
         new DelegateCommand ( async ( ) => await _uiDeskManager.StandAsync ( ) ,
-                              ( ) => _uiDeskManager is { IsInitialize: true , IsConnected: true }) ;
+                              CanExecuteStanding ) ;
 
     /// <summary>
     ///     Moves the desk to the seating height.
@@ -233,15 +233,15 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
     public ICommand SeatingCommand =>
         // ReSharper disable once AsyncVoidLambda
         new DelegateCommand ( async ( ) => await _uiDeskManager.SitAsync ( ) ,
-                              ( ) => _uiDeskManager is { IsInitialize: true , IsConnected: true }) ;
+                              CanExecuteSeating ) ;
 
     /// <summary>
     ///     Stop the desk moving.
     /// </summary>
     public ICommand StopCommand =>
         // ReSharper disable once AsyncVoidLambda
-        new DelegateCommand(async () => await _uiDeskManager.StopAsync(),
-                            () => _uiDeskManager is { IsInitialize: true , IsConnected: true });
+        new DelegateCommand ( async ( ) => await _uiDeskManager.StopAsync ( ) ,
+                              CanExecuteStop ) ;
 
     /// <summary>
     ///     Shuts down the application.
@@ -259,6 +259,31 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
 
         _uiDeskManager.DisconnectAsync ( ) ;
         _uiDeskManager.Dispose ( ) ;
+    }
+
+    private bool CanExecuteConnect ( )
+    {
+        return _uiDeskManager.IsInitialize && ! _uiDeskManager.IsConnected ;
+    }
+
+    private bool CanExecuteDisconnect ( )
+    {
+        return _uiDeskManager is { IsInitialize: true , IsConnected: true } ;
+    }
+
+    private bool CanExecuteStanding ( )
+    {
+        return _uiDeskManager is { IsInitialize: true , IsConnected: true } ;
+    }
+
+    private bool CanExecuteSeating ( )
+    {
+        return _uiDeskManager is { IsInitialize: true , IsConnected: true } ;
+    }
+
+    private bool CanExecuteStop ( )
+    {
+        return _uiDeskManager is { IsInitialize: true , IsConnected: true } ;
     }
 
     private void OnClickExit ( object sender , MouseButtonEventArgs e )
