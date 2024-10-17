@@ -1,36 +1,10 @@
-﻿namespace Idasen.SystemTray.Interfaces
+﻿using Idasen.SystemTray.Interfaces ;
+
+public interface ISettings
 {
-    public interface ISettings
-    {
-        /// <summary>
-        ///     The standing height of the desk in centimeters.
-        /// </summary>
-        uint StandingHeightInCm { get ; set ; }
+    DeviceSettings DeviceSettings { get ; set ; }
 
-        /// <summary>
-        ///     The seating height of the desk in centimeters.
-        /// </summary>
-        uint SeatingHeightInCm { get ; set ; }
-
-        /// <summary>
-        ///     The device's name which is used to discover a desk.
-        /// </summary>
-        string DeviceName { get ; set ; }
-
-        /// <summary>
-        ///     The device's Bluetooth address which is used to discover a desk..
-        /// </summary>
-        ulong DeviceAddress { get ; set ; }
-
-        /// <summary>
-        ///     Device monitoring timeout in seconds which is used to empty a
-        ///     cache of monitored devices.
-        /// </summary>
-        uint DeviceMonitoringTimeout { get ; set ; }
-
-        bool DeviceLocked         { get ; set ; }
-        uint DeskMinHeightInCm    { get ; set ; }
-        uint DeskMaxHeightInCm    { get ; set ; }
-        bool NotificationsEnabled { get ; set ; }
-    }
+    HeightSettings HeightSettings { get ; set ; }
+    
+    bool   NotificationsEnabled    { get ; set ; }
 }

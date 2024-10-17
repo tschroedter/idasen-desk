@@ -2,7 +2,7 @@
 {
     internal interface IStringToUIntConverter
     {
-        ulong ConvertToULong(string text,
+        ulong ConvertStringToUlongOrDefault(string text,
                              ulong  defaultValue);
     }
 }

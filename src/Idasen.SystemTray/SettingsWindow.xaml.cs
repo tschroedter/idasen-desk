@@ -79,20 +79,20 @@ namespace Idasen.SystemTray
             var newDeviceLocked        = Locked.IsChecked ?? false ;
             var newNotificationsEnabled = Notifications.IsChecked ?? false ;
 
-            var lockChanged = settings.DeviceLocked != newDeviceLocked ;
+            var lockChanged = settings.DeviceSettings.DeviceLocked != newDeviceLocked ;
 
-            settings.StandingHeightInCm = _doubleConverter.ConvertToUInt ( Standing.Value ,
+            settings.HeightSettings.StandingHeightInCm = _doubleConverter.ConvertToUInt ( Standing.Value ,
                                                                            Constants.DefaultHeightStandingInCm ) ;
-            settings.SeatingHeightInCm = _doubleConverter.ConvertToUInt ( Seating.Value ,
-                                                                          Constants.DefaultHeightSeatingInCm ) ;
-            settings.DeviceName           = newDeviceName ;
-            settings.DeviceAddress        = newDeviceAddress ;
-            settings.DeviceLocked         = newDeviceLocked ;
+            settings.HeightSettings.SeatingHeightInCm = _doubleConverter.ConvertToUInt ( Seating.Value ,
+                                                                                         Constants.DefaultHeightSeatingInCm ) ;
+            settings.DeviceSettings.DeviceName           = newDeviceName ;
+            settings.DeviceSettings.DeviceAddress        = newDeviceAddress ;
+            settings.DeviceSettings.DeviceLocked         = newDeviceLocked ;
             settings.NotificationsEnabled = newNotificationsEnabled ;
 
-            var advancedChanged = settings.DeviceName           != newDeviceName    ||
-                                  settings.DeviceAddress        != newDeviceAddress ||
-                                  settings.NotificationsEnabled != newNotificationsEnabled;
+            var advancedChanged = settings.DeviceSettings.DeviceName    != newDeviceName    ||
+                                  settings.DeviceSettings.DeviceAddress != newDeviceAddress ||
+                                  settings.NotificationsEnabled         != newNotificationsEnabled ;
 
             _storingSettingsTask = Task.Run ( async ( ) =>
                                               {
@@ -125,7 +125,7 @@ namespace Idasen.SystemTray
                     _logger.Information("Advanced Locked settings have changed...");
 
                     LockSettingsChanged?.Invoke(this,
-                                                new LockSettingsChangedEventArgs(settings.DeviceLocked));
+                                                new LockSettingsChangedEventArgs(settings.DeviceSettings.DeviceLocked));
                 }
             }
             catch ( Exception e )
@@ -154,15 +154,15 @@ namespace Idasen.SystemTray
 
             _logger.Debug($"Update settings: {settings}");
 
-            Standing.Value          = settings.StandingHeightInCm ;
-            Standing.Minimum        = settings.DeskMinHeightInCm;
-            Standing.Maximum        = settings.DeskMaxHeightInCm;
-            Seating.Value           = settings.SeatingHeightInCm ;
-            Seating.Minimum         = settings.DeskMinHeightInCm;
-            Seating.Maximum         = settings.DeskMaxHeightInCm;
-            DeskName.Text           = _nameConverter.EmptyIfDefault ( settings.DeviceName ) ;
-            DeskAddress.Text        = _addressConverter.EmptyIfDefault ( settings.DeviceAddress ) ;
-            Locked.IsChecked        = settings.DeviceLocked ;
+            Standing.Value          = settings.HeightSettings.StandingHeightInCm ;
+            Standing.Minimum        = settings.HeightSettings.DeskMinHeightInCm;
+            Standing.Maximum        = settings.HeightSettings.DeskMaxHeightInCm;
+            Seating.Value           = settings.HeightSettings.SeatingHeightInCm ;
+            Seating.Minimum         = settings.HeightSettings.DeskMinHeightInCm;
+            Seating.Maximum         = settings.HeightSettings.DeskMaxHeightInCm;
+            DeskName.Text           = _nameConverter.EmptyIfDefault ( settings.DeviceSettings.DeviceName ) ;
+            DeskAddress.Text        = _addressConverter.EmptyIfDefault ( settings.DeviceSettings.DeviceAddress ) ;
+            Locked.IsChecked        = settings.DeviceSettings.DeviceLocked ;
             Notifications.IsChecked = settings.NotificationsEnabled ;
         }
 

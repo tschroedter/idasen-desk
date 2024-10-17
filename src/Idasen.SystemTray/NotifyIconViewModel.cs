@@ -303,7 +303,7 @@ namespace Idasen.SystemTray
                 await _manager.Load ( )
                               .ConfigureAwait ( false ) ;
 
-                _desk?.MoveTo ( _manager.CurrentSettings.SeatingHeightInCm *
+                _desk?.MoveTo ( _manager.CurrentSettings.HeightSettings.SeatingHeightInCm *
                                 100 ) ; // todo duplicate
             }
             catch ( Exception e )
@@ -330,7 +330,7 @@ namespace Idasen.SystemTray
 
             await _manager.Load ( ) ;
 
-            _desk?.MoveTo ( _manager.CurrentSettings.StandingHeightInCm * 100 ) ;
+            _desk?.MoveTo ( _manager.CurrentSettings.HeightSettings.StandingHeightInCm * 100 ) ;
         }
 
         public NotifyIconViewModel Initialize (
@@ -428,9 +428,9 @@ namespace Idasen.SystemTray
 
                 _deskProvider?.Dispose ( ) ;
                 _deskProvider = _providerFactory ( ) ;
-                _deskProvider.Initialize ( _manager.CurrentSettings.DeviceName ,
-                                       _manager.CurrentSettings.DeviceAddress ,
-                                       _manager.CurrentSettings.DeviceMonitoringTimeout ) ;
+                _deskProvider.Initialize ( _manager.CurrentSettings.DeviceSettings.DeviceName ,
+                                           _manager.CurrentSettings.DeviceSettings.DeviceAddress ,
+                                           _manager.CurrentSettings.DeviceSettings.DeviceMonitoringTimeout ) ;
 
                 _logger.Debug ( $"[{_desk?.DeviceName}] Trying to connect to Idasen Desk..." ) ;
 
@@ -524,7 +524,7 @@ namespace Idasen.SystemTray
 
             _logger.Debug ( $"[{_desk?.DeviceName}] Connected successful" ) ;
 
-            if ( ! _manager.CurrentSettings.DeviceLocked )
+            if ( ! _manager.CurrentSettings.DeviceSettings.DeviceLocked )
                 return ;
 
             _logger.Information ( "Locking desk movement" );

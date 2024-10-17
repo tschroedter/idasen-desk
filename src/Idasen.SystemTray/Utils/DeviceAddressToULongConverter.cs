@@ -11,7 +11,7 @@ namespace Idasen.SystemTray.Utils
         {
             return string.IsNullOrWhiteSpace ( deviceAddress )
                        ? Constants.DefaultDeviceAddress
-                       : _stringConverter.ConvertToULong ( deviceAddress ,
+                       : _stringConverter.ConvertStringToUlongOrDefault ( deviceAddress ,
                                                            Constants.DefaultDeviceAddress ) ;
         }
 

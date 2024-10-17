@@ -4,10 +4,10 @@ namespace Idasen.SystemTray.Interfaces
 {
     public interface ISettingsManager
     {
-        ISettings CurrentSettings { get ; }
-
-        Task Save ( ) ;
-        Task Load ( ) ;
-        Task UpgradeSettings ( ) ;
+        ISettings     CurrentSettings  { get ; }
+        string        SettingsFileName { get ; }
+        Task          Save ( ) ;
+        Task          Load ( ) ;
+        Task < bool > UpgradeSettings ( ) ;
     }
 }
