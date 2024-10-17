@@ -37,7 +37,11 @@
                         <RowDefinition />
                         <RowDefinition Height="5" />
                         <RowDefinition />
+                        <RowDefinition Height="15" />
+                        <RowDefinition />
                         <RowDefinition Height="5" />
+                        <RowDefinition />
+                        <RowDefinition Height="15" />
                         <RowDefinition />
                         <RowDefinition Height="5" />
                         <RowDefinition />
@@ -45,37 +49,63 @@
                     <!-- Row 0 -->
                     <Label Grid.Row="0"
                            Grid.Column="0"
-                           Content="Desk Name"
-                           ToolTip="Discover the desk by it is Bluetooth device name. Empty means default value."
+                           Content="Log Folder"
+                           ToolTip="Show the location of the log files."
                            VerticalContentAlignment="Center"
                            Padding="5,0,5,0" />
                     <TextBox Grid.Row="0"
                              Grid.Column="1"
-                             Name="DeskName"
-                             Width="Auto"
-                             Text="{Binding ViewModel.DeskName}" />
+                             IsEnabled="True"
+                             IsReadOnly="True"
+                             Text="{Binding ViewModel.LogFolderPath}" />
                     <!-- Row 1 Blank -->
                     <!-- Row 2 -->
                     <Label Grid.Row="2"
+                           Grid.Column="0"
+                           Content="Settings File"
+                           ToolTip="Show the location of the settings file."
+                           VerticalContentAlignment="Center"
+                           Padding="5,0,5,0" />
+                    <TextBox Grid.Row="2"
+                             Grid.Column="1"
+                             IsEnabled="True"
+                             IsReadOnly="True"
+                             Text="{Binding ViewModel.SettingsFileFullPath}" />
+                    <!-- Row 3 Blank -->
+                    <!-- Row 4 -->
+                    <Label Grid.Row="4"
+                           Grid.Column="0"
+                           Content="Desk Name"
+                           ToolTip="Discover the desk by it is Bluetooth device name. Empty means default value."
+                           VerticalContentAlignment="Center"
+                           Padding="5,0,5,0" />
+                    <TextBox Grid.Row="4"
+                             Grid.Column="1"
+                             Name="DeskName"
+                             Width="Auto"
+                             Text="{Binding ViewModel.DeskName}" />
+                    <!-- Row 5 Blank -->
+                    <!-- Row 6 -->
+                    <Label Grid.Row="6"
                            Grid.Column="0"
                            Content="Desk Address"
                            ToolTip="Discover the desk by it is Bluetooth device address. Empty means default value."
                            VerticalContentAlignment="Center"
                            Padding="5,0,5,0" />
-                    <TextBox Grid.Row="2"
+                    <TextBox Grid.Row="6"
                              Grid.Column="1"
                              Name="DeskAddress"
                              Width="Auto"
                              Text="{Binding ViewModel.DeskAddress}" />
-                    <!-- Row 3 Blank -->
-                    <!-- Row 4 -->
-                    <Label Grid.Row="4"
+                    <!-- Row 7 Blank -->
+                    <!-- Row 8 -->
+                    <Label Grid.Row="8"
                            Grid.Column="0"
                            Content="Parental Lock"
                            ToolTip="Blocks manual movements when enabled."
                            VerticalContentAlignment="Center"
                            Padding="5,0,5,0" />
-                    <CheckBox Grid.Row="4"
+                    <CheckBox Grid.Row="8"
                               Grid.Column="1" Content="Enabled"
                               Name="Locked"
                               HorizontalAlignment="Left"
@@ -83,15 +113,15 @@
                               VerticalContentAlignment="Center"
                               Margin="4,0,0,0"
                               IsChecked="{Binding ViewModel.ParentalLock}" />
-                    <!-- Row 5 Blank -->
-                    <!-- Row 6 -->
-                    <Label Grid.Row="6"
+                    <!-- Row 9 Blank -->
+                    <!-- Row 10 -->
+                    <Label Grid.Row="10"
                            Grid.Column="0"
                            Content="Notifications"
                            ToolTip="Show or hide all notifications."
                            VerticalContentAlignment="Center"
                            Padding="5,0,5,0" />
-                    <CheckBox Grid.Row="6"
+                    <CheckBox Grid.Row="10"
                               Grid.Column="1"
                               Content="Enabled"
                               Name="Notifications"

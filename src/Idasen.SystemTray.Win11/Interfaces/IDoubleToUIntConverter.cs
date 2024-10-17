@@ -1,8 +1,7 @@
-﻿namespace Idasen.SystemTray.Win11.Interfaces
+﻿namespace Idasen.SystemTray.Win11.Interfaces ;
+
+public interface IDoubleToUIntConverter
 {
-    internal interface IDoubleToUIntConverter
-    {
-        uint ConvertToUInt ( double value ,
-                             uint   defaultValue ) ;
-    }
+    uint ConvertToUInt ( double value ,
+                         uint   defaultValue ) ;
 }

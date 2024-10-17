@@ -1,21 +1,20 @@
 ﻿using Idasen.SystemTray.Win11.ViewModels.Pages ;
 using Wpf.Ui.Controls ;
 
-namespace Idasen.SystemTray.Win11.Views.Pages
+namespace Idasen.SystemTray.Win11.Views.Pages ;
+
+/// <summary>
+///     Interaction logic for StatusPage.xaml
+/// </summary>
+public partial class StatusPage : INavigableView < StatusViewModel >
 {
-    /// <summary>
-    /// Interaction logic for StatusPage.xaml
-    /// </summary>
-    public partial class StatusPage : INavigableView<StatusViewModel>
+    public StatusPage ( StatusViewModel viewModel )
     {
-        public StatusViewModel ViewModel { get; }
+        ViewModel   = viewModel ;
+        DataContext = this ;
 
-        public StatusPage(StatusViewModel viewModel)
-        {
-            ViewModel   = viewModel ;
-            DataContext = this;
-
-            InitializeComponent();
-        }
+        InitializeComponent ( ) ;
     }
+
+    public StatusViewModel ViewModel { get ; }
 }

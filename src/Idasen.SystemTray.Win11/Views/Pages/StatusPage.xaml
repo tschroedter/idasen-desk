@@ -28,6 +28,9 @@
             <Label Margin="10,0,0,0">- Disconnect</Label>
             <Label Margin="10,0,0,0">- Stand</Label>
             <Label Margin="10,0,0,0">- Sit</Label>
+            <Label Margin="10,0,0,0">- Stop</Label>
+            <Label Margin="10,0,0,0">- Hide</Label>
+            <Label Margin="10,0,0,0">- Exit</Label>
         </StackPanel>
     </DockPanel>
 </Page>

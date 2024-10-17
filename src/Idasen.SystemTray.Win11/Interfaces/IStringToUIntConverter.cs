@@ -1,8 +1,7 @@
-﻿namespace Idasen.SystemTray.Win11.Interfaces
+﻿namespace Idasen.SystemTray.Win11.Interfaces ;
+
+public interface IStringToUIntConverter
 {
-    internal interface IStringToUIntConverter
-    {
-        ulong ConvertStringToUlongOrDefault(string text,
-                             ulong  defaultValue);
-    }
+    ulong ConvertStringToUlongOrDefault ( string text ,
+                                          ulong  defaultValue ) ;
 }

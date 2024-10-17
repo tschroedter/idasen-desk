@@ -2,12 +2,11 @@
 using Serilog ;
 using Wpf.Ui.Tray.Controls ;
 
-namespace Idasen.SystemTray.Win11.Interfaces
+namespace Idasen.SystemTray.Win11.Interfaces ;
+
+public interface ITaskbarIconProvider : IDisposable
 {
-    public interface ITaskbarIconProvider : IDisposable
-    {
-        void Initialize ( ILogger      logger ,
-                          IDesk        desk ,
-                          NotifyIcon ? notifyIcon ) ;
-    }
+    void Initialize ( ILogger      logger ,
+                      IDesk        desk ,
+                      NotifyIcon ? notifyIcon ) ;
 }

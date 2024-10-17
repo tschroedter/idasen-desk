@@ -1,8 +1,7 @@
-﻿namespace Idasen.SystemTray.Win11.Interfaces
+﻿namespace Idasen.SystemTray.Win11.Interfaces ;
+
+public interface IDeviceAddressToULongConverter
 {
-    public interface IDeviceAddressToULongConverter
-    {
-        ulong  DefaultIfEmpty ( string deviceAddress ) ;
-        string EmptyIfDefault ( ulong deviceAddress ) ;
-    }
+    ulong  DefaultIfEmpty ( string deviceAddress ) ;
+    string EmptyIfDefault ( ulong  deviceAddress ) ;
 }
