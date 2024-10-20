@@ -271,11 +271,17 @@ public class UiDeskManager : IUiDeskManager
 
     private void OnErrorChanged ( IErrorDetails details )
     {
-        _logger?.Error ( $"[{_desk?.DeviceName}] {details.Message}" ) ;
+        var deviceName = _desk != null
+                             ? _desk.DeviceName
+                             : "Unknown" ;
+
+        var message = $"[{deviceName}] {details.Message}" ;
+
+        _logger?.Error ( message ) ;
 
         OnStatusChanged ( 0 ,
                           "Error" ,
-                          $"'{_desk?.DeviceName}' {details.Message}" ,
+                          message,
                           InfoBarSeverity.Error ) ;
     }
 
@@ -348,11 +354,13 @@ public class UiDeskManager : IUiDeskManager
              _manager != null )
             return true ;
 
-        _logger?.Error ( "Not connected tot desk!" ) ;
+        var message = "Failed to connect to desk!" ;
+
+        _logger?.Error ( message ) ;
 
         OnStatusChanged ( 0 ,
                           "Not Connected" ,
-                          "Not connected tot desk!" ,
+                          message ,
                           InfoBarSeverity.Error ) ;
 
         return false ;
@@ -387,8 +395,12 @@ public class UiDeskManager : IUiDeskManager
         }
         catch ( Exception e )
         {
+            var deviceName = _desk != null
+                                 ? _desk.DeviceName
+                                 : "Unknown" ;
+
             _logger?.Error ( e ,
-                             $"[{_desk?.DeviceName}] Failed to connect" ) ;
+                             $"[{deviceName}] Failed to connect") ;
 
             ConnectFailed ( ) ;
         }
