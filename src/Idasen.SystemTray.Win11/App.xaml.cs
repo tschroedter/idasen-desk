@@ -1,4 +1,5 @@
-﻿using System.IO ;
+﻿using System.Diagnostics;
+using System.IO ;
 using System.Reactive.Concurrency ;
 using System.Reflection ;
 using System.Windows.Media ;
@@ -134,6 +135,8 @@ public partial class App
     /// </summary>
     private void OnStartup ( object sender , StartupEventArgs e )
     {
+        AvoidRunningTwoInstances ( ) ;
+
         UnhandledExceptionsHandler.RegisterGlobalExceptionHandling ( ) ;
 
         Host.Start ( ) ;
@@ -161,6 +164,19 @@ public partial class App
         var versionProvider = GetVersionProvider ( ) ;
 
         _logger.Information ( $"##### Idasen.SystemTray {versionProvider.GetVersion ( )}" ) ;
+    }
+
+    private void AvoidRunningTwoInstances ( )
+    {
+        var location                 = Assembly.GetEntryAssembly ( )?.Location ?? throw new Exception ( "Can't get entry assembly!" ) ;
+        var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(location) ;
+
+        if ( Process.GetProcessesByName ( fileNameWithoutExtension ).Length <= 1 )
+            return ;
+
+        _logger.Information("##### Application already running!");
+
+        Process.GetCurrentProcess ( ).Kill ( ) ;
     }
 
     private static IVersionProvider GetVersionProvider ( )
