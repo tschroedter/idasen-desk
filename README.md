@@ -1,58 +1,59 @@
 # Latest Changes
-- Added support for Windows 11
-- Updated to .Net 6.0
-- Replaced Windows installer with self-contained .exe file.
+- Updated .NET 4.8 to .NET 8.0
+- Updated used NuGet Packages to latest
+- Updated UI to look more like native Windows application
+- Updated notification to use Windows build in notifcations
+- Added support for themes
 
 #Ikea Idasen Desk
 This repository is about controlling [Ikea's Idasen Desk](https://www.ikea.com/au/en/p/idasen-desk-sit-stand-black-dark-grey-s29280991/) using Windows 10/11 and BluetoothLE. Ikea only provides an Android and IOs app to control the desk. I thought it would be far more convenient to control the desk using a Windows 10/11. The [installation instructions](#Installation) can be found at the end of this document.
 
-![taskbar](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/Taskbar.png)
+## System Tray Icon
+The icon below is shown if the application is running and the desk height is not known.
+![taskbar](https://github.com/tschroedter/idasen-desk/blob/main-face-lift/docs/images/V0.0.222/System_Tray_Icon_Unknow_Height.png)
+
+The icon is updated to show the current desk height as soon as the desk is moving.
+![taskbar](https://github.com/tschroedter/idasen-desk/blob/main-face-lift/docs/images/V0.0.222/System_Tray_Icon_Know_Height.png)
 
 ---
 
 # System Tray Application
-At the moment the Windows 10 system tray application is a *work in progress*. It supports the following features:
-- Detect Desk
+At the moment the updated UI for the Windows 10/11 system tray application is a *work in progress*. It supports the following features:
 - Show Settings
 - Hide Settings
+- Connect
+- Disconnect
 - Standing
 - Seating
+- Stop
 - Exit
 
-![taskbar context menu](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/Taskbar%20Context%20Menu.png)
+![taskbar context menu](https://github.com/tschroedter/idasen-desk/blob/main-face-lift/docs/images/V0.0.222/System_Tray_Context_Menu.png)
 
-The application will automatically connect to the Idasen Desk during start-up. Pop-ups will notify you about the progress:
+The application will automatically connect to the Idasen Desk during start-up. Notifications will notify you about the progress:
 - Trying to connect,
 - Connected or
 - Failed to connect.
 
-![Trying to connect](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/Trying%20To%20Connect.png)![Connected](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/Connected.png)![Connected](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/Failed%20to%20connect.png)
+![Notifications](https://github.com/tschroedter/idasen-desk/blob/main-face-lift/docs/images/V0.0.222/Notifications.png)
 
-## Connect
-*Connect* will try to detect a desk in case the application failed to detected the desk at start-up.
-
-## Show Settings
-*Show Settings* will display the current settings for the current user and allows to change them:
-- Standing Height
-- Seating Height
+# Settings
+*Show Settings* will display the current settings for the current user and allows to change them. The following options are available:
 - Advanced Settings
+- Appearance
+- General Settings
+- Hot Keys
 
 _Note:_ The settings are stored per Windows user.
 
-## Hide Settings
-*Hide Setting* will close the settings window.
-
-## General Settings
-![settings](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/settings.PNG)
-
-### Standing
-*Standing* will move the desk to the standing height specified in the settings.
-
-### Seating
-*Seating* will move the desk to the seating height specified in the settings.
-
 ## Advanced Settings
-![settingsadvanced](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/SettingsAdvanced.PNG)
+![settingsadvanced](https://github.com/tschroedter/idasen-desk/blob/main-face-lift/docs/images/V0.0.222/Settins_Advanced.png)
+
+### Log Folder
+This show the location of the log files.
+
+### Settings File
+This shows the location of the settings file.
 
 ### Desk Name
 You can specify the desk name in case you changed it from the default name. By default the app is looking for a device/desk with a name starting with 'Desk'.
@@ -63,31 +64,37 @@ If you know your devices ulong Bluetooth adress you can put it here. By default 
 ### Parental Lock
 This feature allows to lock/unlock the physical desk controller. If this feature is enabled any pushing of the physical controller up or down will be immediately stop.
 
+## Appearance
+![settings](https://github.com/tschroedter/idasen-desk/blob/main-face-lift/docs/images/V0.0.222/Settins_Appearance.png)
+
+### Theme
+This allows to switch between the different themes.
+
+## General Settings
+![settings](https://github.com/tschroedter/idasen-desk/blob/main-face-lift/docs/images/V0.0.222/Settings_General.png)
+
+### Standing
+*Standing* will move the desk to the standing height specified in the settings.
+
+### Seating
+*Seating* will move the desk to the seating height specified in the settings.
+
 ## Hot Keys
-![settingsadvanced](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/SettingsHotKeys.PNG)
+![settingsadvanced](https://github.com/tschroedter/idasen-desk/blob/main-face-lift/docs/images/V0.0.222/Settins_Hotkeys.png)
 At the moment the application supports the following hot keys:
 - Standing: _Ctrl + Shift + Alt + Cursor Up_
 - Seating: _Ctrl + Shift + Alt + Cursor Down_
 
-## Exit
-*Exit* will close the application.
-
 ---
 # Installation
 ## Windows 10
-Download and run the self-contained application file: ![Idasen.SystemTray.exe](https://github.com/tschroedter/idasen-desk/releases/download/V0.0.189/Idasen.SystemTray.exe)
+Download and run the self-contained application file: ![Idasen.SystemTray.exe](https://github.com/tschroedter/idasen-desk/blob/main-face-lift/docs/images/V0.0.222/Idasen.SystemTray.exe)
 
 ## Windows 11
-Download and run the self-contained application file: ![Idasen.SystemTray.Win11.exe](https://github.com/tschroedter/idasen-desk/releases/download/V0.0.189/Idasen.SystemTray.Win11.exe)
+Download and run the self-contained application file: ![Idasen.SystemTray.Win11.exe](https://github.com/tschroedter/idasen-desk/blob/main-face-lift/docs/images/V0.0.222/Idasen.SystemTray.Win11.exe)
 
-## Additional step for Windows 10 and 11
-Windows will show a pop-up window saying 'Windows protected your PC'. Please, click 'More info' and 'Run anyway' to start the application.
-
-![WindowsProtectedYourPC1](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/WindowsProtectedYourPC1.png)
-
-![WindowsProtectedYourPC2](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/WindowsProtectedYourPC2.png)
-
-
+## Any problems?
+Let me know if you have any trouble installing or using the application.
 ---
 
 # Problems
@@ -95,5 +102,5 @@ _Q: The application fails to connect to the Idasen desk?_
 
 A: Windows 10 needs to be connected to the Idasen desk which means the desk should be listed as a Bluetooth device.
 
-![Trying to connect](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/Windows%2010%20Bluetooth%20Settings.png)
+![Trying to connect](https://github.com/tschroedter/idasen-desk/blob/main-face-lift/docs/images/Windows%2010%20Bluetooth%20Settings.png)
 
