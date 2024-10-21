@@ -8,8 +8,12 @@
 #Ikea Idasen Desk
 This repository is about controlling [Ikea's Idasen Desk](https://www.ikea.com/au/en/p/idasen-desk-sit-stand-black-dark-grey-s29280991/) using Windows 10/11 and BluetoothLE. Ikea only provides an Android and IOs app to control the desk. I thought it would be far more convenient to control the desk using a Windows 10/11. The [installation instructions](#Installation) can be found at the end of this document.
 
+## System Tray Icon
+The icon below is shown if the application is running and the desk height is not known.
 ![taskbar](https://github.com/tschroedter/idasen-desk/blob/main-face-lift/docs/images/V0.0.222/System_Tray_Icon_Unknow_Height.png)
-![taskbar](https://github.com/tschroedter/idasen-desk/blob/main-face-lift/docs/images/V0.0.222/System_Tray_Icon_Known_Height.png)
+
+The icon is updated to show the current desk height as soon as the desk is moving.
+![taskbar]([https://github.com/tschroedter/idasen-desk/blob/main-face-lift/docs/images/V0.0.222/System_Tray_Icon_Known_Height.png](https://github.com/tschroedter/idasen-desk/blob/main-face-lift/docs/images/V0.0.222/System_Tray_Icon_Know_Height.png))
 
 ---
 
