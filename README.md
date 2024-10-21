@@ -13,7 +13,7 @@ The icon below is shown if the application is running and the desk height is not
 ![taskbar](https://github.com/tschroedter/idasen-desk/blob/main-face-lift/docs/images/V0.0.222/System_Tray_Icon_Unknow_Height.png)
 
 The icon is updated to show the current desk height as soon as the desk is moving.
-![taskbar]([https://github.com/tschroedter/idasen-desk/blob/main-face-lift/docs/images/V0.0.222/System_Tray_Icon_Known_Height.png])
+![taskbar](https://github.com/tschroedter/idasen-desk/blob/main-face-lift/docs/images/V0.0.222/System_Tray_Icon_Know_Height.png)
 
 ---
 
