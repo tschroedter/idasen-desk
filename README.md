@@ -65,10 +65,9 @@ If you know your devices ulong Bluetooth adress you can put it here. By default 
 This feature allows to lock/unlock the physical desk controller. If this feature is enabled any pushing of the physical controller up or down will be immediately stop.
 
 ## Appearance
-![settings](https://github.com/tschroedter/idasen-desk/blob/main-face-lift/docs/images/V0.0.222/Settins_Appearance.png)
-
 ### Theme
 This allows to switch between the different themes.
+![settings](https://github.com/tschroedter/idasen-desk/blob/main-face-lift/docs/images/V0.0.222/Settins_Appearance.png)
 
 ## General Settings
 ![settings](https://github.com/tschroedter/idasen-desk/blob/main-face-lift/docs/images/V0.0.222/Settings_General.png)
