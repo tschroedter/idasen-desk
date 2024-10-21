@@ -16,23 +16,31 @@
     Foreground="{DynamicResource TextFillColorPrimaryBrush}"
     mc:Ignorable="d">
 
-    <StackPanel VerticalAlignment="Top">
-        <TextBlock
-            Margin="0,12,0,0"
-            HorizontalAlignment="Left"
-            TextWrapping="Wrap"
-            FontWeight="Bold"
-            Text="{Binding ViewModel.Title}" />
-        <TextBlock
-            Margin="0,12,0,0"
-            HorizontalAlignment="Left"
-            TextWrapping="Wrap"
-            FontWeight="Medium"
-            Text="Overview" />
-        <TextBlock
-            Margin="0,12,0,0"
-            HorizontalAlignment="Left"
-            TextWrapping="Wrap"
-            Text="This application is controlling Ikea's Idasen Desk using Windows 10/11 and BluetoothLE. Ikea only provides an Android and IOs app to control the desk. I thought it would be far more convenient to control the desk using a Windows 10/11." />
+    <StackPanel>
+        <ui:CardExpander
+            DockPanel.Dock="Top"
+            CornerRadius="0,0,8,8"
+            Header="About"
+            IsExpanded="True">
+            <StackPanel VerticalAlignment="Top">
+                <TextBlock
+                    Margin="0,12,0,0"
+                    HorizontalAlignment="Left"
+                    TextWrapping="Wrap"
+                    FontWeight="Bold"
+                    Text="{Binding ViewModel.Title}" />
+                <TextBlock
+                    Margin="0,12,0,0"
+                    HorizontalAlignment="Left"
+                    TextWrapping="Wrap"
+                    FontWeight="Medium"
+                    Text="Overview" />
+                <TextBlock
+                    Margin="0,12,0,0"
+                    HorizontalAlignment="Left"
+                    TextWrapping="Wrap"
+                    Text="This application is controlling Ikea's Idasen Desk using Windows 10/11 and BluetoothLE. Ikea only provides an Android and IOs app to control the desk. I thought it would be far more convenient to control the desk using a Windows 10/11." />
+            </StackPanel>
+        </ui:CardExpander>
     </StackPanel>
 </Page>
