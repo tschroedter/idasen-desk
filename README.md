@@ -19,7 +19,7 @@ The icon is updated to show the current desk height as soon as the desk is movin
 
 # System Tray Application
 At the moment the updated UI for the Windows 10/11 system tray application is a *work in progress*. It supports the following features:
-- Detect Desk
+- Home
 - Show Settings
 - Hide Settings
 - Connect
@@ -38,31 +38,14 @@ The application will automatically connect to the Idasen Desk during start-up. N
 
 ![Notifications](https://github.com/tschroedter/idasen-desk/blob/main-face-lift/docs/images/V0.0.222/Notifications.png)
 
-## Connect
-*Connect* will try to detect a desk in case the application failed to detected the desk at start-up.
-
-## Show Settings
-*Show Settings* will display the current settings for the current user and allows to change them:
-- Standing Height
-- Seating Height
+# Settings
+*Show Settings* will display the current settings for the current user and allows to change them. The following options are available:
 - Advanced Settings
+- Appearance
+- General Settings
+- Hot Keys
 
 _Note:_ The settings are stored per Windows user.
-
-## Hide Settings
-*Hide Setting* will close the settings window.
-
-## General Settings
-![settings](https://github.com/tschroedter/idasen-desk/blob/main-face-lift/docs/images/V0.0.222/Settings_General.png)
-
-### Standing
-*Standing* will move the desk to the standing height specified in the settings.
-
-### Seating
-*Seating* will move the desk to the seating height specified in the settings.
-
-### Stop
-*Stop* will stop a moving the desk.
 
 ## Advanced Settings
 ![settingsadvanced](https://github.com/tschroedter/idasen-desk/blob/main-face-lift/docs/images/V0.0.222/Settins_Advanced.png)
@@ -88,14 +71,23 @@ This feature allows to lock/unlock the physical desk controller. If this feature
 ### Theme
 This allows to switch between the different themes.
 
+## General Settings
+![settings](https://github.com/tschroedter/idasen-desk/blob/main-face-lift/docs/images/V0.0.222/Settings_General.png)
+
+### Standing
+*Standing* will move the desk to the standing height specified in the settings.
+
+### Seating
+*Seating* will move the desk to the seating height specified in the settings.
+
+### Stop
+*Stop* will stop a moving the desk.
+
 ## Hot Keys
 ![settingsadvanced](https://github.com/tschroedter/idasen-desk/blob/main-face-lift/docs/images/V0.0.222/Settins_Hotkeys.png)
 At the moment the application supports the following hot keys:
 - Standing: _Ctrl + Shift + Alt + Cursor Up_
 - Seating: _Ctrl + Shift + Alt + Cursor Down_
-
-## Exit
-*Exit* will close the application.
 
 ---
 # Installation
