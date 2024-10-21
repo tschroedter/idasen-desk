@@ -37,6 +37,16 @@ The application will automatically connect to the Idasen Desk during start-up. N
 
 ![Notifications](https://github.com/tschroedter/idasen-desk/blob/main-face-lift/docs/images/V0.0.222/Notifications.png)
 
+# Actions
+The desk can be controlled by using the system tray context menu or the menu options on the left hand side when the settings menu is visible. To execute an action *double-click* the menu item and confirm the action in the shown dialog.
+- Connect
+- Disconnect
+- Standing
+- Seating
+- Stop _(Stop the moving desk)_
+- Hide Settings _(Hide/Close the window)_
+- Exit _(Exit the application)_
+
 # Settings
 *Show Settings* will display the current settings for the current user and allows to change them. The following options are available:
 - Advanced Settings
