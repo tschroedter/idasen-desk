@@ -31,7 +31,7 @@ The application will automatically connect to the Idasen Desk during start-up. N
 - Connected or
 - Failed to connect.
 
-![Notifications](https://github.com/tschroedter/idasen-desk/blob/main-face-lift/docs/images/V0.0.0222/Notifications.png)
+![Notifications](https://github.com/tschroedter/idasen-desk/blob/main-face-lift/docs/images/V0.0.222/Notifications.png)
 
 ## Connect
 *Connect* will try to detect a desk in case the application failed to detected the desk at start-up.
@@ -52,7 +52,6 @@ _Note:_ The settings are stored per Windows user.
 
 ### Standing
 *Standing* will move the desk to the standing height specified in the settings.
-![settings](https://github.com/tschroedter/idasen-desk/blob/main-face-lift/docs/images/V0.0.222/Settings_Sit_Stand.png)
 
 ### Seating
 *Seating* will move the desk to the seating height specified in the settings.
@@ -96,19 +95,13 @@ At the moment the application supports the following hot keys:
 ---
 # Installation
 ## Windows 10
-Download and run the self-contained application file: ![Idasen.SystemTray.exe](https://github.com/tschroedter/idasen-desk/releases/download/V0.0.189/Idasen.SystemTray.exe)
+Download and run the self-contained application file: ![Idasen.SystemTray.exe](https://github.com/tschroedter/idasen-desk/blob/main-face-lift/docs/images/V0.0.222/Idasen.SystemTray.exe)
 
 ## Windows 11
-Download and run the self-contained application file: ![Idasen.SystemTray.Win11.exe](https://github.com/tschroedter/idasen-desk/releases/download/V0.0.189/Idasen.SystemTray.Win11.exe)
+Download and run the self-contained application file: ![Idasen.SystemTray.Win11.exe](https://github.com/tschroedter/idasen-desk/blob/main-face-lift/docs/images/V0.0.222/Idasen.SystemTray.Win11.exe)
 
-## Additional step for Windows 10 and 11
-Windows will show a pop-up window saying 'Windows protected your PC'. Please, click 'More info' and 'Run anyway' to start the application.
-
-![WindowsProtectedYourPC1](https://github.com/tschroedter/idasen-desk/blob/main-face-lift/docs/images/WindowsProtectedYourPC1.png)
-
-![WindowsProtectedYourPC2](https://github.com/tschroedter/idasen-desk/blob/main-face-lift/docs/images/WindowsProtectedYourPC2.png)
-
-
+## Any problems?
+Let me know if you have any trouble installing or using the application.
 ---
 
 # Problems
