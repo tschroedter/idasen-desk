@@ -19,7 +19,6 @@ The icon is updated to show the current desk height as soon as the desk is movin
 
 # System Tray Application
 At the moment the updated UI for the Windows 10/11 system tray application is a *work in progress*. It supports the following features:
-- Home
 - Show Settings
 - Hide Settings
 - Connect
