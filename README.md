@@ -79,9 +79,6 @@ This allows to switch between the different themes.
 ### Seating
 *Seating* will move the desk to the seating height specified in the settings.
 
-### Stop
-*Stop* will stop a moving the desk.
-
 ## Hot Keys
 ![settingsadvanced](https://github.com/tschroedter/idasen-desk/blob/main-face-lift/docs/images/V0.0.222/Settins_Hotkeys.png)
 At the moment the application supports the following hot keys:
