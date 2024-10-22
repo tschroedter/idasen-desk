@@ -98,10 +98,10 @@ At the moment the application supports the following hot keys:
 ---
 # Installation
 ## Windows 10
-Download and run the self-contained application file: ![Idasen.SystemTray.exe](https://github.com/tschroedter/idasen-desk/blob/main-face-lift/docs/images/V0.0.222/Idasen.SystemTray.exe)
+Download and run the self-contained application file: ![Idasen.SystemTray.exe](https://github.com/tschroedter/idasen-desk/blob/main-face-lift/docs/images/V0.0.243/Idasen.SystemTray.exe)
 
 ## Windows 11
-Download and run the self-contained application file: ![Idasen.SystemTray.Win11.exe](https://github.com/tschroedter/idasen-desk/blob/main-face-lift/docs/images/V0.0.222/Idasen.SystemTray.Win11.exe)
+Download and run the self-contained application file: ![Idasen.SystemTray.Win11.exe](https://github.com/tschroedter/idasen-desk/blob/main-face-lift/docs/images/V0.0.243/Idasen.SystemTray.Win11.exe)
 
 ## Any problems?
 Let me know if you have any trouble installing or using the application.
