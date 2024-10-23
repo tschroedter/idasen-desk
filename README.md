@@ -98,7 +98,7 @@ At the moment the application supports the following hot keys:
 ---
 # Installation
 ## Windows 10
-Download and run the self-contained application file: ![Idasen.SystemTray.exe](https://github.com/tschroedter/idasen-desk/releases/download/V0.0.243/Idasen.Desk.exe)
+Download and run the self-contained application file: ![Idasen.SystemTray.Win11.exe](https://github.com/tschroedter/idasen-desk/releases/download/V0.0.243/Idasen.Desk.exe)
 
 ## Windows 11
 Download and run the self-contained application file: ![Idasen.SystemTray.Win11.exe](https://github.com/tschroedter/idasen-desk/releases/download/V0.0.243/Idasen.Desk.exe)
