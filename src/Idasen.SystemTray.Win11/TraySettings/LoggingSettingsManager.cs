@@ -7,9 +7,10 @@ namespace Idasen.SystemTray.Win11.TraySettings ;
 public class LoggingSettingsManager ( ISettingsManager settingsManager )
     : ILoggingSettingsManager
 {
-    private ILogger ? _logger ;
-    public  ISettings CurrentSettings  => settingsManager.CurrentSettings ;
-    public  string    SettingsFileName => settingsManager.SettingsFileName ;
+    private ILogger ?                 _logger ;
+    public  ISettings                 CurrentSettings  => settingsManager.CurrentSettings ;
+    public  string                    SettingsFileName => settingsManager.SettingsFileName ;
+    public  IObservable < ISettings > SettingsSaved    => settingsManager.SettingsSaved ;
 
     public async Task SaveAsync ( )
     {
@@ -77,5 +78,12 @@ public class LoggingSettingsManager ( ISettingsManager settingsManager )
         _logger = container.Resolve<ILogger>();
 
         _logger?.Debug($"{nameof(SettingsManager)} initializing...");
+    }
+
+    public async Task SetLastKnownDeskHeight ( uint heightInCm )
+    {
+        _logger?.Debug($"{nameof(SettingsManager)} updating last known desk height: {heightInCm}");
+
+        await settingsManager.SetLastKnownDeskHeight ( heightInCm ) ;
     }
 }

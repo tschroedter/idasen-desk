@@ -32,7 +32,7 @@ public partial class StatusViewModel : ObservableObject , IDisposable
         Message  = manager.LastStatusBarInfo.Message ;
         Height   = manager.LastStatusBarInfo.Height ;
         Severity = manager.LastStatusBarInfo.Severity ;
-
+        
         _timer = new Timer ( OnElapsed , 
                              null , 
                              TimeSpan.FromSeconds ( 10 ) , 

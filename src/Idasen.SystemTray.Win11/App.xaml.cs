@@ -108,9 +108,11 @@ public partial class App
     {
         var scheduler = services.GetRequiredService < IScheduler > ( ) ;
         var creator   = services.GetRequiredService < IDynamicIconCreator > ( ) ;
+        var manager   = services.GetRequiredService < ISettingsManager > ( ) ;
 
         return new TaskbarIconProvider ( scheduler ,
-                                         creator ) ;
+                                         creator,
+                                         manager ) ;
     }
 
     private static void GetBasePath ( IConfigurationBuilder c )

@@ -263,7 +263,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
 
     private bool CanExecuteConnect ( )
     {
-        return _uiDeskManager.IsInitialize && ! _uiDeskManager.IsConnected ;
+        return _uiDeskManager is { IsInitialize: true , IsConnected: false } ;
     }
 
     private bool CanExecuteDisconnect ( )

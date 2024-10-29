@@ -1,4 +1,5 @@
 ﻿using System.IO ;
+using System.Reactive.Subjects ;
 using Autofac ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.Utils ;
@@ -6,11 +7,14 @@ using Serilog ;
 
 namespace Idasen.SystemTray.Win11.TraySettings ;
 
-public class SettingsManager (
-    ICommonApplicationData commonApplicationData ,
-    ISettingsStorage       settingsStorage )
+public class SettingsManager ( ICommonApplicationData commonApplicationData ,
+                               ISettingsStorage       settingsStorage )
     : ISettingsManager
 {
+    private readonly ISubject<ISettings> _settingsSaved = new Subject<ISettings>( ) ;
+
+    public IObservable <ISettings> SettingsSaved => _settingsSaved ;
+
     // todo inject ILogger or use _container
     private ILogger ? _logger;
 
@@ -24,6 +28,8 @@ public class SettingsManager (
     {
         await settingsStorage.SaveSettingsAsync ( SettingsFileName ,
                                                   _current ) ;
+
+        _settingsSaved.OnNext ( _current ) ;
     }
 
     public async Task LoadAsync ( )
@@ -52,6 +58,13 @@ public class SettingsManager (
         _logger = container.Resolve<ILogger>();
 
         _logger?.Debug($"{nameof(SettingsManager)} initializing...");
+    }
+
+    public async Task SetLastKnownDeskHeight ( uint heightInCm )
+    {
+        CurrentSettings.HeightSettings.LastKnowDeskHeight = heightInCm ;
+
+        await SaveAsync ( ) ;
     }
 
     private async Task AddMissingSettingsNotificationsEnabled ( )

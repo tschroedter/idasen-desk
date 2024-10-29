@@ -23,4 +23,9 @@ public class HeightSettings
     ///     The maximum height the desk can move to.
     /// </summary>
     public uint DeskMaxHeightInCm { get ; set ; } = Constants.DefaultDeskMaxHeightInCm ;
+
+    /// <summary>
+    ///     The last known height of the desk.
+    /// </summary>
+    public uint LastKnowDeskHeight { get ; set ; } = Constants.DefaultDeskMinHeightInCm;
 }

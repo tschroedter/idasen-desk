@@ -4,6 +4,7 @@ using System.Reactive.Subjects ;
 using System.Windows.Input ;
 using Autofac ;
 using Idasen.BluetoothLE.Core ;
+using Idasen.BluetoothLE.Linak ;
 using Idasen.BluetoothLE.Linak.Interfaces ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using JetBrains.Annotations ;
@@ -22,7 +23,7 @@ public class UiDeskManager : IUiDeskManager
     private static readonly KeyGesture DecrementGesture = new(Key.Down , ModifierKeys.Control | ModifierKeys.Alt | ModifierKeys.Shift) ;
 
     private readonly ITaskbarIconProvider      _iconProvider ;
-    private readonly ISettingsManager ?        _manager ;
+    private readonly ISettingsManager          _manager ;
     private readonly INotifications            _notifications ;
     private readonly Subject < StatusBarInfo > _statusBarInfoSubject ;
 
@@ -56,11 +57,16 @@ public class UiDeskManager : IUiDeskManager
         _iconProvider         = iconProvider ;
         _notifications        = notifications ;
         _statusBarInfoSubject = new Subject < StatusBarInfo > ( ) ;
+
+        LastStatusBarInfo = new("" ,
+                                _manager.CurrentSettings.HeightSettings.LastKnowDeskHeight ,
+                                "Unknown" ,
+                                InfoBarSeverity.Informational) ;
     }
 
     public IObservable < StatusBarInfo > StatusBarInfoChanged => _statusBarInfoSubject ;
 
-    public bool IsInitialize => _logger != null && _manager != null ;
+    public bool IsInitialize => _logger != null ;
 
     public void Dispose ( )
     {
@@ -120,7 +126,7 @@ public class UiDeskManager : IUiDeskManager
         if ( ! IsDeskConnected ( ) )
             return ;
 
-        await _manager!.LoadAsync ( ) ;
+        await _manager.LoadAsync ( ) ;
 
         _desk?.MoveTo ( _manager.CurrentSettings.HeightSettings.StandingHeightInCm * 100 ) ;
     }
@@ -130,8 +136,8 @@ public class UiDeskManager : IUiDeskManager
         if ( ! IsDeskConnected ( ) )
             return ;
 
-        await _manager!.LoadAsync ( )
-                       .ConfigureAwait ( false ) ;
+        await _manager.LoadAsync ( )
+                      .ConfigureAwait ( false ) ;
 
         _desk?.MoveTo ( _manager.CurrentSettings.HeightSettings.SeatingHeightInCm *
                         100 ) ; // todo duplicate
@@ -233,10 +239,7 @@ public class UiDeskManager : IUiDeskManager
         return Task.CompletedTask ;
     }
 
-    public StatusBarInfo LastStatusBarInfo { get ; private set ; } = new("" ,
-                                                                         0 ,
-                                                                         "Unknown" ,
-                                                                         InfoBarSeverity.Informational) ;
+    public StatusBarInfo LastStatusBarInfo { get ; private set ; }
 
     public Task ExitAsync ( )
     {
@@ -350,8 +353,7 @@ public class UiDeskManager : IUiDeskManager
 
     private bool IsDeskConnected ( )
     {
-        if ( _desk    != null &&
-             _manager != null )
+        if ( _desk    != null )
             return true ;
 
         var message = "Failed to connect to desk!" ;
@@ -377,9 +379,9 @@ public class UiDeskManager : IUiDeskManager
 
             _deskProvider?.Dispose ( ) ;
             _deskProvider = _providerFactory! ( ) ;
-            _deskProvider.Initialize ( _manager!.CurrentSettings.DeviceSettings.DeviceName ,
-                                       _manager!.CurrentSettings.DeviceSettings.DeviceAddress ,
-                                       _manager!.CurrentSettings.DeviceSettings.DeviceMonitoringTimeout ) ;
+            _deskProvider.Initialize ( _manager.CurrentSettings.DeviceSettings.DeviceName ,
+                                       _manager.CurrentSettings.DeviceSettings.DeviceAddress ,
+                                       _manager.CurrentSettings.DeviceSettings.DeviceMonitoringTimeout ) ;
 
             _logger?.Debug ( $"[{_desk?.DeviceName}] Trying to connect to Idasen Desk..." ) ;
 
@@ -445,12 +447,12 @@ public class UiDeskManager : IUiDeskManager
 
         _finished = _desk.FinishedChanged
                          .ObserveOn ( Scheduler.Default )
-                         .Subscribe ( OnFinishedChanged ) ;
+                         .SubscribeAsync ( OnFinishedChanged ) ;
 
         _heightChanged = _desk.HeightChanged
                               .ObserveOn ( Scheduler.Default )
                               .Throttle ( TimeSpan.FromSeconds ( 1 ) )
-                              .Subscribe ( OnHeightChanged ) ;
+                              .SubscribeAsync ( OnHeightChanged ) ;
 
         _iconProvider.Initialize ( _logger! ,
                                    _desk ,
@@ -463,7 +465,7 @@ public class UiDeskManager : IUiDeskManager
                           message ,
                           InfoBarSeverity.Success ) ;
 
-        if ( ! _manager?.CurrentSettings.DeviceSettings.DeviceLocked ?? true )
+        if ( ! _manager.CurrentSettings.DeviceSettings.DeviceLocked )
             return ;
 
         _logger?.Information ( "Locking desk movement" ) ;
@@ -471,7 +473,7 @@ public class UiDeskManager : IUiDeskManager
         _desk?.MoveLock ( ) ;
     }
 
-    private void OnFinishedChanged ( uint height )
+    private async Task OnFinishedChanged ( uint height )
     {
         var heightInCm = ( uint ) Math.Round ( height / 100.0 ) ;
 
@@ -479,9 +481,11 @@ public class UiDeskManager : IUiDeskManager
                           "Finished" ,
                           $"Desk height is {heightInCm} cm" ,
                           InfoBarSeverity.Success ) ;
+
+        await _manager.SetLastKnownDeskHeight ( heightInCm ) ;
     }
 
-    private void OnHeightChanged ( uint height )
+    private async Task OnHeightChanged ( uint height )
     {
         var heightInCm = ( uint ) Math.Round ( height / 100.0 ) ;
 
@@ -491,6 +495,8 @@ public class UiDeskManager : IUiDeskManager
                           "Height Changed" ,
                           message ,
                           InfoBarSeverity.Warning ) ;
+
+        await _manager.SetLastKnownDeskHeight(heightInCm);
     }
 
     private void OnStatusChanged ( uint            height     = 0 ,
@@ -502,6 +508,11 @@ public class UiDeskManager : IUiDeskManager
                          $"{nameof ( title )} = {title}, "     +
                          $"{nameof ( message )} = {message}, " +
                          $"{nameof ( severity )} = {severity}" ) ;
+
+        if ( height == 0 ) // if we don't have a current height use the last known height
+        {
+            height = _manager.CurrentSettings.HeightSettings.LastKnowDeskHeight ;
+        }
 
         LastStatusBarInfo = new StatusBarInfo ( title ,
                                                 height ,
