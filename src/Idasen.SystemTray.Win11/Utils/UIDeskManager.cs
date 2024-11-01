@@ -25,6 +25,7 @@ public class UiDeskManager : IUiDeskManager
     private readonly ITaskbarIconProvider      _iconProvider ;
     private readonly ISettingsManager          _manager ;
     private readonly INotifications            _notifications ;
+    private readonly IScheduler                _scheduler ;
     private readonly Subject < StatusBarInfo > _statusBarInfoSubject ;
 
     private IDesk ?         _desk ;
@@ -44,7 +45,8 @@ public class UiDeskManager : IUiDeskManager
 
     public UiDeskManager ( ISettingsManager     manager ,
                            ITaskbarIconProvider iconProvider ,
-                           INotifications       notifications )
+                           INotifications       notifications ,
+                           IScheduler           scheduler )
     {
         Guard.ArgumentNotNull ( manager ,
                                 nameof ( manager ) ) ;
@@ -52,10 +54,13 @@ public class UiDeskManager : IUiDeskManager
                                 nameof ( iconProvider ) ) ;
         Guard.ArgumentNotNull ( notifications ,
                                 nameof ( notifications ) ) ;
+        Guard.ArgumentNotNull ( scheduler ,
+                                nameof ( scheduler ) ) ;
 
         _manager              = manager ;
         _iconProvider         = iconProvider ;
         _notifications        = notifications ;
+        _scheduler            = scheduler ;
         _statusBarInfoSubject = new Subject < StatusBarInfo > ( ) ;
 
         LastStatusBarInfo = new("" ,
@@ -102,9 +107,8 @@ public class UiDeskManager : IUiDeskManager
         _token       = _tokenSource.Token ;
 
         _onErrorChanged = _errorManager.ErrorChanged
-                                       .ObserveOn ( Scheduler.Default )
+                                       .ObserveOn ( _scheduler )
                                        .Subscribe ( OnErrorChanged ) ;
-
 
         HotkeyManager.HotkeyAlreadyRegistered += HotkeyManager_HotkeyAlreadyRegistered ;
 

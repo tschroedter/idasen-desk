@@ -8,8 +8,9 @@ namespace Idasen.SystemTray.Win11.ViewModels.Pages ;
 
 public partial class StatusViewModel : ObservableObject , IDisposable
 {
-    private readonly IDisposable _statusBarInfoChanged ;
-    private readonly Timer       _timer ;
+    private readonly IUiDeskManager _manager ;
+    private readonly IDisposable    _statusBarInfoChanged ;
+    private readonly Timer          _timer ;
 
     [ ObservableProperty ]
     private uint _height ;
@@ -25,6 +26,8 @@ public partial class StatusViewModel : ObservableObject , IDisposable
 
     public StatusViewModel ( IUiDeskManager manager )
     {
+        _manager = manager ;
+
         _statusBarInfoChanged = manager.StatusBarInfoChanged
                                        .ObserveOn ( DispatcherScheduler.Current )
                                        .Subscribe ( OnStatusBarInfoChanged ) ;
@@ -52,6 +55,9 @@ public partial class StatusViewModel : ObservableObject , IDisposable
 
     private void DefaultInfoBar ( )
     {
+        if ( ! _manager.IsConnected )
+            return ;
+
         Message = Height == 0
                       ? "Can't determine desk height."
                       : $"Current desk height {Height} cm" ;
