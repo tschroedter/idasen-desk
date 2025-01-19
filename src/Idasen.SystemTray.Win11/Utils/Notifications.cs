@@ -1,7 +1,5 @@
 ﻿using System.Reactive.Subjects ;
 using System.Windows.Threading ;
-using Autofac ;
-using Idasen.BluetoothLE.Core ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Microsoft.Toolkit.Uwp.Notifications ;
 using Serilog ;
@@ -12,52 +10,36 @@ namespace Idasen.SystemTray.Win11.Utils ;
 
 public class Notifications : INotifications
 {
+    private readonly ILogger                            _logger ;
     private readonly ISettingsManager                   _manager ;
     private readonly Subject < NotificationParameters > _showSubject ;
     private readonly IDisposable                        _showSubscribe ;
     private readonly IVersionProvider                   _version ;
-    private          ILogger ?                          _logger ;
 
-    public Notifications ( ISettingsManager manager ,
+    public Notifications ( ILogger          logger ,
+                           ISettingsManager manager ,
                            IVersionProvider version )
     {
+        _logger        = logger ;
         _manager       = manager ;
         _version       = version ;
         _showSubject   = new Subject < NotificationParameters > ( ) ;
         _showSubscribe = _showSubject.Subscribe ( OnShow ) ;
     }
 
-    public void Show ( string     title ,
-                       string     text ,
-                       InfoBarSeverity serverity)
+    public void Show ( string          title ,
+                       string          text ,
+                       InfoBarSeverity serverity )
     {
         var parameters = new NotificationParameters ( title ,
                                                       text ,
                                                       serverity ) ;
-        Show( parameters ) ;
+        Show ( parameters ) ;
     }
 
-    public void Show ( NotificationParameters parameters)  // todo maybe just one show method
+    public INotifications Initialize ( NotifyIcon notifyIcon )
     {
-        if (_manager is { CurrentSettings.DeviceSettings.NotificationsEnabled: false })
-        {
-            _logger?.Information($"Notifications are disabled. " +
-                                 $"{nameof(parameters)}: {parameters}");
-
-            return;
-        }
-
-        _showSubject.OnNext ( parameters ) ;
-    }
-
-    public INotifications Initialize ( IContainer container , NotifyIcon notifyIcon )
-    {
-        Guard.ArgumentNotNull ( container ,
-                                nameof ( container ) ) ;
-
-        _logger = container.Resolve < ILogger > ( ) ;
-
-        _logger?.Debug ( "Notifications initializing..." ) ;
+        _logger.Debug ( "Notifications initializing..." ) ;
 
         Task.Run ( async ( ) =>
                    {
@@ -77,26 +59,39 @@ public class Notifications : INotifications
         _showSubscribe.Dispose ( ) ;
     }
 
+    public void Show ( NotificationParameters parameters ) // todo maybe just one show method
+    {
+        if ( _manager is { CurrentSettings.DeviceSettings.NotificationsEnabled: false } )
+        {
+            _logger.Information ( $"Notifications are disabled. " +
+                                  $"{nameof ( parameters )}: {parameters}" ) ;
+
+            return ;
+        }
+
+        _showSubject.OnNext ( parameters ) ;
+    }
+
     private void OnShow ( NotificationParameters parameters )
     {
         if ( _manager is { CurrentSettings.DeviceSettings.NotificationsEnabled: false } )
         {
-            _logger?.Information ( $"Notifications are disabled. " +
-                                   $"{nameof ( parameters )}: {parameters}" ) ;
+            _logger.Information ( $"Notifications are disabled. " +
+                                  $"{nameof ( parameters )}: {parameters}" ) ;
 
             return ;
         }
 
         if ( ! Dispatcher.CurrentDispatcher.CheckAccess ( ) )
         {
-            _logger?.Debug ( "Dispatching call on UI thread" ) ;
+            _logger.Debug ( "Dispatching call on UI thread" ) ;
 
             Dispatcher.CurrentDispatcher.BeginInvoke ( new Action ( ( ) => Show ( parameters ) ) ) ;
 
             return ;
         }
 
-        _logger?.Debug ( $"Parameters = {parameters}" ) ;
+        _logger.Debug ( $"Parameters = {parameters}" ) ;
 
         // Requires Microsoft.Toolkit.Uwp.Notifications NuGet package version 7.0 or greater
         var builder = new ToastContentBuilder ( ) ;

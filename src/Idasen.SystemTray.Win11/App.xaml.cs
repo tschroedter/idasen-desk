@@ -1,10 +1,16 @@
-﻿using System.Diagnostics;
+﻿using System.Diagnostics ;
 using System.IO ;
 using System.Reactive.Concurrency ;
 using System.Reflection ;
 using System.Windows.Media ;
 using System.Windows.Threading ;
 using Autofac ;
+using Autofac.Extensions.DependencyInjection ;
+using AutofacSerilogIntegration ;
+using Idasen.Aop ;
+using Idasen.BluetoothLE.Core ;
+using Idasen.BluetoothLE.Linak ;
+using Idasen.BluetoothLE.Linak.Interfaces ;
 using Idasen.Launcher ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.Services ;
@@ -20,9 +26,9 @@ using Idasen.SystemTray.Win11.Views.Windows ;
 using Microsoft.Extensions.Configuration ;
 using Microsoft.Extensions.DependencyInjection ;
 using Microsoft.Extensions.Hosting ;
-using Serilog ;
 using Wpf.Ui ;
 using Wpf.Ui.Tray.Controls ;
+using ILogger = Serilog.ILogger ;
 
 namespace Idasen.SystemTray.Win11 ;
 
@@ -39,6 +45,20 @@ public partial class App
     private static readonly IHost Host = Microsoft.Extensions.Hosting.Host
                                                   .CreateDefaultBuilder ( )
                                                   .ConfigureAppConfiguration ( GetBasePath )
+                                                  .UseServiceProviderFactory ( new AutofacServiceProviderFactory ( ) )
+                                                  .ConfigureContainer < ContainerBuilder > ( builder =>
+                                                                                             {
+                                                                                                 builder.RegisterLogger ( ) ;
+                                                                                                 builder.RegisterModule < BluetoothLEAop > ( ) ;
+                                                                                                 builder
+                                                                                                    .RegisterModule < BluetoothLECoreModule > ( ) ;
+                                                                                                 builder
+                                                                                                    .RegisterModule < BluetoothLELinakModule > ( ) ;
+                                                                                                 builder.RegisterLogger ( LoggerProvider
+                                                                                                    .CreateLogger ( Constants
+                                                                                                            .ApplicationName ,
+                                                                                                         Constants.LogFilename ) ) ;
+                                                                                             } )
                                                   .ConfigureServices ( ( _ , services ) =>
                                                                        {
                                                                            services.AddHostedService < ApplicationHostService > ( ) ;
@@ -70,25 +90,36 @@ public partial class App
                                                                            services.AddSingleton < IObserveSettingsChanges > ( GetSettingsChanged ) ;
                                                                            services.AddSingleton < INotifySettingsChanges > ( GetSettingsChanged ) ;
                                                                            services.AddSingleton < ISettingsManager , SettingsManager > ( ) ;
-                                                                           services.AddSingleton < ILoggingSettingsManager , LoggingSettingsManager > ( ) ;
-                                                                           services.AddSingleton < ICommonApplicationData , CommonApplicationData > ( ) ;
+                                                                           services
+                                                                              .AddSingleton < ILoggingSettingsManager ,
+                                                                                   LoggingSettingsManager > ( ) ;
+                                                                           services
+                                                                              .AddSingleton < ICommonApplicationData , CommonApplicationData > ( ) ;
                                                                            services.AddSingleton < ISettingsStorage , SettingsStorage > ( ) ;
                                                                            services.AddSingleton < ITaskbarIconProvider , TaskbarIconProvider > ( ) ;
                                                                            services.AddSingleton < IUiDeskManager , UiDeskManager > ( ) ;
                                                                            services.AddSingleton < IDynamicIconCreator , DynamicIconCreator > ( ) ;
-                                                                           services.AddSingleton < IIdasenConfigurationProvider , IdasenConfigurationProvider > ( ) ;
+                                                                           services
+                                                                              .AddSingleton < IIdasenConfigurationProvider ,
+                                                                                   IdasenConfigurationProvider > ( ) ;
                                                                            services.AddSingleton ( _ => CreateScheduler ( ) ) ;
                                                                            services.AddSingleton ( CreateTaskbarIconProvider ) ;
                                                                            services.AddTransient < IDeviceNameConverter , DeviceNameConverter > ( ) ;
-                                                                           services.AddTransient < IDoubleToUIntConverter , DoubleToUIntConverter > ( ) ;
-                                                                           services.AddTransient < IStringToUIntConverter , StringToUIntConverter > ( ) ;
-                                                                           services.AddTransient < IDeviceAddressToULongConverter , DeviceAddressToULongConverter > ( ) ;
-                                                                       }).Build ( ) ;
+                                                                           services
+                                                                              .AddTransient < IDoubleToUIntConverter , DoubleToUIntConverter > ( ) ;
+                                                                           services
+                                                                              .AddTransient < IStringToUIntConverter , StringToUIntConverter > ( ) ;
+                                                                           services
+                                                                              .AddTransient < IDeviceAddressToULongConverter ,
+                                                                                   DeviceAddressToULongConverter > ( ) ;
+                                                                           services.AddSingleton ( provider =>
+                                                                                                      new Func < IDeskProvider > ( provider
+                                                                                                         .GetRequiredService <
+                                                                                                              IDeskProvider > ) ) ;
+                                                                       } ).Build ( ) ;
 
     private readonly ILogger _logger = LoggerProvider.CreateLogger ( Constants.ApplicationName ,
                                                                      Constants.LogFilename ) ;
-
-    private IContainer ? _container ;
 
     private static Window CurrentWindow =>
         Current.MainWindow ?? throw new Exception ( "Can't find the main window!" ) ;
@@ -111,7 +142,7 @@ public partial class App
         var manager   = services.GetRequiredService < ISettingsManager > ( ) ;
 
         return new TaskbarIconProvider ( scheduler ,
-                                         creator,
+                                         creator ,
                                          manager ) ;
     }
 
@@ -139,29 +170,24 @@ public partial class App
     {
         AvoidRunningTwoInstances ( ) ;
 
-        UnhandledExceptionsHandler.RegisterGlobalExceptionHandling ( ) ;
-
         Host.Start ( ) ;
+
+        UnhandledExceptionsHandler.RegisterGlobalExceptionHandling ( ) ;
 
         _logger.Information ( "##### Startup..." ) ;
 
-        var configurationProvider = GetService < IIdasenConfigurationProvider > ( ) ;
-
-        _container = ContainerProvider.Create ( configurationProvider!.GetConfiguration ( ) ) ; // todo only use one container
+        var test = GetService < ILogger > ( ) ;
+        test?.Information ( "Test" ) ;
 
         var notifyIcon = FindNotifyIcon ( ) ; // todo maybe we can get the icon from the view?
 
         var main = GetService < IdasenDeskWindowViewModel > ( ) ;
 
-        main!.Initialize ( _container , notifyIcon ) ;
+        main!.Initialize ( notifyIcon ) ;
 
         var settings = GetService < SettingsViewModel > ( ) ;
 
-        settings!.Initialize ( _container ) ;
-
-        var manager = GetService < ILoggingSettingsManager > ( ) ;
-
-        manager!.Initialize ( _container ) ;
+        settings!.Initialize ( ) ;
 
         var versionProvider = GetVersionProvider ( ) ;
 
@@ -171,12 +197,12 @@ public partial class App
     private void AvoidRunningTwoInstances ( )
     {
         var location                 = Assembly.GetEntryAssembly ( )?.Location ?? throw new Exception ( "Can't get entry assembly!" ) ;
-        var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(location) ;
+        var fileNameWithoutExtension = Path.GetFileNameWithoutExtension ( location ) ;
 
         if ( Process.GetProcessesByName ( fileNameWithoutExtension ).Length <= 1 )
             return ;
 
-        _logger.Information("##### Application already running!");
+        _logger.Information ( "##### Application already running!" ) ;
 
         Process.GetCurrentProcess ( ).Kill ( ) ;
     }
@@ -203,7 +229,7 @@ public partial class App
     {
         // For more info see https://docs.microsoft.com/en-us/dotnet/api/system.windows.application.dispatcherunhandledexception?view=windowsdesktop-6.0
         _logger.Error ( e.Exception ,
-                        "Unhandled exception" ) ;
+                         "Unhandled exception" ) ;
     }
 
     private static NotifyIcon FindNotifyIcon ( )
@@ -218,23 +244,24 @@ public partial class App
         return notifyIcons.FirstOrDefault ( ) ?? throw new Exception ( "Can't find the main notify icon!" ) ;
     }
 
-    public static IEnumerable<T> FindVisualChildren<T>(DependencyObject parent)
+    public static IEnumerable < T > FindVisualChildren < T > ( DependencyObject parent )
         where T : DependencyObject
     {
-        var childrenCount = VisualTreeHelper.GetChildrenCount(parent);
+        var childrenCount = VisualTreeHelper.GetChildrenCount ( parent ) ;
 
-        for (var i = 0; i < childrenCount; i++)
+        for ( var i = 0 ; i < childrenCount ; i ++ )
         {
-            var child = VisualTreeHelper.GetChild(parent, i);
+            var child = VisualTreeHelper.GetChild ( parent ,
+                                                    i ) ;
 
-            if (child is T childType)
+            if ( child is T childType )
             {
-                yield return childType;
+                yield return childType ;
             }
 
-            foreach (var other in FindVisualChildren<T>(child))
+            foreach ( var other in FindVisualChildren < T > ( child ) )
             {
-                yield return other;
+                yield return other ;
             }
         }
     }

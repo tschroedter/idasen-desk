@@ -1,8 +1,8 @@
 ﻿using System.Reactive.Concurrency ;
 using System.Reactive.Linq ;
 using System.Reflection ;
-using System.Windows.Threading;
-using Autofac ;
+using System.Windows.Threading ;
+using Idasen.Launcher ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.Utils ;
 using Serilog ;
@@ -11,18 +11,16 @@ using Wpf.Ui.Controls ;
 
 namespace Idasen.SystemTray.Win11.ViewModels.Pages ;
 
-public partial class SettingsViewModel ( ILoggingSettingsManager        settingsManager ,
+public partial class SettingsViewModel ( ILogger                        logger ,
+                                         ILoggingSettingsManager        settingsManager ,
                                          INotifySettingsChanges         settingsChanges ,
                                          IDeviceAddressToULongConverter addressConverter ,
                                          IDoubleToUIntConverter         toUIntConverter ,
-                                         IDeviceNameConverter           nameConverter,
-                                         IScheduler scheduler)
+                                         IDeviceNameConverter           nameConverter ,
+                                         IScheduler                     scheduler )
     : ObservableObject , INavigationAware
 {
-    private bool      _isInitialized;
-    private ILogger ? _logger ;
-
-    [ObservableProperty ]
+    [ ObservableProperty ]
     private string _appVersion = string.Empty ;
 
     [ ObservableProperty ]
@@ -34,14 +32,13 @@ public partial class SettingsViewModel ( ILoggingSettingsManager        settings
     [ ObservableProperty ]
     private string _deskName = string.Empty ;
 
+    private bool _isInitialized ;
+
     [ ObservableProperty ]
-    private string _settingsFileFullPath = string.Empty ;
+    private uint _lastKnownDeskHeight = Constants.DefaultDeskMinHeightInCm ;
 
-    [ObservableProperty]
-    private string _logFolderPath = string.Empty;
-
-    [ObservableProperty]
-    private uint _lastKnownDeskHeight = Constants.DefaultDeskMinHeightInCm;
+    [ ObservableProperty ]
+    private string _logFolderPath = string.Empty ;
 
     [ ObservableProperty ]
     private uint _maxHeight = 90 ;
@@ -59,10 +56,14 @@ public partial class SettingsViewModel ( ILoggingSettingsManager        settings
     private uint _seating = 90 ;
 
     [ ObservableProperty ]
+    private string _settingsFileFullPath = string.Empty ;
+
+    private IDisposable ? _settingsSaved ; // todo dispose
+
+    [ ObservableProperty ]
     private uint _standing = 100 ;
 
-    private Task ?        _storingSettingsTask ;
-    private IDisposable ? _settingsSaved ; // todo dispose
+    private Task ? _storingSettingsTask ;
 
     public void OnNavigatedTo ( )
     {
@@ -75,14 +76,12 @@ public partial class SettingsViewModel ( ILoggingSettingsManager        settings
         StoreSettings ( ) ;
     }
 
-    public SettingsViewModel Initialize ( IContainer container )
+    public SettingsViewModel Initialize ( )
     {
-        _logger = container.Resolve < ILogger > ( ) ;
-
         LoadSettingsAsync ( ) ;
 
-        SettingsFileFullPath = settingsManager.SettingsFileName;
-        LogFolderPath = Launcher.LoggingFile.Path;
+        SettingsFileFullPath = settingsManager.SettingsFileName ;
+        LogFolderPath        = LoggingFile.Path ;
 
         _settingsSaved = settingsManager.SettingsSaved
                                         .ObserveOn ( scheduler )
@@ -93,13 +92,13 @@ public partial class SettingsViewModel ( ILoggingSettingsManager        settings
 
     private void OnSettingsSaved ( ISettings settings )
     {
-        if (!Dispatcher.CurrentDispatcher.CheckAccess())
+        if ( ! Dispatcher.CurrentDispatcher.CheckAccess ( ) )
         {
-            _logger?.Debug("Dispatching call on UI thread");
+            logger.Debug ( "Dispatching call on UI thread" ) ;
 
-            Dispatcher.CurrentDispatcher.BeginInvoke(new Action(() => OnSettingsSaved(settings)));
+            Dispatcher.CurrentDispatcher.BeginInvoke ( new Action ( ( ) => OnSettingsSaved ( settings ) ) ) ;
 
-            return;
+            return ;
         }
 
         LastKnownDeskHeight = settings.HeightSettings.LastKnowDeskHeight ;
@@ -109,7 +108,7 @@ public partial class SettingsViewModel ( ILoggingSettingsManager        settings
     {
         Task.Run ( async ( ) =>
                    {
-                       _logger?.Debug ( "LoadAsync settings" ) ;
+                       logger.Debug ( "LoadAsync settings" ) ;
 
                        await settingsManager.LoadAsync ( ) ;
 
@@ -119,7 +118,7 @@ public partial class SettingsViewModel ( ILoggingSettingsManager        settings
                        MinHeight           = current.HeightSettings.DeskMinHeightInCm ;
                        MaxHeight           = current.HeightSettings.DeskMaxHeightInCm ;
                        Seating             = current.HeightSettings.SeatingHeightInCm ;
-                       LastKnownDeskHeight = current.HeightSettings.LastKnowDeskHeight;
+                       LastKnownDeskHeight = current.HeightSettings.LastKnowDeskHeight ;
                        DeskName            = nameConverter.EmptyIfDefault ( current.DeviceSettings.DeviceName ) ;
                        DeskAddress         = addressConverter.EmptyIfDefault ( current.DeviceSettings.DeviceAddress ) ;
                        ParentalLock        = current.DeviceSettings.DeviceLocked ;
@@ -132,7 +131,7 @@ public partial class SettingsViewModel ( ILoggingSettingsManager        settings
     {
         if ( _storingSettingsTask?.Status == TaskStatus.Running )
         {
-            _logger?.Warning ( "Storing Settings already in progress" ) ;
+            logger.Warning ( "Storing Settings already in progress" ) ;
 
             return ;
         }
@@ -151,7 +150,7 @@ public partial class SettingsViewModel ( ILoggingSettingsManager        settings
 
     private bool HasParentalLockChanged ( )
     {
-        var settings = settingsManager.CurrentSettings;
+        var settings = settingsManager.CurrentSettings ;
 
         return settings.DeviceSettings.DeviceLocked != ParentalLock ;
     }
@@ -160,39 +159,39 @@ public partial class SettingsViewModel ( ILoggingSettingsManager        settings
     {
         var settings = settingsManager.CurrentSettings ;
 
-        var newDeviceName           = nameConverter.DefaultIfEmpty ( DeskName ) ;
-        var newDeviceAddress        = addressConverter.DefaultIfEmpty ( DeskAddress ) ;
+        var newDeviceName    = nameConverter.DefaultIfEmpty ( DeskName ) ;
+        var newDeviceAddress = addressConverter.DefaultIfEmpty ( DeskAddress ) ;
 
         return settings.DeviceSettings.DeviceName    != newDeviceName ||
                settings.DeviceSettings.DeviceAddress != newDeviceAddress ;
     }
 
-    private void UpdateCurrentSettings (  )
+    private void UpdateCurrentSettings ( )
     {
-        var settings = settingsManager.CurrentSettings;
+        var settings = settingsManager.CurrentSettings ;
 
-        var newDeviceName           = nameConverter.DefaultIfEmpty(DeskName);
-        var newDeviceAddress        = addressConverter.DefaultIfEmpty(DeskAddress);
-        var newDeviceLocked         = ParentalLock;
-        var newNotificationsEnabled = Notifications;
+        var newDeviceName           = nameConverter.DefaultIfEmpty ( DeskName ) ;
+        var newDeviceAddress        = addressConverter.DefaultIfEmpty ( DeskAddress ) ;
+        var newDeviceLocked         = ParentalLock ;
+        var newNotificationsEnabled = Notifications ;
 
         settings.HeightSettings.StandingHeightInCm = toUIntConverter.ConvertToUInt ( Standing ,
                                                                                      Constants.DefaultHeightStandingInCm ) ;
         settings.HeightSettings.SeatingHeightInCm = toUIntConverter.ConvertToUInt ( Seating ,
                                                                                     Constants.DefaultHeightSeatingInCm ) ;
-        settings.HeightSettings.LastKnowDeskHeight   = LastKnownDeskHeight;
+        settings.HeightSettings.LastKnowDeskHeight   = LastKnownDeskHeight ;
         settings.DeviceSettings.DeviceName           = newDeviceName ;
         settings.DeviceSettings.DeviceAddress        = newDeviceAddress ;
         settings.DeviceSettings.DeviceLocked         = newDeviceLocked ;
         settings.DeviceSettings.NotificationsEnabled = newNotificationsEnabled ;
     }
 
-    private async Task DoStoreSettingsAsync ( bool      advancedChanged ,
-                                              bool      lockChanged )
+    private async Task DoStoreSettingsAsync ( bool advancedChanged ,
+                                              bool lockChanged )
     {
         try
         {
-            _logger?.Debug ( $"Storing new settings: {settingsManager.CurrentSettings}" ) ;
+            logger.Debug ( $"Storing new settings: {settingsManager.CurrentSettings}" ) ;
 
             await settingsManager.SaveAsync ( ) ;
 
@@ -208,21 +207,21 @@ public partial class SettingsViewModel ( ILoggingSettingsManager        settings
         }
         catch ( Exception e )
         {
-            _logger?.Error ( e ,
-                             "Failed to store settings" ) ;
+            logger.Error ( e ,
+                            "Failed to store settings" ) ;
         }
     }
 
     private void LockChanged ( ISettings settings )
     {
-        _logger?.Information ( "Advanced Locked settings have changed..." ) ;
+        logger.Information ( "Advanced Locked settings have changed..." ) ;
 
         settingsChanges.LockSettingsChanged.OnNext ( settings.DeviceSettings.DeviceLocked ) ;
     }
 
     private void AdvancedSettingsChanged ( bool advancedChanged )
     {
-        _logger?.Information ( "Advanced settings have changed, reconnecting..." ) ;
+        logger.Information ( "Advanced settings have changed, reconnecting..." ) ;
 
         settingsChanges.AdvancedSettingsChanged.OnNext ( advancedChanged ) ;
     }

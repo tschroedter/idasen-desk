@@ -1,24 +1,21 @@
 ﻿using System.IO ;
 using System.Reactive.Subjects ;
-using Autofac ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.Utils ;
 using Serilog ;
 
 namespace Idasen.SystemTray.Win11.TraySettings ;
 
-public class SettingsManager ( ICommonApplicationData commonApplicationData ,
+public class SettingsManager ( ILogger                logger ,
+                               ICommonApplicationData commonApplicationData ,
                                ISettingsStorage       settingsStorage )
     : ISettingsManager
 {
-    private readonly ISubject<ISettings> _settingsSaved = new Subject<ISettings>( ) ;
+    private readonly ISubject < ISettings > _settingsSaved = new Subject < ISettings > ( ) ;
 
-    public IObservable <ISettings> SettingsSaved => _settingsSaved ;
+    private Settings _current = new ( ) ;
 
-    // todo inject ILogger or use _container
-    private ILogger ? _logger;
-
-    private Settings _current = new( ) ;
+    public IObservable < ISettings > SettingsSaved => _settingsSaved ;
 
     public ISettings CurrentSettings => _current ;
 
@@ -53,13 +50,6 @@ public class SettingsManager ( ICommonApplicationData commonApplicationData ,
         return false ;
     }
 
-    public void Initialize ( IContainer container)
-    {
-        _logger = container.Resolve<ILogger>();
-
-        _logger?.Debug($"{nameof(SettingsManager)} initializing...");
-    }
-
     public async Task SetLastKnownDeskHeight ( uint heightInCm )
     {
         CurrentSettings.HeightSettings.LastKnowDeskHeight = heightInCm ;
@@ -69,9 +59,9 @@ public class SettingsManager ( ICommonApplicationData commonApplicationData ,
 
     private async Task AddMissingSettingsNotificationsEnabled ( )
     {
-        _logger?.Debug ( $"Add missing setting "                                       +
-                        $"{nameof ( Settings.DeviceSettings.NotificationsEnabled )} " +
-                        $"to current settings from '{SettingsFileName}'" ) ;
+        logger.Debug ( $"Add missing setting "                                       +
+                       $"{nameof ( Settings.DeviceSettings.NotificationsEnabled )} " +
+                       $"to current settings from '{SettingsFileName}'" ) ;
 
         await LoadAsync ( ).ConfigureAwait ( false ) ;
 

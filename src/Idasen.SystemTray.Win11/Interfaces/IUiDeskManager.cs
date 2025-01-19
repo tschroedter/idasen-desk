@@ -1,5 +1,4 @@
-﻿using Autofac ;
-using Idasen.SystemTray.Win11.Utils ;
+﻿using Idasen.SystemTray.Win11.Utils ;
 using Wpf.Ui.Tray.Controls ;
 
 namespace Idasen.SystemTray.Win11.Interfaces ;
@@ -10,7 +9,7 @@ public interface IUiDeskManager : IDisposable
     IObservable < StatusBarInfo > StatusBarInfoChanged { get ; }
     StatusBarInfo                 LastStatusBarInfo    { get ; }
     bool                          IsConnected          { get ; }
-    UiDeskManager                 Initialize ( IContainer container , NotifyIcon notifyIcon ) ;
+    UiDeskManager                 Initialize ( NotifyIcon notifyIcon ) ;
     Task                          StandAsync ( ) ;
     Task                          SitAsync ( ) ;
     Task                          AutoConnectAsync ( ) ;

@@ -6,7 +6,7 @@ using Microsoft.Extensions.Configuration ;
 
 namespace Idasen.SystemTray.Win11.Utils ;
 
-public class IdasenConfigurationProvider : IIdasenConfigurationProvider
+public class IdasenConfigurationProvider : IIdasenConfigurationProvider // todo can this class be removed
 {
     public IConfigurationRoot GetConfiguration ( )
     {

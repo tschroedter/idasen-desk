@@ -1,6 +1,4 @@
-﻿using Autofac ;
-
-namespace Idasen.SystemTray.Win11.Interfaces ;
+﻿namespace Idasen.SystemTray.Win11.Interfaces ;
 
 public interface ISettingsManager
 {
@@ -10,6 +8,5 @@ public interface ISettingsManager
     Task                      SaveAsync ( ) ;
     Task                      LoadAsync ( ) ;
     Task < bool >             UpgradeSettingsAsync ( ) ;
-    void                      Initialize ( IContainer       container ) ;
     Task                      SetLastKnownDeskHeight ( uint heightInCm ) ;
 }

@@ -4,14 +4,12 @@ using System.Reactive.Linq ;
 using System.Windows.Controls ;
 using System.Windows.Input ;
 using System.Windows.Threading ;
-using Autofac ;
 using Idasen.BluetoothLE.Core ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.Utils ;
 using Idasen.SystemTray.Win11.Views.Pages ;
 using JetBrains.Annotations ;
 using Wpf.Ui.Controls ;
-using IContainer = Autofac.IContainer ;
 using ILogger = Serilog.ILogger ;
 using MenuItem = Wpf.Ui.Controls.MenuItem ;
 using MessageBox = Wpf.Ui.Controls.MessageBox ;
@@ -22,7 +20,7 @@ namespace Idasen.SystemTray.Win11.ViewModels.Windows ;
 
 public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
 {
-    private static readonly NavigationViewItem HomeViewItem = new( )
+    private static readonly NavigationViewItem HomeViewItem = new ( )
     {
         Content = "Home" ,
         Icon = new SymbolIcon
@@ -32,7 +30,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
         TargetPageType = typeof ( HomePage )
     } ;
 
-    private static readonly NavigationViewItem SitViewItem = new( )
+    private static readonly NavigationViewItem SitViewItem = new ( )
     {
         Content = "Sit" ,
         Icon = new SymbolIcon
@@ -43,7 +41,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
         ToolTip        = "Double-Click to move the desk to the sitting position."
     } ;
 
-    private static readonly NavigationViewItem StandViewItem = new( )
+    private static readonly NavigationViewItem StandViewItem = new ( )
     {
         Content = "Stand" ,
         Icon = new SymbolIcon
@@ -54,7 +52,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
         ToolTip        = "Double-Click to move the desk to the standing position."
     } ;
 
-    private static readonly NavigationViewItem ConnectViewItem = new( )
+    private static readonly NavigationViewItem ConnectViewItem = new ( )
     {
         Content = "Connect" ,
         Icon = new SymbolIcon
@@ -62,10 +60,10 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
             Symbol = SymbolRegular.PlugConnected24
         } ,
         TargetPageType = typeof ( StatusPage ) ,
-        ToolTip        = "Double-Click to connect to desk.",
+        ToolTip        = "Double-Click to connect to desk."
     } ;
 
-    private static readonly NavigationViewItem DisconnectViewItem = new( )
+    private static readonly NavigationViewItem DisconnectViewItem = new ( )
     {
         Content = "Disconnect" ,
         Icon = new SymbolIcon
@@ -76,7 +74,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
         ToolTip        = "Double-Click to disconnect desk."
     } ;
 
-    private static readonly NavigationViewItem CloseWindowViewItem = new( )
+    private static readonly NavigationViewItem CloseWindowViewItem = new ( )
     {
         Content = "Hide" ,
         Icon = new SymbolIcon
@@ -87,7 +85,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
         ToolTip        = "Double-Click to close this window."
     } ;
 
-    private static readonly NavigationViewItem SettingsViewItem = new( )
+    private static readonly NavigationViewItem SettingsViewItem = new ( )
     {
         Content = "Settings" ,
         Icon = new SymbolIcon
@@ -98,7 +96,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
         ToolTip        = "Double-Click to see settings."
     } ;
 
-    private static readonly NavigationViewItem StopViewItem = new( )
+    private static readonly NavigationViewItem StopViewItem = new ( )
     {
         Content = "Stop" ,
         Icon = new SymbolIcon
@@ -109,7 +107,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
         ToolTip        = "Double-Click to stop the desk when moving."
     } ;
 
-    private static readonly NavigationViewItem ExitViewItem = new( )
+    private static readonly NavigationViewItem ExitViewItem = new ( )
     {
         Content = "Exit" ,
         Icon = new SymbolIcon
@@ -119,6 +117,8 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
         TargetPageType = typeof ( StatusPage ) ,
         ToolTip        = "Double-Click to exit the application."
     } ;
+
+    private readonly ILogger _logger ;
 
     private readonly IObserveSettingsChanges _settingsChanges ;
 
@@ -136,8 +136,6 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
     ] ;
 
     private IDisposable ? _lockSubscription ;
-
-    private ILogger ? _logger ;
 
     [ ObservableProperty ]
     private ObservableCollection < object > _menuItems =
@@ -158,7 +156,8 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
     [ ObservableProperty ]
     private ObservableCollection < MenuItem > _trayMenuItems ;
 
-    public IdasenDeskWindowViewModel ( IServiceProvider        serviceProvider ,
+    public IdasenDeskWindowViewModel ( ILogger                 logger ,
+                                       IServiceProvider        serviceProvider ,
                                        IUiDeskManager          uiDeskManager ,
                                        IObserveSettingsChanges settingsChanges )
     {
@@ -167,6 +166,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
         Guard.ArgumentNotNull ( uiDeskManager ,
                                 nameof ( uiDeskManager ) ) ;
 
+        _logger          = logger ;
         _uiDeskManager   = uiDeskManager ;
         _settingsChanges = settingsChanges ;
 
@@ -195,13 +195,15 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
     ///     Shows a window, if none is already open.
     /// </summary>
     public ICommand ShowSettingsCommand =>
-        new DelegateCommand ( DoShowSettings , CanShowSettings ) ;
+        new DelegateCommand ( DoShowSettings ,
+                              CanShowSettings ) ;
 
     /// <summary>
     ///     Hides the main window. This command is only enabled if a window is open.
     /// </summary>
     public ICommand HideSettingsCommand =>
-        new DelegateCommand ( DoHideSettings , CanHideSettings ) ;
+        new DelegateCommand ( DoHideSettings ,
+                              CanHideSettings ) ;
 
     /// <summary>
     ///     Connects to the Idasen Desk.
@@ -248,11 +250,12 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
     /// </summary>
     public ICommand ExitApplicationCommand =>
         // ReSharper disable once AsyncVoidLambda
-        new DelegateCommand ( DoExitApplication , ( ) => true ) ;
+        new DelegateCommand ( DoExitApplication ,
+                              ( ) => true ) ;
 
     public void Dispose ( )
     {
-        _logger?.Information ( "Disposing..." ) ;
+        _logger.Information ( "Disposing..." ) ;
 
         _advancedSubscription?.Dispose ( ) ;
         _lockSubscription?.Dispose ( ) ;
@@ -338,7 +341,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
         if ( Application.Current.MainWindow == null )
             return ;
 
-        _logger?.Debug ( $"{nameof ( ShowSettingsCommand )}" ) ;
+        _logger.Debug ( $"{nameof ( ShowSettingsCommand )}" ) ;
 
         Application.Current.MainWindow.Visibility = Visibility.Visible ;
 
@@ -354,7 +357,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
         if ( Application.Current.MainWindow == null )
             return ;
 
-        _logger?.Debug ( $"{nameof ( HideSettingsCommand )}" ) ;
+        _logger.Debug ( $"{nameof ( HideSettingsCommand )}" ) ;
 
         Application.Current.MainWindow.Visibility = Visibility.Hidden ;
 
@@ -511,16 +514,11 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
                                                    } ) ;
     }
 
-    public IdasenDeskWindowViewModel Initialize ( IContainer container ,
-                                                  NotifyIcon notifyIcon )
+    public IdasenDeskWindowViewModel Initialize ( NotifyIcon notifyIcon )
     {
-        Guard.ArgumentNotNull ( container ,
-                                nameof ( container ) ) ;
+        _logger.Debug ( $"{nameof ( IdasenDeskWindowViewModel )}: Initializing..." ) ;
 
-        _logger = container.Resolve < ILogger > ( ) ;
-        _logger?.Debug ( $"{nameof ( IdasenDeskWindowViewModel )}: Initializing..." ) ;
-
-        _uiDeskManager.Initialize ( container , notifyIcon ) ;
+        _uiDeskManager.Initialize ( notifyIcon ) ;
 
         notifyIcon.Menu = new ContextMenu
         {
@@ -552,8 +550,8 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
         }
         catch ( Exception e )
         {
-            _logger?.Error ( e ,
-                             "Failed  to reconnect after advanced settings change." ) ;
+            _logger.Error ( e ,
+                            "Failed  to reconnect after advanced settings change." ) ;
         }
     }
 
@@ -568,8 +566,8 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
         }
         catch ( Exception e )
         {
-            _logger?.Error ( e ,
-                             "Failed  to lock/unlock after locked settings change." ) ;
+            _logger.Error ( e ,
+                            "Failed  to lock/unlock after locked settings change." ) ;
         }
     }
 }
