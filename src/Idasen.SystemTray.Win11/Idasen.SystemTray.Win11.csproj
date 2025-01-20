@@ -11,9 +11,9 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <!-- <AssemblyName>$(MSBuildProjectName)</AssemblyName> -->
         <AssemblyName>Idasen Desk</AssemblyName>
-        <AssemblyVersion>0.0.253.0</AssemblyVersion>
-        <FileVersion>0.0.253.0</FileVersion>
-        <Version>0.0.253</Version>
+        <AssemblyVersion>0.0.257.0</AssemblyVersion>
+        <FileVersion>0.0.257.0</FileVersion>
+        <Version>0.0.257</Version>
         <RuntimeIdentifier>win-x64</RuntimeIdentifier>
         <SelfContained>true</SelfContained>
         <PublishSingleFile>true</PublishSingleFile>
@@ -34,14 +34,14 @@
         <PackageReference Include="Autofac" Version="8.2.0" />
         <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="10.0.0" />
         <PackageReference Include="AutofacSerilogIntegration" Version="5.0.0" />
-        <PackageReference Include="Idasen.Desk.Core" Version="0.0.58" />
+        <PackageReference Include="Idasen.Desk.Core" Version="0.0.59" />
         <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.1.3" />
         <PackageReference Include="NHotkey.Wpf" Version="3.0.0" />
         <PackageReference Include="Serilog" Version="4.2.0" />
         <PackageReference Include="Serilog.Extensions.Autofac.DependencyInjection" Version="5.0.0" />
         <PackageReference Include="WPF-UI" Version="3.0.5" />
-        <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
-        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.1" />
+        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
         <PackageReference Include="WPF-UI.Tray" Version="3.0.5" />
     </ItemGroup>
 

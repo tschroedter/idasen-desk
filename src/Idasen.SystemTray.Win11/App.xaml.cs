@@ -54,10 +54,7 @@ public partial class App
                                                                                                     .RegisterModule < BluetoothLECoreModule > ( ) ;
                                                                                                  builder
                                                                                                     .RegisterModule < BluetoothLELinakModule > ( ) ;
-                                                                                                 builder.RegisterLogger ( LoggerProvider
-                                                                                                    .CreateLogger ( Constants
-                                                                                                            .ApplicationName ,
-                                                                                                         Constants.LogFilename ) ) ;
+                                                                                                 builder.RegisterLogger ( LoggerProvider.CreateLogger ( Constants.ApplicationName , Constants.LogFilename ) ) ;
                                                                                              } )
                                                   .ConfigureServices ( ( _ , services ) =>
                                                                        {
