@@ -6,7 +6,7 @@
 - Added support for themes
 - Remember last desk height
 
-#Ikea Idasen Desk
+# Ikea Idasen Desk
 This repository is about controlling [Ikea's Idasen Desk](https://www.ikea.com/au/en/p/idasen-desk-sit-stand-black-dark-grey-s29280991/) using Windows 10/11 and BluetoothLE. Ikea only provides an Android and IOs app to control the desk. I thought it would be far more convenient to control the desk using a Windows 10/11. The [installation instructions](#Installation) can be found at the end of this document.
 
 ## System Tray Icon
