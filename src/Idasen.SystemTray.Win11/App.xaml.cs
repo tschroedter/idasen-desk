@@ -27,6 +27,7 @@ using Microsoft.Extensions.Configuration ;
 using Microsoft.Extensions.DependencyInjection ;
 using Microsoft.Extensions.Hosting ;
 using Wpf.Ui ;
+using Wpf.Ui.Abstractions;
 using Wpf.Ui.Tray.Controls ;
 using ILogger = Serilog.ILogger ;
 
@@ -61,7 +62,8 @@ public partial class App
                                                                            services.AddHostedService < ApplicationHostService > ( ) ;
 
                                                                            // Page resolver service
-                                                                           services.AddSingleton < IPageService , PageService > ( ) ;
+                                                                           services.AddSingleton< INavigationViewPageProvider , PageService > ( ) ;
+                                                                           services.AddSingleton < INavigationService , NavigationService > ( ) ;
 
                                                                            // Theme manipulation
                                                                            services.AddSingleton < IThemeService , ThemeService > ( ) ;

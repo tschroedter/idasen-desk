@@ -6,8 +6,8 @@ using Idasen.Launcher ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.Utils ;
 using Serilog ;
+using Wpf.Ui.Abstractions.Controls ;
 using Wpf.Ui.Appearance ;
-using Wpf.Ui.Controls ;
 
 namespace Idasen.SystemTray.Win11.ViewModels.Pages ;
 
@@ -64,17 +64,6 @@ public partial class SettingsViewModel ( ILogger                        logger ,
     private uint _standing = 100 ;
 
     private Task ? _storingSettingsTask ;
-
-    public void OnNavigatedTo ( )
-    {
-        if ( ! _isInitialized )
-            InitializeViewModel ( ) ;
-    }
-
-    public void OnNavigatedFrom ( )
-    {
-        StoreSettings ( ) ;
-    }
 
     public SettingsViewModel Initialize ( )
     {
@@ -280,5 +269,20 @@ public partial class SettingsViewModel ( ILogger                        logger ,
 
                 break ;
         }
+    }
+
+    public Task OnNavigatedToAsync ( )
+    {
+        if (!_isInitialized)
+            InitializeViewModel(); // todo make async
+
+        return Task.CompletedTask;
+    }
+
+    public Task OnNavigatedFromAsync ( )
+    {
+        StoreSettings(); // todo make async
+
+        return Task.CompletedTask;
     }
 }

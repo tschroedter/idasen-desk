@@ -1,6 +1,7 @@
 ﻿using Idasen.SystemTray.Win11.ViewModels.Windows ;
 using JetBrains.Annotations ;
 using Wpf.Ui ;
+using Wpf.Ui.Abstractions ;
 using Wpf.Ui.Appearance ;
 using Wpf.Ui.Controls ;
 
@@ -8,9 +9,9 @@ namespace Idasen.SystemTray.Win11.Views.Windows ;
 
 public partial class IdasenDeskWindow : INavigationWindow
 {
-    public IdasenDeskWindow ( IdasenDeskWindowViewModel viewModel ,
-                              IPageService              pageService ,
-                              INavigationService        navigationService )
+    public IdasenDeskWindow ( IdasenDeskWindowViewModel   viewModel ,
+                              INavigationViewPageProvider pageService ,
+                              INavigationService          navigationService )
     {
         ViewModel   = viewModel ;
         DataContext = this ;
@@ -46,9 +47,9 @@ public partial class IdasenDeskWindow : INavigationWindow
         throw new NotImplementedException ( ) ;
     }
 
-    public void SetPageService ( IPageService pageService )
+    public void SetPageService (INavigationViewPageProvider pageService )
     {
-        RootNavigation.SetPageService ( pageService ) ;
+        RootNavigation.SetPageProviderService ( pageService ) ;
     }
 
     public void ShowWindow ( )

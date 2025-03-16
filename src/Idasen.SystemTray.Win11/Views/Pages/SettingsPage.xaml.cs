@@ -1,5 +1,5 @@
 ﻿using Idasen.SystemTray.Win11.ViewModels.Pages ;
-using Wpf.Ui.Controls ;
+using Wpf.Ui.Abstractions.Controls ;
 
 namespace Idasen.SystemTray.Win11.Views.Pages ;
 
