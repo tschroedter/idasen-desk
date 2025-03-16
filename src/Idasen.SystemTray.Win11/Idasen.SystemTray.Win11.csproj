@@ -11,9 +11,9 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <!-- <AssemblyName>$(MSBuildProjectName)</AssemblyName> -->
         <AssemblyName>Idasen Desk</AssemblyName>
-        <AssemblyVersion>0.0.257.0</AssemblyVersion>
-        <FileVersion>0.0.257.0</FileVersion>
-        <Version>0.0.257</Version>
+        <AssemblyVersion>0.0.262.0</AssemblyVersion>
+        <FileVersion>0.0.262.0</FileVersion>
+        <Version>0.0.262</Version>
         <RuntimeIdentifier>win-x64</RuntimeIdentifier>
         <SelfContained>true</SelfContained>
         <PublishSingleFile>true</PublishSingleFile>
