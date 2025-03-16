@@ -98,9 +98,6 @@ public partial class App
                                                                            services.AddSingleton < ITaskbarIconProvider , TaskbarIconProvider > ( ) ;
                                                                            services.AddSingleton < IUiDeskManager , UiDeskManager > ( ) ;
                                                                            services.AddSingleton < IDynamicIconCreator , DynamicIconCreator > ( ) ;
-                                                                           services
-                                                                              .AddSingleton < IIdasenConfigurationProvider ,
-                                                                                   IdasenConfigurationProvider > ( ) ;
                                                                            services.AddSingleton ( _ => CreateScheduler ( ) ) ;
                                                                            services.AddSingleton ( CreateTaskbarIconProvider ) ;
                                                                            services.AddTransient < IDeviceNameConverter , DeviceNameConverter > ( ) ;
