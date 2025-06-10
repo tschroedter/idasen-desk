@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics ;
 using System.IO ;
+using System.IO.Abstractions ;
 using System.Reactive.Concurrency ;
 using System.Reflection ;
 using System.Windows.Media ;
@@ -112,7 +113,8 @@ public partial class App
                                                                                                       new Func < IDeskProvider > ( provider
                                                                                                          .GetRequiredService <
                                                                                                               IDeskProvider > ) ) ;
-                                                                       } ).Build ( ) ;
+                                                                            services.AddSingleton<IFileSystem, FileSystem>();
+                                                                       }).Build ( ) ;
 
     private readonly ILogger _logger = LoggerProvider.CreateLogger ( Constants.ApplicationName ,
                                                                      Constants.LogFilename ) ;
