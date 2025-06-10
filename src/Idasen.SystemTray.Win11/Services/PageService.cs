@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis ;
 using Wpf.Ui.Abstractions;
 
 namespace Idasen.SystemTray.Win11.Services ;
@@ -5,6 +6,7 @@ namespace Idasen.SystemTray.Win11.Services ;
 /// <summary>
 ///     Service that provides pages for navigation.
 /// </summary>
+[ExcludeFromCodeCoverage] // Dependency on WPF FrameworkElement
 public class PageService : INavigationViewPageProvider
 {
     /// <summary>

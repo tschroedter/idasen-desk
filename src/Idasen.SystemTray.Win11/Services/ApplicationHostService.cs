@@ -1,4 +1,5 @@
-﻿using Idasen.SystemTray.Win11.Views.Pages ;
+﻿using System.Diagnostics.CodeAnalysis ;
+using Idasen.SystemTray.Win11.Views.Pages ;
 using Idasen.SystemTray.Win11.Views.Windows ;
 using Microsoft.Extensions.Hosting ;
 using Wpf.Ui ;
@@ -8,6 +9,7 @@ namespace Idasen.SystemTray.Win11.Services ;
 /// <summary>
 ///     Managed host of the application.
 /// </summary>
+[ExcludeFromCodeCoverage] // "Depends on WPF WindowCollection class"
 public class ApplicationHostService ( IServiceProvider serviceProvider ) : IHostedService
 {
     private INavigationWindow ? _navigationWindow ;

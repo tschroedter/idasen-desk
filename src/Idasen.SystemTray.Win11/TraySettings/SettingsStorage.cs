@@ -1,13 +1,14 @@
 using System.IO ;
+using System.IO.Abstractions ;
 using System.Text.Json ;
 using System.Text.Json.Serialization ;
 using Idasen.SystemTray.Win11.Interfaces ;
 
-namespace Idasen.SystemTray.Win11.TraySettings ;
+namespace Idasen.SystemTray.Win11.TraySettings;
 
-public class SettingsStorage : ISettingsStorage
+public class SettingsStorage ( IFileSystem fileSystem ) : ISettingsStorage
 {
-    private readonly JsonSerializerOptions _jsonOptions = new( )
+    public static readonly JsonSerializerOptions JsonOptions = new( )
     {
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull ,
         PropertyNamingPolicy   = JsonNamingPolicy.CamelCase
@@ -17,12 +18,12 @@ public class SettingsStorage : ISettingsStorage
     {
         try
         {
-            if ( ! File.Exists ( settingsFileName ) )
+            if ( ! fileSystem.File.Exists ( settingsFileName ) )
                 return new Settings ( ) ;
 
-            await using var openStream = File.OpenRead ( settingsFileName ) ;
+            await using var openStream = fileSystem.File.OpenRead ( settingsFileName ) ;
             var             result     = await JsonSerializer.DeserializeAsync < Settings > ( openStream ,
-                                                                                              _jsonOptions ) ;
+                                                                                              JsonOptions ) ;
 
             return result ?? new Settings ( ) ;
         }
@@ -45,11 +46,11 @@ public class SettingsStorage : ISettingsStorage
             if ( !Directory.Exists ( directoryName))
                 Directory.CreateDirectory(directoryName);
 
-            await using var stream = File.Create ( settingsFileName ) ;
+            await using var stream = fileSystem.File.Create ( settingsFileName ) ;
 
             await JsonSerializer.SerializeAsync ( stream ,
                                                   settings , 
-                                                  _jsonOptions ) ;
+                                                  JsonOptions ) ;
         }
         catch ( Exception ex )
         {
