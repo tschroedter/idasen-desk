@@ -2,7 +2,7 @@
 
 namespace Idasen.SystemTray.Win11.Interfaces ;
 
-internal interface IExceptionHandler
+public interface IExceptionHandler
 {
     bool CanHandle ( Exception exception ) ;
 
