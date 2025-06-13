@@ -1,4 +1,5 @@
-﻿using System.Reactive.Concurrency ;
+﻿using System.Diagnostics.CodeAnalysis ;
+using System.Reactive.Concurrency ;
 using System.Reactive.Linq ;
 using System.Reactive.Subjects ;
 using System.Windows.Input ;
@@ -16,6 +17,7 @@ using MessageBox = System.Windows.MessageBox ;
 
 namespace Idasen.SystemTray.Win11.Utils ;
 
+[ExcludeFromCodeCoverage]
 public class UiDeskManager : IUiDeskManager
 {
     private static readonly KeyGesture IncrementGesture = new ( Key.Up ,

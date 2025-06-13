@@ -1,10 +1,12 @@
-﻿using System.Drawing ;
+﻿using System.Diagnostics.CodeAnalysis ;
+using System.Drawing ;
 using System.Windows.Interop ;
 using System.Windows.Media ;
 using System.Windows.Media.Imaging ;
 
 namespace Idasen.SystemTray.Win11.Utils.Icons ;
 
+[ExcludeFromCodeCoverage]
 public static class IconExtensions
 {
     public static ImageSource ToImageSource ( this Icon icon )

@@ -1,10 +1,12 @@
-﻿using System.Drawing ;
+﻿using System.Diagnostics.CodeAnalysis ;
+using System.Drawing ;
 using Idasen.BluetoothLE.Core ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Wpf.Ui.Tray.Controls ;
 
 namespace Idasen.SystemTray.Win11.Utils.Icons ;
 
+[ExcludeFromCodeCoverage]
 public class DynamicIconCreator : IDynamicIconCreator
 {
     private readonly Color _brushDarkBlue  = ColorTranslator.FromHtml ( "#FF0048A3" ) ;

@@ -1,4 +1,5 @@
-﻿using System.Reactive.Concurrency ;
+﻿using System.Diagnostics.CodeAnalysis ;
+using System.Reactive.Concurrency ;
 using System.Reactive.Linq ;
 using Idasen.BluetoothLE.Core ;
 using Idasen.BluetoothLE.Linak ;
@@ -9,6 +10,7 @@ using Wpf.Ui.Tray.Controls ;
 
 namespace Idasen.SystemTray.Win11.Utils.Icons ;
 
+[ExcludeFromCodeCoverage]
 public class TaskbarIconProvider : ITaskbarIconProvider
 {
     private readonly IDynamicIconCreator _creator ;

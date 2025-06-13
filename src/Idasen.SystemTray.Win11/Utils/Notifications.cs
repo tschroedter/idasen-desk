@@ -1,4 +1,5 @@
-﻿using System.Reactive.Subjects ;
+﻿using System.Diagnostics.CodeAnalysis ;
+using System.Reactive.Subjects ;
 using System.Windows.Threading ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Microsoft.Toolkit.Uwp.Notifications ;
@@ -8,6 +9,7 @@ using Wpf.Ui.Tray.Controls ;
 
 namespace Idasen.SystemTray.Win11.Utils ;
 
+[ExcludeFromCodeCoverage]
 public class Notifications : INotifications
 {
     private readonly ILogger                            _logger ;
