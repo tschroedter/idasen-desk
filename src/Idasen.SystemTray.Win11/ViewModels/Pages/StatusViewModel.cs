@@ -72,7 +72,7 @@ public partial class StatusViewModel : ObservableObject , IDisposable
         Application.Current.Dispatcher.BeginInvoke ( DefaultInfoBar ) ;
     }
 
-    public void DefaultInfoBar ( ) // Todo: internal doesn't work in tests, so make it public
+    internal void DefaultInfoBar ( )
     {
         if ( _manager is not { IsConnected: true } )
             return ;
