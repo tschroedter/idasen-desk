@@ -1,4 +1,5 @@
-﻿using System.Reactive.Concurrency ;
+﻿using System.Diagnostics.CodeAnalysis ;
+using System.Reactive.Concurrency ;
 using System.Reactive.Linq ;
 using System.Reflection ;
 using System.Windows.Threading ;
@@ -11,6 +12,7 @@ using Wpf.Ui.Appearance ;
 
 namespace Idasen.SystemTray.Win11.ViewModels.Pages ;
 
+[ExcludeFromCodeCoverage]
 public partial class SettingsViewModel ( ILogger                        logger ,
                                          ILoggingSettingsManager        settingsManager ,
                                          INotifySettingsChanges         settingsChanges ,
@@ -70,7 +72,7 @@ public partial class SettingsViewModel ( ILogger                        logger ,
         LoadSettingsAsync ( ) ;
 
         SettingsFileFullPath = settingsManager.SettingsFileName ;
-        LogFolderPath        = LoggingFile.Path ;
+        LogFolderPath        = LoggingFile.Path ; // Todo: Maybe this could be ILoggingFile?
 
         _settingsSaved = settingsManager.SettingsSaved
                                         .ObserveOn ( scheduler )
@@ -229,7 +231,7 @@ public partial class SettingsViewModel ( ILogger                        logger ,
     }
 
     [ RelayCommand ]
-    private void OnChangeTheme ( string parameter )
+    internal void OnChangeTheme ( string parameter )
     {
         switch ( parameter )
         {

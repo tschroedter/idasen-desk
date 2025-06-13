@@ -8,12 +8,10 @@ namespace Idasen.SystemTray.Win11.ViewModels.Pages ;
 
 public partial class StatusViewModel : ObservableObject , IDisposable
 {
-    private readonly IUiDeskManager _manager ;
-    private readonly IDisposable    _statusBarInfoChanged ;
-    private readonly Timer          _timer ;
-
     [ ObservableProperty ]
     private uint _height ;
+
+    private IUiDeskManager ? _manager ;
 
     [ ObservableProperty ]
     private string _message = "Unknown" ;
@@ -21,41 +19,62 @@ public partial class StatusViewModel : ObservableObject , IDisposable
     [ ObservableProperty ]
     private InfoBarSeverity _severity = InfoBarSeverity.Informational ;
 
+    private IDisposable ? _statusBarInfoChanged ;
+    private ITimer ?      _timer ;
+
     [ ObservableProperty ]
     private string _title = "Desk Status" ;
 
     public StatusViewModel ( IUiDeskManager manager )
     {
+        var timer = new Timer ( OnElapsed ,
+                                null ,
+                                TimeSpan.FromSeconds ( 10 ) ,
+                                Timeout.InfiniteTimeSpan ) ;
+
+        var scheduler = DispatcherScheduler.Current ;
+
+        Init ( manager ,
+               scheduler ,
+               timer ) ;        
+    }
+
+    public StatusViewModel ( IUiDeskManager manager , IScheduler scheduler,  ITimer timer )
+    {
+        Init ( manager ,
+               scheduler,
+               timer ) ;
+    }
+
+    public void Dispose ( )
+    {
+        _timer?.Dispose ( ) ;
+        _statusBarInfoChanged?.Dispose ( ) ;
+    }
+
+    private void Init ( IUiDeskManager manager , IScheduler scheduler, ITimer timer )
+    {
         _manager = manager ;
 
         _statusBarInfoChanged = manager.StatusBarInfoChanged
-                                       .ObserveOn ( DispatcherScheduler.Current )
+                                       .ObserveOn (scheduler )
                                        .Subscribe ( OnStatusBarInfoChanged ) ;
 
         Message  = manager.LastStatusBarInfo.Message ;
         Height   = manager.LastStatusBarInfo.Height ;
         Severity = manager.LastStatusBarInfo.Severity ;
-        
-        _timer = new Timer ( OnElapsed , 
-                             null , 
-                             TimeSpan.FromSeconds ( 10 ) , 
-                             Timeout.InfiniteTimeSpan ) ;
+
+        _timer = timer;
     }
 
-    public void Dispose ( )
-    {
-        _timer.Dispose ( ) ;
-        _statusBarInfoChanged.Dispose ( ) ;
-    }
-
-    private void OnElapsed ( object ?  state )
+    private void OnElapsed ( object ? state )
     {
         Application.Current.Dispatcher.BeginInvoke ( DefaultInfoBar ) ;
     }
 
-    private void DefaultInfoBar ( )
+    public void DefaultInfoBar ( ) // Todo: internal doesn't work in tests, so make it public
     {
-        if ( ! _manager.IsConnected )
+        if ( _manager is not { IsConnected: true } )
             return ;
 
         Message = Height == 0
@@ -71,7 +90,7 @@ public partial class StatusViewModel : ObservableObject , IDisposable
         Severity = info.Severity ;
         Height   = info.Height ;
 
-        _timer.Change ( TimeSpan.FromSeconds ( 10 ) ,
-                        Timeout.InfiniteTimeSpan ) ;
+        _timer?.Change ( TimeSpan.FromSeconds ( 10 ) ,
+                         Timeout.InfiniteTimeSpan ) ;
     }
 }

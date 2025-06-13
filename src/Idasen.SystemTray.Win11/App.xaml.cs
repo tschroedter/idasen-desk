@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics ;
+using System.Diagnostics.CodeAnalysis ;
 using System.IO ;
 using System.IO.Abstractions ;
 using System.Reactive.Concurrency ;
@@ -37,6 +38,7 @@ namespace Idasen.SystemTray.Win11 ;
 /// <summary>
 ///     Interaction logic for App.xaml
 /// </summary>
+[ExcludeFromCodeCoverage]
 public partial class App
 {
     // The.NET Generic Host provides dependency injection, configuration, logging, and other services.

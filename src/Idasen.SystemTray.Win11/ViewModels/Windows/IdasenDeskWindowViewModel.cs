@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel ;
+using System.Diagnostics.CodeAnalysis ;
 using System.Reactive.Concurrency ;
 using System.Reactive.Linq ;
 using System.Windows.Controls ;
@@ -18,6 +19,7 @@ using NotifyIcon = Wpf.Ui.Tray.Controls.NotifyIcon ;
 
 namespace Idasen.SystemTray.Win11.ViewModels.Windows ;
 
+[ExcludeFromCodeCoverage]
 public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
 {
     private static readonly NavigationViewItem HomeViewItem = new ( )

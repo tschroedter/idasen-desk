@@ -1,5 +1,6 @@
 ﻿using Idasen.SystemTray.Win11.ViewModels.Windows ;
 using JetBrains.Annotations ;
+using System.Diagnostics.CodeAnalysis;
 using Wpf.Ui ;
 using Wpf.Ui.Abstractions ;
 using Wpf.Ui.Appearance ;
@@ -7,6 +8,7 @@ using Wpf.Ui.Controls ;
 
 namespace Idasen.SystemTray.Win11.Views.Windows ;
 
+[ExcludeFromCodeCoverage]
 public partial class IdasenDeskWindow : INavigationWindow
 {
     public IdasenDeskWindow ( IdasenDeskWindowViewModel   viewModel ,
