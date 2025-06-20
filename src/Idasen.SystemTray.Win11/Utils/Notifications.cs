@@ -61,24 +61,14 @@ public class Notifications : INotifications
         _showSubscribe.Dispose ( ) ;
     }
 
-    public void Show ( NotificationParameters parameters ) // todo maybe just one show method
-    {
-        if ( _manager is { CurrentSettings.DeviceSettings.NotificationsEnabled: false } )
-        {
-            _logger.Information ( $"Notifications are disabled. " +
-                                  $"{nameof ( parameters )}: {parameters}" ) ;
-
-            return ;
-        }
-
+    public void Show ( NotificationParameters parameters ) =>
         _showSubject.OnNext ( parameters ) ;
-    }
 
     private void OnShow ( NotificationParameters parameters )
     {
         if ( _manager is { CurrentSettings.DeviceSettings.NotificationsEnabled: false } )
         {
-            _logger.Information ( $"Notifications are disabled. " +
+            _logger.Information ( "Notifications are disabled. " +
                                   $"{nameof ( parameters )}: {parameters}" ) ;
 
             return ;
