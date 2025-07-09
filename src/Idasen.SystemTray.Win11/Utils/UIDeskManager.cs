@@ -293,7 +293,7 @@ public class UiDeskManager : IUiDeskManager
         catch ( Exception e )
         {
             _logger.Error ( e ,
-                             "Failed to disconnect" ) ;
+                            "Failed to disconnect" ) ;
 
             ConnectFailed ( ) ;
         }
@@ -332,7 +332,7 @@ public class UiDeskManager : IUiDeskManager
         catch ( Exception exception )
         {
             _logger.Error ( exception ,
-                             "Failed to handle global hot key command for 'Stand'." ) ;
+                            "Failed to handle global hot key command for 'Stand'." ) ;
         }
     }
 
@@ -347,7 +347,7 @@ public class UiDeskManager : IUiDeskManager
         catch ( Exception exception )
         {
             _logger.Error ( exception ,
-                             "Failed to handle global hot key command for 'Sit'." ) ;
+                            "Failed to handle global hot key command for 'Sit'." ) ;
         }
     }
 
@@ -362,7 +362,7 @@ public class UiDeskManager : IUiDeskManager
         catch ( Exception e )
         {
             _logger.Error ( e ,
-                             $"Failed to call {nameof ( DoStandingAsync )}" ) ;
+                            $"Failed to call {nameof ( DoStandingAsync )}" ) ;
 
             _errorManager.PublishForMessage ( $"Failed to call {nameof ( DoStandingAsync )}" ) ;
         }
@@ -436,7 +436,7 @@ public class UiDeskManager : IUiDeskManager
                                  : "Unknown" ;
 
             _logger.Error ( e ,
-                             $"[{deviceName}] Failed to connect" ) ;
+                            $"[{deviceName}] Failed to connect" ) ;
 
             ConnectFailed ( ) ;
         }
@@ -474,8 +474,8 @@ public class UiDeskManager : IUiDeskManager
     private void ConnectSuccessful ( IDesk desk )
     {
         _logger.Information ( $"[{desk.DeviceName}] Connected to {desk.DeviceName} " +
-                               $"with address {desk.BluetoothAddress} "               +
-                               $"(MacAddress {desk.BluetoothAddress.ToMacAddress ( )})" ) ;
+                              $"with address {desk.BluetoothAddress} "               +
+                              $"(MacAddress {desk.BluetoothAddress.ToMacAddress ( )})" ) ;
 
         _desk = desk ;
 
@@ -539,9 +539,9 @@ public class UiDeskManager : IUiDeskManager
                                    InfoBarSeverity severity = InfoBarSeverity.Informational )
     {
         _logger.Debug ( $"{nameof ( height )} = {height}, "   +
-                         $"{nameof ( title )} = {title}, "     +
-                         $"{nameof ( message )} = {message}, " +
-                         $"{nameof ( severity )} = {severity}" ) ;
+                        $"{nameof ( title )} = {title}, "     +
+                        $"{nameof ( message )} = {message}, " +
+                        $"{nameof ( severity )} = {severity}" ); // todo structured logging everywhere
 
         if ( height == 0 ) // if we don't have a current height use the last known height
         {
