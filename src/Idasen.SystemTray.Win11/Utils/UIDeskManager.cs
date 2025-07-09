@@ -20,6 +20,8 @@ namespace Idasen.SystemTray.Win11.Utils ;
 [ExcludeFromCodeCoverage]
 public class UiDeskManager : IUiDeskManager
 {
+    private const uint DeskHeightFactor = 100 ;
+
     private static readonly KeyGesture IncrementGesture = new ( Key.Up ,
                                                                 ModifierKeys.Control | ModifierKeys.Alt | ModifierKeys.Shift ) ;
 
@@ -148,7 +150,11 @@ public class UiDeskManager : IUiDeskManager
 
         await _manager.LoadAsync ( ) ;
 
-        _desk?.MoveTo ( _manager.CurrentSettings.HeightSettings.StandingHeightInCm * 100 ) ;
+        var standing = HeightToDeskHeight ( _manager.CurrentSettings
+                                                    .HeightSettings
+                                                    .StandingHeightInCm ) ;
+
+        _desk?.MoveTo ( standing ) ;
     }
 
     public async Task SitAsync ( )
@@ -159,8 +165,11 @@ public class UiDeskManager : IUiDeskManager
         await _manager.LoadAsync ( )
                       .ConfigureAwait ( false ) ;
 
-        _desk?.MoveTo ( _manager.CurrentSettings.HeightSettings.SeatingHeightInCm *
-                        100 ) ; // todo duplicate
+        var seating = HeightToDeskHeight ( _manager.CurrentSettings
+                                                   .HeightSettings
+                                                   .SeatingHeightInCm ) ;
+
+        _desk?.MoveTo ( seating  );
     }
 
     public async Task AutoConnectAsync ( )
@@ -267,6 +276,9 @@ public class UiDeskManager : IUiDeskManager
 
         return Task.CompletedTask ;
     }
+
+    private uint HeightToDeskHeight ( uint heightInCm ) =>
+        heightInCm * DeskHeightFactor ;
 
     private void DoDisconnectAsync ( )
     {
@@ -443,7 +455,7 @@ public class UiDeskManager : IUiDeskManager
 
         DisconnectAsync ( ) ;
 
-        _errorManager.PublishForMessage ( "Failed to connect" ) ; // todo
+        _errorManager.PublishForMessage ( "Failed to connect" ) ;
     }
 
     private void DisposeDesk ( )
