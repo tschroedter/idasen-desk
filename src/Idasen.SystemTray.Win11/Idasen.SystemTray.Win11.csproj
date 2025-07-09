@@ -24,6 +24,7 @@
 
     <ItemGroup>
       <None Remove="Resources\cup-xl.ico" />
+      <None Remove="Resources\small-green-light-bulb.png" />
     </ItemGroup>
 
     <ItemGroup>
@@ -39,12 +40,12 @@
         <PackageReference Include="NHotkey.Wpf" Version="3.0.0" />
         <PackageReference Include="Serilog" Version="4.3.0" />
         <PackageReference Include="Serilog.Extensions.Autofac.DependencyInjection" Version="5.0.0" />
-        <PackageReference Include="System.IO.Abstractions" Version="22.0.14" />
+        <PackageReference Include="System.IO.Abstractions" Version="22.0.15" />
         <PackageReference Include="Testably.Abstractions.FileSystem.Interface" Version="9.0.0" />
-        <PackageReference Include="WPF-UI" Version="4.0.2" />
-        <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.5" />
+        <PackageReference Include="WPF-UI" Version="4.0.3" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.7" />
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-        <PackageReference Include="WPF-UI.Tray" Version="4.0.2" />
+        <PackageReference Include="WPF-UI.Tray" Version="4.0.3" />
     </ItemGroup>
 
     <ItemGroup>
