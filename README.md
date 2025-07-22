@@ -105,6 +105,7 @@ Download and run the self-contained application file: [Idasen.SystemTray.Win11.e
 ## Windows 11
 Download and run the self-contained application file: [Idasen.SystemTray.Win11.exe](https://github.com/tschroedter/idasen-desk/releases/download/V0.0.263/Idasen.Desk.exe)
 
+---
 ### Trouble Pairing the desk?
 ## Solution 1
 User Evo589 had problems getting Windows 11 to even see the desk in pairing mode. Turns out you need to set the Bluetooth device discovery setting to advanced [more details](https://www.reddit.com/r/cricut/comments/14h9sz8/windows_11_bluetooth_issues_fixed).
@@ -126,8 +127,8 @@ In case Windows 11 can't find the desk when you try to add/find a new Bluetooth 
 
 ## Any problems?
 Let me know if you have any trouble installing or using the application.
----
 
+---
 # Problems
 _Q: The application fails to connect to the Idasen desk?_
 
