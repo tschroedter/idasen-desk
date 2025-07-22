@@ -112,14 +112,14 @@ User Evo589 had problems getting Windows 11 to even see the desk in pairing mode
 ## Solution 2
 In case Windows 11 can't find the desk when you try to add/find a new Bluetooth device you can try the following:
 - Open the 'Bluetooth & devices > Devices' screen.
-![Advanced settings](https://github.com/tschroedter/idasen-desk/blob/main-face-lift/docs/images/Win11_Devices.png)
+![Advanced settings](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/Win11_Devices.png)
 - Scroll down a bit and click 'More devices and printer settings'.
 - The 'Devices and Printers' window opens.
-![Add a device](https://github.com/tschroedter/idasen-desk/blob/main-face-lift/docs/images/Win11_Add_Devices_Printers.png)
+![Add a device](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/Win11_Add_Devices_Printers.png)
 - Open the context menu by clicking anywhere on the background.
 - Select 'Add devices and printers.
 - The 'Choose a device or printer to add to this PC' window opens.
-![Choose a device](https://github.com/tschroedter/idasen-desk/blob/main-face-lift/docs/images/Win11_Choose_A_Device.png)
+![Choose a device](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/Win11_Choose_A_Device.png)
 - Put the Idasen Desk into Bluetooth pairing mode.
 - The desk appears in the window.
 - Select 'Next' and follow the instructions.
