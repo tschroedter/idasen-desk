@@ -51,7 +51,7 @@ public class HeightSettingsTests
     {
         var settings = new HeightSettings();
 
-        settings.LastKnowDeskHeight
+        settings.LastKnownDeskHeight
                 .Should()
                 .Be(Constants.DefaultDeskMinHeightInCm);
     }

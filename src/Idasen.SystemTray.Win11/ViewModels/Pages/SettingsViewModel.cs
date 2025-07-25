@@ -92,7 +92,7 @@ public partial class SettingsViewModel ( ILogger                        logger ,
             return ;
         }
 
-        LastKnownDeskHeight = settings.HeightSettings.LastKnowDeskHeight ;
+        LastKnownDeskHeight = settings.HeightSettings.LastKnownDeskHeight ;
     }
 
     public void LoadSettingsAsync ( )
@@ -109,7 +109,7 @@ public partial class SettingsViewModel ( ILogger                        logger ,
                        MinHeight           = current.HeightSettings.DeskMinHeightInCm ;
                        MaxHeight           = current.HeightSettings.DeskMaxHeightInCm ;
                        Seating             = current.HeightSettings.SeatingHeightInCm ;
-                       LastKnownDeskHeight = current.HeightSettings.LastKnowDeskHeight ;
+                       LastKnownDeskHeight = current.HeightSettings.LastKnownDeskHeight ;
                        DeskName            = nameConverter.EmptyIfDefault ( current.DeviceSettings.DeviceName ) ;
                        DeskAddress         = addressConverter.EmptyIfDefault ( current.DeviceSettings.DeviceAddress ) ;
                        ParentalLock        = current.DeviceSettings.DeviceLocked ;
@@ -170,7 +170,7 @@ public partial class SettingsViewModel ( ILogger                        logger ,
                                                                                      Constants.DefaultHeightStandingInCm ) ;
         settings.HeightSettings.SeatingHeightInCm = toUIntConverter.ConvertToUInt ( Seating ,
                                                                                     Constants.DefaultHeightSeatingInCm ) ;
-        settings.HeightSettings.LastKnowDeskHeight   = LastKnownDeskHeight ;
+        settings.HeightSettings.LastKnownDeskHeight   = LastKnownDeskHeight ;
         settings.DeviceSettings.DeviceName           = newDeviceName ;
         settings.DeviceSettings.DeviceAddress        = newDeviceAddress ;
         settings.DeviceSettings.DeviceLocked         = newDeviceLocked ;

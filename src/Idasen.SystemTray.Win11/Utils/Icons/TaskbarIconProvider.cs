@@ -91,7 +91,7 @@ public class TaskbarIconProvider : ITaskbarIconProvider
                               .ObserveOn ( _scheduler )
                               .Subscribe ( OnHeightAndSpeedChanged ) ;
 
-            var heightInCm = _manager.CurrentSettings.HeightSettings.LastKnowDeskHeight ;
+            var heightInCm = _manager.CurrentSettings.HeightSettings.LastKnownDeskHeight ;
 
             if ( heightInCm is >= Constants.DefaultDeskMinHeightInCm and <= Constants.DefaultDeskMaxHeightInCm )
             {

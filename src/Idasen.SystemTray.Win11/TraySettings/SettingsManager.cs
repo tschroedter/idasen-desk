@@ -52,7 +52,7 @@ public class SettingsManager ( ILogger                logger ,
 
     public async Task SetLastKnownDeskHeight ( uint heightInCm )
     {
-        CurrentSettings.HeightSettings.LastKnowDeskHeight = heightInCm ;
+        CurrentSettings.HeightSettings.LastKnownDeskHeight = heightInCm ;
 
         await SaveAsync ( ) ;
     }

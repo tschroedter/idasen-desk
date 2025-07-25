@@ -24,7 +24,7 @@ public class SettingsTests
             SeatingHeightInCm = 70,
             DeskMinHeightInCm = 60,
             DeskMaxHeightInCm = 130,
-            LastKnowDeskHeight = 100
+            LastKnownDeskHeight = 100
         };
 
         var settings = new Settings

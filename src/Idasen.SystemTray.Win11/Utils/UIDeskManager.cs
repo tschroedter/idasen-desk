@@ -84,7 +84,7 @@ public class UiDeskManager : IUiDeskManager
         _statusBarInfoSubject = new Subject < StatusBarInfo > ( ) ;
 
         LastStatusBarInfo = new StatusBarInfo ( "" ,
-                                                _manager.CurrentSettings.HeightSettings.LastKnowDeskHeight ,
+                                                _manager.CurrentSettings.HeightSettings.LastKnownDeskHeight ,
                                                 "Unknown" ,
                                                 InfoBarSeverity.Informational ) ;
     }
@@ -545,7 +545,7 @@ public class UiDeskManager : IUiDeskManager
 
         if ( height == 0 ) // if we don't have a current height use the last known height
         {
-            height = _manager.CurrentSettings.HeightSettings.LastKnowDeskHeight ;
+            height = _manager.CurrentSettings.HeightSettings.LastKnownDeskHeight ;
         }
 
         LastStatusBarInfo = new StatusBarInfo ( title ,

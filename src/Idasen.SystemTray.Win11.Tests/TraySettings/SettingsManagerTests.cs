@@ -86,12 +86,12 @@ public class SettingsManagerTests
         // Assert
         _settingsManager.CurrentSettings
                         .HeightSettings
-                        .LastKnowDeskHeight
+                        .LastKnownDeskHeight
                         .Should()
                         .Be(heightInCm);
 
         await _settingsStorage.Received ( 1 )
                               .SaveSettingsAsync ( "TestSettingsFilePath" ,
-                                                   Arg.Is < Settings > ( s => s.HeightSettings.LastKnowDeskHeight == heightInCm ) ) ;
+                                                   Arg.Is < Settings > ( s => s.HeightSettings.LastKnownDeskHeight == heightInCm ) ) ;
     }
 }
