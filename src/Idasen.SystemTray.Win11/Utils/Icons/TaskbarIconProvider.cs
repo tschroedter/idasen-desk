@@ -22,10 +22,9 @@ public class TaskbarIconProvider : ITaskbarIconProvider
     private          bool                _isInitialized ;
     private          ILogger ?           _logger ;
 
-    public TaskbarIconProvider (
-        IScheduler          scheduler ,
-        IDynamicIconCreator creator ,
-        ISettingsManager    manager )
+    public TaskbarIconProvider ( IScheduler          scheduler ,
+                                 IDynamicIconCreator creator ,
+                                 ISettingsManager    manager )
     {
         Guard.ArgumentNotNull ( scheduler ,
                                 nameof ( scheduler ) ) ;

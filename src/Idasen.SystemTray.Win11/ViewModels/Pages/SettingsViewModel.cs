@@ -12,7 +12,7 @@ using Wpf.Ui.Appearance ;
 
 namespace Idasen.SystemTray.Win11.ViewModels.Pages ;
 
-[ExcludeFromCodeCoverage]
+[ ExcludeFromCodeCoverage ]
 public partial class SettingsViewModel ( ILogger                        logger ,
                                          ILoggingSettingsManager        settingsManager ,
                                          INotifySettingsChanges         settingsChanges ,
@@ -67,9 +67,24 @@ public partial class SettingsViewModel ( ILogger                        logger ,
 
     private Task ? _storingSettingsTask ;
 
-    public SettingsViewModel Initialize ( )
+    public Task OnNavigatedToAsync ( )
     {
-        LoadSettingsAsync ( ) ;
+        if ( ! _isInitialized )
+            InitializeViewModel ( ) ; // todo make async
+
+        return Task.CompletedTask ;
+    }
+
+    public Task OnNavigatedFromAsync ( )
+    {
+        StoreSettings ( CancellationToken.None ) ; // todo make async
+
+        return Task.CompletedTask ;
+    }
+
+    public SettingsViewModel Initialize ( CancellationToken token )
+    {
+        LoadSettingsAsync ( token ) ;
 
         SettingsFileFullPath = settingsManager.SettingsFileName ;
         LogFolderPath        = LoggingFile.Path ; // Todo: Maybe this could be ILoggingFile?
@@ -95,13 +110,13 @@ public partial class SettingsViewModel ( ILogger                        logger ,
         LastKnownDeskHeight = settings.HeightSettings.LastKnownDeskHeight ;
     }
 
-    public void LoadSettingsAsync ( )
+    public void LoadSettingsAsync ( CancellationToken token )
     {
         Task.Run ( async ( ) =>
                    {
                        logger.Debug ( "LoadAsync settings" ) ;
 
-                       await settingsManager.LoadAsync ( ) ;
+                       await settingsManager.LoadAsync ( token ) ;
 
                        var current = settingsManager.CurrentSettings ;
 
@@ -114,11 +129,11 @@ public partial class SettingsViewModel ( ILogger                        logger ,
                        DeskAddress         = addressConverter.EmptyIfDefault ( current.DeviceSettings.DeviceAddress ) ;
                        ParentalLock        = current.DeviceSettings.DeviceLocked ;
                        Notifications       = current.DeviceSettings.NotificationsEnabled ;
-                   } ).GetAwaiter ( )
+                   } , token ).GetAwaiter ( )
             .GetResult ( ) ; // todo not nice but will do for now
     }
 
-    public void StoreSettings ( )
+    public void StoreSettings ( CancellationToken token )
     {
         if ( _storingSettingsTask?.Status == TaskStatus.Running )
         {
@@ -135,7 +150,8 @@ public partial class SettingsViewModel ( ILogger                        logger ,
         _storingSettingsTask = Task.Run ( async ( ) =>
                                           {
                                               await DoStoreSettingsAsync ( advancedChanged ,
-                                                                           lockChanged ) ;
+                                                                           lockChanged ,
+                                                                           token ) ;
                                           } ) ;
     }
 
@@ -170,21 +186,22 @@ public partial class SettingsViewModel ( ILogger                        logger ,
                                                                                      Constants.DefaultHeightStandingInCm ) ;
         settings.HeightSettings.SeatingHeightInCm = toUIntConverter.ConvertToUInt ( Seating ,
                                                                                     Constants.DefaultHeightSeatingInCm ) ;
-        settings.HeightSettings.LastKnownDeskHeight   = LastKnownDeskHeight ;
+        settings.HeightSettings.LastKnownDeskHeight  = LastKnownDeskHeight ;
         settings.DeviceSettings.DeviceName           = newDeviceName ;
         settings.DeviceSettings.DeviceAddress        = newDeviceAddress ;
         settings.DeviceSettings.DeviceLocked         = newDeviceLocked ;
         settings.DeviceSettings.NotificationsEnabled = newNotificationsEnabled ;
     }
 
-    private async Task DoStoreSettingsAsync ( bool advancedChanged ,
-                                              bool lockChanged )
+    private async Task DoStoreSettingsAsync ( bool              advancedChanged ,
+                                              bool              lockChanged ,
+                                              CancellationToken token )
     {
         try
         {
             logger.Debug ( $"Storing new settings: {settingsManager.CurrentSettings}" ) ;
 
-            await settingsManager.SaveAsync ( ) ;
+            await settingsManager.SaveAsync ( token ) ;
 
             if ( advancedChanged )
             {
@@ -199,7 +216,7 @@ public partial class SettingsViewModel ( ILogger                        logger ,
         catch ( Exception e )
         {
             logger.Error ( e ,
-                            "Failed to store settings" ) ;
+                           "Failed to store settings" ) ;
         }
     }
 
@@ -271,20 +288,5 @@ public partial class SettingsViewModel ( ILogger                        logger ,
 
                 break ;
         }
-    }
-
-    public Task OnNavigatedToAsync ( )
-    {
-        if (!_isInitialized)
-            InitializeViewModel(); // todo make async
-
-        return Task.CompletedTask;
-    }
-
-    public Task OnNavigatedFromAsync ( )
-    {
-        StoreSettings(); // todo make async
-
-        return Task.CompletedTask;
     }
 }

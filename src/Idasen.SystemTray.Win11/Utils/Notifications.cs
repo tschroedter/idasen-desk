@@ -9,7 +9,7 @@ using Wpf.Ui.Tray.Controls ;
 
 namespace Idasen.SystemTray.Win11.Utils ;
 
-[ExcludeFromCodeCoverage]
+[ ExcludeFromCodeCoverage ]
 public class Notifications : INotifications
 {
     private readonly ILogger                            _logger ;
@@ -29,24 +29,21 @@ public class Notifications : INotifications
         _showSubscribe = _showSubject.Subscribe ( OnShow ) ;
     }
 
-    public void Show ( string          title ,
-                       string          text ,
-                       InfoBarSeverity serverity )
+    public void Show ( string title , string text , InfoBarSeverity severity )
     {
-        var parameters = new NotificationParameters ( title ,
-                                                      text ,
-                                                      serverity ) ;
-        Show ( parameters ) ;
+        Show ( new NotificationParameters ( title ,
+                                            text ,
+                                            severity ) ) ;
     }
 
-    public INotifications Initialize ( NotifyIcon notifyIcon )
+    public INotifications Initialize ( NotifyIcon notifyIcon ,
+                                       CancellationToken token)
     {
         _logger.Debug ( "Notifications initializing..." ) ;
 
         Task.Run ( async ( ) =>
                    {
-                       await _manager.LoadAsync ( ) ;
-
+                       await _manager.LoadAsync ( token ) ;
                        Show ( $"Idasen System Tray {_version.GetVersion ( )}" ,
                               "Running..." ,
                               InfoBarSeverity.Informational ) ;
@@ -57,42 +54,39 @@ public class Notifications : INotifications
 
     public void Dispose ( )
     {
-        _showSubject.Dispose ( ) ;
         _showSubscribe.Dispose ( ) ;
+        _showSubject.Dispose ( ) ;
     }
 
-    public void Show ( NotificationParameters parameters ) =>
+    public void Show ( NotificationParameters parameters )
+    {
         _showSubject.OnNext ( parameters ) ;
+    }
 
     private void OnShow ( NotificationParameters parameters )
     {
-        if ( _manager is { CurrentSettings.DeviceSettings.NotificationsEnabled: false } )
+        if ( _manager?.CurrentSettings?.DeviceSettings?.NotificationsEnabled == false )
         {
-            _logger.Information ( "Notifications are disabled. " +
-                                  $"{nameof ( parameters )}: {parameters}" ) ;
-
+            _logger.Information ( "Notifications are disabled. {Parameters}" ,
+                                  parameters ) ;
             return ;
         }
 
         if ( ! Dispatcher.CurrentDispatcher.CheckAccess ( ) )
         {
             _logger.Debug ( "Dispatching call on UI thread" ) ;
-
             Dispatcher.CurrentDispatcher.BeginInvoke ( new Action ( ( ) => Show ( parameters ) ) ) ;
-
             return ;
         }
 
-        _logger.Debug ( $"Parameters = {parameters}" ) ;
+        _logger.Debug ( "Parameters = {Parameters}" ,
+                        parameters ) ;
 
-        // Requires Microsoft.Toolkit.Uwp.Notifications NuGet package version 7.0 or greater
-        var builder = new ToastContentBuilder ( ) ;
-        builder.AddText ( parameters.Title ) ;
-        builder.AddText ( parameters.Text ) ; // todo image balloon
-        builder.SetToastDuration ( ToastDuration.Short ) ;
+        var builder = new ToastContentBuilder ( )
+                     .AddText ( parameters.Title )
+                     .AddText ( parameters.Text )
+                     .SetToastDuration ( ToastDuration.Short ) ;
 
-        // Not seeing the Show() method? Make sure you have version 7.0, and if you're using .NET 6 (or later), then your TFM must be net6.0-windows10.0.17763.0 or greater
-        // Try running this code, and you should see the notification appear!
         builder.Show ( ) ;
     }
 }

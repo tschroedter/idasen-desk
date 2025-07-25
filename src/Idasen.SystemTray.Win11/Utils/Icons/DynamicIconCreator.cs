@@ -6,20 +6,22 @@ using Wpf.Ui.Tray.Controls ;
 
 namespace Idasen.SystemTray.Win11.Utils.Icons ;
 
-[ExcludeFromCodeCoverage]
+[ ExcludeFromCodeCoverage ]
 public class DynamicIconCreator : IDynamicIconCreator
 {
-    private readonly Color _brushDarkBlue  = ColorTranslator.FromHtml ( "#FF0048A3" ) ;
-    private readonly Color _brushLightBlue = ColorTranslator.FromHtml ( "#FF0098F3" ) ;
+    private const           int    IconHeight     = 16 ;
+    private const           int    FontSize       = 8 ;
+    private const           string FontFamily     = "Consolas" ;
+    private static readonly Color  BrushDarkBlue  = ColorTranslator.FromHtml ( "#FF0048A3" ) ;
+    private static readonly Color  BrushLightBlue = ColorTranslator.FromHtml ( "#FF0098F3" ) ;
 
-    public void Update ( NotifyIcon taskbarIcon ,
-                         int        height )
+    public void Update ( NotifyIcon taskbarIcon , int height )
     {
         Guard.ArgumentNotNull ( taskbarIcon ,
                                 nameof ( taskbarIcon ) ) ;
-
+        var icon = CreateIcon ( height ) ;
         PushIcons ( taskbarIcon ,
-                    CreateIcon ( height ) ,
+                    icon ,
                     height ) ;
     }
 
@@ -29,57 +31,47 @@ public class DynamicIconCreator : IDynamicIconCreator
                         ? 24
                         : 16 ;
 
-        using var pen   = new Pen ( _brushDarkBlue ) ;
-        using var brush = new SolidBrush ( _brushLightBlue ) ;
-        using var font = new Font ( "Consolas" ,
-                                    8 ) ;
-
         using var bitmap = new Bitmap ( width ,
-                                        16 ) ;
+                                        IconHeight ) ;
+        using var graphics = Graphics.FromImage ( bitmap ) ;
+        using var pen      = new Pen ( BrushDarkBlue ) ;
+        using var brush    = new SolidBrush ( BrushLightBlue ) ;
+        using var font = new Font ( FontFamily ,
+                                    FontSize ) ;
 
-        using var graph = Graphics.FromImage ( bitmap ) ;
+        // Draw top and bottom horizontal lines
+        graphics.DrawLine ( pen ,
+                            0 ,
+                            0 ,
+                            width ,
+                            0 ) ;
+        graphics.DrawLine ( pen ,
+                            0 ,
+                            IconHeight - 1 ,
+                            width ,
+                            IconHeight - 1 ) ;
 
-        //draw two horizontal lines
-        graph.DrawLine ( pen ,
-                         0 ,
-                         15 ,
-                         width ,
-                         15 ) ;
-        graph.DrawLine ( pen ,
-                         0 ,
-                         0 ,
-                         width ,
-                         0 ) ;
+        // Draw the height value string
+        graphics.DrawString ( $"{height}" ,
+                              font ,
+                              brush ,
+                              new PointF ( - 1 ,
+                                           1 ) ) ;
 
-        //draw the string including the value at origin
-        graph.DrawString ( $"{height}" ,
-                           font ,
-                           brush ,
-                           new PointF ( - 1 ,
-                                        1 ) ) ;
-
-
-        var icon = bitmap.GetHicon ( ) ;
-
-        //create a new icon from the handle
-        return Icon.FromHandle ( icon ) ;
+        var iconHandle = bitmap.GetHicon ( ) ;
+        return Icon.FromHandle ( iconHandle ) ;
     }
 
-    private void PushIcons ( NotifyIcon taskbarIcon ,
-                             Icon       icon ,
-                             int        value )
+    private void PushIcons ( NotifyIcon taskbarIcon , Icon icon , int value )
     {
         if ( ! taskbarIcon.Dispatcher.CheckAccess ( ) )
         {
-            taskbarIcon.Dispatcher
-                       .BeginInvoke ( new Action ( ( ) => PushIcons ( taskbarIcon ,
-                                                                      icon ,
-                                                                      value ) ) ) ;
-
+            taskbarIcon.Dispatcher.BeginInvoke ( new Action ( ( ) => PushIcons ( taskbarIcon ,
+                                                                                 icon ,
+                                                                                 value ) ) ) ;
             return ;
         }
 
-        //push the icons to the system tray
         taskbarIcon.Icon        = icon.ToImageSource ( ) ;
         taskbarIcon.TooltipText = $"Desk Height: {value} cm" ;
     }

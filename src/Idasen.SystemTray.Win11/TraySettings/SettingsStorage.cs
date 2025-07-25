@@ -8,13 +8,14 @@ namespace Idasen.SystemTray.Win11.TraySettings;
 
 public class SettingsStorage ( IFileSystem fileSystem ) : ISettingsStorage
 {
-    public static readonly JsonSerializerOptions JsonOptions = new( )
+    public static readonly JsonSerializerOptions JsonOptions = new ( )
     {
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull ,
         PropertyNamingPolicy   = JsonNamingPolicy.CamelCase
     } ;
 
-    public async Task < Settings > LoadSettingsAsync ( string settingsFileName )
+    public async Task < Settings > LoadSettingsAsync ( string            settingsFileName ,
+                                                       CancellationToken token )
     {
         try
         {
@@ -22,8 +23,9 @@ public class SettingsStorage ( IFileSystem fileSystem ) : ISettingsStorage
                 return new Settings ( ) ;
 
             await using var openStream = fileSystem.File.OpenRead ( settingsFileName ) ;
-            var             result     = await JsonSerializer.DeserializeAsync < Settings > ( openStream ,
-                                                                                              JsonOptions ) ;
+            var result = await JsonSerializer.DeserializeAsync < Settings > ( openStream ,
+                                                                              JsonOptions ,
+                                                                              token ) ;
 
             return result ?? new Settings ( ) ;
         }
@@ -34,23 +36,26 @@ public class SettingsStorage ( IFileSystem fileSystem ) : ISettingsStorage
         }
     }
 
-    public async Task SaveSettingsAsync ( string settingsFileName , Settings settings )
+    public async Task SaveSettingsAsync ( string            settingsFileName ,
+                                          Settings          settings ,
+                                          CancellationToken token )
     {
         try
         {
             var directoryName = Path.GetDirectoryName ( settingsFileName ) ;
 
-            if (string.IsNullOrEmpty ( directoryName ))
-                throw new IOException($"Failed to get directory name from {settingsFileName}");
+            if ( string.IsNullOrEmpty ( directoryName ) )
+                throw new IOException ( $"Failed to get directory name from {settingsFileName}" ) ;
 
-            if ( !Directory.Exists ( directoryName))
-                Directory.CreateDirectory(directoryName);
+            if ( ! Directory.Exists ( directoryName ) )
+                Directory.CreateDirectory ( directoryName ) ;
 
             await using var stream = fileSystem.File.Create ( settingsFileName ) ;
 
             await JsonSerializer.SerializeAsync ( stream ,
-                                                  settings , 
-                                                  JsonOptions ) ;
+                                                  settings ,
+                                                  JsonOptions ,
+                                                  token ) ;
         }
         catch ( Exception ex )
         {

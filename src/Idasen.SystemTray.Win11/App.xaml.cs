@@ -187,7 +187,7 @@ public partial class App
 
         var settings = GetService < SettingsViewModel > ( ) ;
 
-        settings!.Initialize ( ) ;
+        settings!.Initialize ( CancellationToken.None ) ;
 
         var versionProvider = GetVersionProvider ( ) ;
 

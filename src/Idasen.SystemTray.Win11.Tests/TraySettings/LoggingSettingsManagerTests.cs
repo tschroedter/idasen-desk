@@ -1,8 +1,8 @@
-﻿using Idasen.SystemTray.Win11.Interfaces ;
+﻿using FluentAssertions ;
+using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.TraySettings ;
 using NSubstitute ;
 using Serilog ;
-using FluentAssertions ;
 
 namespace Idasen.SystemTray.Win11.Tests.TraySettings ;
 
@@ -16,40 +16,40 @@ public class LoggingSettingsManagerTests
     {
         _logger          = Substitute.For < ILogger > ( ) ;
         _settingsManager = Substitute.For < ISettingsManager > ( ) ;
-        _manager         = new LoggingSettingsManager ( _logger ,
-                                                        _settingsManager ) ;
+        _manager = new LoggingSettingsManager ( _logger ,
+                                                _settingsManager ) ;
     }
 
     [ Fact ]
     public async Task SaveAsync_ShouldLogDebugAndCallSaveAsync ( )
     {
-        await _manager.SaveAsync ( ) ;
+        await _manager.SaveAsync ( CancellationToken.None ) ;
 
         _logger.Received ( 1 )
                .Debug ( Arg.Any < string > ( ) ) ;
 
         await _settingsManager.Received ( 1 )
-                              .SaveAsync ( ) ;
+                              .SaveAsync ( CancellationToken.None ) ;
     }
 
     [ Fact ]
     public async Task LoadAsync_ShouldLogDebugAndCallLoadAsync ( )
     {
-        await _manager.LoadAsync ( ) ;
+        await _manager.LoadAsync ( CancellationToken.None ) ;
 
         _logger.Received ( 2 )
                .Debug ( Arg.Any < string > ( ) ) ;
 
         await _settingsManager.Received ( 1 )
-                              .LoadAsync ( ) ;
+                              .LoadAsync ( CancellationToken.None ) ;
     }
 
     [ Fact ]
     public async Task UpgradeSettingsAsync_ShouldLogDebugAndReturnSuccess ( )
     {
-        _settingsManager.UpgradeSettingsAsync ( ).Returns ( true ) ;
+        _settingsManager.UpgradeSettingsAsync ( CancellationToken.None ).Returns ( true ) ;
 
-        var result = await _manager.UpgradeSettingsAsync ( ) ;
+        var result = await _manager.UpgradeSettingsAsync ( CancellationToken.None ) ;
 
         result.Should ( )
               .BeTrue ( ) ;
@@ -61,9 +61,9 @@ public class LoggingSettingsManagerTests
     [ Fact ]
     public async Task UpgradeSettingsAsync_ShouldLogErrorAndReturnFalseOnFailure ( )
     {
-        _settingsManager.UpgradeSettingsAsync ( ).Returns ( false ) ;
+        _settingsManager.UpgradeSettingsAsync ( CancellationToken.None ).Returns ( false ) ;
 
-        var result = await _manager.UpgradeSettingsAsync ( ) ;
+        var result = await _manager.UpgradeSettingsAsync ( CancellationToken.None ) ;
 
         result.Should ( ).BeFalse ( ) ;
 
@@ -76,12 +76,14 @@ public class LoggingSettingsManagerTests
     {
         const uint heightInCm = 100 ;
 
-        await _manager.SetLastKnownDeskHeight ( heightInCm ) ;
+        await _manager.SetLastKnownDeskHeight ( heightInCm ,
+                                                CancellationToken.None ) ;
 
         _logger.Received ( 1 )
                .Debug ( Arg.Any < string > ( ) ) ;
 
         await _settingsManager.Received ( 1 )
-                              .SetLastKnownDeskHeight ( heightInCm ) ;
+                              .SetLastKnownDeskHeight ( heightInCm ,
+                                                        CancellationToken.None ) ;
     }
 }

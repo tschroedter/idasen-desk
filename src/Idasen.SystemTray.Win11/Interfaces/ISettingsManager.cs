@@ -5,8 +5,8 @@ public interface ISettingsManager
     ISettings                 CurrentSettings  { get ; }
     string                    SettingsFileName { get ; }
     IObservable < ISettings > SettingsSaved    { get ; }
-    Task                      SaveAsync ( ) ;
-    Task                      LoadAsync ( ) ;
-    Task < bool >             UpgradeSettingsAsync ( ) ;
-    Task                      SetLastKnownDeskHeight ( uint heightInCm ) ;
+    Task                      SaveAsync (CancellationToken            token) ;
+    Task                      LoadAsync (CancellationToken            token) ;
+    Task < bool >             UpgradeSettingsAsync (CancellationToken token) ;
+    Task                      SetLastKnownDeskHeight ( uint           heightInCm , CancellationToken token) ;
 }

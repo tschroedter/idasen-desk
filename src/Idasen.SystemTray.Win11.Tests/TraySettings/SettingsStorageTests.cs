@@ -23,7 +23,8 @@ public class SettingsStorageTests
         // Arrange
 
         // Act
-        var result = await CreateSut ( ).LoadSettingsAsync ( TestFileName ) ;
+        var result = await CreateSut ( ).LoadSettingsAsync ( TestFileName,
+                                                             CancellationToken.None );
 
         // Assert
         result.Should ( ).NotBeNull ( ) ;
@@ -40,7 +41,8 @@ public class SettingsStorageTests
                                   new MockFileData ( serialize ) ) ;
 
         // Act
-        var result = await CreateSut ( ).LoadSettingsAsync ( TestFileName ) ;
+        var result = await CreateSut ( ).LoadSettingsAsync ( TestFileName,
+                                                             CancellationToken.None);
 
         // Assert
         result.Should ( ).NotBeNull ( ) ;
@@ -61,7 +63,8 @@ public class SettingsStorageTests
 
         // Act
         await CreateSut ( ).SaveSettingsAsync ( TestFileName ,
-                                                _settings ) ;
+                                                _settings,
+                                                CancellationToken.None );
 
         // Assert
         _mockFileSystem.File
@@ -83,7 +86,8 @@ public class SettingsStorageTests
 
         // Act & Assert
         await FluentActions.Invoking ( ( ) => CreateSut ( ).SaveSettingsAsync ( invalidFileName ,
-                                                                                settings ) )
+                                                                                settings,
+                                                                                CancellationToken.None))
                            .Should ( )
                            .ThrowAsync < IOException > ( ) ;
     }
