@@ -13,15 +13,12 @@ using Wpf.Ui.Appearance ;
 namespace Idasen.SystemTray.Win11.ViewModels.Pages ;
 
 [ ExcludeFromCodeCoverage ]
-public partial class SettingsViewModel ( ILogger                        logger ,
-                                         ILoggingSettingsManager        settingsManager ,
-                                         INotifySettingsChanges         settingsChanges ,
-                                         IDeviceAddressToULongConverter addressConverter ,
-                                         IDoubleToUIntConverter         toUIntConverter ,
-                                         IDeviceNameConverter           nameConverter ,
-                                         IScheduler                     scheduler,
-                                         IThemeSwitcher                 themeSwitcher)
-    : ObservableObject , INavigationAware, IDisposable
+public partial class SettingsViewModel ( ILogger                 logger ,
+                                         ILoggingSettingsManager settingsManager ,
+                                         IScheduler              scheduler ,
+                                         IThemeSwitcher          themeSwitcher ,
+                                         ISettingsSynchronizer   synchronizer )
+    : ObservableObject , INavigationAware , IDisposable
 {
     [ ObservableProperty ]
     private string _appVersion = string.Empty ;
@@ -66,22 +63,33 @@ public partial class SettingsViewModel ( ILogger                        logger ,
     [ ObservableProperty ]
     private uint _standing = 100 ;
 
+    public void Dispose ( )
+    {
+        if ( _settingsSaved is null )
+            return ;
+
+        _settingsSaved.Dispose ( ) ;
+        _settingsSaved = null ;
+    }
+
     public async Task OnNavigatedToAsync ( )
     {
         if ( _isInitialized )
-            return;
+            return ;
 
         await InitializeViewModelAsync ( ) ;
     }
 
     public async Task OnNavigatedFromAsync ( )
     {
-        await StoreSettingsAsync ( CancellationToken.None ) ;
+        await synchronizer.StoreSettingsAsync ( this ,
+                                                CancellationToken.None ) ;
     }
 
-    public SettingsViewModel Initialize ( CancellationToken token )
+    public async Task InitializeAsync ( CancellationToken token )
     {
-        LoadSettingsAsync ( token ) ;
+        await synchronizer.LoadSettingsAsync ( this ,
+                                               token ) ;
 
         SettingsFileFullPath = settingsManager.SettingsFileName ;
         LogFolderPath        = LoggingFile.Path ; // Todo: Maybe this could be ILoggingFile?
@@ -89,8 +97,6 @@ public partial class SettingsViewModel ( ILogger                        logger ,
         _settingsSaved = settingsManager.SettingsSaved
                                         .ObserveOn ( scheduler )
                                         .Subscribe ( OnSettingsSaved ) ;
-
-        return this ;
     }
 
     private void OnSettingsSaved ( ISettings settings )
@@ -107,126 +113,12 @@ public partial class SettingsViewModel ( ILogger                        logger ,
         LastKnownDeskHeight = settings.HeightSettings.LastKnownDeskHeight ;
     }
 
-    public void LoadSettingsAsync ( CancellationToken token )
+    private async Task InitializeViewModelAsync ( )
     {
-        Task.Run ( async ( ) =>
-                   {
-                       logger.Debug ( "LoadAsync settings" ) ;
+        CurrentTheme = await Task.Run ( ApplicationThemeManager.GetAppTheme ).ConfigureAwait ( false ) ;
+        AppVersion   = $"UiDesktopApp1 - {GetAssemblyVersion ( )}" ;
 
-                       await settingsManager.LoadAsync ( token ) ;
-
-                       var current = settingsManager.CurrentSettings ;
-
-                       Standing            = current.HeightSettings.StandingHeightInCm ;
-                       MinHeight           = current.HeightSettings.DeskMinHeightInCm ;
-                       MaxHeight           = current.HeightSettings.DeskMaxHeightInCm ;
-                       Seating             = current.HeightSettings.SeatingHeightInCm ;
-                       LastKnownDeskHeight = current.HeightSettings.LastKnownDeskHeight ;
-                       DeskName            = nameConverter.EmptyIfDefault ( current.DeviceSettings.DeviceName ) ;
-                       DeskAddress         = addressConverter.EmptyIfDefault ( current.DeviceSettings.DeviceAddress ) ;
-                       ParentalLock        = current.DeviceSettings.DeviceLocked ;
-                       Notifications       = current.DeviceSettings.NotificationsEnabled ;
-                   } , token ).GetAwaiter ( )
-            .GetResult ( ) ; // todo not nice but will do for now
-    }
-
-    public async Task StoreSettingsAsync ( CancellationToken token )
-    {
-        var lockChanged     = HasParentalLockChanged ( ) ;
-        var advancedChanged = HaveAdvancedSettingsChanged ( ) ;
-
-        UpdateCurrentSettings ( ) ;
-
-        await DoStoreSettingsAsync ( advancedChanged ,
-                                     lockChanged ,
-                                     token ) ;
-    }
-
-    private bool HasParentalLockChanged ( )
-    {
-        var settings = settingsManager.CurrentSettings ;
-
-        return settings.DeviceSettings.DeviceLocked != ParentalLock ;
-    }
-
-    private bool HaveAdvancedSettingsChanged ( )
-    {
-        var settings = settingsManager.CurrentSettings ;
-
-        var newDeviceName    = nameConverter.DefaultIfEmpty ( DeskName ) ;
-        var newDeviceAddress = addressConverter.DefaultIfEmpty ( DeskAddress ) ;
-
-        return settings.DeviceSettings.DeviceName    != newDeviceName ||
-               settings.DeviceSettings.DeviceAddress != newDeviceAddress ;
-    }
-
-    private void UpdateCurrentSettings ( )
-    {
-        var settings = settingsManager.CurrentSettings ;
-
-        var newDeviceName           = nameConverter.DefaultIfEmpty ( DeskName ) ;
-        var newDeviceAddress        = addressConverter.DefaultIfEmpty ( DeskAddress ) ;
-        var newDeviceLocked         = ParentalLock ;
-        var newNotificationsEnabled = Notifications ;
-
-        settings.HeightSettings.StandingHeightInCm = toUIntConverter.ConvertToUInt ( Standing ,
-                                                                                     Constants.DefaultHeightStandingInCm ) ;
-        settings.HeightSettings.SeatingHeightInCm = toUIntConverter.ConvertToUInt ( Seating ,
-                                                                                    Constants.DefaultHeightSeatingInCm ) ;
-        settings.HeightSettings.LastKnownDeskHeight  = LastKnownDeskHeight ;
-        settings.DeviceSettings.DeviceName           = newDeviceName ;
-        settings.DeviceSettings.DeviceAddress        = newDeviceAddress ;
-        settings.DeviceSettings.DeviceLocked         = newDeviceLocked ;
-        settings.DeviceSettings.NotificationsEnabled = newNotificationsEnabled ;
-    }
-
-    private async Task DoStoreSettingsAsync ( bool              advancedChanged ,
-                                              bool              lockChanged ,
-                                              CancellationToken token )
-    {
-        try
-        {
-            logger.Debug ( $"Storing new settings: {settingsManager.CurrentSettings}" ) ;
-
-            await settingsManager.SaveAsync ( token ) ;
-
-            if ( advancedChanged )
-            {
-                AdvancedSettingsChanged ( advancedChanged ) ;
-            }
-
-            if ( lockChanged )
-            {
-                LockChanged ( settingsManager.CurrentSettings ) ;
-            }
-        }
-        catch ( Exception e )
-        {
-            logger.Error ( e ,
-                           "Failed to store settings" ) ;
-        }
-    }
-
-    private void LockChanged ( ISettings settings )
-    {
-        logger.Information ( "Advanced Locked settings have changed..." ) ;
-
-        settingsChanges.LockSettingsChanged.OnNext ( settings.DeviceSettings.DeviceLocked ) ;
-    }
-
-    private void AdvancedSettingsChanged ( bool advancedChanged )
-    {
-        logger.Information ( "Advanced settings have changed, reconnecting..." ) ;
-
-        settingsChanges.AdvancedSettingsChanged.OnNext ( advancedChanged ) ;
-    }
-
-    private async Task InitializeViewModelAsync()
-    {
-        CurrentTheme = await Task.Run(ApplicationThemeManager.GetAppTheme).ConfigureAwait(false);
-        AppVersion   = $"UiDesktopApp1 - {GetAssemblyVersion()}";
-
-        _isInitialized = true;
+        _isInitialized = true ;
     }
 
     private string GetAssemblyVersion ( )
@@ -240,15 +132,8 @@ public partial class SettingsViewModel ( ILogger                        logger ,
         ChangeTheme ( parameter ) ;
     }
 
-    private void ChangeTheme ( string parameter ) =>
-        themeSwitcher.ChangeTheme ( parameter );
-
-    public void Dispose()
+    private void ChangeTheme ( string parameter )
     {
-        if ( _settingsSaved is null )
-            return ;
-
-        _settingsSaved.Dispose();
-        _settingsSaved = null;
+        themeSwitcher.ChangeTheme ( parameter ) ;
     }
 }

@@ -46,6 +46,7 @@
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.7" />
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
         <PackageReference Include="WPF-UI.Tray" Version="4.0.3" />
+        <PackageReference Include="xunit.abstractions" Version="2.0.3" />
     </ItemGroup>
 
     <ItemGroup>

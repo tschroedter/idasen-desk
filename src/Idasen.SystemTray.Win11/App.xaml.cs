@@ -117,6 +117,7 @@ public partial class App
                                                                                                               IDeskProvider > ) ) ;
                                                                            services.AddSingleton < IFileSystem , FileSystem > ( ) ;
                                                                            services.AddTransient<IThemeSwitcher, ThemeSwitcher>();
+                                                                           services.AddTransient < ISettingsSynchronizer , SettingsSynchronizer > ( ) ;
                                                                        }).Build ( ) ;
 
     private readonly ILogger _logger = LoggerProvider.CreateLogger ( Constants.ApplicationName ,
@@ -167,32 +168,40 @@ public partial class App
     /// <summary>
     ///     Occurs when the application is loading.
     /// </summary>
-    private void OnStartup ( object sender , StartupEventArgs e )
+    private async void OnStartup(object sender, StartupEventArgs args)
     {
-        AvoidRunningTwoInstances ( ) ;
+        try
+        {
+            AvoidRunningTwoInstances();
 
-        Host.Start ( ) ;
+            await Host.StartAsync();
 
-        UnhandledExceptionsHandler.RegisterGlobalExceptionHandling ( ) ;
+            UnhandledExceptionsHandler.RegisterGlobalExceptionHandling();
 
-        _logger.Information ( "##### Startup..." ) ;
+            _logger.Information("##### Startup...");
 
-        var test = GetService < ILogger > ( ) ;
-        test?.Information ( "Test" ) ;
+            var test = GetService<ILogger>();
+            test?.Information("Test");
 
-        var notifyIcon = FindNotifyIcon ( ) ; // todo maybe we can get the icon from the view?
+            var notifyIcon = FindNotifyIcon(); // todo maybe we can get the icon from the view?
 
-        var main = GetService < IdasenDeskWindowViewModel > ( ) ;
+            var main = GetService<IdasenDeskWindowViewModel>();
 
-        main!.Initialize ( notifyIcon ) ;
+            main!.Initialize(notifyIcon);
 
-        var settings = GetService < SettingsViewModel > ( ) ;
+            var settings = GetService<SettingsViewModel>();
 
-        settings!.Initialize ( CancellationToken.None ) ;
+            await settings!.InitializeAsync(CancellationToken.None);
 
-        var versionProvider = GetVersionProvider ( ) ;
+            var versionProvider = GetVersionProvider();
 
-        _logger.Information ( $"##### Idasen.SystemTray {versionProvider.GetVersion ( )}" ) ;
+            _logger.Information($"##### Idasen.SystemTray {versionProvider.GetVersion()}");
+        }
+        catch ( Exception ex )
+        {
+            _logger.Error ( ex ,
+                            "Failed to start application" ) ;
+        }
     }
 
     private void AvoidRunningTwoInstances ( )
