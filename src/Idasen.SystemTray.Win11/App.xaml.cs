@@ -115,7 +115,8 @@ public partial class App
                                                                                                       new Func < IDeskProvider > ( provider
                                                                                                          .GetRequiredService <
                                                                                                               IDeskProvider > ) ) ;
-                                                                            services.AddSingleton<IFileSystem, FileSystem>();
+                                                                           services.AddSingleton < IFileSystem , FileSystem > ( ) ;
+                                                                           services.AddTransient<IThemeSwitcher, ThemeSwitcher>();
                                                                        }).Build ( ) ;
 
     private readonly ILogger _logger = LoggerProvider.CreateLogger ( Constants.ApplicationName ,

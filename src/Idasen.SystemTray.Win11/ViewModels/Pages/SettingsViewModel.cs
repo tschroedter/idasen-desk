@@ -19,7 +19,8 @@ public partial class SettingsViewModel ( ILogger                        logger ,
                                          IDeviceAddressToULongConverter addressConverter ,
                                          IDoubleToUIntConverter         toUIntConverter ,
                                          IDeviceNameConverter           nameConverter ,
-                                         IScheduler                     scheduler )
+                                         IScheduler                     scheduler,
+                                         IThemeSwitcher                 themeSwitcher)
     : ObservableObject , INavigationAware, IDisposable
 {
     [ ObservableProperty ]
@@ -236,45 +237,11 @@ public partial class SettingsViewModel ( ILogger                        logger ,
     [ RelayCommand ]
     internal void OnChangeTheme ( string parameter )
     {
-        switch ( parameter )
-        {
-            case "theme_light" :
-                if ( CurrentTheme == ApplicationTheme.Light )
-                    break ;
-
-                ApplicationThemeManager.Apply ( ApplicationTheme.Light ) ;
-                CurrentTheme = ApplicationTheme.Light ;
-
-                break ;
-
-            case "theme_dark" :
-                if ( CurrentTheme == ApplicationTheme.Dark )
-                    break ;
-
-                ApplicationThemeManager.Apply ( ApplicationTheme.Dark ) ;
-                CurrentTheme = ApplicationTheme.Dark ;
-
-                break ;
-
-            case "theme_high_contrast" :
-                if ( CurrentTheme == ApplicationTheme.HighContrast )
-                    break ;
-
-                ApplicationThemeManager.Apply ( ApplicationTheme.HighContrast ) ;
-                CurrentTheme = ApplicationTheme.HighContrast ;
-
-                break ;
-
-            default :
-                if ( CurrentTheme == ApplicationTheme.Unknown )
-                    break ;
-
-                ApplicationThemeManager.Apply ( ApplicationTheme.Unknown ) ;
-                CurrentTheme = ApplicationTheme.Unknown ;
-
-                break ;
-        }
+        ChangeTheme ( parameter ) ;
     }
+
+    private void ChangeTheme ( string parameter ) =>
+        themeSwitcher.ChangeTheme ( parameter );
 
     public void Dispose()
     {
