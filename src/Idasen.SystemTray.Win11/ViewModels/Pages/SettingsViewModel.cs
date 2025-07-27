@@ -20,7 +20,7 @@ public partial class SettingsViewModel ( ILogger                        logger ,
                                          IDoubleToUIntConverter         toUIntConverter ,
                                          IDeviceNameConverter           nameConverter ,
                                          IScheduler                     scheduler )
-    : ObservableObject , INavigationAware
+    : ObservableObject , INavigationAware, IDisposable
 {
     [ ObservableProperty ]
     private string _appVersion = string.Empty ;
@@ -60,26 +60,22 @@ public partial class SettingsViewModel ( ILogger                        logger ,
     [ ObservableProperty ]
     private string _settingsFileFullPath = string.Empty ;
 
-    private IDisposable ? _settingsSaved ; // todo dispose
+    private IDisposable ? _settingsSaved ;
 
     [ ObservableProperty ]
     private uint _standing = 100 ;
 
-    private Task ? _storingSettingsTask ;
-
-    public Task OnNavigatedToAsync ( )
+    public async Task OnNavigatedToAsync ( )
     {
-        if ( ! _isInitialized )
-            InitializeViewModel ( ) ; // todo make async
+        if ( _isInitialized )
+            return;
 
-        return Task.CompletedTask ;
+        await InitializeViewModelAsync ( ) ;
     }
 
-    public Task OnNavigatedFromAsync ( )
+    public async Task OnNavigatedFromAsync ( )
     {
-        StoreSettings ( CancellationToken.None ) ; // todo make async
-
-        return Task.CompletedTask ;
+        await StoreSettingsAsync ( CancellationToken.None ) ;
     }
 
     public SettingsViewModel Initialize ( CancellationToken token )
@@ -133,26 +129,16 @@ public partial class SettingsViewModel ( ILogger                        logger ,
             .GetResult ( ) ; // todo not nice but will do for now
     }
 
-    public void StoreSettings ( CancellationToken token )
+    public async Task StoreSettingsAsync ( CancellationToken token )
     {
-        if ( _storingSettingsTask?.Status == TaskStatus.Running )
-        {
-            logger.Warning ( "Storing Settings already in progress" ) ;
-
-            return ;
-        }
-
         var lockChanged     = HasParentalLockChanged ( ) ;
         var advancedChanged = HaveAdvancedSettingsChanged ( ) ;
 
         UpdateCurrentSettings ( ) ;
 
-        _storingSettingsTask = Task.Run ( async ( ) =>
-                                          {
-                                              await DoStoreSettingsAsync ( advancedChanged ,
-                                                                           lockChanged ,
-                                                                           token ) ;
-                                          } ) ;
+        await DoStoreSettingsAsync ( advancedChanged ,
+                                     lockChanged ,
+                                     token ) ;
     }
 
     private bool HasParentalLockChanged ( )
@@ -234,12 +220,12 @@ public partial class SettingsViewModel ( ILogger                        logger ,
         settingsChanges.AdvancedSettingsChanged.OnNext ( advancedChanged ) ;
     }
 
-    private void InitializeViewModel ( )
+    private async Task InitializeViewModelAsync()
     {
-        CurrentTheme = ApplicationThemeManager.GetAppTheme ( ) ;
-        AppVersion   = $"UiDesktopApp1 - {GetAssemblyVersion ( )}" ;
+        CurrentTheme = await Task.Run(ApplicationThemeManager.GetAppTheme).ConfigureAwait(false);
+        AppVersion   = $"UiDesktopApp1 - {GetAssemblyVersion()}";
 
-        _isInitialized = true ;
+        _isInitialized = true;
     }
 
     private string GetAssemblyVersion ( )
@@ -288,5 +274,14 @@ public partial class SettingsViewModel ( ILogger                        logger ,
 
                 break ;
         }
+    }
+
+    public void Dispose()
+    {
+        if ( _settingsSaved is null )
+            return ;
+
+        _settingsSaved.Dispose();
+        _settingsSaved = null;
     }
 }
