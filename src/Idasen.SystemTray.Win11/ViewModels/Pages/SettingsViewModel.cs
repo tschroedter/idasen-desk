@@ -1,12 +1,12 @@
-﻿using System.Diagnostics.CodeAnalysis ;
+﻿using Idasen.Launcher ;
+using Idasen.SystemTray.Win11.Interfaces ;
+using Idasen.SystemTray.Win11.Utils ;
+using Serilog ;
+using System.Diagnostics.CodeAnalysis ;
 using System.Reactive.Concurrency ;
 using System.Reactive.Linq ;
 using System.Reflection ;
 using System.Windows.Threading ;
-using Idasen.Launcher ;
-using Idasen.SystemTray.Win11.Interfaces ;
-using Idasen.SystemTray.Win11.Utils ;
-using Serilog ;
 using Wpf.Ui.Abstractions.Controls ;
 using Wpf.Ui.Appearance ;
 
@@ -16,9 +16,8 @@ namespace Idasen.SystemTray.Win11.ViewModels.Pages ;
 public partial class SettingsViewModel ( ILogger                 logger ,
                                          ILoggingSettingsManager settingsManager ,
                                          IScheduler              scheduler ,
-                                         IThemeSwitcher          themeSwitcher ,
                                          ISettingsSynchronizer   synchronizer )
-    : ObservableObject , INavigationAware , IDisposable
+    : ObservableObject , INavigationAware , ISettingsViewModel
 {
     [ ObservableProperty ]
     private string _appVersion = string.Empty ;
@@ -127,13 +126,6 @@ public partial class SettingsViewModel ( ILogger                 logger ,
     }
 
     [ RelayCommand ]
-    internal void OnChangeTheme ( string parameter )
-    {
-        ChangeTheme ( parameter ) ;
-    }
-
-    private void ChangeTheme ( string parameter )
-    {
-        themeSwitcher.ChangeTheme ( parameter ) ;
-    }
+    internal void OnChangeTheme ( string parameter ) => 
+        synchronizer.ChangeTheme ( parameter ) ;
 }
