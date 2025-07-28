@@ -118,6 +118,7 @@ public partial class App
                                                                            services.AddSingleton < IFileSystem , FileSystem > ( ) ;
                                                                            services.AddTransient<IThemeSwitcher, ThemeSwitcher>();
                                                                            services.AddTransient < ISettingsSynchronizer , SettingsSynchronizer > ( ) ;
+                                                                           services.AddSingleton <IApplicationThemeManager, MyApplicationThemeManager> ( );
                                                                        }).Build ( ) ;
 
     private readonly ILogger _logger = LoggerProvider.CreateLogger ( Constants.ApplicationName ,
