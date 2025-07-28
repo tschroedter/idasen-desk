@@ -4,13 +4,15 @@ namespace Idasen.SystemTray.Win11.TraySettings ;
 
 public class Settings : ISettings
 {
-    public DeviceSettings DeviceSettings { get ; set ; } = new( ) ;
+    public DeviceSettings DeviceSettings { get ; set ; } = new ( ) ;
 
-    public HeightSettings HeightSettings { get ; set ; } = new( ) ;
+    public HeightSettings     HeightSettings     { get ; set ; } = new ( ) ;
+    public AppearanceSettings AppearanceSettings { get ; set ; } = new ( ) ;
 
     public override string ToString ( )
     {
         return $"{nameof ( DeviceSettings )} = {DeviceSettings}, " +
-               $"{nameof ( HeightSettings )} = {HeightSettings}" ;
+               $"{nameof ( HeightSettings )} = {HeightSettings}, " +
+               $"{nameof ( AppearanceSettings )} = {AppearanceSettings}" ;
     }
 }

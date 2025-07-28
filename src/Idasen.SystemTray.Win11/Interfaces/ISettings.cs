@@ -7,4 +7,6 @@ public interface ISettings
     DeviceSettings DeviceSettings { get ; set ; }
 
     HeightSettings HeightSettings { get ; set ; }
+
+    AppearanceSettings AppearanceSettings { get ; set ; }
 }

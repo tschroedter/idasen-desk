@@ -27,14 +27,22 @@ public class SettingsTests
             LastKnownDeskHeight = 100
         };
 
+        var appearanceSettings = new AppearanceSettings
+        {
+            ThemeName = "Test"
+        } ;
+
         var settings = new Settings
         {
             DeviceSettings = deviceSettings,
-            HeightSettings = heightSettings
+            HeightSettings = heightSettings,
+            AppearanceSettings = appearanceSettings
         };
 
         var expected =
-            $"DeviceSettings = {deviceSettings}, HeightSettings = {heightSettings}";
+            $"DeviceSettings = {deviceSettings}, " +
+            $"HeightSettings = {heightSettings}, " +
+            $"AppearanceSettings = {appearanceSettings}";
 
         // Act  
         var result = settings.ToString();

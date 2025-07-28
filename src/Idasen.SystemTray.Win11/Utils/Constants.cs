@@ -14,5 +14,6 @@ public class Constants
     public const  bool   DefaultLocked                  = false ;
     public const  uint   DefaultDeskMinHeightInCm       = 60 ;
     public const  uint   DefaultDeskMaxHeightInCm       = 127 ;
+    public const  string DefaultAppearanceThemeName     = "theme_light" ;
     public static bool   NotificationsEnabled           = true ;
 }
