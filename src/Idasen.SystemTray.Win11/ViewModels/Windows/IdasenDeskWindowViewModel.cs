@@ -19,7 +19,7 @@ using NotifyIcon = Wpf.Ui.Tray.Controls.NotifyIcon ;
 
 namespace Idasen.SystemTray.Win11.ViewModels.Windows ;
 
-[ExcludeFromCodeCoverage]
+[ ExcludeFromCodeCoverage ]
 public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
 {
     private static readonly NavigationViewItem HomeViewItem = new ( )
@@ -136,6 +136,8 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
     [
         ExitViewItem
     ] ;
+
+    private bool _isInitialized ;
 
     private IDisposable ? _lockSubscription ;
 
@@ -346,12 +348,6 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
         _logger.Debug ( $"{nameof ( ShowSettingsCommand )}" ) ;
 
         Application.Current.MainWindow.Visibility = Visibility.Visible ;
-
-        /* todo: implement
-        SettingsWindow.Show();
-        SettingsWindow.AdvancedSettingsChanged += OnAdvancedSettingsChanged;
-        SettingsWindow.LockSettingsChanged     += OnLockSettingsChanged;
-        */
     }
 
     private void DoHideSettings ( )
@@ -362,13 +358,6 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
         _logger.Debug ( $"{nameof ( HideSettingsCommand )}" ) ;
 
         Application.Current.MainWindow.Visibility = Visibility.Hidden ;
-
-        /* todo: implement
-        SettingsWindow.AdvancedSettingsChanged -= OnAdvancedSettingsChanged;
-        SettingsWindow.LockSettingsChanged     -= OnLockSettingsChanged;
-        SettingsWindow.Hide();
-        SettingsWindow = null;
-        */
     }
 
     private void DoExitApplication ( )
@@ -518,6 +507,11 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
 
     public IdasenDeskWindowViewModel Initialize ( NotifyIcon notifyIcon )
     {
+        if ( _isInitialized )
+            return this ;
+
+        _isInitialized = true ;
+
         _logger.Debug ( $"{nameof ( IdasenDeskWindowViewModel )}: Initializing..." ) ;
 
         _uiDeskManager.Initialize ( notifyIcon ) ;
@@ -527,7 +521,6 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
             ItemsSource = TrayMenuItems
         } ;
 
-        // todo IDisposable right
         _advancedSubscription = _settingsChanges.AdvancedSettingsChanged
                                                 .ObserveOn ( Scheduler.Default )
                                                 .Subscribe ( OnAdvancedSettingsChanged ) ;
