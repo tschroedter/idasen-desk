@@ -54,10 +54,8 @@ public partial class App
                                                                                              {
                                                                                                  builder.RegisterLogger ( ) ;
                                                                                                  builder.RegisterModule < BluetoothLEAop > ( ) ;
-                                                                                                 builder
-                                                                                                    .RegisterModule < BluetoothLECoreModule > ( ) ;
-                                                                                                 builder
-                                                                                                    .RegisterModule < BluetoothLELinakModule > ( ) ;
+                                                                                                 builder.RegisterModule < BluetoothLECoreModule > ( ) ;
+                                                                                                 builder.RegisterModule < BluetoothLELinakModule > ( ) ;
                                                                                                  builder.RegisterLogger ( LoggerProvider.CreateLogger ( Constants.ApplicationName , Constants.LogFilename ) ) ;
                                                                                              } )
                                                   .ConfigureServices ( ( _ , services ) =>
@@ -92,11 +90,8 @@ public partial class App
                                                                            services.AddSingleton < IObserveSettingsChanges > ( GetSettingsChanged ) ;
                                                                            services.AddSingleton < INotifySettingsChanges > ( GetSettingsChanged ) ;
                                                                            services.AddSingleton < ISettingsManager , SettingsManager > ( ) ;
-                                                                           services
-                                                                              .AddSingleton < ILoggingSettingsManager ,
-                                                                                   LoggingSettingsManager > ( ) ;
-                                                                           services
-                                                                              .AddSingleton < ICommonApplicationData , CommonApplicationData > ( ) ;
+                                                                           services.AddSingleton < ILoggingSettingsManager , LoggingSettingsManager > ( ) ;
+                                                                           services.AddSingleton < ICommonApplicationData , CommonApplicationData > ( ) ;
                                                                            services.AddSingleton < ISettingsStorage , SettingsStorage > ( ) ;
                                                                            services.AddSingleton < ITaskbarIconProvider , TaskbarIconProvider > ( ) ;
                                                                            services.AddSingleton < IUiDeskManager , UiDeskManager > ( ) ;
@@ -104,13 +99,9 @@ public partial class App
                                                                            services.AddSingleton ( _ => CreateScheduler ( ) ) ;
                                                                            services.AddSingleton ( CreateTaskbarIconProvider ) ;
                                                                            services.AddTransient < IDeviceNameConverter , DeviceNameConverter > ( ) ;
-                                                                           services
-                                                                              .AddTransient < IDoubleToUIntConverter , DoubleToUIntConverter > ( ) ;
-                                                                           services
-                                                                              .AddTransient < IStringToUIntConverter , StringToUIntConverter > ( ) ;
-                                                                           services
-                                                                              .AddTransient < IDeviceAddressToULongConverter ,
-                                                                                   DeviceAddressToULongConverter > ( ) ;
+                                                                           services.AddTransient < IDoubleToUIntConverter , DoubleToUIntConverter > ( ) ;
+                                                                           services.AddTransient < IStringToUIntConverter , StringToUIntConverter > ( ) ;
+                                                                           services.AddTransient < IDeviceAddressToULongConverter , DeviceAddressToULongConverter > ( ) ;
                                                                            services.AddSingleton ( provider =>
                                                                                                       new Func < IDeskProvider > ( provider
                                                                                                          .GetRequiredService <
@@ -119,6 +110,9 @@ public partial class App
                                                                            services.AddTransient<IThemeSwitcher, ThemeSwitcher>();
                                                                            services.AddTransient < ISettingsSynchronizer , SettingsSynchronizer > ( ) ;
                                                                            services.AddSingleton <IApplicationThemeManager, MyApplicationThemeManager> ( );
+                                                                           // Replace the incorrect registration line with the following:
+                                                                           services.AddSingleton<Func<TimerCallback, object?, TimeSpan, TimeSpan, ITimer>>( provider =>
+                                                                               (callback, state, dueTime, period) => new Timer(callback, state, dueTime, period) );
                                                                        }).Build ( ) ;
 
     private readonly ILogger _logger = LoggerProvider.CreateLogger ( Constants.ApplicationName ,

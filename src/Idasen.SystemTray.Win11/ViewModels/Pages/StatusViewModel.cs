@@ -1,4 +1,5 @@
-﻿using System.Reactive.Concurrency ;
+﻿using System.Diagnostics.CodeAnalysis ;
+using System.Reactive.Concurrency ;
 using System.Reactive.Linq ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.Utils ;
@@ -25,24 +26,17 @@ public partial class StatusViewModel : ObservableObject , IDisposable
     [ ObservableProperty ]
     private string _title = "Desk Status" ;
 
-    public StatusViewModel ( IUiDeskManager manager )
+    public StatusViewModel ( IUiDeskManager                                                   manager ,
+                             IScheduler                                                       scheduler ,
+                             Func < TimerCallback , object ? , TimeSpan , TimeSpan , ITimer > timerFactory )
     {
-        var timer = new Timer ( OnElapsed ,
-                                null ,
-                                TimeSpan.FromSeconds ( 10 ) ,
-                                Timeout.InfiniteTimeSpan ) ;
-
-        var scheduler = DispatcherScheduler.Current ;
+        var timer = timerFactory ( OnElapsed ,
+                                   null ,
+                                   TimeSpan.FromSeconds ( 10 ) ,
+                                   Timeout.InfiniteTimeSpan ) ;
 
         Init ( manager ,
                scheduler ,
-               timer ) ;        
-    }
-
-    public StatusViewModel ( IUiDeskManager manager , IScheduler scheduler,  ITimer timer )
-    {
-        Init ( manager ,
-               scheduler,
                timer ) ;
     }
 
@@ -52,22 +46,25 @@ public partial class StatusViewModel : ObservableObject , IDisposable
         _statusBarInfoChanged?.Dispose ( ) ;
     }
 
-    private void Init ( IUiDeskManager manager , IScheduler scheduler, ITimer timer )
+    private void Init ( IUiDeskManager manager ,
+                        IScheduler scheduler ,
+                        ITimer timer )
     {
         _manager = manager ;
 
         _statusBarInfoChanged = manager.StatusBarInfoChanged
-                                       .ObserveOn (scheduler )
+                                       .ObserveOn ( scheduler )
                                        .Subscribe ( OnStatusBarInfoChanged ) ;
 
         Message  = manager.LastStatusBarInfo.Message ;
         Height   = manager.LastStatusBarInfo.Height ;
         Severity = manager.LastStatusBarInfo.Severity ;
 
-        _timer = timer;
+        _timer = timer ;
     }
 
-    private void OnElapsed ( object ? state )
+    [ExcludeFromCodeCoverage]
+    internal void OnElapsed ( object ? state )
     {
         Application.Current.Dispatcher.BeginInvoke ( DefaultInfoBar ) ;
     }

@@ -104,6 +104,11 @@ public class StatusViewModelTests
     {
         return new StatusViewModel(_manager,
                                    _scheduler,
-                                   _timer);
+                                   TimerFactory);
+    }
+
+    private ITimer TimerFactory(TimerCallback arg1, object? arg2, TimeSpan arg3, TimeSpan arg4)
+    {
+        return _timer;
     }
 }
