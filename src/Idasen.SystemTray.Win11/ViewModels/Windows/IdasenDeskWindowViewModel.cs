@@ -20,111 +20,19 @@ using NotifyIcon = Wpf.Ui.Tray.Controls.NotifyIcon ;
 namespace Idasen.SystemTray.Win11.ViewModels.Windows ;
 
 [ ExcludeFromCodeCoverage ]
-public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
+public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDisposable
 {
-    private static readonly NavigationViewItem HomeViewItem = new ( )
-    {
-        Content = "Home" ,
-        Icon = new SymbolIcon
-        {
-            Symbol = SymbolRegular.Home20
-        } ,
-        TargetPageType = typeof ( HomePage )
-    } ;
-
-    private static readonly NavigationViewItem SitViewItem = new ( )
-    {
-        Content = "Sit" ,
-        Icon = new SymbolIcon
-        {
-            Symbol = SymbolRegular.ArrowCircleDown20
-        } ,
-        TargetPageType = typeof ( StatusPage ) ,
-        ToolTip        = "Double-Click to move the desk to the sitting position."
-    } ;
-
-    private static readonly NavigationViewItem StandViewItem = new ( )
-    {
-        Content = "Stand" ,
-        Icon = new SymbolIcon
-        {
-            Symbol = SymbolRegular.ArrowCircleUp20
-        } ,
-        TargetPageType = typeof ( StatusPage ) ,
-        ToolTip        = "Double-Click to move the desk to the standing position."
-    } ;
-
-    private static readonly NavigationViewItem ConnectViewItem = new ( )
-    {
-        Content = "Connect" ,
-        Icon = new SymbolIcon
-        {
-            Symbol = SymbolRegular.PlugConnected24
-        } ,
-        TargetPageType = typeof ( StatusPage ) ,
-        ToolTip        = "Double-Click to connect to desk."
-    } ;
-
-    private static readonly NavigationViewItem DisconnectViewItem = new ( )
-    {
-        Content = "Disconnect" ,
-        Icon = new SymbolIcon
-        {
-            Symbol = SymbolRegular.PlugDisconnected24
-        } ,
-        TargetPageType = typeof ( StatusPage ) ,
-        ToolTip        = "Double-Click to disconnect desk."
-    } ;
-
-    private static readonly NavigationViewItem CloseWindowViewItem = new ( )
-    {
-        Content = "Hide" ,
-        Icon = new SymbolIcon
-        {
-            Symbol = SymbolRegular.SlideHide24
-        } ,
-        TargetPageType = typeof ( StatusPage ) ,
-        ToolTip        = "Double-Click to close this window."
-    } ;
-
-    private static readonly NavigationViewItem SettingsViewItem = new ( )
-    {
-        Content = "Settings" ,
-        Icon = new SymbolIcon
-        {
-            Symbol = SymbolRegular.Settings24
-        } ,
-        TargetPageType = typeof ( SettingsPage ) ,
-        ToolTip        = "Double-Click to see settings."
-    } ;
-
-    private static readonly NavigationViewItem StopViewItem = new ( )
-    {
-        Content = "Stop" ,
-        Icon = new SymbolIcon
-        {
-            Symbol = SymbolRegular.Stop24
-        } ,
-        TargetPageType = typeof ( StatusPage ) ,
-        ToolTip        = "Double-Click to stop the desk when moving."
-    } ;
-
-    private static readonly NavigationViewItem ExitViewItem = new ( )
-    {
-        Content = "Exit" ,
-        Icon = new SymbolIcon
-        {
-            Symbol = SymbolRegular.CallInbound24
-        } ,
-        TargetPageType = typeof ( StatusPage ) ,
-        ToolTip        = "Double-Click to exit the application."
-    } ;
-
-    private readonly ILogger _logger ;
-
+    private readonly NavigationViewItem ?    _closeWindowViewItem ;
+    private readonly NavigationViewItem ?    _connectViewItem ;
+    private readonly NavigationViewItem ?    _disconnectViewItem ;
+    private readonly NavigationViewItem ?    _exitViewItem ;
+    private readonly ILogger                 _logger ;
+    private readonly IScheduler              _scheduler ;
     private readonly IObserveSettingsChanges _settingsChanges ;
-
-    private readonly IUiDeskManager _uiDeskManager ;
+    private readonly NavigationViewItem ?    _sitViewItem ;
+    private readonly NavigationViewItem ?    _standViewItem ;
+    private readonly NavigationViewItem ?    _stopViewItem ;
+    private readonly IUiDeskManager          _uiDeskManager ;
 
     private IDisposable ? _advancedSubscription ;
 
@@ -132,38 +40,26 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
     private string _applicationTitle = "Idasen Desk" ;
 
     [ ObservableProperty ]
-    private ObservableCollection < object > _footerMenuItems =
-    [
-        ExitViewItem
-    ] ;
+    private ObservableCollection < object > _footerMenuItems = [] ;
 
     private bool _isInitialized ;
 
     private IDisposable ? _lockSubscription ;
 
     [ ObservableProperty ]
-    private ObservableCollection < object > _menuItems =
-    [
-        HomeViewItem ,
-        SettingsViewItem ,
-        ConnectViewItem ,
-        DisconnectViewItem ,
-        StandViewItem ,
-        SitViewItem ,
-        StopViewItem ,
-        CloseWindowViewItem
-    ] ;
+    private ObservableCollection < object > _menuItems = [] ;
 
     [ UsedImplicitly ]
     private IDisposable ? _onErrorChanged ;
 
     [ ObservableProperty ]
-    private ObservableCollection < MenuItem > _trayMenuItems ;
+    private ObservableCollection < MenuItem > _trayMenuItems = [] ;
 
     public IdasenDeskWindowViewModel ( ILogger                 logger ,
                                        IServiceProvider        serviceProvider ,
                                        IUiDeskManager          uiDeskManager ,
-                                       IObserveSettingsChanges settingsChanges )
+                                       IObserveSettingsChanges settingsChanges ,
+                                       IScheduler              scheduler )
     {
         Guard.ArgumentNotNull ( serviceProvider ,
                                 nameof ( serviceProvider ) ) ;
@@ -173,14 +69,96 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
         _logger          = logger ;
         _uiDeskManager   = uiDeskManager ;
         _settingsChanges = settingsChanges ;
+        _scheduler       = scheduler ;
 
-        SitViewItem.MouseDoubleClick         += OnClickSitViewItem ;
-        StandViewItem.MouseDoubleClick       += OnClickStandViewItem ;
-        StopViewItem.MouseDoubleClick        += OnClickStopViewItem ;
-        ConnectViewItem.MouseDoubleClick     += OnClickConnectViewItem ;
-        DisconnectViewItem.MouseDoubleClick  += OnClickDisconnectViewItem ;
-        CloseWindowViewItem.MouseDoubleClick += OnClickCloseViewItem ;
-        ExitViewItem.MouseDoubleClick        += OnClickExit ;
+        var homeViewItem = new NavigationViewItem
+        {
+            Content        = "Home" ,
+            Icon           = new SymbolIcon { Symbol = SymbolRegular.Home20 } ,
+            TargetPageType = typeof ( HomePage )
+        } ;
+
+        _sitViewItem = new NavigationViewItem
+        {
+            Content        = "Sit" ,
+            Icon           = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleDown20 } ,
+            TargetPageType = typeof ( StatusPage ) ,
+            ToolTip        = "Double-Click to move the desk to the sitting position."
+        } ;
+        _sitViewItem.MouseDoubleClick += OnClickSitViewItem ;
+
+        _standViewItem = new NavigationViewItem
+        {
+            Content        = "Stand" ,
+            Icon           = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleUp20 } ,
+            TargetPageType = typeof ( StatusPage ) ,
+            ToolTip        = "Double-Click to move the desk to the standing position."
+        } ;
+        _standViewItem.MouseDoubleClick += OnClickStandViewItem ;
+
+        _connectViewItem = new NavigationViewItem
+        {
+            Content        = "Connect" ,
+            Icon           = new SymbolIcon { Symbol = SymbolRegular.PlugConnected24 } ,
+            TargetPageType = typeof ( StatusPage ) ,
+            ToolTip        = "Double-Click to connect to desk."
+        } ;
+        _connectViewItem.MouseDoubleClick += OnClickConnectViewItem ;
+
+        _disconnectViewItem = new NavigationViewItem
+        {
+            Content        = "Disconnect" ,
+            Icon           = new SymbolIcon { Symbol = SymbolRegular.PlugDisconnected24 } ,
+            TargetPageType = typeof ( StatusPage ) ,
+            ToolTip        = "Double-Click to disconnect desk."
+        } ;
+        _disconnectViewItem.MouseDoubleClick += OnClickDisconnectViewItem ;
+
+        _closeWindowViewItem = new NavigationViewItem
+        {
+            Content        = "Hide" ,
+            Icon           = new SymbolIcon { Symbol = SymbolRegular.SlideHide24 } ,
+            TargetPageType = typeof ( StatusPage ) ,
+            ToolTip        = "Double-Click to close this window."
+        } ;
+        _closeWindowViewItem.MouseDoubleClick += OnClickCloseViewItem ;
+
+        var settingsViewItem = new NavigationViewItem
+        {
+            Content        = "Settings" ,
+            Icon           = new SymbolIcon { Symbol = SymbolRegular.Settings24 } ,
+            TargetPageType = typeof ( SettingsPage ) ,
+            ToolTip        = "Double-Click to see settings."
+        } ;
+
+        _stopViewItem = new NavigationViewItem
+        {
+            Content        = "Stop" ,
+            Icon           = new SymbolIcon { Symbol = SymbolRegular.Stop24 } ,
+            TargetPageType = typeof ( StatusPage ) ,
+            ToolTip        = "Double-Click to stop the desk when moving."
+        } ;
+        _stopViewItem.MouseDoubleClick += OnClickStopViewItem ;
+
+        _exitViewItem = new NavigationViewItem
+        {
+            Content        = "Exit" ,
+            Icon           = new SymbolIcon { Symbol = SymbolRegular.CallInbound24 } ,
+            TargetPageType = typeof ( StatusPage ) ,
+            ToolTip        = "Double-Click to exit the application."
+        } ;
+        _exitViewItem.MouseDoubleClick += OnClickExit ;
+
+        _menuItems.Add ( homeViewItem ) ;
+        _menuItems.Add ( settingsViewItem ) ;
+        _menuItems.Add ( _connectViewItem ) ;
+        _menuItems.Add ( _disconnectViewItem ) ;
+        _menuItems.Add ( _standViewItem ) ;
+        _menuItems.Add ( _sitViewItem ) ;
+        _menuItems.Add ( _stopViewItem ) ;
+        _menuItems.Add ( _closeWindowViewItem ) ;
+
+        _footerMenuItems.Add ( _exitViewItem ) ;
 
         TrayMenuItems =
         [
@@ -214,7 +192,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
     /// </summary>
     public ICommand ConnectCommand =>
         // ReSharper disable once AsyncVoidLambda
-        new DelegateCommand ( async ( ) => await _uiDeskManager.AutoConnectAsync ( ) ,
+        new DelegateCommand ( async _ => await _uiDeskManager.AutoConnectAsync ( ) ,
                               CanExecuteConnect ) ;
 
     /// <summary>
@@ -222,7 +200,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
     /// </summary>
     public ICommand DisconnectCommand =>
         // ReSharper disable once AsyncVoidLambda
-        new DelegateCommand ( async ( ) => await _uiDeskManager.DisconnectAsync ( ) ,
+        new DelegateCommand ( async _ => await _uiDeskManager.DisconnectAsync ( ) ,
                               CanExecuteDisconnect ) ;
 
     /// <summary>
@@ -230,7 +208,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
     /// </summary>
     public ICommand StandingCommand =>
         // ReSharper disable once AsyncVoidLambda
-        new DelegateCommand ( async ( ) => await _uiDeskManager.StandAsync ( ) ,
+        new DelegateCommand ( async _ => await _uiDeskManager.StandAsync ( ) ,
                               CanExecuteStanding ) ;
 
     /// <summary>
@@ -238,7 +216,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
     /// </summary>
     public ICommand SeatingCommand =>
         // ReSharper disable once AsyncVoidLambda
-        new DelegateCommand ( async ( ) => await _uiDeskManager.SitAsync ( ) ,
+        new DelegateCommand ( async _ => await _uiDeskManager.SitAsync ( ) ,
                               CanExecuteSeating ) ;
 
     /// <summary>
@@ -246,7 +224,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
     /// </summary>
     public ICommand StopCommand =>
         // ReSharper disable once AsyncVoidLambda
-        new DelegateCommand ( async ( ) => await _uiDeskManager.StopAsync ( ) ,
+        new DelegateCommand ( async _ => await _uiDeskManager.StopAsync ( ) ,
                               CanExecuteStop ) ;
 
     /// <summary>
@@ -255,47 +233,70 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
     public ICommand ExitApplicationCommand =>
         // ReSharper disable once AsyncVoidLambda
         new DelegateCommand ( DoExitApplication ,
-                              ( ) => true ) ;
+                              _ => true ) ;
 
-    public void Dispose ( )
+    public async ValueTask DisposeAsync ( )
     {
         _logger.Information ( "Disposing..." ) ;
 
-        _advancedSubscription?.Dispose ( ) ;
-        _lockSubscription?.Dispose ( ) ;
+        if ( _sitViewItem != null )
+            _sitViewItem.MouseDoubleClick -= OnClickSitViewItem ;
+        if ( _standViewItem != null )
+            _standViewItem.MouseDoubleClick -= OnClickStandViewItem ;
+        if ( _stopViewItem != null )
+            _stopViewItem.MouseDoubleClick -= OnClickStopViewItem ;
+        if ( _connectViewItem != null )
+            _connectViewItem.MouseDoubleClick -= OnClickConnectViewItem ;
+        if ( _disconnectViewItem != null )
+            _disconnectViewItem.MouseDoubleClick -= OnClickDisconnectViewItem ;
+        if ( _closeWindowViewItem != null )
+            _closeWindowViewItem.MouseDoubleClick -= OnClickCloseViewItem ;
+        if ( _exitViewItem != null )
+            _exitViewItem.MouseDoubleClick -= OnClickExit ;
 
-        _uiDeskManager.DisconnectAsync ( ) ;
-        _uiDeskManager.Dispose ( ) ;
+        await CastAndDispose ( _uiDeskManager ) ;
+        await CastAndDispose ( _advancedSubscription ) ;
+        await CastAndDispose ( _lockSubscription ) ;
+        await CastAndDispose ( _onErrorChanged ) ;
     }
 
-    private bool CanExecuteConnect ( )
+    private async static ValueTask CastAndDispose ( IDisposable ? resource )
+    {
+        if ( resource is IAsyncDisposable resourceAsyncDisposable )
+            await resourceAsyncDisposable.DisposeAsync ( ) ;
+        else
+            resource?.Dispose ( ) ;
+    }
+
+
+    private bool CanExecuteConnect ( object ? _ )
     {
         return _uiDeskManager is { IsInitialize: true , IsConnected: false } ;
     }
 
-    private bool CanExecuteDisconnect ( )
+    private bool CanExecuteDisconnect ( object ? _ )
     {
         return _uiDeskManager is { IsInitialize: true , IsConnected: true } ;
     }
 
-    private bool CanExecuteStanding ( )
+    private bool CanExecuteStanding ( object ? _ )
     {
         return _uiDeskManager is { IsInitialize: true , IsConnected: true } ;
     }
 
-    private bool CanExecuteSeating ( )
+    private bool CanExecuteSeating ( object ? _ )
     {
         return _uiDeskManager is { IsInitialize: true , IsConnected: true } ;
     }
 
-    private bool CanExecuteStop ( )
+    private bool CanExecuteStop ( object ? _ )
     {
         return _uiDeskManager is { IsInitialize: true , IsConnected: true } ;
     }
 
     private void OnClickExit ( object sender , MouseButtonEventArgs e )
     {
-        DoExitApplication ( ) ;
+        DoExitApplication ( e ) ;
     }
 
     private void OnClickCloseViewItem ( object sender , MouseButtonEventArgs e )
@@ -330,17 +331,17 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
                                                    } ) ;
     }
 
-    private static bool CanShowSettings ( )
+    private static bool CanShowSettings ( object ? _ )
     {
         return Application.Current.MainWindow != null && Application.Current.MainWindow.Visibility != Visibility.Visible ;
     }
 
-    private static bool CanHideSettings ( )
+    private static bool CanHideSettings ( object ? _ )
     {
         return Application.Current.MainWindow != null && Application.Current.MainWindow.Visibility != Visibility.Hidden ;
     }
 
-    private void DoShowSettings ( )
+    private void DoShowSettings ( object ? _ )
     {
         if ( Application.Current.MainWindow == null )
             return ;
@@ -350,7 +351,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
         Application.Current.MainWindow.Visibility = Visibility.Visible ;
     }
 
-    private void DoHideSettings ( )
+    private void DoHideSettings ( object ? _ )
     {
         if ( Application.Current.MainWindow == null )
             return ;
@@ -360,7 +361,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
         Application.Current.MainWindow.Visibility = Visibility.Hidden ;
     }
 
-    private void DoExitApplication ( )
+    private void DoExitApplication ( object ? _ )
     {
         if ( ! _uiDeskManager.IsInitialize )
         {
@@ -522,19 +523,24 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
         } ;
 
         _advancedSubscription = _settingsChanges.AdvancedSettingsChanged
-                                                .ObserveOn ( Scheduler.Default )
-                                                .Subscribe ( OnAdvancedSettingsChanged ) ;
+                                                .ObserveOn ( _scheduler )
+                                                 // ReSharper disable once AsyncVoidLambda
+                                                .Subscribe ( async hasChanged => await OnAdvancedSettingsChanged ( hasChanged ) ) ;
+
         _lockSubscription = _settingsChanges.LockSettingsChanged
-                                            .ObserveOn ( Scheduler.Default )
-                                            .Subscribe ( OnLockSettingsChanged ) ;
+                                            .ObserveOn ( _scheduler )
+                                             // ReSharper disable once AsyncVoidLambda
+                                            .Subscribe ( async isLocked => await OnLockSettingsChanged ( isLocked ) ) ;
 
         return this ;
     }
 
-    private async void OnAdvancedSettingsChanged ( bool hasChanged )
+    private async Task OnAdvancedSettingsChanged ( bool hasChanged )
     {
         try
         {
+            _logger.Debug ( $"{nameof ( OnAdvancedSettingsChanged )}: hasChanged={hasChanged}" ) ;
+
             // ReSharper disable once MethodSupportsCancellation
             await Task.Delay ( 3000 )
                       .ConfigureAwait ( false ) ;
@@ -550,10 +556,12 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IDisposable
         }
     }
 
-    private async void OnLockSettingsChanged ( bool isLocked )
+    private async Task OnLockSettingsChanged ( bool isLocked )
     {
         try
         {
+            _logger.Debug ( $"{nameof ( OnLockSettingsChanged )}: hasChanged={isLocked}" ) ;
+
             if ( isLocked )
                 await _uiDeskManager.MoveLockAsync ( ) ;
             else

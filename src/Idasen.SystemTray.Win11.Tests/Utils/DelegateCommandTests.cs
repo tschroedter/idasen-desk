@@ -1,57 +1,57 @@
-using FluentAssertions;
-using Idasen.SystemTray.Win11.Utils;
-using NSubstitute;
+using FluentAssertions ;
+using Idasen.SystemTray.Win11.Utils ;
+using NSubstitute ;
 
-namespace Idasen.SystemTray.Win11.Tests.Utils
+namespace Idasen.SystemTray.Win11.Tests.Utils ;
+
+public class DelegateCommandTests
 {
-    public class DelegateCommandTests
+    private readonly Func < object ? , bool > _canExecuteFunc = Substitute.For < Func < object ? , bool > > ( ) ;
+    private readonly Action < object ? >      _commandAction  = Substitute.For < Action < object ? > > ( ) ;
+
+    [ Fact ]
+    public void Execute_ShouldInvokeCommandAction ( )
     {
-        private readonly Action        _commandAction  = Substitute.For<Action>() ;
-        private readonly Func < bool > _canExecuteFunc = Substitute.For<Func<bool>>() ;
+        // Arrange  
+        _commandAction.ClearReceivedCalls ( ) ;
+        _canExecuteFunc.Invoke ( null ).Returns ( true ) ;
 
-        [Fact]
-        public void Execute_ShouldInvokeCommandAction()
-        {
-            // Arrange  
-            _commandAction.ClearReceivedCalls (  );
-            _canExecuteFunc.Invoke().Returns(true);
+        // Act  
+        CreateSut ( ).Execute ( null ) ;
 
-            // Act  
-            CreateSut().Execute(null);
+        // Assert  
+        _commandAction.Received ( 1 ).Invoke ( null ) ;
+    }
 
-            // Assert  
-            _commandAction.Received(1).Invoke();
-        }
+    [ Fact ]
+    public void CanExecute_ShouldReturnTrue_WhenCanExecuteFuncReturnsTrue ( )
+    {
+        // Arrange  
+        _canExecuteFunc.Invoke ( null ).Returns ( true ) ;
 
-        [Fact]
-        public void CanExecute_ShouldReturnTrue_WhenCanExecuteFuncReturnsTrue()
-        {
-            // Arrange  
-            _canExecuteFunc.Invoke().Returns(true);
+        // Act  
+        var result = CreateSut ( ).CanExecute ( null ) ;
 
-            // Act  
-            var result = CreateSut().CanExecute(null);
+        // Assert  
+        result.Should ( ).BeTrue ( ) ;
+    }
 
-            // Assert  
-            result.Should().BeTrue();
-        }
+    [ Fact ]
+    public void CanExecute_ShouldReturnFalse_WhenCanExecuteFuncReturnsFalse ( )
+    {
+        // Arrange  
+        _canExecuteFunc.Invoke ( null ).Returns ( false ) ;
 
-        [Fact]
-        public void CanExecute_ShouldReturnFalse_WhenCanExecuteFuncReturnsFalse()
-        {
-            // Arrange  
-            _canExecuteFunc.Invoke().Returns(false);
+        // Act  
+        var result = CreateSut ( ).CanExecute ( null ) ;
 
-            // Act  
-            var result = CreateSut().CanExecute(null);
+        // Assert  
+        result.Should ( ).BeFalse ( ) ;
+    }
 
-            // Assert  
-            result.Should().BeFalse();
-        }
-
-        private DelegateCommand CreateSut ( )
-        {
-            return new DelegateCommand(_commandAction, _canExecuteFunc) ;
-        }
+    private DelegateCommand CreateSut ( )
+    {
+        return new DelegateCommand ( _commandAction ,
+                                     _canExecuteFunc ) ;
     }
 }
