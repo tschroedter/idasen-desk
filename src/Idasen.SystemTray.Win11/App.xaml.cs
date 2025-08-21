@@ -190,6 +190,8 @@ public partial class App
 
             var versionProvider = GetVersionProvider();
 
+            CurrentWindow.StateChanged += OnStateChanged_HideOnMinimize;
+
             _logger.Information($"##### Idasen.SystemTray {versionProvider.GetVersion()}");
         }
         catch ( Exception ex )
@@ -222,6 +224,8 @@ public partial class App
     /// </summary>
     private async void OnExit ( object sender , ExitEventArgs e )
     {
+        CurrentWindow.StateChanged -= OnStateChanged_HideOnMinimize;
+
         await Host.StopAsync ( ) ;
 
         Host.Dispose ( ) ;
@@ -269,5 +273,13 @@ public partial class App
                 yield return other ;
             }
         }
+    }
+    private void OnStateChanged_HideOnMinimize(object? sender, EventArgs e)
+    {
+        if (CurrentWindow.WindowState != WindowState.Minimized )
+            return ;
+
+        CurrentWindow.Visibility = Visibility.Hidden;
+        CurrentWindow.WindowState = WindowState.Normal;
     }
 }
