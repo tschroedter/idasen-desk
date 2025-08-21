@@ -111,7 +111,7 @@ public partial class App
                                                                            services.AddTransient < ISettingsSynchronizer , SettingsSynchronizer > ( ) ;
                                                                            services.AddSingleton <IApplicationThemeManager, MyApplicationThemeManager> ( );
                                                                            // Replace the incorrect registration line with the following:
-                                                                           services.AddSingleton<Func<TimerCallback, object?, TimeSpan, TimeSpan, ITimer>>( provider =>
+                                                                           services.AddSingleton<Func<TimerCallback, object?, TimeSpan, TimeSpan, ITimer>>( _ =>
                                                                                (callback, state, dueTime, period) => new Timer(callback, state, dueTime, period) );
                                                                        }).Build ( ) ;
 
@@ -231,6 +231,15 @@ public partial class App
         Host.Dispose ( ) ;
     }
 
+    private void OnStateChanged_HideOnMinimize(object? sender, EventArgs e)
+    {
+        if (CurrentWindow.WindowState != WindowState.Minimized)
+            return;
+
+        CurrentWindow.Visibility  = Visibility.Hidden;
+        CurrentWindow.WindowState = WindowState.Normal;
+    }
+
     /// <summary>
     ///     Occurs when an exception is thrown by an application but not handled.
     /// </summary>
@@ -273,13 +282,5 @@ public partial class App
                 yield return other ;
             }
         }
-    }
-    private void OnStateChanged_HideOnMinimize(object? sender, EventArgs e)
-    {
-        if (CurrentWindow.WindowState != WindowState.Minimized )
-            return ;
-
-        CurrentWindow.Visibility = Visibility.Hidden;
-        CurrentWindow.WindowState = WindowState.Normal;
     }
 }
