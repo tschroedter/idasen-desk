@@ -62,6 +62,12 @@ public partial class SettingsViewModel ( ILogger                 logger ,
     [ ObservableProperty ]
     private uint _standing = 100 ;
 
+    [ObservableProperty]
+    private uint _treadmill = 100;
+
+    [ObservableProperty]
+    private uint _eating = 90;
+
     public void Dispose ( )
     {
         if ( _settingsSaved is null )

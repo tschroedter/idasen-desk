@@ -25,6 +25,8 @@ public class SettingsSynchronizer ( ILogger                        logger ,
         model.MinHeight           = current.HeightSettings.DeskMinHeightInCm ;
         model.MaxHeight           = current.HeightSettings.DeskMaxHeightInCm ;
         model.Seating             = current.HeightSettings.SeatingHeightInCm ;
+        model.Treadmill           = current.HeightSettings.TreadmillHeightInCm ;
+        model.Eating              = current.HeightSettings.EatingHeightInCm ;
         model.LastKnownDeskHeight = current.HeightSettings.LastKnownDeskHeight ;
         model.DeskName            = nameConverter.EmptyIfDefault ( current.DeviceSettings.DeviceName ) ;
         model.DeskAddress         = addressConverter.EmptyIfDefault ( current.DeviceSettings.DeviceAddress ) ;
@@ -92,6 +94,10 @@ public class SettingsSynchronizer ( ILogger                        logger ,
                                                                                      Constants.DefaultHeightStandingInCm ) ;
         settings.HeightSettings.SeatingHeightInCm = toUIntConverter.ConvertToUInt ( model.Seating ,
                                                                                     Constants.DefaultHeightSeatingInCm ) ;
+        settings.HeightSettings.TreadmillHeightInCm = toUIntConverter.ConvertToUInt ( model.Treadmill ,
+                                                                                      Constants.DefaultHeightStandingInCm ) ;
+        settings.HeightSettings.EatingHeightInCm    = toUIntConverter.ConvertToUInt ( model.Eating ,
+                                                                                     Constants.DefaultHeightSeatingInCm ) ;
         settings.HeightSettings.LastKnownDeskHeight  = model.LastKnownDeskHeight ;
 
         settings.DeviceSettings.DeviceName           = newDeviceName ;
