@@ -47,6 +47,8 @@ public class SettingsSynchronizerTests
         _heightSettings.DeskMinHeightInCm    = 60 ;
         _heightSettings.DeskMaxHeightInCm    = 120 ;
         _heightSettings.SeatingHeightInCm    = 70 ;
+        _heightSettings.TreadmillHeightInCm  = 105 ; // new
+        _heightSettings.EatingHeightInCm     = 72 ;  // new
         _heightSettings.LastKnownDeskHeight  = 80 ;
         _deviceSettings.DeviceName           = "Desk" ;
         _deviceSettings.DeviceAddress        = 12345 ;
@@ -65,6 +67,8 @@ public class SettingsSynchronizerTests
         _model.MinHeight.Should ( ).Be ( 60 ) ;
         _model.MaxHeight.Should ( ).Be ( 120 ) ;
         _model.Seating.Should ( ).Be ( 70 ) ;
+        _model.Treadmill.Should ( ).Be ( 105 ) ;
+        _model.Eating.Should ( ).Be ( 72 ) ;
         _model.LastKnownDeskHeight.Should ( ).Be ( 80 ) ;
         _model.DeskName.Should ( ).Be ( "Desk" ) ;
         _model.DeskAddress.Should ( ).Be ( "12345" ) ;
@@ -141,6 +145,8 @@ public class SettingsSynchronizerTests
         var sut = CreateSut ( ) ;
         _model.Standing            = 110 ;
         _model.Seating             = 75 ;
+        _model.Treadmill           = 112 ; // new
+        _model.Eating              = 74 ;  // new
         _model.LastKnownDeskHeight = 85 ;
         _model.DeskName            = "DeskX" ;
         _model.DeskAddress         = "99999" ;
@@ -151,6 +157,10 @@ public class SettingsSynchronizerTests
                                          Arg.Any < uint > ( ) ).Returns ( 110u ) ;
         _toUIntConverter.ConvertToUInt ( 75 ,
                                          Arg.Any < uint > ( ) ).Returns ( 75u ) ;
+        _toUIntConverter.ConvertToUInt ( 112 ,
+                                         Arg.Any < uint > ( ) ).Returns ( 112u ) ;
+        _toUIntConverter.ConvertToUInt ( 74 ,
+                                         Arg.Any < uint > ( ) ).Returns ( 74u ) ;
         _nameConverter.DefaultIfEmpty ( "DeskX" ).Returns ( "DeskX" ) ;
         _addressConverter.DefaultIfEmpty ( "99999" ).Returns ( 99999UL ) ;
 
@@ -160,6 +170,8 @@ public class SettingsSynchronizerTests
         // Assert
         _heightSettings.StandingHeightInCm.Should ( ).Be ( 110 ) ;
         _heightSettings.SeatingHeightInCm.Should ( ).Be ( 75 ) ;
+        _heightSettings.TreadmillHeightInCm.Should ( ).Be ( 112 ) ;
+        _heightSettings.EatingHeightInCm.Should ( ).Be ( 74 ) ;
         _heightSettings.LastKnownDeskHeight.Should ( ).Be ( 85 ) ;
         _deviceSettings.DeviceName.Should ( ).Be ( "DeskX" ) ;
         _deviceSettings.DeviceAddress.Should ( ).Be ( 99999UL ) ;
