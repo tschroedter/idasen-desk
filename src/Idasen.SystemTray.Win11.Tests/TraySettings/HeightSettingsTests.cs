@@ -27,6 +27,26 @@ public class HeightSettingsTests
     }
 
     [Fact]
+    public void TreadmillHeightInCm_ShouldHaveDefaultValue()
+    {
+        var settings = new HeightSettings();
+
+        settings.TreadmillHeightInCm
+                .Should()
+                .Be(Constants.DefaultHeightStandingInCm);
+    }
+
+    [Fact]
+    public void EatingHeightInCm_ShouldHaveDefaultValue()
+    {
+        var settings = new HeightSettings();
+
+        settings.EatingHeightInCm
+                .Should()
+                .Be(Constants.DefaultHeightSeatingInCm);
+    }
+
+    [Fact]
     public void DeskMinHeightInCm_ShouldHaveDefaultValue()
     {
         var settings = new HeightSettings();
