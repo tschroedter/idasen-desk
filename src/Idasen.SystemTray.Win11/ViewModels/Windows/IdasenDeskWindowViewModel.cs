@@ -497,7 +497,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
         var uiMessageBox = new MessageBox
         {
-            Title             = "Treadmill ?" ,
+            Title             = "Treadmill" ,
             Content           = "Do you want to move the desk into the treadmill position?" ,
             PrimaryButtonText = "Move"
         } ;
