@@ -246,19 +246,19 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
                               CanExecuteSeating ) ;
 
     /// <summary>
-    ///     Moves the desk to the treadmill height (currently uses StandAsync until specific implementation exists).
+    ///     Moves the desk to the treadmill height.
     /// </summary>
     public ICommand TreadmillCommand =>
         // ReSharper disable once AsyncVoidLambda
-        new DelegateCommand ( async _ => await _uiDeskManager.StandAsync ( ) ,
+        new DelegateCommand ( async _ => await _uiDeskManager.TreadmillAsync ( ) ,
                               CanExecuteStanding ) ;
 
     /// <summary>
-    ///     Moves the desk to the eating height (currently uses SitAsync until specific implementation exists).
+    ///     Moves the desk to the eating height.
     /// </summary>
     public ICommand EatingCommand =>
         // ReSharper disable once AsyncVoidLambda
-        new DelegateCommand ( async _ => await _uiDeskManager.SitAsync ( ) ,
+        new DelegateCommand ( async _ => await _uiDeskManager.EatingAsync ( ) ,
                               CanExecuteSeating ) ;
 
     /// <summary>
@@ -471,7 +471,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         var uiMessageBox = new MessageBox
         {
             Title             = "Stand ?" ,
-            Content           = "Do you want to move the desk into the sitting position?" ,
+            Content           = "Do you want to move the desk into the standing position?" ,
             PrimaryButtonText = "Stand"
         } ;
 
@@ -511,8 +511,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
                                                            return ;
                                                        }
 
-                                                       // Placeholder: uses standing height until dedicated implementation exists.
-                                                       await _uiDeskManager.StandAsync ( ) ;
+                                                       await _uiDeskManager.TreadmillAsync( ) ;
                                                    } ) ;
     }
 
@@ -539,8 +538,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
                                                            return ;
                                                        }
 
-                                                       // Placeholder: uses seating height until dedicated implementation exists.
-                                                       await _uiDeskManager.SitAsync ( ) ;
+                                                       await _uiDeskManager.EatingAsync ( ) ;
                                                    } ) ;
     }
 

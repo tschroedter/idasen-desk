@@ -19,4 +19,6 @@ public interface IUiDeskManager : IDisposable
     Task                          StopAsync ( ) ;
     Task                          MoveLockAsync ( ) ;
     Task                          MoveUnlockAsync ( ) ;
+    Task                          TreadmillAsync ( ) ;
+    Task                          EatingAsync ( ) ;
 }

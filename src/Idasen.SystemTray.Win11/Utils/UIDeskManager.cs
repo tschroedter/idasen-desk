@@ -282,6 +282,40 @@ public class UiDeskManager : IUiDeskManager
         }
     }
 
+    public async Task TreadmillAsync ( )
+    {
+        _logger.Debug ( "Executing {MethodName}..." ,
+                        nameof ( TreadmillAsync ) ) ;
+
+        if ( ! IsDeskConnected ( ) )
+            return ;
+
+        await _manager.LoadAsync ( CancellationToken.None ).ConfigureAwait ( false ) ;
+
+        var treadmill = HeightToDeskHeight ( _manager.CurrentSettings
+                                                     .HeightSettings
+                                                     .TreadmillHeightInCm ) ;
+
+        _desk?.MoveTo ( treadmill ) ;
+    }
+
+    public async Task EatingAsync ( )
+    {
+        _logger.Debug ( "Executing {MethodName}..." ,
+                        nameof ( EatingAsync ) ) ;
+
+        if ( ! IsDeskConnected ( ) )
+            return ;
+
+        await _manager.LoadAsync ( CancellationToken.None ).ConfigureAwait ( false ) ;
+
+        var eating = HeightToDeskHeight ( _manager.CurrentSettings
+                                                  .HeightSettings
+                                                  .EatingHeightInCm ) ;
+
+        _desk?.MoveTo ( eating ) ;
+    }
+
     private static uint HeightToDeskHeight ( uint heightInCm )
     {
         return heightInCm * DeskHeightFactor ;
