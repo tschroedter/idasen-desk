@@ -299,7 +299,7 @@ public class UiDeskManager : IUiDeskManager
 
         var eating = HeightToDeskHeight ( _manager.CurrentSettings
                                                   .HeightSettings
-                                                  .EatingHeightInCm ) ;
+                                                  .Custom2HeightInCm ) ;
 
         _desk?.MoveTo ( eating ) ;
     }

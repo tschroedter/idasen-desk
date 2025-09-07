@@ -71,7 +71,7 @@ public class UiDeskManagerTests
         // Arrange
         var sut = CreateSut(out var desk, out var settingsManager);
         var settings = settingsManager.CurrentSettings as Settings;
-        settings!.HeightSettings.EatingHeightInCm = 66;
+        settings!.HeightSettings.Custom2HeightInCm = 66;
         settingsManager.LoadAsync(Arg.Any<CancellationToken>()).Returns(Task.CompletedTask);
 
         // Act

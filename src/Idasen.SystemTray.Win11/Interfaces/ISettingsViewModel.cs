@@ -7,7 +7,7 @@ public interface ISettingsViewModel : IDisposable
     uint MaxHeight { get; set; }
     uint Seating { get; set; }
     uint Custom1 { get; set; }
-    uint Eating { get; set; }
+    uint Custom2 { get; set; }
     uint LastKnownDeskHeight { get; set; }
     string DeskName { get; set; }
     string DeskAddress { get; set; }

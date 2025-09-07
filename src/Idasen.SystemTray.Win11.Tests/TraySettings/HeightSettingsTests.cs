@@ -37,11 +37,11 @@ public class HeightSettingsTests
     }
 
     [Fact]
-    public void EatingHeightInCm_ShouldHaveDefaultValue()
+    public void Custom2HeightInCm_ShouldHaveDefaultValue()
     {
         var settings = new HeightSettings();
 
-        settings.EatingHeightInCm
+        settings.Custom2HeightInCm
                 .Should()
                 .Be(Constants.DefaultHeightSeatingInCm);
     }

@@ -20,9 +20,9 @@ public class HeightSettings
     public uint Custom1HeightInCm { get ; set ; } = Constants.DefaultHeightStandingInCm ;
 
     /// <summary>
-    ///     The eating height of the desk in centimeters.
+    ///     The custom position 2 height of the desk in centimeters.
     /// </summary>
-    public uint EatingHeightInCm { get ; set ; } = Constants.DefaultHeightSeatingInCm ;
+    public uint Custom2HeightInCm { get ; set ; } = Constants.DefaultHeightSeatingInCm ;
 
     /// <summary>
     ///     The minimum height the desk can move to.

@@ -66,7 +66,7 @@ public partial class SettingsViewModel ( ILogger                 logger ,
     private uint _custom1 = 100;
 
     [ObservableProperty]
-    private uint _eating = 90;
+    private uint _custom2 = 90;
 
     public void Dispose ( )
     {

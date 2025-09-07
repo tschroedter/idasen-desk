@@ -26,7 +26,7 @@ public class SettingsSynchronizer ( ILogger                        logger ,
         model.MaxHeight           = current.HeightSettings.DeskMaxHeightInCm ;
         model.Seating             = current.HeightSettings.SeatingHeightInCm ;
         model.Custom1             = current.HeightSettings.Custom1HeightInCm ;
-        model.Eating              = current.HeightSettings.EatingHeightInCm ;
+        model.Custom2             = current.HeightSettings.Custom2HeightInCm ;
         model.LastKnownDeskHeight = current.HeightSettings.LastKnownDeskHeight ;
         model.DeskName            = nameConverter.EmptyIfDefault ( current.DeviceSettings.DeviceName ) ;
         model.DeskAddress         = addressConverter.EmptyIfDefault ( current.DeviceSettings.DeviceAddress ) ;
@@ -95,9 +95,9 @@ public class SettingsSynchronizer ( ILogger                        logger ,
         settings.HeightSettings.SeatingHeightInCm = toUIntConverter.ConvertToUInt ( model.Seating ,
                                                                                     Constants.DefaultHeightSeatingInCm ) ;
         settings.HeightSettings.Custom1HeightInCm = toUIntConverter.ConvertToUInt ( model.Custom1 ,
-                                                                                      Constants.DefaultHeightStandingInCm ) ;
-        settings.HeightSettings.EatingHeightInCm    = toUIntConverter.ConvertToUInt ( model.Eating ,
-                                                                                     Constants.DefaultHeightSeatingInCm ) ;
+                                                                                    Constants.DefaultHeightStandingInCm ) ;
+        settings.HeightSettings.Custom2HeightInCm    = toUIntConverter.ConvertToUInt ( model.Custom2 ,
+                                                                                       Constants.DefaultHeightSeatingInCm ) ;
         settings.HeightSettings.LastKnownDeskHeight  = model.LastKnownDeskHeight ;
 
         settings.DeviceSettings.DeviceName           = newDeviceName ;
