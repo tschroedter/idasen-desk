@@ -28,6 +28,12 @@ public class UiDeskManager : IUiDeskManager
     private static readonly KeyGesture SittingGesture = new ( Key.Down ,
                                                               ModifierKeys.Control | ModifierKeys.Alt | ModifierKeys.Shift ) ;
 
+    private static readonly KeyGesture Custom1Gesture = new( Key.Left,
+                                                             ModifierKeys.Control | ModifierKeys.Alt | ModifierKeys.Shift);
+
+    private static readonly KeyGesture Custom2Gesture = new ( Key.Right ,
+                                                              ModifierKeys.Control | ModifierKeys.Alt | ModifierKeys.Shift ) ;
+
     private readonly IErrorManager             _errorManager ;
     private readonly ITaskbarIconProvider      _iconProvider ;
     private readonly ILogger                   _logger ;
@@ -189,6 +195,12 @@ public class UiDeskManager : IUiDeskManager
         HotkeyManager.Current.AddOrReplace ( "Seating" ,
                                              SittingGesture ,
                                              OnGlobalHotKeySeating ) ;
+        HotkeyManager.Current.AddOrReplace ( "Custom 1" ,
+                                             Custom1Gesture ,
+                                             OnGlobalHotKeyCustom1 ) ;
+        HotkeyManager.Current.AddOrReplace ( "Custom 2" ,
+                                             Custom2Gesture ,
+                                             OnGlobalHotKeyCustom2 ) ;
 
         _notifications.Initialize ( notifyIcon ,
                                     CancellationToken.None ) ;
@@ -281,8 +293,8 @@ public class UiDeskManager : IUiDeskManager
         await _manager.LoadAsync ( CancellationToken.None ).ConfigureAwait ( false ) ;
 
         var custom1 = HeightToDeskHeight ( _manager.CurrentSettings
-                                                    .HeightSettings
-                                                    .Custom1HeightInCm ) ;
+                                                   .HeightSettings
+                                                   .Custom1HeightInCm ) ;
 
         _desk?.MoveTo ( custom1 ) ;
     }
@@ -373,6 +385,34 @@ public class UiDeskManager : IUiDeskManager
         {
             _logger.Error ( exception ,
                             "Failed to handle global hot key command for 'Sit'." ) ;
+        }
+    }
+
+    private void OnGlobalHotKeyCustom1(object? sender, HotkeyEventArgs e)
+    {
+        try
+        {
+            _logger.Information("Received global hot key for 'Custom 1' command...");
+            _ = DoCustom1Async();
+        }
+        catch (Exception exception)
+        {
+            _logger.Error(exception,
+                          "Failed to handle global hot key command for 'Custom 1'.");
+        }
+    }
+
+    private void OnGlobalHotKeyCustom2(object? sender, HotkeyEventArgs e)
+    {
+        try
+        {
+            _logger.Information("Received global hot key for 'Custom 2' command...");
+            _ = DoCustom2Async();
+        }
+        catch (Exception exception)
+        {
+            _logger.Error(exception,
+                          "Failed to handle global hot key command for 'Custom 2'.");
         }
     }
 
@@ -586,5 +626,39 @@ public class UiDeskManager : IUiDeskManager
         _notifications.Show ( title ,
                               message ,
                               severity ) ;
+    }
+
+    private async Task DoCustom1Async()
+    {
+        try
+        {
+            _logger.Debug("{MethodName}",
+                            nameof(DoCustom1Async));
+            await Custom1Async().ConfigureAwait(false);
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e,
+                            "Failed to call {MethodName}",
+                            nameof(DoCustom1Async));
+            _errorManager.PublishForMessage($"Failed to call {nameof(DoCustom1Async)}");
+        }
+    }
+
+    private async Task DoCustom2Async()
+    {
+        try
+        {
+            _logger.Debug("{MethodName}",
+                            nameof(DoCustom2Async));
+            await Custom2Async().ConfigureAwait(false);
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e,
+                            "Failed to call {MethodName}",
+                            nameof(DoCustom2Async));
+            _errorManager.PublishForMessage($"Failed to call {nameof(DoCustom2Async)}");
+        }
     }
 }
