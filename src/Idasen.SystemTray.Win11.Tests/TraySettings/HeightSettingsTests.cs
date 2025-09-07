@@ -27,11 +27,11 @@ public class HeightSettingsTests
     }
 
     [Fact]
-    public void TreadmillHeightInCm_ShouldHaveDefaultValue()
+    public void Custom1HeightInCm_ShouldHaveDefaultValue()
     {
         var settings = new HeightSettings();
 
-        settings.TreadmillHeightInCm
+        settings.Custom1HeightInCm
                 .Should()
                 .Be(Constants.DefaultHeightStandingInCm);
     }

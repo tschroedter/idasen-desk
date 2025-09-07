@@ -49,16 +49,16 @@ public class UiDeskManagerTests
     }
 
     [Fact]
-    public async Task TreadmillAsync_MovesDeskToConfiguredTreadmillHeight()
+    public async Task Custom1Async_MovesDeskToConfiguredCustom1Height() 
     {
         // Arrange
         var sut = CreateSut(out var desk, out var settingsManager);
         var settings = settingsManager.CurrentSettings as Settings;
-        settings!.HeightSettings.TreadmillHeightInCm = 111;
+        settings!.HeightSettings.Custom1HeightInCm = 111;
         settingsManager.LoadAsync(Arg.Any<CancellationToken>()).Returns(Task.CompletedTask);
 
         // Act
-        await sut.TreadmillAsync();
+        await sut.Custom1Async();
 
         // Assert
         await settingsManager.Received(1).LoadAsync(Arg.Any<CancellationToken>());

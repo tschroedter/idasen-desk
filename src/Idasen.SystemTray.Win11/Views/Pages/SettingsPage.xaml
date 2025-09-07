@@ -248,19 +248,19 @@
                     <!-- Row 4 -->
                     <Label Grid.Row="4"
                            Grid.Column="0"
-                           Content="Treadmill"
+                           Content="Custom1"
                            Padding="5,0,5,0" />
                     <Slider Grid.Row="4"
                             Grid.Column="1"
-                            Name="Treadmill"
+                            Name="Custom1"
                             Minimum="65"
                             Maximum="127"
-                            Value="{Binding ViewModel.Treadmill}"
+                            Value="{Binding ViewModel.Custom1}"
                             TickPlacement="BottomRight" />
                     <TextBlock Grid.Row="4"
                                Grid.Column="2"
                                HorizontalAlignment="Right"
-                               Text="{Binding ElementName=Treadmill, Path=Value, StringFormat='0',UpdateSourceTrigger=LostFocus}"
+                               Text="{Binding ElementName=Custom1, Path=Value, StringFormat='0',UpdateSourceTrigger=LostFocus}"
                                Padding="5,0,5,0" />
                     <Label Grid.Row="4"
                            Grid.Column="3"

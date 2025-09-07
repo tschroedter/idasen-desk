@@ -29,7 +29,7 @@
             <Label Margin="10,0,0,0">- Stand</Label>
             <Label Margin="10,0,0,0">- Sit</Label>
             <Label Margin="10,0,0,0">- Stop</Label>
-            <Label Margin="10,0,0,0">- Treadmill</Label>
+            <Label Margin="10,0,0,0">- Custom 1</Label>
             <Label Margin="10,0,0,0">- Eating</Label>
             <Label Margin="10,0,0,0">- Hide</Label>
             <Label Margin="10,0,0,0">- Exit</Label>

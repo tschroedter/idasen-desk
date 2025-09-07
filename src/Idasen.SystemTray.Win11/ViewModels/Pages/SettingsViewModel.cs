@@ -63,7 +63,7 @@ public partial class SettingsViewModel ( ILogger                 logger ,
     private uint _standing = 100 ;
 
     [ObservableProperty]
-    private uint _treadmill = 100;
+    private uint _custom1 = 100;
 
     [ObservableProperty]
     private uint _eating = 90;

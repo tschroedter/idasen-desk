@@ -4,7 +4,6 @@ using System.Reactive.Concurrency ;
 using System.Reactive.Linq ;
 using System.Windows.Controls ;
 using System.Windows.Input ;
-using System.Windows.Media ;
 using System.Windows.Threading ;
 using Idasen.BluetoothLE.Core ;
 using Idasen.SystemTray.Win11.Interfaces ;
@@ -33,7 +32,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
     private readonly NavigationViewItem ?    _sitViewItem ;
     private readonly NavigationViewItem ?    _standViewItem ;
     private readonly NavigationViewItem ?    _stopViewItem ;
-    private readonly NavigationViewItem ?    _treadmillViewItem ;
+    private readonly NavigationViewItem ?    _custom1ViewItem ;
     private readonly NavigationViewItem ?    _eatingViewItem ;
     private readonly IUiDeskManager          _uiDeskManager ;
 
@@ -99,14 +98,14 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         } ;
         _standViewItem.MouseDoubleClick += OnClickStandViewItem ;
 
-        _treadmillViewItem = new NavigationViewItem
+        _custom1ViewItem = new NavigationViewItem
         {
-            Content        = "Treadmill" ,
+            Content        = "Custom1" ,
             Icon           = new SymbolIcon { Symbol = SymbolRegular.ArrowSync24 } ,
             TargetPageType = typeof ( StatusPage ) ,
-            ToolTip        = "Double-Click to move the desk to the treadmill position."
+            ToolTip        = "Double-Click to move the desk to the Custom1 position."
         } ;
-        _treadmillViewItem.MouseDoubleClick += OnClickTreadmillViewItem ;
+        _custom1ViewItem.MouseDoubleClick += OnClickCustom1ViewItem ;
 
         _eatingViewItem = new NavigationViewItem
         {
@@ -176,7 +175,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         _menuItems.Add ( _disconnectViewItem ) ;
         _menuItems.Add ( _standViewItem ) ;
         _menuItems.Add ( _sitViewItem ) ;
-        _menuItems.Add ( _treadmillViewItem ) ;
+        _menuItems.Add ( _custom1ViewItem ) ;
         _menuItems.Add ( _eatingViewItem ) ;
         _menuItems.Add ( _stopViewItem ) ;
         _menuItems.Add ( _closeWindowViewItem ) ;
@@ -191,7 +190,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
             new MenuItem { Header      = "Disconnect" , Command    = DisconnectCommand } ,
             new MenuItem { Header      = "Stand" , Command     = StandingCommand } ,
             new MenuItem { Header      = "Sit" , Command       = SeatingCommand } ,
-            new MenuItem { Header      = "Treadmill" , Command = TreadmillCommand } ,
+            new MenuItem { Header      = "Custom1" , Command = Custom1Command } ,
             new MenuItem { Header      = "Eating" , Command    = EatingCommand } ,
             new MenuItem { Header      = "Stop" , Command      = StopCommand } ,
             new MenuItem { Header      = "Exit" , Command      = ExitApplicationCommand }
@@ -245,11 +244,11 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
                               CanExecuteSeating ) ;
 
     /// <summary>
-    ///     Moves the desk to the treadmill height (currently uses StandAsync until specific implementation exists).
+    ///     Moves the desk to the custom 1 height.
     /// </summary>
-    public ICommand TreadmillCommand =>
+    public ICommand Custom1Command =>
         // ReSharper disable once AsyncVoidLambda
-        new DelegateCommand ( async _ => await _uiDeskManager.StandAsync ( ) ,
+        new DelegateCommand ( async _ => await _uiDeskManager.Custom1Async ( ) ,
                               CanExecuteStanding ) ;
 
     /// <summary>
@@ -284,8 +283,8 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
             _sitViewItem.MouseDoubleClick -= OnClickSitViewItem ;
         if ( _standViewItem != null )
             _standViewItem.MouseDoubleClick -= OnClickStandViewItem ;
-        if ( _treadmillViewItem != null )
-            _treadmillViewItem.MouseDoubleClick -= OnClickTreadmillViewItem ;
+        if ( _custom1ViewItem != null )
+            _custom1ViewItem.MouseDoubleClick -= OnClickCustom1ViewItem ;
         if ( _eatingViewItem != null )
             _eatingViewItem.MouseDoubleClick -= OnClickEatingViewItem ;
         if ( _stopViewItem != null )
@@ -487,7 +486,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
                                                    } ) ;
     }
 
-    private void OnClickTreadmillViewItem ( object sender , RoutedEventArgs e )
+    private void OnClickCustom1ViewItem ( object sender , RoutedEventArgs e )
     {
         if ( ! _uiDeskManager.IsInitialize )
         {
@@ -496,8 +495,8 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
         var uiMessageBox = new MessageBox
         {
-            Title             = "Treadmill" ,
-            Content           = "Do you want to move the desk into the treadmill position?" ,
+            Title             = "Custom1" ,
+            Content           = "Do you want to move the desk into the Custom1 position?" ,
             PrimaryButtonText = "Move"
         } ;
 
@@ -510,8 +509,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
                                                            return ;
                                                        }
 
-                                                       // Placeholder: uses standing height until dedicated implementation exists.
-                                                       await _uiDeskManager.TreadmillAsync( ) ;
+                                                       await _uiDeskManager.Custom1Async( ) ;
                                                    } ) ;
     }
 
@@ -538,7 +536,6 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
                                                            return ;
                                                        }
 
-                                                       // Placeholder: uses seating height until dedicated implementation exists.
                                                        await _uiDeskManager.EatingAsync ( ) ;
                                                    } ) ;
     }
@@ -625,12 +622,10 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
         _advancedSubscription = _settingsChanges.AdvancedSettingsChanged
                                                 .ObserveOn ( _scheduler )
-                                                 // ReSharper disable once AsyncVoidLambda
                                                 .Subscribe ( async hasChanged => await OnAdvancedSettingsChanged ( hasChanged ) ) ;
 
         _lockSubscription = _settingsChanges.LockSettingsChanged
                                             .ObserveOn ( _scheduler )
-                                             // ReSharper disable once AsyncVoidLambda
                                             .Subscribe ( async isLocked => await OnLockSettingsChanged ( isLocked ) ) ;
 
         return this ;

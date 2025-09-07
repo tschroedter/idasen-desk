@@ -17,18 +17,6 @@ using MessageBox = System.Windows.MessageBox ;
 
 namespace Idasen.SystemTray.Win11.Utils ;
 
-// Pseudocode plan for improvements:
-// 1. Remove redundant null checks for fields that are never null after construction (e.g., _manager).
-// 2. Use ConfigureAwait(false) for all awaits to avoid deadlocks in UI context.
-// 3. Use more meaningful method names for async void lambdas (replace Task.Run with explicit async Task methods where possible).
-// 4. Use structured logging for all log messages instead of string interpolation.
-// 5. Use pattern matching for null checks where possible for clarity.
-// 6. Remove unnecessary Task.CompletedTask returns in synchronous methods.
-// 7. Use nameof for event and method names in logging for consistency.
-// 8. Add cancellation support to StandAsync and SitAsync if possible (optional).
-// 9. Use explicit access modifiers for all members (private/protected/public).
-// 10. Minor: fix typo in log message ("UI Desk ManagerInitializing...") to "UI Desk Manager Initializing..."
-
 [ ExcludeFromCodeCoverage ]
 public class UiDeskManager : IUiDeskManager
 {
@@ -205,7 +193,7 @@ public class UiDeskManager : IUiDeskManager
         _notifications.Initialize ( notifyIcon ,
                                     CancellationToken.None ) ;
 
-        _ = AutoConnectAsync ( ) ; // fire and forget, no need for Task.Run
+        _ = AutoConnectAsync ( ) ;
 
         return this ;
     }
@@ -282,21 +270,21 @@ public class UiDeskManager : IUiDeskManager
         }
     }
 
-    public async Task TreadmillAsync ( )
+    public async Task Custom1Async ( )
     {
         _logger.Debug ( "Executing {MethodName}..." ,
-                        nameof ( TreadmillAsync ) ) ;
+                        nameof ( Custom1Async ) ) ;
 
         if ( ! IsDeskConnected ( ) )
             return ;
 
         await _manager.LoadAsync ( CancellationToken.None ).ConfigureAwait ( false ) ;
 
-        var treadmill = HeightToDeskHeight ( _manager.CurrentSettings
-                                                     .HeightSettings
-                                                     .TreadmillHeightInCm ) ;
+        var custom1 = HeightToDeskHeight ( _manager.CurrentSettings
+                                                    .HeightSettings
+                                                    .Custom1HeightInCm ) ;
 
-        _desk?.MoveTo ( treadmill ) ;
+        _desk?.MoveTo ( custom1 ) ;
     }
 
     public async Task EatingAsync ( )

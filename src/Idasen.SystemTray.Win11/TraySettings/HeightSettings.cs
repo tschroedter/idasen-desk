@@ -15,14 +15,12 @@ public class HeightSettings
     public uint SeatingHeightInCm { get ; set ; } = Constants.DefaultHeightSeatingInCm ;
 
     /// <summary>
-    ///     The treadmill walking height of the desk in centimeters.
-    ///     (Added) Defaults to the standing height until explicitly set.
+    ///     The custom position 1 height of the desk in centimeters.
     /// </summary>
-    public uint TreadmillHeightInCm { get ; set ; } = Constants.DefaultHeightStandingInCm ;
+    public uint Custom1HeightInCm { get ; set ; } = Constants.DefaultHeightStandingInCm ;
 
     /// <summary>
     ///     The eating height of the desk in centimeters.
-    ///     (Added) Defaults to the seating height until explicitly set.
     /// </summary>
     public uint EatingHeightInCm { get ; set ; } = Constants.DefaultHeightSeatingInCm ;
 
