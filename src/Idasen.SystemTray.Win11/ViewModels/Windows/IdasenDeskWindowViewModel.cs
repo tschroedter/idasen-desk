@@ -101,7 +101,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         _custom1ViewItem = new NavigationViewItem
         {
             Content        = "Custom1" ,
-            Icon           = new SymbolIcon { Symbol = SymbolRegular.ArrowSync24 } ,
+            Icon           = new SymbolIcon { Symbol = SymbolRegular.ArrowBidirectionalUpDown24 } ,
             TargetPageType = typeof ( StatusPage ) ,
             ToolTip        = "Double-Click to move the desk to the Custom1 position."
         } ;
@@ -110,7 +110,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         _custom2ViewItem = new NavigationViewItem
         {
             Content        = "Custom 2" ,
-            Icon           = new SymbolIcon { Symbol = SymbolRegular.ArrowSync24 } ,
+            Icon           = new SymbolIcon { Symbol = SymbolRegular.ArrowBidirectionalUpDown24 } ,
             TargetPageType = typeof ( StatusPage ) ,
             ToolTip        = "Double-Click to move the desk to the Custom 2 position."
         } ;
@@ -171,29 +171,35 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
         _menuItems.Add ( homeViewItem ) ;
         _menuItems.Add ( settingsViewItem ) ;
-        _menuItems.Add ( _connectViewItem ) ;
-        _menuItems.Add ( _disconnectViewItem ) ;
+        _menuItems.Add ( new CustomSeparatorMenuItem () );
         _menuItems.Add ( _standViewItem ) ;
         _menuItems.Add ( _sitViewItem ) ;
         _menuItems.Add ( _custom1ViewItem ) ;
         _menuItems.Add ( _custom2ViewItem ) ;
         _menuItems.Add ( _stopViewItem ) ;
+        _menuItems.Add (new CustomSeparatorMenuItem());
+        _menuItems.Add ( _connectViewItem ) ;
+        _menuItems.Add ( _disconnectViewItem ) ;
+        _menuItems.Add (new CustomSeparatorMenuItem());
         _menuItems.Add ( _closeWindowViewItem ) ;
 
         _footerMenuItems.Add ( _exitViewItem ) ;
 
         TrayMenuItems =
         [
-            new MenuItem { Header      = "Show Settings" , Command = ShowSettingsCommand } ,
-            new MenuItem { Header      = "Hide Settings" , Command = HideSettingsCommand } ,
-            new MenuItem { Header      = "Connect" , Command       = ConnectCommand } ,
-            new MenuItem { Header      = "Disconnect" , Command    = DisconnectCommand } ,
-            new MenuItem { Header      = "Stand" , Command     = StandingCommand } ,
-            new MenuItem { Header      = "Sit" , Command       = SeatingCommand } ,
-            new MenuItem { Header      = "Custom 1" , Command = Custom1Command } ,
-            new MenuItem { Header      = "Custom 2" , Command    = Custom2Command } ,
-            new MenuItem { Header      = "Stop" , Command      = StopCommand } ,
-            new MenuItem { Header      = "Exit" , Command      = ExitApplicationCommand }
+            new MenuItem { Header = "Stand" , Command         = StandingCommand } ,
+            new MenuItem { Header = "Sit" , Command           = SeatingCommand } ,
+            new MenuItem { Header = "Custom 1" , Command      = Custom1Command } ,
+            new MenuItem { Header = "Custom 2" , Command      = Custom2Command } ,
+            new MenuItem { Header = "Stop" , Command          = StopCommand } ,
+            new CustomSeparatorMenuItem (  ),
+            new MenuItem { Header = "Connect" , Command       = ConnectCommand } ,
+            new MenuItem { Header = "Disconnect" , Command    = DisconnectCommand } ,
+            new CustomSeparatorMenuItem (  ),
+            new MenuItem { Header = "Show Settings" , Command = ShowSettingsCommand } ,
+            new MenuItem { Header = "Hide Settings" , Command = HideSettingsCommand } ,
+            new CustomSeparatorMenuItem (  ),
+            new MenuItem { Header = "Exit" , Command          = ExitApplicationCommand }
         ] ;
     }
 
