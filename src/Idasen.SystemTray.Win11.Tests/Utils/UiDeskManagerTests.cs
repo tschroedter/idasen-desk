@@ -66,7 +66,7 @@ public class UiDeskManagerTests
     }
 
     [Fact]
-    public async Task EatingAsync_MovesDeskToConfiguredEatingHeight()
+    public async Task Custom2Async_MovesDeskToConfigureCustom2Height()
     {
         // Arrange
         var sut = CreateSut(out var desk, out var settingsManager);
@@ -75,7 +75,7 @@ public class UiDeskManagerTests
         settingsManager.LoadAsync(Arg.Any<CancellationToken>()).Returns(Task.CompletedTask);
 
         // Act
-        await sut.EatingAsync();
+        await sut.Custom2Async();
 
         // Assert
         await settingsManager.Received(1).LoadAsync(Arg.Any<CancellationToken>());

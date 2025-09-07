@@ -33,7 +33,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
     private readonly NavigationViewItem ?    _standViewItem ;
     private readonly NavigationViewItem ?    _stopViewItem ;
     private readonly NavigationViewItem ?    _custom1ViewItem ;
-    private readonly NavigationViewItem ?    _eatingViewItem ;
+    private readonly NavigationViewItem ?    _custom2ViewItem ;
     private readonly IUiDeskManager          _uiDeskManager ;
 
     private IDisposable ? _advancedSubscription ;
@@ -107,14 +107,14 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         } ;
         _custom1ViewItem.MouseDoubleClick += OnClickCustom1ViewItem ;
 
-        _eatingViewItem = new NavigationViewItem
+        _custom2ViewItem = new NavigationViewItem
         {
-            Content        = "Eating" ,
-            Icon           = new SymbolIcon { Symbol = SymbolRegular.DrinkBeer24 } ,
+            Content        = "Custom 2" ,
+            Icon           = new SymbolIcon { Symbol = SymbolRegular.ArrowSync24 } ,
             TargetPageType = typeof ( StatusPage ) ,
-            ToolTip        = "Double-Click to move the desk to the eating position."
+            ToolTip        = "Double-Click to move the desk to the Custom 2 position."
         } ;
-        _eatingViewItem.MouseDoubleClick += OnClickEatingViewItem ;
+        _custom2ViewItem.MouseDoubleClick += OnClickCustom2ViewItem ;
 
         _connectViewItem = new NavigationViewItem
         {
@@ -176,7 +176,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         _menuItems.Add ( _standViewItem ) ;
         _menuItems.Add ( _sitViewItem ) ;
         _menuItems.Add ( _custom1ViewItem ) ;
-        _menuItems.Add ( _eatingViewItem ) ;
+        _menuItems.Add ( _custom2ViewItem ) ;
         _menuItems.Add ( _stopViewItem ) ;
         _menuItems.Add ( _closeWindowViewItem ) ;
 
@@ -190,8 +190,8 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
             new MenuItem { Header      = "Disconnect" , Command    = DisconnectCommand } ,
             new MenuItem { Header      = "Stand" , Command     = StandingCommand } ,
             new MenuItem { Header      = "Sit" , Command       = SeatingCommand } ,
-            new MenuItem { Header      = "Custom1" , Command = Custom1Command } ,
-            new MenuItem { Header      = "Eating" , Command    = EatingCommand } ,
+            new MenuItem { Header      = "Custom 1" , Command = Custom1Command } ,
+            new MenuItem { Header      = "Custom 2" , Command    = Custom2Command } ,
             new MenuItem { Header      = "Stop" , Command      = StopCommand } ,
             new MenuItem { Header      = "Exit" , Command      = ExitApplicationCommand }
         ] ;
@@ -254,7 +254,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
     /// <summary>
     ///     Moves the desk to the eating height (currently uses SitAsync until specific implementation exists).
     /// </summary>
-    public ICommand EatingCommand =>
+    public ICommand Custom2Command =>
         // ReSharper disable once AsyncVoidLambda
         new DelegateCommand ( async _ => await _uiDeskManager.SitAsync ( ) ,
                               CanExecuteSeating ) ;
@@ -285,8 +285,8 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
             _standViewItem.MouseDoubleClick -= OnClickStandViewItem ;
         if ( _custom1ViewItem != null )
             _custom1ViewItem.MouseDoubleClick -= OnClickCustom1ViewItem ;
-        if ( _eatingViewItem != null )
-            _eatingViewItem.MouseDoubleClick -= OnClickEatingViewItem ;
+        if ( _custom2ViewItem != null )
+            _custom2ViewItem.MouseDoubleClick -= OnClickCustom2ViewItem ;
         if ( _stopViewItem != null )
             _stopViewItem.MouseDoubleClick -= OnClickStopViewItem ;
         if ( _connectViewItem != null )
@@ -513,7 +513,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
                                                    } ) ;
     }
 
-    private void OnClickEatingViewItem ( object sender , RoutedEventArgs e )
+    private void OnClickCustom2ViewItem ( object sender , RoutedEventArgs e )
     {
         if ( ! _uiDeskManager.IsInitialize )
         {
@@ -522,8 +522,8 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
         var uiMessageBox = new MessageBox
         {
-            Title             = "Eating ?" ,
-            Content           = "Do you want to move the desk into the eating position?" ,
+            Title             = "Custom 2 ?" ,
+            Content           = "Do you want to move the desk into the custom 2 position?" ,
             PrimaryButtonText = "Move"
         } ;
 
@@ -536,7 +536,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
                                                            return ;
                                                        }
 
-                                                       await _uiDeskManager.EatingAsync ( ) ;
+                                                       await _uiDeskManager.Custom2Async ( ) ;
                                                    } ) ;
     }
 

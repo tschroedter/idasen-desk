@@ -287,10 +287,10 @@ public class UiDeskManager : IUiDeskManager
         _desk?.MoveTo ( custom1 ) ;
     }
 
-    public async Task EatingAsync ( )
+    public async Task Custom2Async ( )
     {
         _logger.Debug ( "Executing {MethodName}..." ,
-                        nameof ( EatingAsync ) ) ;
+                        nameof ( Custom2Async ) ) ;
 
         if ( ! IsDeskConnected ( ) )
             return ;

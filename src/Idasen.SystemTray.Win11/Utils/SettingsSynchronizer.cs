@@ -95,9 +95,9 @@ public class SettingsSynchronizer ( ILogger                        logger ,
         settings.HeightSettings.SeatingHeightInCm = toUIntConverter.ConvertToUInt ( model.Seating ,
                                                                                     Constants.DefaultHeightSeatingInCm ) ;
         settings.HeightSettings.Custom1HeightInCm = toUIntConverter.ConvertToUInt ( model.Custom1 ,
-                                                                                    Constants.DefaultHeightStandingInCm ) ;
+                                                                                      Constants.DefaultHeightStandingInCm ) ;
         settings.HeightSettings.Custom2HeightInCm    = toUIntConverter.ConvertToUInt ( model.Custom2 ,
-                                                                                       Constants.DefaultHeightSeatingInCm ) ;
+                                                                                     Constants.DefaultHeightSeatingInCm ) ;
         settings.HeightSettings.LastKnownDeskHeight  = model.LastKnownDeskHeight ;
 
         settings.DeviceSettings.DeviceName           = newDeviceName ;

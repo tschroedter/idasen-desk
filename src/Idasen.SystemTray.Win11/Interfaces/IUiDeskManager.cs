@@ -20,5 +20,5 @@ public interface IUiDeskManager : IDisposable
     Task                          MoveLockAsync ( ) ;
     Task                          MoveUnlockAsync ( ) ;
     Task                          Custom1Async ( ) ;
-    Task                          EatingAsync ( ) ;
+    Task                          Custom2Async ( ) ;
 }
