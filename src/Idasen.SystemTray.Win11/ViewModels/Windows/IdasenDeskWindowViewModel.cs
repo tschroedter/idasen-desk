@@ -4,6 +4,7 @@ using System.Reactive.Concurrency ;
 using System.Reactive.Linq ;
 using System.Windows.Controls ;
 using System.Windows.Input ;
+using System.Windows.Media ;
 using System.Windows.Threading ;
 using Idasen.BluetoothLE.Core ;
 using Idasen.SystemTray.Win11.Interfaces ;
@@ -101,8 +102,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         _treadmillViewItem = new NavigationViewItem
         {
             Content        = "Treadmill" ,
-            // Fallback icon using existing available symbol
-            Icon           = new SymbolIcon { Symbol = SymbolRegular.ArrowUp24 } ,
+            Icon           = new SymbolIcon { Symbol = SymbolRegular.ArrowSync24 } ,
             TargetPageType = typeof ( StatusPage ) ,
             ToolTip        = "Double-Click to move the desk to the treadmill position."
         } ;
@@ -111,7 +111,6 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         _eatingViewItem = new NavigationViewItem
         {
             Content        = "Eating" ,
-            // Fallback icon using existing available symbol
             Icon           = new SymbolIcon { Symbol = SymbolRegular.DrinkBeer24 } ,
             TargetPageType = typeof ( StatusPage ) ,
             ToolTip        = "Double-Click to move the desk to the eating position."
@@ -186,16 +185,16 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
         TrayMenuItems =
         [
-            new MenuItem { Header = "Show Settings" , Command = ShowSettingsCommand } ,
-            new MenuItem { Header = "Hide Settings" , Command = HideSettingsCommand } ,
-            new MenuItem { Header = "Connect" , Command       = ConnectCommand } ,
-            new MenuItem { Header = "Disconnect" , Command    = DisconnectCommand } ,
-            new MenuItem { Header = "Stand" , Command         = StandingCommand } ,
-            new MenuItem { Header = "Sit" , Command           = SeatingCommand } ,
-            new MenuItem { Header = "Treadmill" , Command     = TreadmillCommand } ,
-            new MenuItem { Header = "Eating" , Command        = EatingCommand } ,
-            new MenuItem { Header = "Stop" , Command          = StopCommand } ,
-            new MenuItem { Header = "Exit" , Command          = ExitApplicationCommand }
+            new MenuItem { Header      = "Show Settings" , Command = ShowSettingsCommand } ,
+            new MenuItem { Header      = "Hide Settings" , Command = HideSettingsCommand } ,
+            new MenuItem { Header      = "Connect" , Command       = ConnectCommand } ,
+            new MenuItem { Header      = "Disconnect" , Command    = DisconnectCommand } ,
+            new MenuItem { Header      = "Stand" , Command     = StandingCommand } ,
+            new MenuItem { Header      = "Sit" , Command       = SeatingCommand } ,
+            new MenuItem { Header      = "Treadmill" , Command = TreadmillCommand } ,
+            new MenuItem { Header      = "Eating" , Command    = EatingCommand } ,
+            new MenuItem { Header      = "Stop" , Command      = StopCommand } ,
+            new MenuItem { Header      = "Exit" , Command      = ExitApplicationCommand }
         ] ;
     }
 
@@ -246,19 +245,19 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
                               CanExecuteSeating ) ;
 
     /// <summary>
-    ///     Moves the desk to the treadmill height.
+    ///     Moves the desk to the treadmill height (currently uses StandAsync until specific implementation exists).
     /// </summary>
     public ICommand TreadmillCommand =>
         // ReSharper disable once AsyncVoidLambda
-        new DelegateCommand ( async _ => await _uiDeskManager.TreadmillAsync ( ) ,
+        new DelegateCommand ( async _ => await _uiDeskManager.StandAsync ( ) ,
                               CanExecuteStanding ) ;
 
     /// <summary>
-    ///     Moves the desk to the eating height.
+    ///     Moves the desk to the eating height (currently uses SitAsync until specific implementation exists).
     /// </summary>
     public ICommand EatingCommand =>
         // ReSharper disable once AsyncVoidLambda
-        new DelegateCommand ( async _ => await _uiDeskManager.EatingAsync ( ) ,
+        new DelegateCommand ( async _ => await _uiDeskManager.SitAsync ( ) ,
                               CanExecuteSeating ) ;
 
     /// <summary>
@@ -471,7 +470,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         var uiMessageBox = new MessageBox
         {
             Title             = "Stand ?" ,
-            Content           = "Do you want to move the desk into the standing position?" ,
+            Content           = "Do you want to move the desk into the sitting position?" ,
             PrimaryButtonText = "Stand"
         } ;
 
@@ -511,6 +510,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
                                                            return ;
                                                        }
 
+                                                       // Placeholder: uses standing height until dedicated implementation exists.
                                                        await _uiDeskManager.TreadmillAsync( ) ;
                                                    } ) ;
     }
@@ -538,6 +538,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
                                                            return ;
                                                        }
 
+                                                       // Placeholder: uses seating height until dedicated implementation exists.
                                                        await _uiDeskManager.EatingAsync ( ) ;
                                                    } ) ;
     }

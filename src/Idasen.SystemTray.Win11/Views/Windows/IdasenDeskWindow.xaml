@@ -9,11 +9,11 @@
     xmlns:tray="http://schemas.lepo.co/wpfui/2022/xaml/tray"
     Title="{Binding ViewModel.ApplicationTitle, Mode=OneWay}"
     Width="640"
-    Height="520"
+    Height="580"
     d:DataContext="{d:DesignInstance local:IdasenDeskWindow,
                                      IsDesignTimeCreatable=True}"
     d:DesignHeight="640"
-    d:DesignWidth="520"
+    d:DesignWidth="580"
     ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
     ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
     ExtendsContentIntoTitleBar="True"
