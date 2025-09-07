@@ -230,7 +230,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
     /// </summary>
     public ICommand DisconnectCommand =>
         // ReSharper disable once AsyncVoidLambda
-        new DelegateCommand ( async _ => await _uiDeskManager.DisconnectAsync ( ) ,
+        new DelegateCommand ( DoDisconnect,
                               CanExecuteDisconnect ) ;
 
     /// <summary>
@@ -409,6 +409,33 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         _logger.Debug ( $"{nameof ( HideSettingsCommand )}" ) ;
 
         Application.Current.MainWindow.Visibility = Visibility.Hidden ;
+    }
+
+    private void DoDisconnect(object? _)
+    {
+        if (!_uiDeskManager.IsInitialize)
+        {
+            return;
+        }
+
+        var uiMessageBox = new MessageBox
+        {
+            Title             = "Disconnect ?",
+            Content           = "Do you want to disconnect from the desk?",
+            PrimaryButtonText = "Disconnect"
+        };
+
+        Dispatcher.CurrentDispatcher.InvokeAsync(async () =>
+                                                 {
+                                                     var result = await uiMessageBox.ShowDialogAsync();
+
+                                                     if (result != MessageBoxResult.Primary)
+                                                     {
+                                                         return;
+                                                     }
+
+                                                     await _uiDeskManager.DisconnectAsync();
+                                                 });
     }
 
     private void DoExitApplication ( object ? _ )
