@@ -22,11 +22,11 @@ public class UiDeskManager : IUiDeskManager
 {
     private const uint DeskHeightFactor = 100 ;
 
-    private static readonly KeyGesture IncrementGesture = new ( Key.Up ,
-                                                                ModifierKeys.Control | ModifierKeys.Alt | ModifierKeys.Shift ) ;
+    private static readonly KeyGesture StandingGesture = new ( Key.Up ,
+                                                               ModifierKeys.Control | ModifierKeys.Alt | ModifierKeys.Shift ) ;
 
-    private static readonly KeyGesture DecrementGesture = new ( Key.Down ,
-                                                                ModifierKeys.Control | ModifierKeys.Alt | ModifierKeys.Shift ) ;
+    private static readonly KeyGesture SittingGesture = new ( Key.Down ,
+                                                              ModifierKeys.Control | ModifierKeys.Alt | ModifierKeys.Shift ) ;
 
     private readonly IErrorManager             _errorManager ;
     private readonly ITaskbarIconProvider      _iconProvider ;
@@ -183,11 +183,11 @@ public class UiDeskManager : IUiDeskManager
 
         HotkeyManager.HotkeyAlreadyRegistered += HotkeyManager_HotkeyAlreadyRegistered ;
 
-        HotkeyManager.Current.AddOrReplace ( "Increment" ,
-                                             IncrementGesture ,
+        HotkeyManager.Current.AddOrReplace ( "Standing" ,
+                                             StandingGesture ,
                                              OnGlobalHotKeyStanding ) ;
-        HotkeyManager.Current.AddOrReplace ( "Decrement" ,
-                                             DecrementGesture ,
+        HotkeyManager.Current.AddOrReplace ( "Seating" ,
+                                             SittingGesture ,
                                              OnGlobalHotKeySeating ) ;
 
         _notifications.Initialize ( notifyIcon ,
