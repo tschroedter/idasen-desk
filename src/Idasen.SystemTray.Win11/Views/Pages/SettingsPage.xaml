@@ -358,7 +358,7 @@
                     <TextBox Grid.Row="6"
                              Grid.Column="1"
                              IsEnabled="False"
-                             Text="Ctrl+Shift+Alt+Cursor Left"
+                             Text="Ctrl+Shift+Alt+Cursor Right"
                              Width="Auto" />
                 </Grid>
             </StackPanel>
