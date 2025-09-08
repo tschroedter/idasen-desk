@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis ;
 using System.Reactive.Concurrency ;
 using System.Reactive.Linq ;
+using System.Text ;
 using System.Windows.Controls ;
 using System.Windows.Input ;
 using System.Windows.Threading ;
@@ -56,6 +57,11 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
     [ ObservableProperty ]
     private ObservableCollection < MenuItem > _trayMenuItems = [] ;
+
+    private MenuItem _menuItemConnect ;
+    private MenuItem _menuItemDisconnect ;
+    private MenuItem _menuItemShow ;
+    private MenuItem _menuItemHide ;
 
     public IdasenDeskWindowViewModel ( ILogger                 logger ,
                                        IServiceProvider        serviceProvider ,
@@ -185,6 +191,11 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
         _footerMenuItems.Add ( _exitViewItem ) ;
 
+        _menuItemConnect    = new MenuItem { Header = "Connect" , Command       = ConnectCommand } ;
+        _menuItemDisconnect = new MenuItem { Header = "Disconnect" , Command    = DisconnectCommand } ;
+        _menuItemShow       = new MenuItem { Header = "Show Settings" , Command = ShowSettingsCommand } ;
+        _menuItemHide       = new MenuItem { Header = "Hide Settings" , Command = HideSettingsCommand } ;
+
         TrayMenuItems =
         [
             new MenuItem { Header = "Stand" , Command         = StandingCommand } ,
@@ -193,11 +204,11 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
             new MenuItem { Header = "Custom 2" , Command      = Custom2Command } ,
             new MenuItem { Header = "Stop" , Command          = StopCommand } ,
             new CustomSeparatorMenuItem (  ),
-            new MenuItem { Header = "Connect" , Command       = ConnectCommand } ,
-            new MenuItem { Header = "Disconnect" , Command    = DisconnectCommand } ,
+            _menuItemConnect ,
+            _menuItemDisconnect ,
             new CustomSeparatorMenuItem (  ),
-            new MenuItem { Header = "Show Settings" , Command = ShowSettingsCommand } ,
-            new MenuItem { Header = "Hide Settings" , Command = HideSettingsCommand } ,
+            _menuItemShow ,
+            _menuItemHide ,
             new CustomSeparatorMenuItem (  ),
             new MenuItem { Header = "Exit" , Command          = ExitApplicationCommand }
         ] ;
@@ -648,10 +659,15 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
         _uiDeskManager.Initialize ( notifyIcon ) ;
 
-        notifyIcon.Menu = new ContextMenu
+        var contextMenu = new ContextMenu
         {
             ItemsSource = TrayMenuItems
-        } ;
+        };
+
+        // Attach event handler for ContextMenu.Opened
+        contextMenu.Opened += OnContextMenuOpened;
+
+        notifyIcon.Menu = contextMenu;
 
         _advancedSubscription = _settingsChanges.AdvancedSettingsChanged
                                                 .ObserveOn ( _scheduler )
@@ -662,6 +678,45 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
                                             .Subscribe ( async isLocked => await OnLockSettingsChanged ( isLocked ) ) ;
 
         return this ;
+    }
+
+    private void OnContextMenuOpened(object sender, EventArgs e)
+    {
+        _logger.Debug("Context menu is about to be opened.");
+
+        if (_uiDeskManager.IsConnected)
+        {
+            _menuItemConnect.Visibility    = Visibility.Collapsed;
+            _menuItemDisconnect.Visibility = Visibility.Visible;
+        }
+        else
+        {
+            _menuItemConnect.Visibility = Visibility.Visible;
+            _menuItemDisconnect.Visibility = Visibility.Collapsed;
+        }
+
+        if ( CanShowSettings ( null ) )
+        {
+            _menuItemShow.Visibility = Visibility.Visible ;
+            _menuItemHide.Visibility = Visibility.Collapsed;
+        }
+        else
+        {
+            _menuItemShow.Visibility = Visibility.Collapsed;
+            _menuItemHide.Visibility = Visibility.Visible;
+        }
+
+        var logBuilder = new StringBuilder();
+
+        foreach ( var item in TrayMenuItems )
+        {
+            if ( item is { } menuItem )
+            {
+                logBuilder.Append ( $"TrayMenuItem: {menuItem.Header}, Visibility: {menuItem.Visibility}," ) ;
+            }
+        }
+
+        _logger.Debug(logBuilder.ToString());
     }
 
     private async Task OnAdvancedSettingsChanged ( bool hasChanged )
