@@ -192,6 +192,7 @@
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="50" />
                         <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition />
@@ -228,6 +229,13 @@
                            Grid.Column="4"
                            HorizontalAlignment="Right"
                            Content="cm" />
+                    <CheckBox Grid.Row="0"
+                              Grid.Column="5" 
+                              VerticalAlignment="Center" 
+                              MinWidth="75" 
+                              Content="Tray" 
+                              ToolTip="Show in tray context menu" 
+                              IsChecked="{Binding IsVisibleInContextMenu, Mode=TwoWay}" />
                     <!-- Row 1 - Blank -->
                     <!-- Row 2 -->
                     <ui:SymbolIcon Grid.Row="2"
@@ -255,6 +263,13 @@
                            Grid.Column="4"
                            HorizontalAlignment="Right"
                            Content="cm" />
+                    <CheckBox Grid.Row="2"
+                              Grid.Column="5" 
+                              VerticalAlignment="Center" 
+                              MinWidth="75" 
+                              Content="Tray" 
+                              ToolTip="Show in tray context menu" 
+                              IsChecked="{Binding IsVisibleInContextMenu, Mode=TwoWay}" />
                     <!-- Row 3 - Blank -->
                     <!-- Row 4 -->
                     <ui:SymbolIcon Grid.Row="4"
@@ -282,6 +297,13 @@
                            Grid.Column="4"
                            HorizontalAlignment="Right"
                            Content="cm" />
+                    <CheckBox Grid.Row="4"
+                              Grid.Column="5" 
+                              VerticalAlignment="Center" 
+                              MinWidth="75" 
+                              Content="Tray" 
+                              ToolTip="Show in tray context menu" 
+                              IsChecked="{Binding IsVisibleInContextMenu, Mode=TwoWay}" />
                     <!-- Row 5 - Blank -->
                     <!-- Row 6 -->
                     <ui:SymbolIcon Grid.Row="6"
@@ -309,6 +331,13 @@
                            Grid.Column="4"
                            HorizontalAlignment="Right"
                            Content="cm" />
+                    <CheckBox Grid.Row="6"
+                              Grid.Column="5" 
+                              VerticalAlignment="Center"
+                              MinWidth="75" 
+                              Content="Tray" 
+                              ToolTip="Show in tray context menu" 
+                              IsChecked="{Binding IsVisibleInContextMenu, Mode=TwoWay}" />
                 </Grid>
             </StackPanel>
         </ui:CardExpander>
