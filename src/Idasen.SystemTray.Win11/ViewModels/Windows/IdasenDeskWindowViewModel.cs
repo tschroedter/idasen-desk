@@ -89,7 +89,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         _sitViewItem = new NavigationViewItem
         {
             Content        = "Sit" ,
-            Icon           = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleDown20 } ,
+            Icon           = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleDown24 } ,
             TargetPageType = typeof ( StatusPage ) ,
             ToolTip        = "Double-Click to move the desk to the sitting position."
         } ;
@@ -98,7 +98,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         _standViewItem = new NavigationViewItem
         {
             Content        = "Stand" ,
-            Icon           = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleUp20 } ,
+            Icon           = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleUp24 } ,
             TargetPageType = typeof ( StatusPage ) ,
             ToolTip        = "Double-Click to move the desk to the standing position."
         } ;
@@ -107,7 +107,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         _custom1ViewItem = new NavigationViewItem
         {
             Content        = "Custom1" ,
-            Icon           = new SymbolIcon { Symbol = SymbolRegular.ArrowBidirectionalUpDown24 } ,
+            Icon           = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleLeft24 } ,
             TargetPageType = typeof ( StatusPage ) ,
             ToolTip        = "Double-Click to move the desk to the Custom1 position."
         } ;
@@ -116,7 +116,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         _custom2ViewItem = new NavigationViewItem
         {
             Content        = "Custom 2" ,
-            Icon           = new SymbolIcon { Symbol = SymbolRegular.ArrowBidirectionalUpDown24 } ,
+            Icon           = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleRight24 } ,
             TargetPageType = typeof ( StatusPage ) ,
             ToolTip        = "Double-Click to move the desk to the Custom 2 position."
         } ;
@@ -198,19 +198,19 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
         TrayMenuItems =
         [
-            new MenuItem { Header = "Stand" , Command         = StandingCommand } ,
-            new MenuItem { Header = "Sit" , Command           = SeatingCommand } ,
-            new MenuItem { Header = "Custom 1" , Command      = Custom1Command } ,
-            new MenuItem { Header = "Custom 2" , Command      = Custom2Command } ,
-            new MenuItem { Header = "Stop" , Command          = StopCommand } ,
-            new CustomSeparatorMenuItem (  ),
+            new MenuItem { Header = "Stand" , Command    = StandingCommand , Icon = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleUp24 } } ,
+            new MenuItem { Header = "Sit" , Command      = SeatingCommand , Icon  = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleDown24 } } ,
+            new MenuItem { Header = "Custom 1" , Command = Custom1Command , Icon  = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleLeft24 } } ,
+            new MenuItem { Header = "Custom 2" , Command = Custom2Command , Icon  = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleRight24 } } ,
+            new MenuItem { Header = "Stop" , Command     = StopCommand } ,
+            new CustomSeparatorMenuItem ( ) ,
             _menuItemConnect ,
             _menuItemDisconnect ,
-            new CustomSeparatorMenuItem (  ),
+            new CustomSeparatorMenuItem ( ) ,
             _menuItemShow ,
             _menuItemHide ,
-            new CustomSeparatorMenuItem (  ),
-            new MenuItem { Header = "Exit" , Command          = ExitApplicationCommand }
+            new CustomSeparatorMenuItem ( ) ,
+            new MenuItem { Header = "Exit" , Command = ExitApplicationCommand }
         ] ;
     }
 

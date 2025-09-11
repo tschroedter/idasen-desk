@@ -187,6 +187,7 @@
                            Text="Positions" />
                 <Grid Margin="0,12,0,0">
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="32" />
                         <ColumnDefinition Width="100" />
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="50" />
@@ -202,90 +203,110 @@
                         <RowDefinition />
                     </Grid.RowDefinitions>
                     <!-- Row 0 -->
+                    <ui:SymbolIcon Grid.Row="0"
+                                   Grid.Column="0"
+                                   Symbol="{x:Static ui:SymbolRegular.ArrowCircleUp24}"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" />
                     <Label Grid.Row="0"
-                           Grid.Column="0"
+                           Grid.Column="1"
                            Content="Stand"
                            Padding="5,0,5,0" />
                     <Slider Grid.Row="0"
-                            Grid.Column="1"
+                            Grid.Column="2"
                             Name="Standing"
                             Minimum="65"
                             Maximum="127"
                             Value="{Binding ViewModel.Standing}"
                             TickPlacement="BottomRight" />
                     <TextBlock Grid.Row="0"
-                               Grid.Column="2"
+                               Grid.Column="3"
                                HorizontalAlignment="Right"
                                Text="{Binding ElementName=Standing, Path=Value, StringFormat='0', UpdateSourceTrigger=LostFocus}"
                                Padding="5,0,5,0" />
                     <Label Grid.Row="0"
-                           Grid.Column="3"
+                           Grid.Column="4"
                            HorizontalAlignment="Right"
                            Content="cm" />
                     <!-- Row 1 - Blank -->
                     <!-- Row 2 -->
+                    <ui:SymbolIcon Grid.Row="2"
+                                   Grid.Column="0"
+                                   Symbol="{x:Static ui:SymbolRegular.ArrowCircleDown24}"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" />
                     <Label Grid.Row="2"
-                           Grid.Column="0"
+                           Grid.Column="1"
                            Content="Sit"
                            Padding="5,0,5,0" />
                     <Slider Grid.Row="2"
-                            Grid.Column="1"
+                            Grid.Column="2"
                             Name="Seating"
                             Minimum="65"
                             Maximum="127"
                             Value="{Binding ViewModel.Seating}"
                             TickPlacement="BottomRight" />
                     <TextBlock Grid.Row="2"
-                               Grid.Column="2"
+                               Grid.Column="3"
                                HorizontalAlignment="Right"
                                Text="{Binding ElementName=Seating, Path=Value, StringFormat='0',UpdateSourceTrigger=LostFocus}"
                                Padding="5,0,5,0" />
                     <Label Grid.Row="2"
-                           Grid.Column="3"
+                           Grid.Column="4"
                            HorizontalAlignment="Right"
                            Content="cm" />
                     <!-- Row 3 - Blank -->
                     <!-- Row 4 -->
+                    <ui:SymbolIcon Grid.Row="4"
+                                   Grid.Column="0"
+                                   Symbol="{x:Static ui:SymbolRegular.ArrowCircleLeft24}"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" />
                     <Label Grid.Row="4"
-                           Grid.Column="0"
+                           Grid.Column="1"
                            Content="Custom1"
                            Padding="5,0,5,0" />
                     <Slider Grid.Row="4"
-                            Grid.Column="1"
+                            Grid.Column="2"
                             Name="Custom1"
                             Minimum="65"
                             Maximum="127"
                             Value="{Binding ViewModel.Custom1}"
                             TickPlacement="BottomRight" />
                     <TextBlock Grid.Row="4"
-                               Grid.Column="2"
+                               Grid.Column="3"
                                HorizontalAlignment="Right"
                                Text="{Binding ElementName=Custom1, Path=Value, StringFormat='0',UpdateSourceTrigger=LostFocus}"
                                Padding="5,0,5,0" />
                     <Label Grid.Row="4"
-                           Grid.Column="3"
+                           Grid.Column="4"
                            HorizontalAlignment="Right"
                            Content="cm" />
                     <!-- Row 5 - Blank -->
                     <!-- Row 6 -->
+                    <ui:SymbolIcon Grid.Row="6"
+                                   Grid.Column="0"
+                                   Symbol="{x:Static ui:SymbolRegular.ArrowCircleRight24}"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" />
                     <Label Grid.Row="6"
-                           Grid.Column="0"
+                           Grid.Column="1"
                            Content="Custom 2"
                            Padding="5,0,5,0" />
                     <Slider Grid.Row="6"
-                            Grid.Column="1"
+                            Grid.Column="2"
                             Name="Custom2"
                             Minimum="65"
                             Maximum="127"
                             Value="{Binding ViewModel.Custom2}"
                             TickPlacement="BottomRight" />
                     <TextBlock Grid.Row="6"
-                               Grid.Column="2"
+                               Grid.Column="3"
                                HorizontalAlignment="Right"
                                Text="{Binding ElementName=Custom2, Path=Value, StringFormat='0',UpdateSourceTrigger=LostFocus}"
                                Padding="5,0,5,0" />
                     <Label Grid.Row="6"
-                           Grid.Column="3"
+                           Grid.Column="4"
                            HorizontalAlignment="Right"
                            Content="cm" />
                 </Grid>
@@ -300,6 +321,7 @@
                            Text="Definitions" />
                 <Grid Margin="0,12,0,0">
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="32" />
                         <ColumnDefinition Width="100" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
@@ -313,50 +335,70 @@
                         <RowDefinition />
                     </Grid.RowDefinitions>
                     <!-- Row 0 -->
+                    <ui:SymbolIcon Grid.Row="0"
+                                   Grid.Column="0"
+                                   Symbol="{x:Static ui:SymbolRegular.ArrowCircleUp24}"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" />
                     <Label Grid.Row="0"
-                           Grid.Column="0"
+                           Grid.Column="1"
                            Content="Stand"
                            ToolTip="The global hot key to move the desk to the standing height."
                            VerticalAlignment="Center"
                            Padding="5,0,5,0" />
                     <TextBox Grid.Row="0"
-                             Grid.Column="1"
+                             Grid.Column="2"
                              IsEnabled="False"
                              Text="Ctrl+Shift+Alt+Cursor Up"
                              Width="Auto" />
                     <!-- Row 2 -->
+                    <ui:SymbolIcon Grid.Row="2"
+                                   Grid.Column="0"
+                                   Symbol="{x:Static ui:SymbolRegular.ArrowCircleDown24}"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" />
                     <Label Grid.Row="2"
-                           Grid.Column="0"
+                           Grid.Column="1"
                            Content="Sit"
                            ToolTip="The global hot key to move the desk to the seating height."
                            VerticalAlignment="Center"
                            Padding="5,0,5,0" />
                     <TextBox Grid.Row="2"
-                             Grid.Column="1"
+                             Grid.Column="2"
                              IsEnabled="False"
                              Text="Ctrl+Shift+Alt+Cursor Down"
                              Width="Auto" />
                     <!-- Row 4 -->
+                    <ui:SymbolIcon Grid.Row="4"
+                                   Grid.Column="0"
+                                   Symbol="{x:Static ui:SymbolRegular.ArrowCircleLeft24}"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" />
                     <Label Grid.Row="4"
-                           Grid.Column="0"
+                           Grid.Column="1"
                            Content="Custom 1"
                            ToolTip="The global hot key to move the desk to the custom 1 height."
                            VerticalAlignment="Center"
                            Padding="5,0,5,0" />
                     <TextBox Grid.Row="4"
-                             Grid.Column="1"
+                             Grid.Column="2"
                              IsEnabled="False"
                              Text="Ctrl+Shift+Alt+Cursor Left"
                              Width="Auto" />
                     <!-- Row 6 -->
+                    <ui:SymbolIcon Grid.Row="6"
+                                   Grid.Column="0"
+                                   Symbol="{x:Static ui:SymbolRegular.ArrowCircleRight24}"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" />
                     <Label Grid.Row="6"
-                           Grid.Column="0"
+                           Grid.Column="1"
                            Content="Custom 2"
                            ToolTip="The global hot key to move the desk to the custom 2 height."
                            VerticalAlignment="Center"
                            Padding="5,0,5,0" />
                     <TextBox Grid.Row="6"
-                             Grid.Column="1"
+                             Grid.Column="2"
                              IsEnabled="False"
                              Text="Ctrl+Shift+Alt+Cursor Right"
                              Width="Auto" />
