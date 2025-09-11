@@ -21,12 +21,18 @@ public class SettingsSynchronizer ( ILogger                        logger ,
 
         var current = settingsManager.CurrentSettings ;
 
-        model.Standing            = current.HeightSettings.StandingHeightInCm ;
-        model.MinHeight           = current.HeightSettings.DeskMinHeightInCm ;
-        model.MaxHeight           = current.HeightSettings.DeskMaxHeightInCm ;
-        model.Seating             = current.HeightSettings.SeatingHeightInCm ;
-        model.Custom1             = current.HeightSettings.Custom1HeightInCm ;
-        model.Custom2             = current.HeightSettings.Custom2HeightInCm ;
+        model.MinHeight = current.HeightSettings.DeskMinHeightInCm ;
+        model.MaxHeight = current.HeightSettings.DeskMaxHeightInCm ;
+        model.Standing  = current.HeightSettings.StandingHeightInCm;
+        model.Seating   = current.HeightSettings.SeatingHeightInCm ;
+        model.Custom1   = current.HeightSettings.Custom1HeightInCm ;
+        model.Custom2   = current.HeightSettings.Custom2HeightInCm ;
+
+        model.StandingIsVisibleInContextMenu = current.HeightSettings.StandingIsVisibleInContextMenu;
+        model.SeatingIsVisibleInContextMenu  = current.HeightSettings.SeatingIsVisibleInContextMenu;
+        model.Custom1IsVisibleInContextMenu  = current.HeightSettings.Custom1IsVisibleInContextMenu;
+        model.Custom2IsVisibleInContextMenu  = current.HeightSettings.Custom2IsVisibleInContextMenu;
+
         model.LastKnownDeskHeight = current.HeightSettings.LastKnownDeskHeight ;
         model.DeskName            = nameConverter.EmptyIfDefault ( current.DeviceSettings.DeviceName ) ;
         model.DeskAddress         = addressConverter.EmptyIfDefault ( current.DeviceSettings.DeviceAddress ) ;
@@ -99,6 +105,11 @@ public class SettingsSynchronizer ( ILogger                        logger ,
         settings.HeightSettings.Custom2HeightInCm    = toUIntConverter.ConvertToUInt ( model.Custom2 ,
                                                                                      Constants.DefaultHeightSeatingInCm ) ;
         settings.HeightSettings.LastKnownDeskHeight  = model.LastKnownDeskHeight ;
+
+        settings.HeightSettings.StandingIsVisibleInContextMenu = model.StandingIsVisibleInContextMenu ;
+        settings.HeightSettings.SeatingIsVisibleInContextMenu  = model.SeatingIsVisibleInContextMenu ;
+        settings.HeightSettings.Custom1IsVisibleInContextMenu  = model.Custom1IsVisibleInContextMenu ;
+        settings.HeightSettings.Custom2IsVisibleInContextMenu  = model.Custom2IsVisibleInContextMenu ; 
 
         settings.DeviceSettings.DeviceName           = newDeviceName ;
         settings.DeviceSettings.DeviceAddress        = newDeviceAddress ;

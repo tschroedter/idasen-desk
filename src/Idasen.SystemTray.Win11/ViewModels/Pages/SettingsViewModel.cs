@@ -68,6 +68,18 @@ public partial class SettingsViewModel ( ILogger                 logger ,
     [ObservableProperty]
     private uint _custom2 = 90;
 
+    [ObservableProperty]
+    private bool _seatingIsVisibleInContextMenu = true;
+
+    [ObservableProperty]
+    private bool _standingIsVisibleInContextMenu = true;
+
+    [ObservableProperty]
+    private bool _custom1IsVisibleInContextMenu = true;
+
+    [ObservableProperty]
+    private bool _custom2IsVisibleInContextMenu = true;
+
     public void Dispose ( )
     {
         if ( _settingsSaved is null )

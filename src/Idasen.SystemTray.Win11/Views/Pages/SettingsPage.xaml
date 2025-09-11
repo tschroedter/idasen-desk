@@ -237,8 +237,8 @@
                               VerticalAlignment="Center" 
                               MinWidth="75" 
                               Content="Tray"
-                              ToolTip="Show in tray context menu" 
-                              IsChecked="{Binding IsVisibleInContextMenu, Mode=TwoWay}" />
+                              ToolTip="Show 'Stand' position in tray context menu" 
+                              IsChecked="{Binding ViewModel.StandingIsVisibleInContextMenu, Mode=TwoWay}" />
                     <!-- Row 1 - Blank -->
                     <!-- Row 2 -->
                     <ui:SymbolIcon Grid.Row="2"
@@ -248,7 +248,7 @@
                                    VerticalAlignment="Center" />
                     <Label Grid.Row="2"
                            Grid.Column="1"
-                           Content="Sit"
+                           Content="Seating"
                            VerticalAlignment="Center"
                            Padding="5,0,5,0" />
                     <Slider Grid.Row="2"
@@ -274,8 +274,8 @@
                               VerticalAlignment="Center" 
                               MinWidth="75" 
                               Content="Tray" 
-                              ToolTip="Show in tray context menu" 
-                              IsChecked="{Binding IsVisibleInContextMenu, Mode=TwoWay}" />
+                              ToolTip="Show 'Seating' position in tray context menu" 
+                              IsChecked="{Binding ViewModel.SeatingIsVisibleInContextMenu, Mode=TwoWay}" />
                     <!-- Row 3 - Blank -->
                     <!-- Row 4 -->
                     <ui:SymbolIcon Grid.Row="4"
@@ -285,7 +285,7 @@
                                    VerticalAlignment="Center" />
                     <Label Grid.Row="4"
                            Grid.Column="1"
-                           Content="Custom1"
+                           Content="Custom 1"
                            VerticalAlignment="Center"
                            Padding="5,0,5,0" />
                     <Slider Grid.Row="4"
@@ -311,8 +311,8 @@
                               VerticalAlignment="Center" 
                               MinWidth="75" 
                               Content="Tray" 
-                              ToolTip="Show in tray context menu" 
-                              IsChecked="{Binding IsVisibleInContextMenu, Mode=TwoWay}" />
+                              ToolTip="Show 'Custom 1' position in tray context menu" 
+                              IsChecked="{Binding ViewModel.Custom1IsVisibleInContextMenu, Mode=TwoWay}" />
                     <!-- Row 5 - Blank -->
                     <!-- Row 6 -->
                     <ui:SymbolIcon Grid.Row="6"
@@ -348,8 +348,8 @@
                               VerticalAlignment="Center"
                               MinWidth="75" 
                               Content="Tray" 
-                              ToolTip="Show in tray context menu" 
-                              IsChecked="{Binding IsVisibleInContextMenu, Mode=TwoWay}" />
+                              ToolTip="Show 'Custom 2' position in tray context menu" 
+                              IsChecked="{Binding ViewModel.Custom2IsVisibleInContextMenu, Mode=TwoWay}" />
                 </Grid>
             </StackPanel>
         </ui:CardExpander>

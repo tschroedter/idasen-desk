@@ -38,4 +38,24 @@ public class HeightSettings
     ///     The last known height of the desk.
     /// </summary>
     public uint LastKnownDeskHeight { get ; set ; } = Constants.DefaultDeskMinHeightInCm;
+
+    /// <summary>
+    ///     Indicates whether the seating height is visible in the context menu.
+    /// </summary>
+    public bool StandingIsVisibleInContextMenu { get ; set ; } = true ;
+
+    /// <summary>
+    ///     Indicates whether the custom position 1 height is visible in the context menu.
+    /// </summary>
+    public bool SeatingIsVisibleInContextMenu { get ; set ; } = true ;
+
+    /// <summary>
+    ///     Indicates whether the custom position 2 height is visible in the context menu.
+    /// </summary>
+    public bool Custom1IsVisibleInContextMenu { get ; set ; } = false ;
+
+    /// <summary>
+    ///     Indicates whether the custom position 2 height is visible in the context menu.
+    /// </summary>
+    public bool Custom2IsVisibleInContextMenu { get ; set ; } = false ;
 }
