@@ -212,6 +212,7 @@
                     <Label Grid.Row="0"
                            Grid.Column="1"
                            Content="Stand"
+                           VerticalAlignment="Center"
                            Padding="5,0,5,0" />
                     <Slider Grid.Row="0"
                             Grid.Column="2"
@@ -219,21 +220,23 @@
                             Minimum="65"
                             Maximum="127"
                             Value="{Binding ViewModel.Standing}"
-                            TickPlacement="BottomRight" />
+                            TickPlacement="TopLeft" />
                     <TextBlock Grid.Row="0"
                                Grid.Column="3"
+                               VerticalAlignment="Center" 
                                HorizontalAlignment="Right"
                                Text="{Binding ElementName=Standing, Path=Value, StringFormat='0', UpdateSourceTrigger=LostFocus}"
                                Padding="5,0,5,0" />
                     <Label Grid.Row="0"
                            Grid.Column="4"
+                           VerticalAlignment="Center" 
                            HorizontalAlignment="Right"
                            Content="cm" />
                     <CheckBox Grid.Row="0"
                               Grid.Column="5" 
                               VerticalAlignment="Center" 
                               MinWidth="75" 
-                              Content="Tray" 
+                              Content="Tray"
                               ToolTip="Show in tray context menu" 
                               IsChecked="{Binding IsVisibleInContextMenu, Mode=TwoWay}" />
                     <!-- Row 1 - Blank -->
@@ -246,6 +249,7 @@
                     <Label Grid.Row="2"
                            Grid.Column="1"
                            Content="Sit"
+                           VerticalAlignment="Center"
                            Padding="5,0,5,0" />
                     <Slider Grid.Row="2"
                             Grid.Column="2"
@@ -253,14 +257,16 @@
                             Minimum="65"
                             Maximum="127"
                             Value="{Binding ViewModel.Seating}"
-                            TickPlacement="BottomRight" />
+                            TickPlacement="TopLeft" />
                     <TextBlock Grid.Row="2"
                                Grid.Column="3"
+                               VerticalAlignment="Center" 
                                HorizontalAlignment="Right"
                                Text="{Binding ElementName=Seating, Path=Value, StringFormat='0',UpdateSourceTrigger=LostFocus}"
                                Padding="5,0,5,0" />
                     <Label Grid.Row="2"
                            Grid.Column="4"
+                           VerticalAlignment="Center" 
                            HorizontalAlignment="Right"
                            Content="cm" />
                     <CheckBox Grid.Row="2"
@@ -280,6 +286,7 @@
                     <Label Grid.Row="4"
                            Grid.Column="1"
                            Content="Custom1"
+                           VerticalAlignment="Center"
                            Padding="5,0,5,0" />
                     <Slider Grid.Row="4"
                             Grid.Column="2"
@@ -287,14 +294,16 @@
                             Minimum="65"
                             Maximum="127"
                             Value="{Binding ViewModel.Custom1}"
-                            TickPlacement="BottomRight" />
+                            TickPlacement="TopLeft" />
                     <TextBlock Grid.Row="4"
                                Grid.Column="3"
+                               VerticalAlignment="Center" 
                                HorizontalAlignment="Right"
                                Text="{Binding ElementName=Custom1, Path=Value, StringFormat='0',UpdateSourceTrigger=LostFocus}"
                                Padding="5,0,5,0" />
                     <Label Grid.Row="4"
                            Grid.Column="4"
+                           VerticalAlignment="Center" 
                            HorizontalAlignment="Right"
                            Content="cm" />
                     <CheckBox Grid.Row="4"
@@ -310,10 +319,11 @@
                                    Grid.Column="0"
                                    Symbol="{x:Static ui:SymbolRegular.ArrowCircleRight24}"
                                    HorizontalAlignment="Center"
-                                   VerticalAlignment="Center" />
+                                   VerticalAlignment="Center"/>
                     <Label Grid.Row="6"
                            Grid.Column="1"
                            Content="Custom 2"
+                           VerticalAlignment="Center"
                            Padding="5,0,5,0" />
                     <Slider Grid.Row="6"
                             Grid.Column="2"
@@ -321,14 +331,16 @@
                             Minimum="65"
                             Maximum="127"
                             Value="{Binding ViewModel.Custom2}"
-                            TickPlacement="BottomRight" />
+                            TickPlacement="TopLeft" />
                     <TextBlock Grid.Row="6"
                                Grid.Column="3"
+                               VerticalAlignment="Center" 
                                HorizontalAlignment="Right"
                                Text="{Binding ElementName=Custom2, Path=Value, StringFormat='0',UpdateSourceTrigger=LostFocus}"
                                Padding="5,0,5,0" />
                     <Label Grid.Row="6"
                            Grid.Column="4"
+                           VerticalAlignment="Center" 
                            HorizontalAlignment="Right"
                            Content="cm" />
                     <CheckBox Grid.Row="6"
