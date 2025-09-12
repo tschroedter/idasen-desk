@@ -5,9 +5,7 @@ using System.Reactive.Linq ;
 using System.Text ;
 using System.Windows.Controls ;
 using System.Windows.Input ;
-using Idasen.BluetoothLE.Core ;
 using Idasen.SystemTray.Win11.Interfaces ;
-using Idasen.SystemTray.Win11.TraySettings ;
 using Idasen.SystemTray.Win11.Utils ;
 using Idasen.SystemTray.Win11.Views.Pages ;
 using JetBrains.Annotations ;
@@ -29,6 +27,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
     private readonly NavigationViewItem ?    _exitViewItem ;
     private readonly ILogger                 _logger ;
     private readonly IScheduler              _scheduler ;
+    private readonly ISettingsManager        _settingsManager ;
     private readonly IObserveSettingsChanges _settingsChanges ;
     private readonly NavigationViewItem ?    _sitViewItem ;
     private readonly NavigationViewItem ?    _standViewItem ;
@@ -63,28 +62,21 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
     private readonly MenuItem _menuItemCustom1;
     private readonly MenuItem _menuItemCustom2;
     private readonly MenuItem _menuItemStop;
-    private readonly MenuItem _menuItemExit ;
 
     private IDisposable?  _advancedSubscription;
     private IDisposable?  _lockSubscription;
-    private IDisposable?  _heightSubscription;
-    private IDisposable?  _stopSubscription;
 
     public IdasenDeskWindowViewModel ( ILogger                 logger ,
-                                       IServiceProvider        serviceProvider ,
                                        IUiDeskManager          uiDeskManager ,
                                        IObserveSettingsChanges settingsChanges ,
-                                       IScheduler              scheduler )
+                                       IScheduler              scheduler,
+                                       ISettingsManager        settingsManager)
     {
-        Guard.ArgumentNotNull ( serviceProvider ,
-                                nameof ( serviceProvider ) ) ;
-        Guard.ArgumentNotNull ( uiDeskManager ,
-                                nameof ( uiDeskManager ) ) ;
-
         _logger          = logger ;
         _uiDeskManager   = uiDeskManager ;
         _settingsChanges = settingsChanges ;
         _scheduler       = scheduler ;
+        _settingsManager = settingsManager ;
 
         var homeViewItem = new NavigationViewItem
         {
@@ -213,7 +205,8 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
             { Header = "Custom 2" , Command = Custom2Command , Icon = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleRight24 } } ;
         _menuItemStop = new MenuItem 
             { Header = "Stop" , Command = StopCommand , Icon = new SymbolIcon { Symbol = SymbolRegular.Stop24 } } ;
-        _menuItemExit = new MenuItem { Header = "Exit" , Command = ExitApplicationCommand } ;
+        var menuItemExit = new MenuItem 
+            { Header = "Exit" , Command = ExitApplicationCommand, Icon = new SymbolIcon { Symbol = SymbolRegular.CallInbound24 } } ;
 
         TrayMenuItems =
         [
@@ -229,7 +222,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
             _menuItemShow ,
             _menuItemHide ,
             new CustomSeparatorMenuItem ( ) ,
-            _menuItemExit
+            menuItemExit
         ] ;
     }
 
@@ -335,8 +328,6 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
             _exitViewItem.MouseDoubleClick -= OnClickExit ;
 
         await CastAndDispose ( _uiDeskManager ) ;
-        await CastAndDispose ( _stopSubscription ) ;
-        await CastAndDispose ( _heightSubscription ) ;
         await CastAndDispose ( _advancedSubscription ) ;
         await CastAndDispose ( _lockSubscription ) ;
         await CastAndDispose ( _onErrorChanged ) ;
@@ -548,14 +539,6 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         notifyIcon.Menu = contextMenu;
 
         // ReSharper disable AsyncVoidLambda
-        _stopSubscription = _settingsChanges.StopChanged
-                                            .ObserveOn(_scheduler)
-                                            .Subscribe(async settings => await OnStopChanged(settings));
-
-        _heightSubscription = _settingsChanges.HeightSettingsChanged
-                                              .ObserveOn(_scheduler)
-                                              .Subscribe(async heightSettings => await OnHeightSettingsChanged(heightSettings));
-
         _advancedSubscription = _settingsChanges.AdvancedSettingsChanged
                                                 .ObserveOn ( _scheduler )
                                                 .Subscribe ( async hasChanged => await OnAdvancedSettingsChanged ( hasChanged ) ) ;
@@ -566,64 +549,6 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         // ReSharper restore AsyncVoidLambda
 
         return this ;
-    }
-
-    private Task OnStopChanged ( ISettings settings )
-    {
-        _logger.Debug($"{nameof(OnStopChanged)}: {nameof(settings)}={settings}");
-
-        Application.Current?.Dispatcher.InvokeAsync ( ( ) =>
-                                                      {
-                                                          try
-                                                          {
-                                                              _menuItemStop.Visibility = settings.DeviceSettings.StopIsVisibleInContextMenu
-                                                                                             ? Visibility.Visible
-                                                                                             : Visibility.Collapsed ;
-                                                          }
-                                                          catch ( Exception e )
-                                                          {
-                                                              _logger.Error ( e ,
-                                                                              "Failed to update stop settings." ) ;
-                                                          }
-                                                      } ) ;
-
-        return Task.CompletedTask ;
-    }
-
-    private Task OnHeightSettingsChanged ( HeightSettings heightSettings )
-    {
-        _logger.Debug($"{nameof(OnHeightSettingsChanged)}: {nameof(heightSettings)}={heightSettings}");
-
-        Application.Current?.Dispatcher.InvokeAsync ( ( ) =>
-                                                      {
-                                                          try
-                                                          {
-                                                              UpdateContextMenuItemVisibility ( heightSettings ) ;
-                                                          }
-                                                          catch ( Exception e )
-                                                          {
-                                                              _logger.Error ( e ,
-                                                                              "Failed to update height settings." ) ;
-                                                          }
-                                                      } ) ;
-
-        return Task.CompletedTask ;
-    }
-
-    private void UpdateContextMenuItemVisibility ( HeightSettings heightSettings )
-    {
-        _menuItemStand.Visibility = heightSettings.StandingIsVisibleInContextMenu
-                                        ? Visibility.Visible
-                                        : Visibility.Collapsed ;
-        _menuItemSit.Visibility = heightSettings.SeatingIsVisibleInContextMenu
-                                      ? Visibility.Visible
-                                      : Visibility.Collapsed;
-        _menuItemCustom1.Visibility = heightSettings.Custom1IsVisibleInContextMenu
-                                          ? Visibility.Visible
-                                          : Visibility.Collapsed;
-        _menuItemCustom2.Visibility = heightSettings.Custom2IsVisibleInContextMenu
-                                          ? Visibility.Visible
-                                          : Visibility.Collapsed;
     }
 
     private void OnContextMenuOpened(object sender, EventArgs e)
@@ -651,6 +576,25 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
             _menuItemShow.Visibility = Visibility.Collapsed;
             _menuItemHide.Visibility = Visibility.Visible;
         }
+
+        var heightSettings = _settingsManager.CurrentSettings.HeightSettings ;
+
+        _menuItemStand.Visibility = heightSettings.StandingIsVisibleInContextMenu
+                                        ? Visibility.Visible
+                                        : Visibility.Collapsed;
+        _menuItemSit.Visibility = heightSettings.SeatingIsVisibleInContextMenu
+                                      ? Visibility.Visible
+                                      : Visibility.Collapsed;
+        _menuItemCustom1.Visibility = heightSettings.Custom1IsVisibleInContextMenu
+                                          ? Visibility.Visible
+                                          : Visibility.Collapsed;
+        _menuItemCustom2.Visibility = heightSettings.Custom2IsVisibleInContextMenu
+                                          ? Visibility.Visible
+                                          : Visibility.Collapsed;
+
+        _menuItemStop.Visibility = _settingsManager.CurrentSettings.DeviceSettings.StopIsVisibleInContextMenu
+                                       ? Visibility.Visible
+                                       : Visibility.Collapsed;
 
         var logBuilder = new StringBuilder();
 
