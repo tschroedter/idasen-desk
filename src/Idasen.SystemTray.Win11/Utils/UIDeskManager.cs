@@ -104,6 +104,23 @@ public class UiDeskManager : IUiDeskManager
         _logger.Information ( "Disposing {TypeName}..." ,
                               nameof ( UiDeskManager ) ) ;
 
+        // Unregister static/global hotkeys to avo  id retaining this instance
+        try
+        {
+            HotkeyManager.HotkeyAlreadyRegistered -= HotkeyManager_HotkeyAlreadyRegistered ;
+            HotkeyManager.Current.Remove ( "Standing" ) ;
+            HotkeyManager.Current.Remove ( "Seating" ) ;
+            HotkeyManager.Current.Remove ( "Custom 1" ) ;
+            HotkeyManager.Current.Remove ( "Custom 2" ) ;
+        }
+        catch
+        {
+            // ignore cleanup errors
+        }
+
+        // Cancel any pending operations
+        try { _tokenSource?.Cancel ( ) ; } catch { }
+
         DisposeDesk ( ) ;
 
         _heightChanged?.Dispose ( ) ;
@@ -111,6 +128,17 @@ public class UiDeskManager : IUiDeskManager
         _onErrorChanged?.Dispose ( ) ;
         _deskProvider?.Dispose ( ) ;
         _tokenSource?.Dispose ( ) ;
+
+        // Complete and dispose the subject to release subscriptions
+        try
+        {
+            _statusBarInfoSubject.OnCompleted ( ) ;
+            _statusBarInfoSubject.Dispose ( ) ;
+        }
+        catch
+        {
+            // ignore
+        }
     }
 
     public bool IsConnected => _desk is not null ;

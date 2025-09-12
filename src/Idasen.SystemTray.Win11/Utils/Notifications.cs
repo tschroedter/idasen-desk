@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis ;
 using System.Reactive.Subjects ;
+using System.Windows ;
 using System.Windows.Threading ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Microsoft.Toolkit.Uwp.Notifications ;
@@ -73,10 +74,12 @@ public class Notifications : INotifications
             return ;
         }
 
-        if ( ! Dispatcher.CurrentDispatcher.CheckAccess ( ) )
+        var appDispatcher = Application.Current?.Dispatcher ;
+
+        if ( appDispatcher != null && ! appDispatcher.CheckAccess ( ) )
         {
             _logger.Debug ( "Dispatching call on UI thread" ) ;
-            Dispatcher.CurrentDispatcher.BeginInvoke ( new Action ( ( ) => Show ( parameters ) ) ) ;
+            appDispatcher.BeginInvoke ( new Action ( ( ) => Show ( parameters ) ) ) ;
             return ;
         }
 

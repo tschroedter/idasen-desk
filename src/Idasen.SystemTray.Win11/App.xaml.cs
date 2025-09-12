@@ -262,7 +262,8 @@ public partial class App
     {
         if ( ! CurrentWindow.CheckAccess ( ) )
         {
-            CurrentWindow.Dispatcher.BeginInvoke ( new Action ( ( ) => FindNotifyIcon ( ) ) ) ;
+            // Ensure we access visual tree on UI thread and return the result
+            return CurrentWindow.Dispatcher.Invoke ( FindNotifyIcon ) ;
         }
 
         var notifyIcons = FindVisualChildren < NotifyIcon > ( CurrentWindow ) ;
