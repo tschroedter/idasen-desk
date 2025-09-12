@@ -1,8 +1,5 @@
-using System.Reflection ;
 using FluentAssertions ;
 using Idasen.SystemTray.Win11.Utils ;
-using NSubstitute ;
-using Serilog ;
 
 namespace Idasen.SystemTray.Win11.Tests.Utils ;
 

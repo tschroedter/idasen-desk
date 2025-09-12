@@ -25,10 +25,10 @@ namespace Idasen.SystemTray.Win11.Tests.ViewModels.Pages
         public void Constructor_ShouldThrowArgumentNullException_WhenVersionProviderIsNull()
         {
             // Arrange
-            IVersionProvider versionProvider = null;
+            IVersionProvider versionProvider = null!;
 
             // Act
-            var act = () => new DashboardViewModel(versionProvider!);
+            var act = () => new DashboardViewModel(versionProvider);
 
             // Assert
             act.Should().Throw<ArgumentNullException>()

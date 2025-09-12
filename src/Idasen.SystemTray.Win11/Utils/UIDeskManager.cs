@@ -531,8 +531,7 @@ public class UiDeskManager : IUiDeskManager
 
     private void ConnectSuccessful ( IDesk desk )
     {
-        _logger.Information ( "[{DeviceName}] Connected to {DeviceName} with address {BluetoothAddress} (MacAddress {MacAddress})" ,
-                              desk.DeviceName ,
+        _logger.Information ( "[{DeviceName}] Connected with address {BluetoothAddress} (MacAddress {MacAddress})" ,
                               desk.DeviceName ,
                               desk.BluetoothAddress ,
                               desk.BluetoothAddress.ToMacAddress ( ) ) ;
@@ -601,7 +600,7 @@ public class UiDeskManager : IUiDeskManager
         string          message  = "" ,
         InfoBarSeverity severity = InfoBarSeverity.Informational )
     {
-        _logger.Debug ( "{Height} = {height}, {Title} = {title}, {Message} = {message}, {Severity} = {severity}" ,
+        _logger.Debug ( "{HeightName} = {height}, {TitleName} = {title}, {Message} = {messageName}, {SeverityName} = {severity}" ,
                         nameof ( height ) ,
                         height ,
                         nameof ( title ) ,

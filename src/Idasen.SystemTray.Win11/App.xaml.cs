@@ -224,11 +224,19 @@ public partial class App
     /// </summary>
     private async void OnExit ( object sender , ExitEventArgs e )
     {
-        CurrentWindow.StateChanged -= OnStateChanged_HideOnMinimize;
+        try
+        {
+            CurrentWindow.StateChanged -= OnStateChanged_HideOnMinimize;
 
-        await Host.StopAsync ( ) ;
+            await Host.StopAsync ( ) ;
 
-        Host.Dispose ( ) ;
+            Host.Dispose ( ) ;
+        }
+        catch ( Exception ex )
+        {
+            _logger.Error ( ex ,
+                            "Failed to stop application" );
+        }
     }
 
     private void OnStateChanged_HideOnMinimize(object? sender, EventArgs e)

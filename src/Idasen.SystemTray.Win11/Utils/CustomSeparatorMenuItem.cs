@@ -27,5 +27,4 @@ public class CustomSeparatorMenuItem : Wpf.Ui.Controls.MenuItem
 
         return template;
     }
-
 }

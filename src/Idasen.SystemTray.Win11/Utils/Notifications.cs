@@ -47,7 +47,8 @@ public class Notifications : INotifications
                        Show ( $"Idasen System Tray {_version.GetVersion ( )}" ,
                               "Running..." ,
                               InfoBarSeverity.Informational ) ;
-                   } ) ;
+                   } ,
+                   token ) ;
 
         return this ;
     }
@@ -65,7 +66,7 @@ public class Notifications : INotifications
 
     private void OnShow ( NotificationParameters parameters )
     {
-        if ( _manager?.CurrentSettings?.DeviceSettings?.NotificationsEnabled == false )
+        if ( ! _manager.CurrentSettings.DeviceSettings.NotificationsEnabled )
         {
             _logger.Information ( "Notifications are disabled. {Parameters}" ,
                                   parameters ) ;

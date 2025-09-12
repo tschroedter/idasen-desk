@@ -10,58 +10,80 @@ public class SettingsSynchronizer ( ILogger                        logger ,
                                     IDeviceNameConverter           nameConverter ,
                                     IDeviceAddressToULongConverter addressConverter ,
                                     INotifySettingsChanges         settingsChanges ,
-                                    IThemeSwitcher themeSwitcher ) : ISettingsSynchronizer
+                                    IThemeSwitcher                 themeSwitcher ) : ISettingsSynchronizer
 {
     public async Task LoadSettingsAsync ( ISettingsViewModel model ,
-                                          CancellationToken token )
+                                          CancellationToken  token )
     {
-        logger.Debug ( "LoadSettingsAsync settings" ) ;
+        if ( model == null ) throw new ArgumentNullException ( nameof ( model ) ) ;
 
-        await settingsManager.LoadAsync ( token ) ;
-
-        var current = settingsManager.CurrentSettings ;
-
-        model.MinHeight = current.HeightSettings.DeskMinHeightInCm ;
-        model.MaxHeight = current.HeightSettings.DeskMaxHeightInCm ;
-        model.Standing  = current.HeightSettings.StandingHeightInCm;
-        model.Seating   = current.HeightSettings.SeatingHeightInCm ;
-        model.Custom1   = current.HeightSettings.Custom1HeightInCm ;
-        model.Custom2   = current.HeightSettings.Custom2HeightInCm ;
-
-        model.StandingIsVisibleInContextMenu = current.HeightSettings.StandingIsVisibleInContextMenu;
-        model.SeatingIsVisibleInContextMenu  = current.HeightSettings.SeatingIsVisibleInContextMenu;
-        model.Custom1IsVisibleInContextMenu  = current.HeightSettings.Custom1IsVisibleInContextMenu;
-        model.Custom2IsVisibleInContextMenu  = current.HeightSettings.Custom2IsVisibleInContextMenu;
-        model.StopIsVisibleInContextMenu     = current.DeviceSettings.StopIsVisibleInContextMenu;
-
-        model.LastKnownDeskHeight = current.HeightSettings.LastKnownDeskHeight ;
-        model.DeskName            = nameConverter.EmptyIfDefault ( current.DeviceSettings.DeviceName ) ;
-        model.DeskAddress         = addressConverter.EmptyIfDefault ( current.DeviceSettings.DeviceAddress ) ;
-        model.ParentalLock        = current.DeviceSettings.DeviceLocked ;
-        model.Notifications       = current.DeviceSettings.NotificationsEnabled ;
-
-        var themeName = current.AppearanceSettings.ThemeName;
-
-        if (Enum.TryParse<ApplicationTheme>(themeName, out var parsedTheme) &&
-            parsedTheme is ApplicationTheme.Light or 
-                           ApplicationTheme.Dark or 
-                           ApplicationTheme.HighContrast)
+        try
         {
-            model.CurrentTheme = parsedTheme;
-        }
-        else
-        {
-            model.CurrentTheme = ApplicationTheme.Light;
-        }
+            logger.Debug ( "LoadSettingsAsync settings" ) ;
 
-        themeSwitcher.ChangeTheme ( current.AppearanceSettings.ThemeName );
+            await settingsManager.LoadAsync ( token ).ConfigureAwait ( false ) ;
+
+            var current = settingsManager.CurrentSettings ;
+
+            model.MinHeight = current.HeightSettings.DeskMinHeightInCm ;
+            model.MaxHeight = current.HeightSettings.DeskMaxHeightInCm ;
+            model.Standing  = current.HeightSettings.StandingHeightInCm ;
+            model.Seating   = current.HeightSettings.SeatingHeightInCm ;
+            model.Custom1   = current.HeightSettings.Custom1HeightInCm ;
+            model.Custom2   = current.HeightSettings.Custom2HeightInCm ;
+
+            model.StandingIsVisibleInContextMenu = current.HeightSettings.StandingIsVisibleInContextMenu ;
+            model.SeatingIsVisibleInContextMenu  = current.HeightSettings.SeatingIsVisibleInContextMenu ;
+            model.Custom1IsVisibleInContextMenu  = current.HeightSettings.Custom1IsVisibleInContextMenu ;
+            model.Custom2IsVisibleInContextMenu  = current.HeightSettings.Custom2IsVisibleInContextMenu ;
+            model.StopIsVisibleInContextMenu     = current.DeviceSettings.StopIsVisibleInContextMenu ;
+
+            model.LastKnownDeskHeight = current.HeightSettings.LastKnownDeskHeight ;
+            model.DeskName            = nameConverter.EmptyIfDefault ( current.DeviceSettings.DeviceName ) ;
+            model.DeskAddress         = addressConverter.EmptyIfDefault ( current.DeviceSettings.DeviceAddress ) ;
+            model.ParentalLock        = current.DeviceSettings.DeviceLocked ;
+            model.Notifications       = current.DeviceSettings.NotificationsEnabled ;
+
+            var themeName = current.AppearanceSettings.ThemeName ;
+
+            if ( Enum.TryParse<ApplicationTheme> ( themeName , out var parsedTheme ) &&
+                 parsedTheme is ApplicationTheme.Light or
+                                 ApplicationTheme.Dark or
+                                 ApplicationTheme.HighContrast )
+            {
+                model.CurrentTheme = parsedTheme ;
+            }
+            else
+            {
+                model.CurrentTheme = ApplicationTheme.Light ;
+            }
+
+            if ( ! string.Equals ( themeSwitcher.CurrentThemeName , themeName , StringComparison.Ordinal ) )
+            {
+                themeSwitcher.ChangeTheme ( current.AppearanceSettings.ThemeName ) ;
+            }
+        }
+        catch ( Exception ex )
+        {
+            logger.Error ( ex , "Failed to load settings" ) ;
+            throw ;
+        }
     }
 
-    public async Task StoreSettingsAsync (ISettingsViewModel model ,
-                                          CancellationToken token )
+    public async Task StoreSettingsAsync ( ISettingsViewModel model ,
+                                           CancellationToken  token )
     {
-        var lockChanged           = HasParentalLockChanged ( model ) ;
-        var advancedChanged       = HaveAdvancedSettingsChanged ( model ) ;
+        if ( model == null ) throw new ArgumentNullException ( nameof ( model ) ) ;
+
+        var lockChanged     = HasParentalLockChanged ( model ) ;
+        var advancedChanged = HaveAdvancedSettingsChanged ( model ) ;
+        var anyChanged      = HaveAnySettingsChanged ( model ) || lockChanged || advancedChanged ;
+
+        if ( ! anyChanged )
+        {
+            logger.Debug ( "No settings changes detected. Skipping save and notifications." ) ;
+            return ;
+        }
 
         UpdateCurrentSettings ( model ) ;
 
@@ -70,14 +92,14 @@ public class SettingsSynchronizer ( ILogger                        logger ,
                                      token ) ;
     }
 
-    public bool HasParentalLockChanged (ISettingsViewModel model )
+    public bool HasParentalLockChanged ( ISettingsViewModel model )
     {
         var settings = settingsManager.CurrentSettings ;
 
         return settings.DeviceSettings.DeviceLocked != model.ParentalLock ;
     }
 
-    public bool HaveAdvancedSettingsChanged (ISettingsViewModel model )
+    public bool HaveAdvancedSettingsChanged ( ISettingsViewModel model )
     {
         var settings = settingsManager.CurrentSettings ;
 
@@ -88,7 +110,7 @@ public class SettingsSynchronizer ( ILogger                        logger ,
                settings.DeviceSettings.DeviceAddress != newDeviceAddress ;
     }
 
-    public void UpdateCurrentSettings (ISettingsViewModel model )
+    public void UpdateCurrentSettings ( ISettingsViewModel model )
     {
         var settings = settingsManager.CurrentSettings ;
 
@@ -99,13 +121,13 @@ public class SettingsSynchronizer ( ILogger                        logger ,
 
         settings.HeightSettings.StandingHeightInCm = toUIntConverter.ConvertToUInt ( model.Standing ,
                                                                                      Constants.DefaultHeightStandingInCm ) ;
-        settings.HeightSettings.SeatingHeightInCm = toUIntConverter.ConvertToUInt ( model.Seating ,
-                                                                                    Constants.DefaultHeightSeatingInCm ) ;
-        settings.HeightSettings.Custom1HeightInCm = toUIntConverter.ConvertToUInt ( model.Custom1 ,
-                                                                                      Constants.DefaultHeightStandingInCm ) ;
-        settings.HeightSettings.Custom2HeightInCm    = toUIntConverter.ConvertToUInt ( model.Custom2 ,
+        settings.HeightSettings.SeatingHeightInCm  = toUIntConverter.ConvertToUInt ( model.Seating ,
                                                                                      Constants.DefaultHeightSeatingInCm ) ;
-        settings.HeightSettings.LastKnownDeskHeight  = model.LastKnownDeskHeight ;
+        settings.HeightSettings.Custom1HeightInCm  = toUIntConverter.ConvertToUInt ( model.Custom1 ,
+                                                                                     Constants.DefaultHeightStandingInCm ) ;
+        settings.HeightSettings.Custom2HeightInCm  = toUIntConverter.ConvertToUInt ( model.Custom2 ,
+                                                                                     Constants.DefaultHeightSeatingInCm ) ;
+        settings.HeightSettings.LastKnownDeskHeight = model.LastKnownDeskHeight ;
 
         settings.HeightSettings.StandingIsVisibleInContextMenu = model.StandingIsVisibleInContextMenu ;
         settings.HeightSettings.SeatingIsVisibleInContextMenu  = model.SeatingIsVisibleInContextMenu ;
@@ -113,16 +135,16 @@ public class SettingsSynchronizer ( ILogger                        logger ,
         settings.HeightSettings.Custom2IsVisibleInContextMenu  = model.Custom2IsVisibleInContextMenu ;
         settings.DeviceSettings.StopIsVisibleInContextMenu     = model.StopIsVisibleInContextMenu ;
 
-        settings.DeviceSettings.DeviceName                     = newDeviceName ;
-        settings.DeviceSettings.DeviceAddress                  = newDeviceAddress ;
-        settings.DeviceSettings.DeviceLocked                   = newDeviceLocked ;
-        settings.DeviceSettings.NotificationsEnabled           = newNotificationsEnabled ;
+        settings.DeviceSettings.DeviceName           = newDeviceName ;
+        settings.DeviceSettings.DeviceAddress        = newDeviceAddress ;
+        settings.DeviceSettings.DeviceLocked         = newDeviceLocked ;
+        settings.DeviceSettings.NotificationsEnabled = newNotificationsEnabled ;
 
-        settings.AppearanceSettings.ThemeName = themeSwitcher.CurrentThemeName;
+        settings.AppearanceSettings.ThemeName = themeSwitcher.CurrentThemeName ;
     }
 
-    public void ChangeTheme(string parameter) => 
-        themeSwitcher.ChangeTheme(parameter);
+    public void ChangeTheme ( string parameter ) =>
+        themeSwitcher.ChangeTheme ( parameter ) ;
 
     private async Task DoStoreSettingsAsync ( bool              advancedChanged ,
                                               bool              lockChanged ,
@@ -133,7 +155,7 @@ public class SettingsSynchronizer ( ILogger                        logger ,
             logger.Debug ( "Storing new settings: {SettingsManagerCurrentSettings}" ,
                            settingsManager.CurrentSettings ) ;
 
-            await settingsManager.SaveAsync ( token ) ;
+            await settingsManager.SaveAsync ( token ).ConfigureAwait ( false ) ;
 
             if ( advancedChanged )
             {
@@ -164,5 +186,35 @@ public class SettingsSynchronizer ( ILogger                        logger ,
         logger.Information ( "Advanced settings have changed, reconnecting..." ) ;
 
         settingsChanges.AdvancedSettingsChanged.OnNext ( advancedChanged ) ;
+    }
+
+    private bool HaveAnySettingsChanged ( ISettingsViewModel model )
+    {
+        var current = settingsManager.CurrentSettings ;
+
+        bool heightChanged =
+            current.HeightSettings.DeskMinHeightInCm != model.MinHeight ||
+            current.HeightSettings.DeskMaxHeightInCm != model.MaxHeight ||
+            current.HeightSettings.StandingHeightInCm != toUIntConverter.ConvertToUInt ( model.Standing , Constants.DefaultHeightStandingInCm ) ||
+            current.HeightSettings.SeatingHeightInCm  != toUIntConverter.ConvertToUInt ( model.Seating  , Constants.DefaultHeightSeatingInCm  ) ||
+            current.HeightSettings.Custom1HeightInCm  != toUIntConverter.ConvertToUInt ( model.Custom1  , Constants.DefaultHeightStandingInCm ) ||
+            current.HeightSettings.Custom2HeightInCm  != toUIntConverter.ConvertToUInt ( model.Custom2  , Constants.DefaultHeightSeatingInCm  ) ||
+            current.HeightSettings.LastKnownDeskHeight != model.LastKnownDeskHeight ;
+
+        bool visibilityChanged =
+            current.HeightSettings.StandingIsVisibleInContextMenu != model.StandingIsVisibleInContextMenu ||
+            current.HeightSettings.SeatingIsVisibleInContextMenu  != model.SeatingIsVisibleInContextMenu  ||
+            current.HeightSettings.Custom1IsVisibleInContextMenu  != model.Custom1IsVisibleInContextMenu  ||
+            current.HeightSettings.Custom2IsVisibleInContextMenu  != model.Custom2IsVisibleInContextMenu  ||
+            current.DeviceSettings.StopIsVisibleInContextMenu     != model.StopIsVisibleInContextMenu ;
+
+        bool deviceChanged =
+            current.DeviceSettings.NotificationsEnabled != model.Notifications ||
+            current.DeviceSettings.DeviceLocked         != model.ParentalLock ;
+
+        bool themeChanged =
+            ! string.Equals ( current.AppearanceSettings.ThemeName , themeSwitcher.CurrentThemeName , StringComparison.Ordinal ) ;
+
+        return heightChanged || visibilityChanged || deviceChanged || themeChanged ;
     }
 }

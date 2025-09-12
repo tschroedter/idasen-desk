@@ -6,7 +6,6 @@ using System.Diagnostics.CodeAnalysis ;
 using System.Reactive.Concurrency ;
 using System.Reactive.Linq ;
 using System.Reflection ;
-using System.Windows.Threading ;
 using Wpf.Ui.Abstractions.Controls ;
 using Wpf.Ui.Appearance ;
 
