@@ -66,6 +66,20 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
     private IDisposable?  _advancedSubscription;
     private IDisposable?  _lockSubscription;
 
+    private ContextMenu? _contextMenu ;
+
+    // Cached commands
+    private readonly ICommand _showSettingsCommand ;
+    private readonly ICommand _hideSettingsCommand ;
+    private readonly ICommand _connectCommand ;
+    private readonly ICommand _disconnectCommand ;
+    private readonly ICommand _standingCommand ;
+    private readonly ICommand _seatingCommand ;
+    private readonly ICommand _custom1Command ;
+    private readonly ICommand _custom2Command ;
+    private readonly ICommand _stopCommand ;
+    private readonly ICommand _exitApplicationCommand ;
+
     public IdasenDeskWindowViewModel ( ILogger                 logger ,
                                        IUiDeskManager          uiDeskManager ,
                                        IObserveSettingsChanges settingsChanges ,
@@ -190,27 +204,41 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
         _footerMenuItems.Add ( _exitViewItem ) ;
 
+        // Cache commands
+        // ReSharper disable AsyncVoidLambda
+        _showSettingsCommand = new DelegateCommand ( DoShowSettings , CanShowSettings ) ;
+        _hideSettingsCommand = new DelegateCommand ( DoHideSettings , CanHideSettings ) ;
+        _connectCommand      = new DelegateCommand ( async _ => await _uiDeskManager.AutoConnectAsync ( ) , CanExecuteConnect ) ;
+        _disconnectCommand   = new DelegateCommand ( DoDisconnect , CanExecuteDisconnect ) ;
+        _standingCommand     = new DelegateCommand ( async _ => await _uiDeskManager.StandAsync ( ) , CanExecuteStanding ) ;
+        _seatingCommand      = new DelegateCommand ( async _ => await _uiDeskManager.SitAsync ( ) , CanExecuteSeating ) ;
+        _custom1Command      = new DelegateCommand ( async _ => await _uiDeskManager.Custom1Async ( ) , CanExecuteStanding ) ;
+        _custom2Command      = new DelegateCommand ( async _ => await _uiDeskManager.Custom2Async ( ) , CanExecuteStanding ) ;
+        _stopCommand         = new DelegateCommand ( async _ => await _uiDeskManager.StopAsync ( ) , CanExecuteStop ) ;
+        _exitApplicationCommand = new DelegateCommand ( DoExitApplication , _ => true ) ;
+        // ReSharper restore AsyncVoidLambda
+
         _menuItemConnect = new MenuItem
-            { Header = "Connect" , Command = ConnectCommand , Icon = new SymbolIcon { Symbol = SymbolRegular.PlugConnected24 } } ;
+            { Header = "Connect" , Command = _connectCommand , Icon = new SymbolIcon { Symbol = SymbolRegular.PlugConnected24 } } ;
         _menuItemDisconnect = new MenuItem
-            { Header = "Disconnect" , Command = DisconnectCommand , Icon = new SymbolIcon { Symbol = SymbolRegular.PlugDisconnected24 } } ;
+            { Header = "Disconnect" , Command = _disconnectCommand , Icon = new SymbolIcon { Symbol = SymbolRegular.PlugDisconnected24 } } ;
         _menuItemShow = new MenuItem
-            { Header = "Show Settings" , Command = ShowSettingsCommand , Icon = new SymbolIcon { Symbol = SymbolRegular.SlideTransition24 } } ;
+            { Header = "Show Settings" , Command = _showSettingsCommand , Icon = new SymbolIcon { Symbol = SymbolRegular.SlideTransition24 } } ;
         _menuItemHide = new MenuItem
-            { Header = "Hide Settings" , Command = HideSettingsCommand , Icon = new SymbolIcon { Symbol = SymbolRegular.SlideHide24 } } ;
+            { Header = "Hide Settings" , Command = _hideSettingsCommand , Icon = new SymbolIcon { Symbol = SymbolRegular.SlideHide24 } } ;
 
         _menuItemStand = new MenuItem
-            { Header = "Stand" , Command = StandingCommand , Icon = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleUp24 } } ;
+            { Header = "Stand" , Command = _standingCommand , Icon = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleUp24 } } ;
         _menuItemSit = new MenuItem
-            { Header = "Sit" , Command = SeatingCommand , Icon = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleDown24 } } ;
+            { Header = "Sit" , Command = _seatingCommand , Icon = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleDown24 } } ;
         _menuItemCustom1 = new MenuItem
-            { Header = "Custom 1" , Command = Custom1Command , Icon = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleLeft24 } } ;
+            { Header = "Custom 1" , Command = _custom1Command , Icon = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleLeft24 } } ;
         _menuItemCustom2 = new MenuItem
-            { Header = "Custom 2" , Command = Custom2Command , Icon = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleRight24 } } ;
+            { Header = "Custom 2" , Command = _custom2Command , Icon = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleRight24 } } ;
         _menuItemStop = new MenuItem 
-            { Header = "Stop" , Command = StopCommand , Icon = new SymbolIcon { Symbol = SymbolRegular.Stop24 } } ;
+            { Header = "Stop" , Command = _stopCommand , Icon = new SymbolIcon { Symbol = SymbolRegular.Stop24 } } ;
         var menuItemExit = new MenuItem 
-            { Header = "Exit" , Command = ExitApplicationCommand, Icon = new SymbolIcon { Symbol = SymbolRegular.CallInbound24 } } ;
+            { Header = "Exit" , Command = _exitApplicationCommand, Icon = new SymbolIcon { Symbol = SymbolRegular.CallInbound24 } } ;
 
         TrayMenuItems =
         [
@@ -233,80 +261,52 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
     /// <summary>
     ///     Shows a window, if none is already open.
     /// </summary>
-    public ICommand ShowSettingsCommand =>
-        new DelegateCommand ( DoShowSettings ,
-                              CanShowSettings ) ;
+    public ICommand ShowSettingsCommand => _showSettingsCommand ;
 
     /// <summary>
     ///     Hides the main window. This command is only enabled if a window is open.
     /// </summary>
-    public ICommand HideSettingsCommand =>
-        new DelegateCommand ( DoHideSettings ,
-                              CanHideSettings ) ;
+    public ICommand HideSettingsCommand => _hideSettingsCommand ;
 
     /// <summary>
     ///     Connects to the Idasen Desk.
     /// </summary>
-    public ICommand ConnectCommand =>
-        // ReSharper disable once AsyncVoidLambda
-        new DelegateCommand ( async _ => await _uiDeskManager.AutoConnectAsync ( ) ,
-                              CanExecuteConnect ) ;
+    public ICommand ConnectCommand => _connectCommand ;
 
     /// <summary>
     ///     Disconnects from the Idasen Desk.
     /// </summary>
-    public ICommand DisconnectCommand =>
-        // ReSharper disable once AsyncVoidLambda
-        new DelegateCommand ( DoDisconnect,
-                              CanExecuteDisconnect ) ;
+    public ICommand DisconnectCommand => _disconnectCommand ;
 
     /// <summary>
     ///     Moves the desk to the standing height.
     /// </summary>
-    public ICommand StandingCommand =>
-        // ReSharper disable once AsyncVoidLambda
-        new DelegateCommand ( async _ => await _uiDeskManager.StandAsync ( ) ,
-                              CanExecuteStanding ) ;
+    public ICommand StandingCommand => _standingCommand ;
 
     /// <summary>
     ///     Moves the desk to the seating height.
     /// </summary>
-    public ICommand SeatingCommand =>
-        // ReSharper disable once AsyncVoidLambda
-        new DelegateCommand ( async _ => await _uiDeskManager.SitAsync ( ) ,
-                              CanExecuteSeating ) ;
+    public ICommand SeatingCommand => _seatingCommand ;
 
     /// <summary>
     ///     Moves the desk to the custom 1 height.
     /// </summary>
-    public ICommand Custom1Command =>
-        // ReSharper disable once AsyncVoidLambda
-        new DelegateCommand ( async _ => await _uiDeskManager.Custom1Async ( ) ,
-                              CanExecuteStanding ) ;
+    public ICommand Custom1Command => _custom1Command ;
 
     /// <summary>
     ///     Moves the desk to the custom 2 height.
     /// </summary>
-    public ICommand Custom2Command =>
-        // ReSharper disable once AsyncVoidLambda
-        new DelegateCommand ( async _ => await _uiDeskManager.Custom2Async ( ) ,
-                              CanExecuteStanding ) ;
+    public ICommand Custom2Command => _custom2Command ;
 
     /// <summary>
     ///     Stop the desk moving.
     /// </summary>
-    public ICommand StopCommand =>
-        // ReSharper disable once AsyncVoidLambda
-        new DelegateCommand ( async _ => await _uiDeskManager.StopAsync ( ) ,
-                              CanExecuteStop ) ;
+    public ICommand StopCommand => _stopCommand ;
 
     /// <summary>
     ///     Shuts down the application.
     /// </summary>
-    public ICommand ExitApplicationCommand =>
-        // ReSharper disable once AsyncVoidLambda
-        new DelegateCommand ( DoExitApplication ,
-                              _ => true ) ;
+    public ICommand ExitApplicationCommand => _exitApplicationCommand ;
 
     public async ValueTask DisposeAsync ( )
     {
@@ -330,6 +330,12 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
             _closeWindowViewItem.MouseDoubleClick -= OnClickCloseViewItem ;
         if ( _exitViewItem != null )
             _exitViewItem.MouseDoubleClick -= OnClickExit ;
+
+        if ( _contextMenu != null )
+        {
+            _contextMenu.Opened -= OnContextMenuOpened ;
+            _contextMenu         = null ;
+        }
 
         await CastAndDispose ( _uiDeskManager ) ;
         await CastAndDispose ( _advancedSubscription ) ;
@@ -459,7 +465,14 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
                 return;
             }
 
-            await action();
+            try
+            {
+                await action();
+            }
+            catch ( Exception ex )
+            {
+                _logger.Error(ex, "Action failed for {Title}", title);
+            }
         });
     }
 
@@ -532,15 +545,15 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
         _uiDeskManager.Initialize ( notifyIcon ) ;
 
-        var contextMenu = new ContextMenu
+        _contextMenu = new ContextMenu
         {
             ItemsSource = TrayMenuItems
         };
 
         // Attach event handler for ContextMenu.Opened
-        contextMenu.Opened += OnContextMenuOpened;
+        _contextMenu.Opened += OnContextMenuOpened;
 
-        notifyIcon.Menu = contextMenu;
+        notifyIcon.Menu = _contextMenu;
 
         // ReSharper disable AsyncVoidLambda
         _advancedSubscription = _settingsChanges.AdvancedSettingsChanged
@@ -611,6 +624,8 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         }
 
         _logger.Debug(logBuilder.ToString());
+
+        CommandManager.InvalidateRequerySuggested();
     }
 
     private async Task OnAdvancedSettingsChanged ( bool hasChanged )
