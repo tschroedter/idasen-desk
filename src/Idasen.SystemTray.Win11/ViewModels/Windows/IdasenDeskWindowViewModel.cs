@@ -5,7 +5,6 @@ using System.Reactive.Linq ;
 using System.Text ;
 using System.Windows.Controls ;
 using System.Windows.Input ;
-using System.Windows.Threading ;
 using Idasen.BluetoothLE.Core ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.TraySettings ;
@@ -389,29 +388,10 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
     private void DoHideWindow ( )
     {
-        if ( ! _uiDeskManager.IsInitialize )
-        {
-            return ;
-        }
-
-        var uiMessageBox = new MessageBox
-        {
-            Title             = "Hide ?" ,
-            Content           = "Do you want to hide this window?" ,
-            PrimaryButtonText = "Hide"
-        } ;
-
-        Application.Current?.Dispatcher.InvokeAsync ( async ( ) =>
-                                                      {
-                                                          var result = await uiMessageBox.ShowDialogAsync ( ) ;
-
-                                                          if ( result != MessageBoxResult.Primary )
-                                                          {
-                                                              return ;
-                                                          }
-
-                                                          await _uiDeskManager.HideAsync ( ) ;
-                                                      } ) ;
+        ConfirmAndExecute("Hide ?",
+                          "Do you want to hide this window?",
+                          "Hide",
+                          () => _uiDeskManager.HideAsync());
     }
 
     private static bool CanShowSettings ( object ? _ )
@@ -446,56 +426,18 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
     private void DoDisconnect(object? _)
     {
-        if (!_uiDeskManager.IsInitialize)
-        {
-            return;
-        }
-
-        var uiMessageBox = new MessageBox
-        {
-            Title             = "Disconnect ?",
-            Content           = "Do you want to disconnect from the desk?",
-            PrimaryButtonText = "Disconnect"
-        };
-
-        Application.Current?.Dispatcher.InvokeAsync(async () =>
-                                                 {
-                                                     var result = await uiMessageBox.ShowDialogAsync();
-
-                                                     if (result != MessageBoxResult.Primary)
-                                                     {
-                                                         return;
-                                                     }
-
-                                                     await _uiDeskManager.DisconnectAsync();
-                                                 });
+        ConfirmAndExecute("Disconnect ?",
+                          "Do you want to disconnect from the desk?",
+                          "Disconnect",
+                          () => _uiDeskManager.DisconnectAsync());
     }
 
     private void DoExitApplication ( object ? _ )
     {
-        if ( ! _uiDeskManager.IsInitialize )
-        {
-            return ;
-        }
-
-        var uiMessageBox = new MessageBox
-        {
-            Title             = "Exit ?" ,
-            Content           = "Do you want to exit the application?" ,
-            PrimaryButtonText = "Exit"
-        } ;
-
-        Application.Current?.Dispatcher.InvokeAsync ( async ( ) =>
-                                                      {
-                                                          var result = await uiMessageBox.ShowDialogAsync ( ) ;
-
-                                                          if ( result != MessageBoxResult.Primary )
-                                                          {
-                                                              return ;
-                                                          }
-
-                                                          await _uiDeskManager.ExitAsync ( ) ;
-                                                      } ) ;
+        ConfirmAndExecute("Exit ?",
+                          "Do you want to exit the application?",
+                          "Exit",
+                          () => _uiDeskManager.ExitAsync());
     }
 
     // Generic helper to show a confirmation and run an async action if confirmed
@@ -570,56 +512,18 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
     private void OnClickConnectViewItem ( object sender , RoutedEventArgs e )
     {
-        if ( ! _uiDeskManager.IsInitialize )
-        {
-            return ;
-        }
-
-        var uiMessageBox = new MessageBox
-        {
-            Title             = "Connect ?" ,
-            Content           = "Do you want to connect to the desk?" ,
-            PrimaryButtonText = "Connect"
-        } ;
-
-        Application.Current?.Dispatcher.InvokeAsync ( async ( ) =>
-                                                      {
-                                                          var result = await uiMessageBox.ShowDialogAsync ( ) ;
-
-                                                          if ( result != MessageBoxResult.Primary )
-                                                          {
-                                                              return ;
-                                                          }
-
-                                                          await _uiDeskManager.AutoConnectAsync ( ) ;
-                                                      } ) ;
+        ConfirmAndExecute("Connect ?",
+                          "Do you want to connect to the desk?",
+                          "Connect",
+                          () => _uiDeskManager.AutoConnectAsync());
     }
 
     private void OnClickDisconnectViewItem ( object sender , RoutedEventArgs e )
     {
-        if ( ! _uiDeskManager.IsInitialize )
-        {
-            return ;
-        }
-
-        var uiMessageBox = new MessageBox
-        {
-            Title             = "Disconnect ?" ,
-            Content           = "Do you want to disconnect from the desk?" ,
-            PrimaryButtonText = "Disconnect"
-        } ;
-
-        Application.Current?.Dispatcher.InvokeAsync ( async ( ) =>
-                                                      {
-                                                          var result = await uiMessageBox.ShowDialogAsync ( ) ;
-
-                                                          if ( result != MessageBoxResult.Primary )
-                                                          {
-                                                              return ;
-                                                          }
-
-                                                          await _uiDeskManager.DisconnectAsync ( ) ;
-                                                      } ) ;
+        ConfirmAndExecute("Disconnect ?",
+                          "Do you want to disconnect from the desk?",
+                          "Disconnect",
+                          () => _uiDeskManager.DisconnectAsync());
     }
 
     public IdasenDeskWindowViewModel Initialize ( NotifyIcon notifyIcon )
