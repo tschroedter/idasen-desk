@@ -22,6 +22,11 @@ public class UiDeskManager : IUiDeskManager
 {
     private const uint DeskHeightFactor = 100 ;
 
+    private const string HotkeyNameStanding = "Standing" ;
+    private const string HotkeyNameSeating  = "Seating" ;
+    private const string HotkeyNameCustom1  = "Custom 1" ;
+    private const string HotkeyNameCustom2  = "Custom 2" ;
+
     private static readonly KeyGesture StandingGesture = new ( Key.Up ,
                                                                ModifierKeys.Control | ModifierKeys.Alt | ModifierKeys.Shift ) ;
 
@@ -104,14 +109,14 @@ public class UiDeskManager : IUiDeskManager
         _logger.Information ( "Disposing {TypeName}..." ,
                               nameof ( UiDeskManager ) ) ;
 
-        // Unregister static/global hotkeys to avo  id retaining this instance
+        // Unregister static/global hotkeys to avoid retaining this instance
         try
         {
             HotkeyManager.HotkeyAlreadyRegistered -= HotkeyManager_HotkeyAlreadyRegistered ;
-            HotkeyManager.Current.Remove ( "Standing" ) ;
-            HotkeyManager.Current.Remove ( "Seating" ) ;
-            HotkeyManager.Current.Remove ( "Custom 1" ) ;
-            HotkeyManager.Current.Remove ( "Custom 2" ) ;
+            HotkeyManager.Current.Remove ( HotkeyNameStanding ) ;
+            HotkeyManager.Current.Remove ( HotkeyNameSeating ) ;
+            HotkeyManager.Current.Remove ( HotkeyNameCustom1 ) ;
+            HotkeyManager.Current.Remove ( HotkeyNameCustom2 ) ;
         }
         catch
         {
@@ -217,16 +222,16 @@ public class UiDeskManager : IUiDeskManager
 
         HotkeyManager.HotkeyAlreadyRegistered += HotkeyManager_HotkeyAlreadyRegistered ;
 
-        HotkeyManager.Current.AddOrReplace ( "Standing" ,
+        HotkeyManager.Current.AddOrReplace ( HotkeyNameStanding ,
                                              StandingGesture ,
                                              OnGlobalHotKeyStanding ) ;
-        HotkeyManager.Current.AddOrReplace ( "Seating" ,
+        HotkeyManager.Current.AddOrReplace ( HotkeyNameSeating ,
                                              SittingGesture ,
                                              OnGlobalHotKeySeating ) ;
-        HotkeyManager.Current.AddOrReplace ( "Custom 1" ,
+        HotkeyManager.Current.AddOrReplace ( HotkeyNameCustom1 ,
                                              Custom1Gesture ,
                                              OnGlobalHotKeyCustom1 ) ;
-        HotkeyManager.Current.AddOrReplace ( "Custom 2" ,
+        HotkeyManager.Current.AddOrReplace ( HotkeyNameCustom2 ,
                                              Custom2Gesture ,
                                              OnGlobalHotKeyCustom2 ) ;
 

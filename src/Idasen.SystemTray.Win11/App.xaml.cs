@@ -72,9 +72,6 @@ public partial class App
                                                                            // TaskBar manipulation
                                                                            services.AddSingleton < ITaskBarService , TaskBarService > ( ) ;
 
-                                                                           // Service containing navigation, same as INavigationWindow... but without window
-                                                                           services.AddSingleton < INavigationService , NavigationService > ( ) ;
-
                                                                            // Main window with navigation
                                                                            services.AddSingleton < INavigationWindow , IdasenDeskWindow > ( ) ;
                                                                            services.AddSingleton < IdasenDeskWindowViewModel > ( ) ;
@@ -110,7 +107,6 @@ public partial class App
                                                                            services.AddTransient<IThemeSwitcher, ThemeSwitcher>();
                                                                            services.AddTransient < ISettingsSynchronizer , SettingsSynchronizer > ( ) ;
                                                                            services.AddSingleton <IApplicationThemeManager, MyApplicationThemeManager> ( );
-                                                                           // Replace the incorrect registration line with the following:
                                                                            services.AddSingleton<Func<TimerCallback, object?, TimeSpan, TimeSpan, ITimer>>( _ =>
                                                                                (callback, state, dueTime, period) => new Timer(callback, state, dueTime, period) );
                                                                        }).Build ( ) ;
