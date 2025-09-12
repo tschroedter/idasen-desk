@@ -33,6 +33,7 @@ public class SettingsSynchronizer ( ILogger                        logger ,
         model.SeatingIsVisibleInContextMenu  = current.HeightSettings.SeatingIsVisibleInContextMenu;
         model.Custom1IsVisibleInContextMenu  = current.HeightSettings.Custom1IsVisibleInContextMenu;
         model.Custom2IsVisibleInContextMenu  = current.HeightSettings.Custom2IsVisibleInContextMenu;
+        model.StopIsVisibleInContextMenu     = current.DeviceSettings.StopIsVisibleInContextMenu;
 
         model.LastKnownDeskHeight = current.HeightSettings.LastKnownDeskHeight ;
         model.DeskName            = nameConverter.EmptyIfDefault ( current.DeviceSettings.DeviceName ) ;
@@ -65,12 +66,14 @@ public class SettingsSynchronizer ( ILogger                        logger ,
         var lockChanged           = HasParentalLockChanged ( model ) ;
         var advancedChanged       = HaveAdvancedSettingsChanged ( model ) ;
         var heightSettingsChanged = HaveIsVisibleInContextMenuChanged ( model ); // todo heights are not checked at the moment
+        var stopChanged           = HasStopIsVisibleInContextMenuChanged ( model ) ;
 
         UpdateCurrentSettings ( model ) ;
 
         await DoStoreSettingsAsync ( advancedChanged ,
                                      lockChanged ,
                                      heightSettingsChanged ,
+                                     stopChanged ,
                                      token ) ;
     }
 
@@ -102,6 +105,13 @@ public class SettingsSynchronizer ( ILogger                        logger ,
                settings.HeightSettings.Custom2IsVisibleInContextMenu  != model.Custom2IsVisibleInContextMenu ;
     }
 
+    public bool HasStopIsVisibleInContextMenuChanged(ISettingsViewModel model)
+    {
+        var settings = settingsManager.CurrentSettings;
+
+        return settings.DeviceSettings.StopIsVisibleInContextMenu != model.StopIsVisibleInContextMenu;
+    }
+
     public void UpdateCurrentSettings (ISettingsViewModel model )
     {
         var settings = settingsManager.CurrentSettings ;
@@ -124,12 +134,13 @@ public class SettingsSynchronizer ( ILogger                        logger ,
         settings.HeightSettings.StandingIsVisibleInContextMenu = model.StandingIsVisibleInContextMenu ;
         settings.HeightSettings.SeatingIsVisibleInContextMenu  = model.SeatingIsVisibleInContextMenu ;
         settings.HeightSettings.Custom1IsVisibleInContextMenu  = model.Custom1IsVisibleInContextMenu ;
-        settings.HeightSettings.Custom2IsVisibleInContextMenu  = model.Custom2IsVisibleInContextMenu ; 
+        settings.HeightSettings.Custom2IsVisibleInContextMenu  = model.Custom2IsVisibleInContextMenu ;
+        settings.DeviceSettings.StopIsVisibleInContextMenu     = model.StopIsVisibleInContextMenu ;
 
-        settings.DeviceSettings.DeviceName           = newDeviceName ;
-        settings.DeviceSettings.DeviceAddress        = newDeviceAddress ;
-        settings.DeviceSettings.DeviceLocked         = newDeviceLocked ;
-        settings.DeviceSettings.NotificationsEnabled = newNotificationsEnabled ;
+        settings.DeviceSettings.DeviceName                     = newDeviceName ;
+        settings.DeviceSettings.DeviceAddress                  = newDeviceAddress ;
+        settings.DeviceSettings.DeviceLocked                   = newDeviceLocked ;
+        settings.DeviceSettings.NotificationsEnabled           = newNotificationsEnabled ;
 
         settings.AppearanceSettings.ThemeName = themeSwitcher.CurrentThemeName;
     }
@@ -139,7 +150,8 @@ public class SettingsSynchronizer ( ILogger                        logger ,
 
     private async Task DoStoreSettingsAsync ( bool              advancedChanged ,
                                               bool              lockChanged ,
-                                              bool              heightSettingsChanged,
+                                              bool              heightSettingsChanged ,
+                                              bool              stopChanged ,
                                               CancellationToken token )
     {
         try
@@ -162,6 +174,11 @@ public class SettingsSynchronizer ( ILogger                        logger ,
             if ( heightSettingsChanged )
             {
                 HeightSettingsChanged ( settingsManager.CurrentSettings.HeightSettings ) ;
+            }
+
+            if (stopChanged)
+            {
+                StopChanged(settingsManager.CurrentSettings);
             }
         }
         catch ( Exception e )
@@ -190,5 +207,12 @@ public class SettingsSynchronizer ( ILogger                        logger ,
         logger.Information("Height settings have changed..."); 
 
         settingsChanges.HeightSettingsChanged.OnNext(settings);
+    }
+
+    private void StopChanged(ISettings settings)
+    {
+        logger.Information("Stop settings have changed...");
+
+        settingsChanges.StopChanged.OnNext(settings);
     }
 }

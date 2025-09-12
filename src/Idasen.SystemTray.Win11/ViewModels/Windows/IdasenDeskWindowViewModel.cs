@@ -55,18 +55,20 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
     [ ObservableProperty ]
     private ObservableCollection < MenuItem > _trayMenuItems = [] ;
 
-    private MenuItem    _menuItemConnect ;
-    private MenuItem    _menuItemDisconnect ;
-    private MenuItem    _menuItemShow ;
-    private MenuItem    _menuItemHide ;
+    private readonly MenuItem _menuItemConnect ;
+    private readonly MenuItem _menuItemDisconnect ;
+    private readonly MenuItem _menuItemShow ;
+    private readonly MenuItem _menuItemHide ;
+    private readonly MenuItem _menuItemStand;
+    private readonly MenuItem _menuItemSit;
+    private readonly MenuItem _menuItemCustom1;
+    private readonly MenuItem _menuItemCustom2;
+    private readonly MenuItem _menuItemStop;
 
-    private IDisposable? _advancedSubscription;
-    private IDisposable? _lockSubscription;
-    private IDisposable? _heightSubscription;
-    private MenuItem     _menuItemStand ;
-    private MenuItem     _menuItemSit ;
-    private MenuItem     _menuItemCustom1 ;
-    private MenuItem     _menuItemCustom2 ;
+    private IDisposable?  _advancedSubscription;
+    private IDisposable?  _lockSubscription;
+    private IDisposable?  _heightSubscription;
+    private IDisposable?  _stopSubscription;
 
     public IdasenDeskWindowViewModel ( ILogger                 logger ,
                                        IServiceProvider        serviceProvider ,
@@ -209,6 +211,8 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
             { Header = "Custom 1" , Command = Custom1Command , Icon = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleLeft24 } } ;
         _menuItemCustom2 = new MenuItem
             { Header = "Custom 2" , Command = Custom2Command , Icon = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleRight24 } } ;
+        _menuItemStop = new MenuItem 
+            { Header = "Stop" , Command = StopCommand , Icon = new SymbolIcon { Symbol = SymbolRegular.Stop24 } } ;
 
         TrayMenuItems =
         [
@@ -216,7 +220,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
             _menuItemSit ,
             _menuItemCustom1 ,
             _menuItemCustom2 ,
-            new MenuItem { Header = "Stop" , Command = StopCommand } ,
+            _menuItemStop ,
             new CustomSeparatorMenuItem ( ) ,
             _menuItemConnect ,
             _menuItemDisconnect ,
@@ -330,9 +334,10 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
             _exitViewItem.MouseDoubleClick -= OnClickExit ;
 
         await CastAndDispose ( _uiDeskManager ) ;
+        await CastAndDispose ( _stopSubscription ) ;
+        await CastAndDispose ( _heightSubscription ) ;
         await CastAndDispose ( _advancedSubscription ) ;
         await CastAndDispose ( _lockSubscription ) ;
-        await CastAndDispose ( _heightSubscription ) ;
         await CastAndDispose ( _onErrorChanged ) ;
     }
 
@@ -684,6 +689,11 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
         notifyIcon.Menu = contextMenu;
 
+        // ReSharper disable AsyncVoidLambda
+        _stopSubscription = _settingsChanges.StopChanged
+                                            .ObserveOn(_scheduler)
+                                            .Subscribe(async settings => await OnStopChanged(settings));
+
         _heightSubscription = _settingsChanges.HeightSettingsChanged
                                               .ObserveOn(_scheduler)
                                               .Subscribe(async heightSettings => await OnHeightSettingsChanged(heightSettings));
@@ -695,13 +705,36 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         _lockSubscription = _settingsChanges.LockSettingsChanged
                                             .ObserveOn ( _scheduler )
                                             .Subscribe ( async isLocked => await OnLockSettingsChanged ( isLocked ) ) ;
+        // ReSharper restore AsyncVoidLambda
 
         return this ;
     }
 
+    private Task OnStopChanged ( ISettings settings )
+    {
+        _logger.Debug($"{nameof(OnStopChanged)}: {nameof(settings)}={settings}");
+
+        Application.Current?.Dispatcher.InvokeAsync ( ( ) =>
+                                                      {
+                                                          try
+                                                          {
+                                                              _menuItemStop.Visibility = settings.DeviceSettings.StopIsVisibleInContextMenu
+                                                                                             ? Visibility.Visible
+                                                                                             : Visibility.Collapsed ;
+                                                          }
+                                                          catch ( Exception e )
+                                                          {
+                                                              _logger.Error ( e ,
+                                                                              "Failed to update stop settings." ) ;
+                                                          }
+                                                      } ) ;
+
+        return Task.CompletedTask ;
+    }
+
     private Task OnHeightSettingsChanged ( HeightSettings heightSettings )
     {
-        _logger.Debug($"{nameof(OnHeightSettingsChanged)}: hasChanged={heightSettings}");
+        _logger.Debug($"{nameof(OnHeightSettingsChanged)}: {nameof(heightSettings)}={heightSettings}");
 
         Application.Current?.Dispatcher.InvokeAsync ( ( ) =>
                                                       {

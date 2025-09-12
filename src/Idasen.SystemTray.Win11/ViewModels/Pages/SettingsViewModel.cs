@@ -51,6 +51,9 @@ public partial class SettingsViewModel ( ILogger                 logger ,
     [ ObservableProperty ]
     private bool _parentalLock ;
 
+    [ObservableProperty]
+    private bool _stopIsVisibleInContextMenu = true ;
+
     [ ObservableProperty ]
     private uint _seating = 90 ;
 

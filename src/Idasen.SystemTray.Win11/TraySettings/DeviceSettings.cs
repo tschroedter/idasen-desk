@@ -29,4 +29,9 @@ public class DeviceSettings
     ///     Indicates if we should show a notifications.
     /// </summary>
     public bool NotificationsEnabled { get ; set ; } = Constants.NotificationsEnabled ;
+
+    /// <summary>
+    ///     Indicates whether the stop option is visible in the context menu.
+    /// </summary>
+    public bool StopIsVisibleInContextMenu { get ; set ; } = true ;
 }

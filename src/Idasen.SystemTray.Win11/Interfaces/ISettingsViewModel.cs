@@ -18,4 +18,5 @@ public interface ISettingsViewModel : IDisposable
     bool                               SeatingIsVisibleInContextMenu  { get ; set ; }
     bool                               Custom1IsVisibleInContextMenu  { get ; set ; }
     bool                               Custom2IsVisibleInContextMenu  { get ; set ; }
+    bool                               StopIsVisibleInContextMenu     { get ; set ; }
 }

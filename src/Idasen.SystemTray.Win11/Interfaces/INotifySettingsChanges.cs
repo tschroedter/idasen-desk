@@ -8,4 +8,5 @@ public interface INotifySettingsChanges
     ISubject < bool >           AdvancedSettingsChanged { get ; }
     ISubject < bool >           LockSettingsChanged     { get ; }
     ISubject < HeightSettings > HeightSettingsChanged   { get ; }
+    ISubject < ISettings >       StopChanged             { get ; }
 }

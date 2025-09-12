@@ -59,6 +59,7 @@
         <AssemblyAttributes>
             <InternalsVisibleTo Include="Idasen.SystemTray.Win11.Tests" />
         </AssemblyAttributes>
+        <LangVersion>preview</LangVersion>
     </PropertyGroup>
 
 </Project>
