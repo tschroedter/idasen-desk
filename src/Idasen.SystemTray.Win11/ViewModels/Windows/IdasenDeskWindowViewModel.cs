@@ -190,10 +190,14 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
         _footerMenuItems.Add ( _exitViewItem ) ;
 
-        _menuItemConnect    = new MenuItem { Header = "Connect" , Command       = ConnectCommand } ;
-        _menuItemDisconnect = new MenuItem { Header = "Disconnect" , Command    = DisconnectCommand } ;
-        _menuItemShow       = new MenuItem { Header = "Show Settings" , Command = ShowSettingsCommand } ;
-        _menuItemHide       = new MenuItem { Header = "Hide Settings" , Command = HideSettingsCommand } ;
+        _menuItemConnect = new MenuItem
+            { Header = "Connect" , Command = ConnectCommand , Icon = new SymbolIcon { Symbol = SymbolRegular.PlugConnected24 } } ;
+        _menuItemDisconnect = new MenuItem
+            { Header = "Disconnect" , Command = DisconnectCommand , Icon = new SymbolIcon { Symbol = SymbolRegular.PlugDisconnected24 } } ;
+        _menuItemShow = new MenuItem
+            { Header = "Show Settings" , Command = ShowSettingsCommand , Icon = new SymbolIcon { Symbol = SymbolRegular.SlideTransition24 } } ;
+        _menuItemHide = new MenuItem
+            { Header = "Hide Settings" , Command = HideSettingsCommand , Icon = new SymbolIcon { Symbol = SymbolRegular.SlideHide24 } } ;
 
         _menuItemStand = new MenuItem
             { Header = "Stand" , Command = StandingCommand , Icon = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleUp24 } } ;
