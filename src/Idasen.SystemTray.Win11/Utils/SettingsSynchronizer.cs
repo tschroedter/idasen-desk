@@ -1,5 +1,4 @@
 ﻿using Idasen.SystemTray.Win11.Interfaces;
-using Idasen.SystemTray.Win11.TraySettings ;
 using Serilog;
 using Wpf.Ui.Appearance;
 
@@ -56,8 +55,6 @@ public class SettingsSynchronizer ( ILogger                        logger ,
         }
 
         themeSwitcher.ChangeTheme ( current.AppearanceSettings.ThemeName );
-
-        HeightSettingsChanged( current.HeightSettings );
     }
 
     public async Task StoreSettingsAsync (ISettingsViewModel model ,
@@ -65,15 +62,11 @@ public class SettingsSynchronizer ( ILogger                        logger ,
     {
         var lockChanged           = HasParentalLockChanged ( model ) ;
         var advancedChanged       = HaveAdvancedSettingsChanged ( model ) ;
-        var heightSettingsChanged = HaveIsVisibleInContextMenuChanged ( model ); // todo heights are not checked at the moment
-        var stopChanged           = HasStopIsVisibleInContextMenuChanged ( model ) ;
 
         UpdateCurrentSettings ( model ) ;
 
         await DoStoreSettingsAsync ( advancedChanged ,
                                      lockChanged ,
-                                     heightSettingsChanged ,
-                                     stopChanged ,
                                      token ) ;
     }
 
@@ -93,23 +86,6 @@ public class SettingsSynchronizer ( ILogger                        logger ,
 
         return settings.DeviceSettings.DeviceName    != newDeviceName ||
                settings.DeviceSettings.DeviceAddress != newDeviceAddress ;
-    }
-
-    private bool HaveIsVisibleInContextMenuChanged(ISettingsViewModel model)
-    {
-        var settings = settingsManager.CurrentSettings;
-
-        return settings.HeightSettings.StandingIsVisibleInContextMenu != model.StandingIsVisibleInContextMenu ||
-               settings.HeightSettings.SeatingIsVisibleInContextMenu  != model.SeatingIsVisibleInContextMenu  ||
-               settings.HeightSettings.Custom1IsVisibleInContextMenu  != model.Custom1IsVisibleInContextMenu  ||
-               settings.HeightSettings.Custom2IsVisibleInContextMenu  != model.Custom2IsVisibleInContextMenu ;
-    }
-
-    public bool HasStopIsVisibleInContextMenuChanged(ISettingsViewModel model)
-    {
-        var settings = settingsManager.CurrentSettings;
-
-        return settings.DeviceSettings.StopIsVisibleInContextMenu != model.StopIsVisibleInContextMenu;
     }
 
     public void UpdateCurrentSettings (ISettingsViewModel model )
@@ -150,8 +126,6 @@ public class SettingsSynchronizer ( ILogger                        logger ,
 
     private async Task DoStoreSettingsAsync ( bool              advancedChanged ,
                                               bool              lockChanged ,
-                                              bool              heightSettingsChanged ,
-                                              bool              stopChanged ,
                                               CancellationToken token )
     {
         try
@@ -169,16 +143,6 @@ public class SettingsSynchronizer ( ILogger                        logger ,
             if ( lockChanged )
             {
                 LockChanged ( settingsManager.CurrentSettings ) ;
-            }
-
-            if ( heightSettingsChanged )
-            {
-                HeightSettingsChanged ( settingsManager.CurrentSettings.HeightSettings ) ;
-            }
-
-            if (stopChanged)
-            {
-                StopChanged(settingsManager.CurrentSettings);
             }
         }
         catch ( Exception e )
@@ -200,19 +164,5 @@ public class SettingsSynchronizer ( ILogger                        logger ,
         logger.Information ( "Advanced settings have changed, reconnecting..." ) ;
 
         settingsChanges.AdvancedSettingsChanged.OnNext ( advancedChanged ) ;
-    }
-
-    private void HeightSettingsChanged(HeightSettings settings)
-    {
-        logger.Information("Height settings have changed..."); 
-
-        settingsChanges.HeightSettingsChanged.OnNext(settings);
-    }
-
-    private void StopChanged(ISettings settings)
-    {
-        logger.Information("Stop settings have changed...");
-
-        settingsChanges.StopChanged.OnNext(settings);
     }
 }

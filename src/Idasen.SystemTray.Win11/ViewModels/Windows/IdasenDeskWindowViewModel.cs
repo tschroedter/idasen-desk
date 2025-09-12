@@ -25,15 +25,16 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
     private readonly NavigationViewItem ?    _connectViewItem ;
     private readonly NavigationViewItem ?    _disconnectViewItem ;
     private readonly NavigationViewItem ?    _exitViewItem ;
-    private readonly ILogger                 _logger ;
-    private readonly IScheduler              _scheduler ;
-    private readonly ISettingsManager        _settingsManager ;
-    private readonly IObserveSettingsChanges _settingsChanges ;
     private readonly NavigationViewItem ?    _sitViewItem ;
     private readonly NavigationViewItem ?    _standViewItem ;
     private readonly NavigationViewItem ?    _stopViewItem ;
     private readonly NavigationViewItem ?    _custom1ViewItem ;
     private readonly NavigationViewItem ?    _custom2ViewItem ;
+
+    private readonly ILogger                 _logger;
+    private readonly IScheduler              _scheduler;
+    private readonly ISettingsManager        _settingsManager;
+    private readonly IObserveSettingsChanges _settingsChanges;
     private readonly IUiDeskManager          _uiDeskManager ;
 
     [ ObservableProperty ]
@@ -43,6 +44,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
     private ObservableCollection < object > _footerMenuItems = [] ;
 
     private bool _isInitialized ;
+    private bool _isActionInProgress ;
 
     [ObservableProperty ]
     private ObservableCollection < object > _menuItems = [] ;
@@ -354,27 +356,27 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
     private bool CanExecuteConnect ( object ? _ )
     {
-        return _uiDeskManager is { IsInitialize: true , IsConnected: false } ;
+        return !_isActionInProgress && _uiDeskManager is { IsInitialize: true , IsConnected: false } ;
     }
 
     private bool CanExecuteDisconnect ( object ? _ )
     {
-        return _uiDeskManager is { IsInitialize: true , IsConnected: true } ;
+        return !_isActionInProgress && _uiDeskManager is { IsInitialize: true , IsConnected: true } ;
     }
 
     private bool CanExecuteStanding ( object ? _ )
     {
-        return _uiDeskManager is { IsInitialize: true , IsConnected: true } ;
+        return !_isActionInProgress && _uiDeskManager is { IsInitialize: true , IsConnected: true } ;
     }
 
     private bool CanExecuteSeating ( object ? _ )
     {
-        return _uiDeskManager is { IsInitialize: true , IsConnected: true } ;
+        return !_isActionInProgress && _uiDeskManager is { IsInitialize: true , IsConnected: true } ;
     }
 
     private bool CanExecuteStop ( object ? _ )
     {
-        return _uiDeskManager is { IsInitialize: true , IsConnected: true } ;
+        return !_isActionInProgress && _uiDeskManager is { IsInitialize: true , IsConnected: true } ;
     }
 
     private void OnClickExit ( object sender , MouseButtonEventArgs e )
@@ -444,7 +446,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
     // Generic helper to show a confirmation and run an async action if confirmed
     private void ConfirmAndExecute(string title, string content, string primaryButtonText, Func<Task> action)
     {
-        if (!_uiDeskManager.IsInitialize)
+        if (_isActionInProgress || !_uiDeskManager.IsInitialize)
         {
             return;
         }
@@ -467,11 +469,46 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
             try
             {
+                _isActionInProgress = true;
+                CommandManager.InvalidateRequerySuggested();
                 await action();
             }
             catch ( Exception ex )
             {
                 _logger.Error(ex, "Action failed for {Title}", title);
+            }
+            finally
+            {
+                _isActionInProgress = false;
+                CommandManager.InvalidateRequerySuggested();
+            }
+        });
+    }
+
+    // Execute an action without confirmation but with busy guard
+    private void ExecuteAsync(Func<Task> action)
+    {
+        if (_isActionInProgress || !_uiDeskManager.IsInitialize)
+        {
+            return;
+        }
+
+        Application.Current?.Dispatcher.InvokeAsync(async () =>
+        {
+            try
+            {
+                _isActionInProgress = true;
+                CommandManager.InvalidateRequerySuggested();
+                await action();
+            }
+            catch ( Exception ex )
+            {
+                _logger.Error(ex, "Action failed");
+            }
+            finally
+            {
+                _isActionInProgress = false;
+                CommandManager.InvalidateRequerySuggested();
             }
         });
     }
@@ -510,12 +547,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
     private void OnClickStopViewItem ( object sender , RoutedEventArgs e )
     {
-        if ( ! _uiDeskManager.IsInitialize )
-        {
-            return ;
-        }
-
-        Application.Current?.Dispatcher.InvokeAsync ( async ( ) => { await _uiDeskManager.StopAsync ( ) ; } ) ;
+        ExecuteAsync ( () => _uiDeskManager.StopAsync ( ) ) ;
     }
 
     private void OnClickConnectViewItem ( object sender , RoutedEventArgs e )
