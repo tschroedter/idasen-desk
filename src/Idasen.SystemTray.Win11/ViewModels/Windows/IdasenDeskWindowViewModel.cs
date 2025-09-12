@@ -498,112 +498,64 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
                                                       } ) ;
     }
 
-    private void OnClickSitViewItem ( object sender , RoutedEventArgs e )
+    // Generic helper to show a confirmation and run an async action if confirmed
+    private void ConfirmAndExecute(string title, string content, string primaryButtonText, Func<Task> action)
     {
-        if ( ! _uiDeskManager.IsInitialize )
+        if (!_uiDeskManager.IsInitialize)
         {
-            return ;
+            return;
         }
 
         var uiMessageBox = new MessageBox
         {
-            Title             = "Sit ?" ,
-            Content           = "Do you want to move the desk into the sitting position?" ,
-            PrimaryButtonText = "Sit"
-        } ;
+            Title             = title,
+            Content           = content,
+            PrimaryButtonText = primaryButtonText
+        };
 
-        Application.Current?.Dispatcher.InvokeAsync ( async ( ) =>
-                                                      {
-                                                          var result = await uiMessageBox.ShowDialogAsync ( ) ;
+        Application.Current?.Dispatcher.InvokeAsync(async () =>
+        {
+            var result = await uiMessageBox.ShowDialogAsync();
 
-                                                          if ( result != MessageBoxResult.Primary )
-                                                          {
-                                                              return ;
-                                                          }
+            if (result != MessageBoxResult.Primary)
+            {
+                return;
+            }
 
-                                                          await _uiDeskManager.SitAsync ( ) ;
-                                                      } ) ;
+            await action();
+        });
+    }
+
+    private void OnClickSitViewItem ( object sender , RoutedEventArgs e )
+    {
+        ConfirmAndExecute("Sit ?",
+                           "Do you want to move the desk into the sitting position?",
+                           "Sit",
+                           () => _uiDeskManager.SitAsync());
     }
 
     private void OnClickStandViewItem ( object sender , RoutedEventArgs e )
     {
-        if ( ! _uiDeskManager.IsInitialize )
-        {
-            return ;
-        }
-
-        var uiMessageBox = new MessageBox
-        {
-            Title             = "Stand ?" ,
-            Content           = "Do you want to move the desk into the standing position?" ,
-            PrimaryButtonText = "Stand"
-        } ;
-
-        Application.Current?.Dispatcher.InvokeAsync ( async ( ) =>
-                                                      {
-                                                          var result = await uiMessageBox.ShowDialogAsync ( ) ;
-
-                                                          if ( result != MessageBoxResult.Primary )
-                                                          {
-                                                              return ;
-                                                          }
-
-                                                          await _uiDeskManager.StandAsync ( ) ;
-                                                      } ) ;
+        ConfirmAndExecute("Stand ?",
+                           "Do you want to move the desk into the standing position?",
+                           "Stand",
+                           () => _uiDeskManager.StandAsync());
     }
 
     private void OnClickCustom1ViewItem ( object sender , RoutedEventArgs e )
     {
-        if ( ! _uiDeskManager.IsInitialize )
-        {
-            return ;
-        }
-
-        var uiMessageBox = new MessageBox
-        {
-            Title             = "Custom1" ,
-            Content           = "Do you want to move the desk into the Custom1 position?" ,
-            PrimaryButtonText = "Move"
-        } ;
-
-        Application.Current?.Dispatcher.InvokeAsync ( async ( ) =>
-                                                      {
-                                                          var result = await uiMessageBox.ShowDialogAsync ( ) ;
-
-                                                          if ( result != MessageBoxResult.Primary )
-                                                          {
-                                                              return ;
-                                                          }
-
-                                                          await _uiDeskManager.Custom1Async( ) ;
-                                                      } ) ;
+        ConfirmAndExecute("Custom1",
+                           "Do you want to move the desk into the Custom1 position?",
+                           "Move",
+                           () => _uiDeskManager.Custom1Async());
     }
 
     private void OnClickCustom2ViewItem ( object sender , RoutedEventArgs e )
     {
-        if ( ! _uiDeskManager.IsInitialize )
-        {
-            return ;
-        }
-
-        var uiMessageBox = new MessageBox
-        {
-            Title             = "Custom 2 ?" ,
-            Content           = "Do you want to move the desk into the custom 2 position?" ,
-            PrimaryButtonText = "Move"
-        } ;
-
-        Application.Current?.Dispatcher.InvokeAsync ( async ( ) =>
-                                                      {
-                                                          var result = await uiMessageBox.ShowDialogAsync ( ) ;
-
-                                                          if ( result != MessageBoxResult.Primary )
-                                                          {
-                                                              return ;
-                                                          }
-
-                                                          await _uiDeskManager.Custom2Async ( ) ;
-                                                      } ) ;
+        ConfirmAndExecute("Custom 2 ?",
+                           "Do you want to move the desk into the custom 2 position?",
+                           "Move",
+                           () => _uiDeskManager.Custom2Async());
     }
 
     private void OnClickStopViewItem ( object sender , RoutedEventArgs e )
