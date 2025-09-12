@@ -371,81 +371,7 @@ public class UiDeskManager : IUiDeskManager
         }
     }
 
-    private static void HotkeyManager_HotkeyAlreadyRegistered ( object ? sender , HotkeyAlreadyRegisteredEventArgs e )
-    {
-        MessageBox.Show ( $"The hotkey {e.Name} is already registered by another application" ) ;
-    }
-
-    private void OnErrorChanged ( IErrorDetails details )
-    {
-        var deviceName = _desk?.DeviceName ?? "Unknown" ;
-        var message    = $"[{deviceName}] {details.Message}" ;
-
-        _logger.Error ( "{ErrorMessage}" ,
-                        message ) ;
-
-        OnStatusChanged ( 0 ,
-                          "Error" ,
-                          message ,
-                          InfoBarSeverity.Error ) ;
-    }
-
-    private void OnGlobalHotKeyStanding ( object ? sender , HotkeyEventArgs e )
-    {
-        try
-        {
-            _logger.Information ( "Received global hot key for 'Stand' command..." ) ;
-            _ = ExecuteWithErrorHandlingAsync ( nameof ( StandAsync ) , StandAsync ) ;
-        }
-        catch ( Exception exception )
-        {
-            _logger.Error ( exception ,
-                            "Failed to handle global hot key command for 'Stand'." ) ;
-        }
-    }
-
-    private void OnGlobalHotKeySeating ( object ? sender , HotkeyEventArgs e )
-    {
-        try
-        {
-            _logger.Information ( "Received global hot key for 'Sit' command..." ) ;
-            _ = ExecuteWithErrorHandlingAsync ( nameof ( SitAsync ) , SitAsync ) ;
-        }
-        catch ( Exception exception )
-        {
-            _logger.Error ( exception ,
-                            "Failed to handle global hot key command for 'Sit'." ) ;
-        }
-    }
-
-    private void OnGlobalHotKeyCustom1(object? sender, HotkeyEventArgs e)
-    {
-        try
-        {
-            _logger.Information("Received global hot key for 'Custom 1' command...");
-            _ = ExecuteWithErrorHandlingAsync ( nameof ( Custom1Async ) , Custom1Async ) ;
-        }
-        catch (Exception exception)
-        {
-            _logger.Error(exception,
-                          "Failed to handle global hot key command for 'Custom 1'.");
-        }
-    }
-
-    private void OnGlobalHotKeyCustom2(object? sender, HotkeyEventArgs e)
-    {
-        try
-        {
-            _logger.Information("Received global hot key for 'Custom 2' command...");
-            _ = ExecuteWithErrorHandlingAsync ( nameof ( Custom2Async ) , Custom2Async ) ;
-        }
-        catch (Exception exception)
-        {
-            _logger.Error(exception,
-                          "Failed to handle global hot key command for 'Custom 2'.");
-        }
-    }
-
+    // Restored helpers
     private bool IsDeskConnected ( )
     {
         if ( _desk is not null )
@@ -525,6 +451,119 @@ public class UiDeskManager : IUiDeskManager
         _deskProvider = null ;
     }
 
+    private static void HotkeyManager_HotkeyAlreadyRegistered ( object ? sender , HotkeyAlreadyRegisteredEventArgs e )
+    {
+        MessageBox.Show ( $"The hotkey {e.Name} is already registered by another application" ) ;
+    }
+
+    private void OnErrorChanged ( IErrorDetails details )
+    {
+        var deviceName = _desk?.DeviceName ?? "Unknown" ;
+        var message    = $"[{deviceName}] {details.Message}" ;
+
+        _logger.Error ( "{ErrorMessage}" ,
+                        message ) ;
+
+        OnStatusChanged ( 0 ,
+                          "Error" ,
+                          message ,
+                          InfoBarSeverity.Error ) ;
+    }
+
+    // Unified hotkey handler to reduce duplication
+    private void HandleHotkey ( string name , Func<Task> action )
+    {
+        try
+        {
+            _logger.Information ( "Received global hot key for '{Name}' command..." , name ) ;
+            _ = ExecuteWithErrorHandlingAsync ( name , action ) ;
+        }
+        catch ( Exception exception )
+        {
+            _logger.Error ( exception ,
+                            "Failed to handle global hot key command for '{Name}'." ,
+                            name ) ;
+        }
+    }
+
+    private void OnGlobalHotKeyStanding ( object ? sender , HotkeyEventArgs e )
+    {
+        HandleHotkey ( nameof ( StandAsync ) , StandAsync ) ;
+    }
+
+    private void OnGlobalHotKeySeating ( object ? sender , HotkeyEventArgs e )
+    {
+        HandleHotkey ( nameof ( SitAsync ) , SitAsync ) ;
+    }
+
+    private void OnGlobalHotKeyCustom1 ( object ? sender , HotkeyEventArgs e )
+    {
+        HandleHotkey ( nameof ( Custom1Async ) , Custom1Async ) ;
+    }
+
+    private void OnGlobalHotKeyCustom2 ( object ? sender , HotkeyEventArgs e )
+    {
+        HandleHotkey ( nameof ( Custom2Async ) , Custom2Async ) ;
+    }
+
+    private static string HeightMessage ( uint heightInCm ) => $"Desk height is {heightInCm} cm" ;
+
+    private async Task NotifyAndPersistHeightAsync ( uint heightInCm , string title , InfoBarSeverity severity )
+    {
+        OnStatusChanged ( heightInCm ,
+                          title ,
+                          HeightMessage ( heightInCm ) ,
+                          severity ) ;
+
+        await _manager.SetLastKnownDeskHeight ( heightInCm ,
+                                                CancellationToken.None ).ConfigureAwait ( false ) ;
+    }
+
+    private async Task OnFinishedChanged ( uint height )
+    {
+        var heightInCm = ( uint ) Math.Round ( height / 100.0 ) ;
+        await NotifyAndPersistHeightAsync ( heightInCm , "Finished" , InfoBarSeverity.Success ).ConfigureAwait ( false ) ;
+    }
+
+    private async Task OnHeightChanged ( uint height )
+    {
+        var heightInCm = ( uint ) Math.Round ( height / 100.0 ) ;
+        await NotifyAndPersistHeightAsync ( heightInCm , "Height Changed" , InfoBarSeverity.Warning ).ConfigureAwait ( false ) ;
+    }
+
+    private void OnStatusChanged (
+        uint            height   = 0 ,
+        string          title    = "" ,
+        string          message  = "" ,
+        InfoBarSeverity severity = InfoBarSeverity.Informational )
+    {
+        _logger.Debug ( "{HeightName} = {height}, {TitleName} = {title}, {Message} = {messageName}, {SeverityName} = {severity}" ,
+                        nameof ( height ) ,
+                        height ,
+                        nameof ( title ) ,
+                        title ,
+                        nameof ( message ) ,
+                        message ,
+                        nameof ( severity ) ,
+                        severity ) ;
+
+        if ( height == 0 )
+        {
+            height = _manager.CurrentSettings.HeightSettings.LastKnownDeskHeight ;
+        }
+
+        LastStatusBarInfo = new StatusBarInfo ( title ,
+                                                height ,
+                                                message ,
+                                                severity ) ;
+
+        _statusBarInfoSubject.OnNext ( LastStatusBarInfo ) ;
+
+        _notifications.Show ( title ,
+                              message ,
+                              severity ) ;
+    }
+
     private void ConnectSuccessful ( IDesk desk )
     {
         _logger.Information ( "[{DeviceName}] Connected with address {BluetoothAddress} (MacAddress {MacAddress})" ,
@@ -560,66 +599,5 @@ public class UiDeskManager : IUiDeskManager
         _logger.Information ( "Locking desk movement" ) ;
 
         _desk?.MoveLock ( ) ;
-    }
-
-    private async Task OnFinishedChanged ( uint height )
-    {
-        var heightInCm = ( uint ) Math.Round ( height / 100.0 ) ;
-
-        OnStatusChanged ( heightInCm ,
-                          "Finished" ,
-                          $"Desk height is {heightInCm} cm" ,
-                          InfoBarSeverity.Success ) ;
-
-        await _manager.SetLastKnownDeskHeight ( heightInCm ,
-                                                CancellationToken.None ).ConfigureAwait ( false ) ;
-    }
-
-    private async Task OnHeightChanged ( uint height )
-    {
-        var heightInCm = ( uint ) Math.Round ( height / 100.0 ) ;
-
-        var message = $"Desk height is {heightInCm} cm" ;
-
-        OnStatusChanged ( heightInCm ,
-                          "Height Changed" ,
-                          message ,
-                          InfoBarSeverity.Warning ) ;
-
-        await _manager.SetLastKnownDeskHeight ( heightInCm ,
-                                                CancellationToken.None ).ConfigureAwait ( false ) ;
-    }
-
-    private void OnStatusChanged (
-        uint            height   = 0 ,
-        string          title    = "" ,
-        string          message  = "" ,
-        InfoBarSeverity severity = InfoBarSeverity.Informational )
-    {
-        _logger.Debug ( "{HeightName} = {height}, {TitleName} = {title}, {Message} = {messageName}, {SeverityName} = {severity}" ,
-                        nameof ( height ) ,
-                        height ,
-                        nameof ( title ) ,
-                        title ,
-                        nameof ( message ) ,
-                        message ,
-                        nameof ( severity ) ,
-                        severity ) ;
-
-        if ( height == 0 )
-        {
-            height = _manager.CurrentSettings.HeightSettings.LastKnownDeskHeight ;
-        }
-
-        LastStatusBarInfo = new StatusBarInfo ( title ,
-                                                height ,
-                                                message ,
-                                                severity ) ;
-
-        _statusBarInfoSubject.OnNext ( LastStatusBarInfo ) ;
-
-        _notifications.Show ( title ,
-                              message ,
-                              severity ) ;
     }
 }
