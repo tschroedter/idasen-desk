@@ -121,11 +121,14 @@ public partial class SettingsViewModel ( ILogger                 logger ,
 
     private void OnSettingsSaved ( ISettings settings )
     {
-        if ( ! Dispatcher.CurrentDispatcher.CheckAccess ( ) )
+        // Always marshal back to the main application dispatcher to update bindable properties
+        var appDispatcher = Application.Current?.Dispatcher ;
+
+        if ( appDispatcher != null && ! appDispatcher.CheckAccess ( ) )
         {
             logger.Debug ( "Dispatching call on UI thread" ) ;
 
-            Dispatcher.CurrentDispatcher.BeginInvoke ( new Action ( ( ) => OnSettingsSaved ( settings ) ) ) ;
+            appDispatcher.BeginInvoke ( new Action ( ( ) => OnSettingsSaved ( settings ) ) ) ;
 
             return ;
         }

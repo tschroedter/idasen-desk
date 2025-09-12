@@ -64,6 +64,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
     private readonly MenuItem _menuItemCustom1;
     private readonly MenuItem _menuItemCustom2;
     private readonly MenuItem _menuItemStop;
+    private readonly MenuItem _menuItemExit ;
 
     private IDisposable?  _advancedSubscription;
     private IDisposable?  _lockSubscription;
@@ -213,6 +214,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
             { Header = "Custom 2" , Command = Custom2Command , Icon = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleRight24 } } ;
         _menuItemStop = new MenuItem 
             { Header = "Stop" , Command = StopCommand , Icon = new SymbolIcon { Symbol = SymbolRegular.Stop24 } } ;
+        _menuItemExit = new MenuItem { Header = "Exit" , Command = ExitApplicationCommand } ;
 
         TrayMenuItems =
         [
@@ -228,7 +230,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
             _menuItemShow ,
             _menuItemHide ,
             new CustomSeparatorMenuItem ( ) ,
-            new MenuItem { Header = "Exit" , Command = ExitApplicationCommand }
+            _menuItemExit
         ] ;
     }
 
@@ -287,12 +289,12 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
                               CanExecuteStanding ) ;
 
     /// <summary>
-    ///     Moves the desk to the eating height (currently uses SitAsync until specific implementation exists).
+    ///     Moves the desk to the custom 2 height.
     /// </summary>
     public ICommand Custom2Command =>
         // ReSharper disable once AsyncVoidLambda
-        new DelegateCommand ( async _ => await _uiDeskManager.SitAsync ( ) ,
-                              CanExecuteSeating ) ;
+        new DelegateCommand ( async _ => await _uiDeskManager.Custom2Async ( ) ,
+                              CanExecuteStanding ) ;
 
     /// <summary>
     ///     Stop the desk moving.
@@ -399,17 +401,17 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
             PrimaryButtonText = "Hide"
         } ;
 
-        Dispatcher.CurrentDispatcher.InvokeAsync ( async ( ) =>
-                                                   {
-                                                       var result = await uiMessageBox.ShowDialogAsync ( ) ;
+        Application.Current?.Dispatcher.InvokeAsync ( async ( ) =>
+                                                      {
+                                                          var result = await uiMessageBox.ShowDialogAsync ( ) ;
 
-                                                       if ( result != MessageBoxResult.Primary )
-                                                       {
-                                                           return ;
-                                                       }
+                                                          if ( result != MessageBoxResult.Primary )
+                                                          {
+                                                              return ;
+                                                          }
 
-                                                       await _uiDeskManager.HideAsync ( ) ;
-                                                   } ) ;
+                                                          await _uiDeskManager.HideAsync ( ) ;
+                                                      } ) ;
     }
 
     private static bool CanShowSettings ( object ? _ )
@@ -456,7 +458,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
             PrimaryButtonText = "Disconnect"
         };
 
-        Dispatcher.CurrentDispatcher.InvokeAsync(async () =>
+        Application.Current?.Dispatcher.InvokeAsync(async () =>
                                                  {
                                                      var result = await uiMessageBox.ShowDialogAsync();
 
@@ -483,17 +485,17 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
             PrimaryButtonText = "Exit"
         } ;
 
-        Dispatcher.CurrentDispatcher.InvokeAsync ( async ( ) =>
-                                                   {
-                                                       var result = await uiMessageBox.ShowDialogAsync ( ) ;
+        Application.Current?.Dispatcher.InvokeAsync ( async ( ) =>
+                                                      {
+                                                          var result = await uiMessageBox.ShowDialogAsync ( ) ;
 
-                                                       if ( result != MessageBoxResult.Primary )
-                                                       {
-                                                           return ;
-                                                       }
+                                                          if ( result != MessageBoxResult.Primary )
+                                                          {
+                                                              return ;
+                                                          }
 
-                                                       await _uiDeskManager.ExitAsync ( ) ;
-                                                   } ) ;
+                                                          await _uiDeskManager.ExitAsync ( ) ;
+                                                      } ) ;
     }
 
     private void OnClickSitViewItem ( object sender , RoutedEventArgs e )
@@ -510,17 +512,17 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
             PrimaryButtonText = "Sit"
         } ;
 
-        Dispatcher.CurrentDispatcher.InvokeAsync ( async ( ) =>
-                                                   {
-                                                       var result = await uiMessageBox.ShowDialogAsync ( ) ;
+        Application.Current?.Dispatcher.InvokeAsync ( async ( ) =>
+                                                      {
+                                                          var result = await uiMessageBox.ShowDialogAsync ( ) ;
 
-                                                       if ( result != MessageBoxResult.Primary )
-                                                       {
-                                                           return ;
-                                                       }
+                                                          if ( result != MessageBoxResult.Primary )
+                                                          {
+                                                              return ;
+                                                          }
 
-                                                       await _uiDeskManager.SitAsync ( ) ;
-                                                   } ) ;
+                                                          await _uiDeskManager.SitAsync ( ) ;
+                                                      } ) ;
     }
 
     private void OnClickStandViewItem ( object sender , RoutedEventArgs e )
@@ -533,21 +535,21 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         var uiMessageBox = new MessageBox
         {
             Title             = "Stand ?" ,
-            Content           = "Do you want to move the desk into the sitting position?" ,
+            Content           = "Do you want to move the desk into the standing position?" ,
             PrimaryButtonText = "Stand"
         } ;
 
-        Dispatcher.CurrentDispatcher.InvokeAsync ( async ( ) =>
-                                                   {
-                                                       var result = await uiMessageBox.ShowDialogAsync ( ) ;
+        Application.Current?.Dispatcher.InvokeAsync ( async ( ) =>
+                                                      {
+                                                          var result = await uiMessageBox.ShowDialogAsync ( ) ;
 
-                                                       if ( result != MessageBoxResult.Primary )
-                                                       {
-                                                           return ;
-                                                       }
+                                                          if ( result != MessageBoxResult.Primary )
+                                                          {
+                                                              return ;
+                                                          }
 
-                                                       await _uiDeskManager.StandAsync ( ) ;
-                                                   } ) ;
+                                                          await _uiDeskManager.StandAsync ( ) ;
+                                                      } ) ;
     }
 
     private void OnClickCustom1ViewItem ( object sender , RoutedEventArgs e )
@@ -564,17 +566,17 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
             PrimaryButtonText = "Move"
         } ;
 
-        Dispatcher.CurrentDispatcher.InvokeAsync ( async ( ) =>
-                                                   {
-                                                       var result = await uiMessageBox.ShowDialogAsync ( ) ;
+        Application.Current?.Dispatcher.InvokeAsync ( async ( ) =>
+                                                      {
+                                                          var result = await uiMessageBox.ShowDialogAsync ( ) ;
 
-                                                       if ( result != MessageBoxResult.Primary )
-                                                       {
-                                                           return ;
-                                                       }
+                                                          if ( result != MessageBoxResult.Primary )
+                                                          {
+                                                              return ;
+                                                          }
 
-                                                       await _uiDeskManager.Custom1Async( ) ;
-                                                   } ) ;
+                                                          await _uiDeskManager.Custom1Async( ) ;
+                                                      } ) ;
     }
 
     private void OnClickCustom2ViewItem ( object sender , RoutedEventArgs e )
@@ -591,17 +593,17 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
             PrimaryButtonText = "Move"
         } ;
 
-        Dispatcher.CurrentDispatcher.InvokeAsync ( async ( ) =>
-                                                   {
-                                                       var result = await uiMessageBox.ShowDialogAsync ( ) ;
+        Application.Current?.Dispatcher.InvokeAsync ( async ( ) =>
+                                                      {
+                                                          var result = await uiMessageBox.ShowDialogAsync ( ) ;
 
-                                                       if ( result != MessageBoxResult.Primary )
-                                                       {
-                                                           return ;
-                                                       }
+                                                          if ( result != MessageBoxResult.Primary )
+                                                          {
+                                                              return ;
+                                                          }
 
-                                                       await _uiDeskManager.Custom2Async ( ) ;
-                                                   } ) ;
+                                                          await _uiDeskManager.Custom2Async ( ) ;
+                                                      } ) ;
     }
 
     private void OnClickStopViewItem ( object sender , RoutedEventArgs e )
@@ -611,7 +613,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
             return ;
         }
 
-        Dispatcher.CurrentDispatcher.InvokeAsync ( async ( ) => { await _uiDeskManager.StopAsync ( ) ; } ) ;
+        Application.Current?.Dispatcher.InvokeAsync ( async ( ) => { await _uiDeskManager.StopAsync ( ) ; } ) ;
     }
 
     private void OnClickConnectViewItem ( object sender , RoutedEventArgs e )
@@ -628,17 +630,17 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
             PrimaryButtonText = "Connect"
         } ;
 
-        Dispatcher.CurrentDispatcher.InvokeAsync ( async ( ) =>
-                                                   {
-                                                       var result = await uiMessageBox.ShowDialogAsync ( ) ;
+        Application.Current?.Dispatcher.InvokeAsync ( async ( ) =>
+                                                      {
+                                                          var result = await uiMessageBox.ShowDialogAsync ( ) ;
 
-                                                       if ( result != MessageBoxResult.Primary )
-                                                       {
-                                                           return ;
-                                                       }
+                                                          if ( result != MessageBoxResult.Primary )
+                                                          {
+                                                              return ;
+                                                          }
 
-                                                       await _uiDeskManager.AutoConnectAsync ( ) ;
-                                                   } ) ;
+                                                          await _uiDeskManager.AutoConnectAsync ( ) ;
+                                                      } ) ;
     }
 
     private void OnClickDisconnectViewItem ( object sender , RoutedEventArgs e )
@@ -655,17 +657,17 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
             PrimaryButtonText = "Disconnect"
         } ;
 
-        Dispatcher.CurrentDispatcher.InvokeAsync ( async ( ) =>
-                                                   {
-                                                       var result = await uiMessageBox.ShowDialogAsync ( ) ;
+        Application.Current?.Dispatcher.InvokeAsync ( async ( ) =>
+                                                      {
+                                                          var result = await uiMessageBox.ShowDialogAsync ( ) ;
 
-                                                       if ( result != MessageBoxResult.Primary )
-                                                       {
-                                                           return ;
-                                                       }
+                                                          if ( result != MessageBoxResult.Primary )
+                                                          {
+                                                              return ;
+                                                          }
 
-                                                       await _uiDeskManager.DisconnectAsync ( ) ;
-                                                   } ) ;
+                                                          await _uiDeskManager.DisconnectAsync ( ) ;
+                                                      } ) ;
     }
 
     public IdasenDeskWindowViewModel Initialize ( NotifyIcon notifyIcon )
