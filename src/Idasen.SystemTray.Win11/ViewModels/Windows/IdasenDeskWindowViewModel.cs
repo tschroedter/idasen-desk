@@ -37,6 +37,8 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
     private readonly IObserveSettingsChanges _settingsChanges;
     private readonly IUiDeskManager          _uiDeskManager ;
 
+    private NotifyIcon? _notifyIcon ;
+
     [ ObservableProperty ]
     private string _applicationTitle = "Idasen Desk" ;
 
@@ -336,8 +338,17 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         if ( _contextMenu != null )
         {
             _contextMenu.Opened -= OnContextMenuOpened ;
-            _contextMenu         = null ;
+
+            // If we set a context menu on the tray icon, clear it to avoid retaining the instance
+            if ( _notifyIcon != null && ReferenceEquals ( _notifyIcon.Menu , _contextMenu ) )
+            {
+                _notifyIcon.Menu = null ;
+            }
+
+            _contextMenu = null ;
         }
+
+        _notifyIcon = null ;
 
         await CastAndDispose ( _uiDeskManager ) ;
         await CastAndDispose ( _advancedSubscription ) ;
@@ -576,6 +587,8 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         _logger.Debug ( $"{nameof ( IdasenDeskWindowViewModel )}: Initializing..." ) ;
 
         _uiDeskManager.Initialize ( notifyIcon ) ;
+
+        _notifyIcon = notifyIcon ;
 
         _contextMenu = new ContextMenu
         {

@@ -1,7 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis ;
 using System.Reactive.Subjects ;
-using System.Windows ;
-using System.Windows.Threading ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Microsoft.Toolkit.Uwp.Notifications ;
 using Serilog ;
