@@ -245,36 +245,38 @@ public class UiDeskManager : IUiDeskManager
 
     public async Task StandAsync ( )
     {
-        _logger.Debug ( "Executing {MethodName}..." ,
-                        nameof ( StandAsync ) ) ;
-
         if ( ! IsDeskConnected ( ) )
             return ;
 
-        await _manager.LoadAsync ( CancellationToken.None ).ConfigureAwait ( false ) ;
-
-        var standing = HeightToDeskHeight ( _manager.CurrentSettings
-                                                    .HeightSettings
-                                                    .StandingHeightInCm ) ;
-
-        _desk?.MoveTo ( standing ) ;
+        await MoveToConfiguredHeightAsync ( nameof ( StandAsync ) ,
+                                            s => s.HeightSettings.StandingHeightInCm ) ;
     }
 
     public async Task SitAsync ( )
     {
-        _logger.Debug ( "Executing {MethodName}..." ,
-                        nameof ( SitAsync ) ) ;
-
         if ( ! IsDeskConnected ( ) )
             return ;
 
-        await _manager.LoadAsync ( CancellationToken.None ).ConfigureAwait ( false ) ;
+        await MoveToConfiguredHeightAsync ( nameof ( SitAsync ) ,
+                                            s => s.HeightSettings.SeatingHeightInCm ) ;
+    }
 
-        var seating = HeightToDeskHeight ( _manager.CurrentSettings
-                                                   .HeightSettings
-                                                   .SeatingHeightInCm ) ;
+    public async Task Custom1Async ( )
+    {
+        if ( ! IsDeskConnected ( ) )
+            return ;
 
-        _desk?.MoveTo ( seating ) ;
+        await MoveToConfiguredHeightAsync ( nameof ( Custom1Async ) ,
+                                            s => s.HeightSettings.Custom1HeightInCm ) ;
+    }
+
+    public async Task Custom2Async ( )
+    {
+        if ( ! IsDeskConnected ( ) )
+            return ;
+
+        await MoveToConfiguredHeightAsync ( nameof ( Custom2Async ) ,
+                                            s => s.HeightSettings.Custom2HeightInCm ) ;
     }
 
     public async Task AutoConnectAsync ( )
@@ -315,38 +317,33 @@ public class UiDeskManager : IUiDeskManager
         }
     }
 
-    public async Task Custom1Async ( )
+    private async Task MoveToConfiguredHeightAsync ( string methodName ,
+                                                      Func < ISettings , uint > pickHeightInCm )
     {
-        _logger.Debug ( "Executing {MethodName}..." ,
-                        nameof ( Custom1Async ) ) ;
-
-        if ( ! IsDeskConnected ( ) )
-            return ;
+        _logger.Debug ( "Executing {MethodName}..." , methodName ) ;
 
         await _manager.LoadAsync ( CancellationToken.None ).ConfigureAwait ( false ) ;
 
-        var custom1 = HeightToDeskHeight ( _manager.CurrentSettings
-                                                   .HeightSettings
-                                                   .Custom1HeightInCm ) ;
+        var heightInCm = pickHeightInCm ( _manager.CurrentSettings ) ;
+        var height     = HeightToDeskHeight ( heightInCm ) ;
 
-        _desk?.MoveTo ( custom1 ) ;
+        _desk?.MoveTo ( height ) ;
     }
 
-    public async Task Custom2Async ( )
+    private async Task ExecuteWithErrorHandlingAsync ( string methodName , Func < Task > action )
     {
-        _logger.Debug ( "Executing {MethodName}..." ,
-                        nameof ( Custom2Async ) ) ;
-
-        if ( ! IsDeskConnected ( ) )
-            return ;
-
-        await _manager.LoadAsync ( CancellationToken.None ).ConfigureAwait ( false ) ;
-
-        var eating = HeightToDeskHeight ( _manager.CurrentSettings
-                                                  .HeightSettings
-                                                  .Custom2HeightInCm ) ;
-
-        _desk?.MoveTo ( eating ) ;
+        try
+        {
+            _logger.Debug ( "{MethodName}" , methodName ) ;
+            await action ( ).ConfigureAwait ( false ) ;
+        }
+        catch ( Exception e )
+        {
+            _logger.Error ( e ,
+                            "Failed to call {MethodName}" ,
+                            methodName ) ;
+            _errorManager.PublishForMessage ( $"Failed to call {methodName}" ) ;
+        }
     }
 
     private static uint HeightToDeskHeight ( uint heightInCm )
@@ -398,7 +395,7 @@ public class UiDeskManager : IUiDeskManager
         try
         {
             _logger.Information ( "Received global hot key for 'Stand' command..." ) ;
-            _ = DoStandingAsync ( ) ;
+            _ = ExecuteWithErrorHandlingAsync ( nameof ( StandAsync ) , StandAsync ) ;
         }
         catch ( Exception exception )
         {
@@ -412,7 +409,7 @@ public class UiDeskManager : IUiDeskManager
         try
         {
             _logger.Information ( "Received global hot key for 'Sit' command..." ) ;
-            _ = DoSeatingAsync ( ) ;
+            _ = ExecuteWithErrorHandlingAsync ( nameof ( SitAsync ) , SitAsync ) ;
         }
         catch ( Exception exception )
         {
@@ -426,7 +423,7 @@ public class UiDeskManager : IUiDeskManager
         try
         {
             _logger.Information("Received global hot key for 'Custom 1' command...");
-            _ = DoCustom1Async();
+            _ = ExecuteWithErrorHandlingAsync ( nameof ( Custom1Async ) , Custom1Async ) ;
         }
         catch (Exception exception)
         {
@@ -440,46 +437,12 @@ public class UiDeskManager : IUiDeskManager
         try
         {
             _logger.Information("Received global hot key for 'Custom 2' command...");
-            _ = DoCustom2Async();
+            _ = ExecuteWithErrorHandlingAsync ( nameof ( Custom2Async ) , Custom2Async ) ;
         }
         catch (Exception exception)
         {
             _logger.Error(exception,
                           "Failed to handle global hot key command for 'Custom 2'.");
-        }
-    }
-
-    private async Task DoStandingAsync ( )
-    {
-        try
-        {
-            _logger.Debug ( "{MethodName}" ,
-                            nameof ( DoStandingAsync ) ) ;
-            await StandAsync ( ).ConfigureAwait ( false ) ;
-        }
-        catch ( Exception e )
-        {
-            _logger.Error ( e ,
-                            "Failed to call {MethodName}" ,
-                            nameof ( DoStandingAsync ) ) ;
-            _errorManager.PublishForMessage ( $"Failed to call {nameof ( DoStandingAsync )}" ) ;
-        }
-    }
-
-    private async Task DoSeatingAsync ( )
-    {
-        try
-        {
-            _logger.Debug ( "{MethodName}" ,
-                            nameof ( DoSeatingAsync ) ) ;
-            await SitAsync ( ).ConfigureAwait ( false ) ;
-        }
-        catch ( Exception e )
-        {
-            _logger.Error ( e ,
-                            "Failed to call {MethodName}" ,
-                            nameof ( DoSeatingAsync ) ) ;
-            _errorManager.PublishForMessage ( $"Failed to call {nameof ( DoSeatingAsync )}" ) ;
         }
     }
 
@@ -658,39 +621,5 @@ public class UiDeskManager : IUiDeskManager
         _notifications.Show ( title ,
                               message ,
                               severity ) ;
-    }
-
-    private async Task DoCustom1Async()
-    {
-        try
-        {
-            _logger.Debug("{MethodName}",
-                            nameof(DoCustom1Async));
-            await Custom1Async().ConfigureAwait(false);
-        }
-        catch (Exception e)
-        {
-            _logger.Error(e,
-                            "Failed to call {MethodName}",
-                            nameof(DoCustom1Async));
-            _errorManager.PublishForMessage($"Failed to call {nameof(DoCustom1Async)}");
-        }
-    }
-
-    private async Task DoCustom2Async()
-    {
-        try
-        {
-            _logger.Debug("{MethodName}",
-                            nameof(DoCustom2Async));
-            await Custom2Async().ConfigureAwait(false);
-        }
-        catch (Exception e)
-        {
-            _logger.Error(e,
-                            "Failed to call {MethodName}",
-                            nameof(DoCustom2Async));
-            _errorManager.PublishForMessage($"Failed to call {nameof(DoCustom2Async)}");
-        }
     }
 }
