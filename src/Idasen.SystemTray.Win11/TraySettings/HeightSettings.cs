@@ -52,10 +52,10 @@ public class HeightSettings
     /// <summary>
     ///     Indicates whether the custom position 2 height is visible in the context menu.
     /// </summary>
-    public bool Custom1IsVisibleInContextMenu { get ; set ; } = false ;
+    public bool Custom1IsVisibleInContextMenu { get ; set ; } = true ;
 
     /// <summary>
     ///     Indicates whether the custom position 2 height is visible in the context menu.
     /// </summary>
-    public bool Custom2IsVisibleInContextMenu { get ; set ; } = false ;
+    public bool Custom2IsVisibleInContextMenu { get ; set ; } = true ;
 }

@@ -8,6 +8,7 @@ using System.Windows.Input ;
 using System.Windows.Threading ;
 using Idasen.BluetoothLE.Core ;
 using Idasen.SystemTray.Win11.Interfaces ;
+using Idasen.SystemTray.Win11.TraySettings ;
 using Idasen.SystemTray.Win11.Utils ;
 using Idasen.SystemTray.Win11.Views.Pages ;
 using JetBrains.Annotations ;
@@ -37,8 +38,6 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
     private readonly NavigationViewItem ?    _custom2ViewItem ;
     private readonly IUiDeskManager          _uiDeskManager ;
 
-    private IDisposable ? _advancedSubscription ;
-
     [ ObservableProperty ]
     private string _applicationTitle = "Idasen Desk" ;
 
@@ -47,9 +46,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
     private bool _isInitialized ;
 
-    private IDisposable ? _lockSubscription ;
-
-    [ ObservableProperty ]
+    [ObservableProperty ]
     private ObservableCollection < object > _menuItems = [] ;
 
     [ UsedImplicitly ]
@@ -58,10 +55,18 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
     [ ObservableProperty ]
     private ObservableCollection < MenuItem > _trayMenuItems = [] ;
 
-    private MenuItem _menuItemConnect ;
-    private MenuItem _menuItemDisconnect ;
-    private MenuItem _menuItemShow ;
-    private MenuItem _menuItemHide ;
+    private MenuItem    _menuItemConnect ;
+    private MenuItem    _menuItemDisconnect ;
+    private MenuItem    _menuItemShow ;
+    private MenuItem    _menuItemHide ;
+
+    private IDisposable? _advancedSubscription;
+    private IDisposable? _lockSubscription;
+    private IDisposable? _heightSubscription;
+    private MenuItem     _menuItemStand ;
+    private MenuItem     _menuItemSit ;
+    private MenuItem     _menuItemCustom1 ;
+    private MenuItem     _menuItemCustom2 ;
 
     public IdasenDeskWindowViewModel ( ILogger                 logger ,
                                        IServiceProvider        serviceProvider ,
@@ -177,16 +182,16 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
         _menuItems.Add ( homeViewItem ) ;
         _menuItems.Add ( settingsViewItem ) ;
-        _menuItems.Add ( new CustomSeparatorMenuItem () );
+        _menuItems.Add ( new CustomSeparatorMenuItem ( ) ) ;
         _menuItems.Add ( _standViewItem ) ;
         _menuItems.Add ( _sitViewItem ) ;
         _menuItems.Add ( _custom1ViewItem ) ;
         _menuItems.Add ( _custom2ViewItem ) ;
         _menuItems.Add ( _stopViewItem ) ;
-        _menuItems.Add (new CustomSeparatorMenuItem());
+        _menuItems.Add ( new CustomSeparatorMenuItem ( ) ) ;
         _menuItems.Add ( _connectViewItem ) ;
         _menuItems.Add ( _disconnectViewItem ) ;
-        _menuItems.Add (new CustomSeparatorMenuItem());
+        _menuItems.Add ( new CustomSeparatorMenuItem ( ) ) ;
         _menuItems.Add ( _closeWindowViewItem ) ;
 
         _footerMenuItems.Add ( _exitViewItem ) ;
@@ -196,13 +201,22 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         _menuItemShow       = new MenuItem { Header = "Show Settings" , Command = ShowSettingsCommand } ;
         _menuItemHide       = new MenuItem { Header = "Hide Settings" , Command = HideSettingsCommand } ;
 
+        _menuItemStand = new MenuItem
+            { Header = "Stand" , Command = StandingCommand , Icon = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleUp24 } } ;
+        _menuItemSit = new MenuItem
+            { Header = "Sit" , Command = SeatingCommand , Icon = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleDown24 } } ;
+        _menuItemCustom1 = new MenuItem
+            { Header = "Custom 1" , Command = Custom1Command , Icon = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleLeft24 } } ;
+        _menuItemCustom2 = new MenuItem
+            { Header = "Custom 2" , Command = Custom2Command , Icon = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleRight24 } } ;
+
         TrayMenuItems =
         [
-            new MenuItem { Header = "Stand" , Command    = StandingCommand , Icon = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleUp24 } } ,
-            new MenuItem { Header = "Sit" , Command      = SeatingCommand , Icon  = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleDown24 } } ,
-            new MenuItem { Header = "Custom 1" , Command = Custom1Command , Icon  = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleLeft24 } } ,
-            new MenuItem { Header = "Custom 2" , Command = Custom2Command , Icon  = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleRight24 } } ,
-            new MenuItem { Header = "Stop" , Command     = StopCommand } ,
+            _menuItemStand ,
+            _menuItemSit ,
+            _menuItemCustom1 ,
+            _menuItemCustom2 ,
+            new MenuItem { Header = "Stop" , Command = StopCommand } ,
             new CustomSeparatorMenuItem ( ) ,
             _menuItemConnect ,
             _menuItemDisconnect ,
@@ -318,6 +332,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         await CastAndDispose ( _uiDeskManager ) ;
         await CastAndDispose ( _advancedSubscription ) ;
         await CastAndDispose ( _lockSubscription ) ;
+        await CastAndDispose ( _heightSubscription ) ;
         await CastAndDispose ( _onErrorChanged ) ;
     }
 
@@ -669,6 +684,10 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
         notifyIcon.Menu = contextMenu;
 
+        _heightSubscription = _settingsChanges.HeightSettingsChanged
+                                              .ObserveOn(_scheduler)
+                                              .Subscribe(async heightSettings => await OnHeightSettingsChanged(heightSettings));
+
         _advancedSubscription = _settingsChanges.AdvancedSettingsChanged
                                                 .ObserveOn ( _scheduler )
                                                 .Subscribe ( async hasChanged => await OnAdvancedSettingsChanged ( hasChanged ) ) ;
@@ -678,6 +697,42 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
                                             .Subscribe ( async isLocked => await OnLockSettingsChanged ( isLocked ) ) ;
 
         return this ;
+    }
+
+    private Task OnHeightSettingsChanged ( HeightSettings heightSettings )
+    {
+        _logger.Debug($"{nameof(OnHeightSettingsChanged)}: hasChanged={heightSettings}");
+
+        Application.Current?.Dispatcher.InvokeAsync ( ( ) =>
+                                                      {
+                                                          try
+                                                          {
+                                                              UpdateContextMenuItemVisibility ( heightSettings ) ;
+                                                          }
+                                                          catch ( Exception e )
+                                                          {
+                                                              _logger.Error ( e ,
+                                                                              "Failed to update height settings." ) ;
+                                                          }
+                                                      } ) ;
+
+        return Task.CompletedTask ;
+    }
+
+    private void UpdateContextMenuItemVisibility ( HeightSettings heightSettings )
+    {
+        _menuItemStand.Visibility = heightSettings.StandingIsVisibleInContextMenu
+                                        ? Visibility.Visible
+                                        : Visibility.Collapsed ;
+        _menuItemSit.Visibility = heightSettings.SeatingIsVisibleInContextMenu
+                                      ? Visibility.Visible
+                                      : Visibility.Collapsed;
+        _menuItemCustom1.Visibility = heightSettings.Custom1IsVisibleInContextMenu
+                                          ? Visibility.Visible
+                                          : Visibility.Collapsed;
+        _menuItemCustom2.Visibility = heightSettings.Custom2IsVisibleInContextMenu
+                                          ? Visibility.Visible
+                                          : Visibility.Collapsed;
     }
 
     private void OnContextMenuOpened(object sender, EventArgs e)
