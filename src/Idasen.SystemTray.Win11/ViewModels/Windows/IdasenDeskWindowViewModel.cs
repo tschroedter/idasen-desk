@@ -107,7 +107,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         {
             Content        = "Sit" ,
             Icon           = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleDown24 } ,
-            TargetPageType = typeof ( StatusPage ) ,
+            TargetPageType = typeof ( SettingsPage ) ,
             ToolTip        = "Double-Click to move the desk to the sitting position."
         } ;
         _sitViewItem.MouseDoubleClick += OnClickSitViewItem ;
@@ -116,16 +116,16 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         {
             Content        = "Stand" ,
             Icon           = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleUp24 } ,
-            TargetPageType = typeof ( StatusPage ) ,
+            TargetPageType = typeof ( SettingsPage ) ,
             ToolTip        = "Double-Click to move the desk to the standing position."
         } ;
         _standViewItem.MouseDoubleClick += OnClickStandViewItem ;
 
         _custom1ViewItem = new NavigationViewItem
         {
-            Content        = "Custom1" ,
+            Content        = "Custom 1" ,
             Icon           = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleLeft24 } ,
-            TargetPageType = typeof ( StatusPage ) ,
+            TargetPageType = typeof ( SettingsPage ) ,
             ToolTip        = "Double-Click to move the desk to the Custom1 position."
         } ;
         _custom1ViewItem.MouseDoubleClick += OnClickCustom1ViewItem ;
@@ -134,7 +134,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         {
             Content        = "Custom 2" ,
             Icon           = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleRight24 } ,
-            TargetPageType = typeof ( StatusPage ) ,
+            TargetPageType = typeof ( SettingsPage ) ,
             ToolTip        = "Double-Click to move the desk to the Custom 2 position."
         } ;
         _custom2ViewItem.MouseDoubleClick += OnClickCustom2ViewItem ;
