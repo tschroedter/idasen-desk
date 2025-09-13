@@ -222,11 +222,15 @@ public partial class App
     {
         try
         {
+            _logger.Information ( "##### Exiting..." ) ;
+
             CurrentWindow.StateChanged -= OnStateChanged_HideOnMinimize;
 
             await Host.StopAsync ( ) ;
 
             Host.Dispose ( ) ;
+
+            _logger.Information ( "##### Stopped." ) ;
         }
         catch ( Exception ex )
         {
