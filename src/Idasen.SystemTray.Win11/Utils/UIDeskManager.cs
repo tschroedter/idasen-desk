@@ -157,34 +157,29 @@ public sealed class UiDeskManager : IUiDeskManager
         return Task.CompletedTask;
     }
 
-    public Task StopAsync()
+    // Helper to run an action only when connected
+    private Task ExecuteIfConnected(Action action)
     {
         if (!IsDeskConnected())
             return Task.CompletedTask;
 
-        _desk?.MoveStop();
-
+        try { action(); } catch (Exception e) { _logger.Error(e, "Action failed while connected"); }
         return Task.CompletedTask;
+    }
+
+    public Task StopAsync()
+    {
+        return ExecuteIfConnected(() => _desk?.MoveStop());
     }
 
     public Task MoveLockAsync()
     {
-        if (!IsDeskConnected())
-            return Task.CompletedTask;
-
-        _desk?.MoveLock();
-
-        return Task.CompletedTask;
+        return ExecuteIfConnected(() => _desk?.MoveLock());
     }
 
     public Task MoveUnlockAsync()
     {
-        if (!IsDeskConnected())
-            return Task.CompletedTask;
-
-        _desk?.MoveUnlock();
-
-        return Task.CompletedTask;
+        return ExecuteIfConnected(() => _desk?.MoveUnlock());
     }
 
     public Task HideAsync()
@@ -278,6 +273,11 @@ public sealed class UiDeskManager : IUiDeskManager
                                           s => s.HeightSettings.Custom2HeightInCm);
     }
 
+    private CancellationToken GetTokenOrThrow()
+    {
+        return _token ?? throw new Exception("Token is null");
+    }
+
     public async Task AutoConnectAsync()
     {
         _logger.Debug("Auto connecting...");
@@ -292,7 +292,7 @@ public sealed class UiDeskManager : IUiDeskManager
 
             _logger.Debug("Trying to auto connect to Idasen Desk...");
 
-            CancellationToken token = _token ?? throw new Exception("Token is null");
+            var token = GetTokenOrThrow();
 
             await Task.Delay(TimeSpan.FromSeconds(3), token).ConfigureAwait(false);
 
@@ -346,6 +346,11 @@ public sealed class UiDeskManager : IUiDeskManager
     private static uint HeightToDeskHeight(uint heightInCm)
     {
         return heightInCm * DeskHeightFactor;
+    }
+
+    private static uint MmToCm(uint height)
+    {
+        return (uint)Math.Round(height / 100.0);
     }
 
     private void DoDisconnectAsync()
@@ -438,13 +443,13 @@ public sealed class UiDeskManager : IUiDeskManager
 
     private async Task OnFinishedChanged(uint height)
     {
-        var heightInCm = (uint)Math.Round(height / 100.0);
+        var heightInCm = MmToCm(height);
         await NotifyAndPersistHeightAsync(heightInCm, "Finished", InfoBarSeverity.Success).ConfigureAwait(false);
     }
 
     private async Task OnHeightChanged(uint height)
     {
-        var heightInCm = (uint)Math.Round(height / 100.0);
+        var heightInCm = MmToCm(height);
         await NotifyAndPersistHeightAsync(heightInCm, "Height Changed", InfoBarSeverity.Warning).ConfigureAwait(false);
     }
 
@@ -518,7 +523,7 @@ public sealed class UiDeskManager : IUiDeskManager
             _logger.Debug("[{DeviceName}] Trying to connect to Idasen Desk...",
               deviceName);
 
-            CancellationToken token = _token ?? throw new Exception("Token is null");
+            var token = GetTokenOrThrow();
 
             var (isSuccess, desk) = await _deskProvider.TryGetDesk(token).ConfigureAwait(false);
 

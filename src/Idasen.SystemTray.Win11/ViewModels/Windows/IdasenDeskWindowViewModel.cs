@@ -507,34 +507,34 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
     private void OnClickSitViewItem ( object sender , RoutedEventArgs e )
     {
-        ConfirmAndExecute("Sit ?",
-                           "Do you want to move the desk into the sitting position?",
-                           "Sit",
-                           () => _uiDeskManager.SitAsync());
+        ConfirmMove("Sit ?",
+                    "Do you want to move the desk into the sitting position?",
+                    "Sit",
+                    () => _uiDeskManager.SitAsync());
     }
 
     private void OnClickStandViewItem ( object sender , RoutedEventArgs e )
     {
-        ConfirmAndExecute("Stand ?",
-                           "Do you want to move the desk into the standing position?",
-                           "Stand",
-                           () => _uiDeskManager.StandAsync());
+        ConfirmMove("Stand ?",
+                    "Do you want to move the desk into the standing position?",
+                    "Stand",
+                    () => _uiDeskManager.StandAsync());
     }
 
     private void OnClickCustom1ViewItem ( object sender , RoutedEventArgs e )
     {
-        ConfirmAndExecute("Custom1",
-                           "Do you want to move the desk into the Custom1 position?",
-                           "Move",
-                           () => _uiDeskManager.Custom1Async());
+        ConfirmMove("Custom1",
+                    "Do you want to move the desk into the Custom1 position?",
+                    "Move",
+                    () => _uiDeskManager.Custom1Async());
     }
 
     private void OnClickCustom2ViewItem ( object sender , RoutedEventArgs e )
     {
-        ConfirmAndExecute("Custom 2 ?",
-                           "Do you want to move the desk into the custom 2 position?",
-                           "Move",
-                           () => _uiDeskManager.Custom2Async());
+        ConfirmMove("Custom 2 ?",
+                    "Do you want to move the desk into the custom 2 position?",
+                    "Move",
+                    () => _uiDeskManager.Custom2Async());
     }
 
     private void OnClickStopViewItem ( object sender , RoutedEventArgs e )
@@ -544,18 +544,18 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
     private void OnClickConnectViewItem ( object sender , RoutedEventArgs e )
     {
-        ConfirmAndExecute("Connect ?",
-                          "Do you want to connect to the desk?",
-                          "Connect",
-                          () => _uiDeskManager.AutoConnectAsync());
+        ConfirmMove("Connect ?",
+                    "Do you want to connect to the desk?",
+                    "Connect",
+                    () => _uiDeskManager.AutoConnectAsync());
     }
 
     private void OnClickDisconnectViewItem ( object sender , RoutedEventArgs e )
     {
-        ConfirmAndExecute("Disconnect ?",
-                          "Do you want to disconnect from the desk?",
-                          "Disconnect",
-                          () => _uiDeskManager.DisconnectAsync());
+        ConfirmMove("Disconnect ?",
+                    "Do you want to disconnect from the desk?",
+                    "Disconnect",
+                    () => _uiDeskManager.DisconnectAsync());
     }
 
     public IdasenDeskWindowViewModel Initialize ( NotifyIcon notifyIcon )
@@ -598,46 +598,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
     {
         _logger.Debug("Context menu is about to be opened.");
 
-        if (_uiDeskManager.IsConnected)
-        {
-            _menuItemConnect.Visibility    = Visibility.Collapsed;
-            _menuItemDisconnect.Visibility = Visibility.Visible;
-        }
-        else
-        {
-            _menuItemConnect.Visibility = Visibility.Visible;
-            _menuItemDisconnect.Visibility = Visibility.Collapsed;
-        }
-
-        if ( CanShowSettings ( null ) )
-        {
-            _menuItemShow.Visibility = Visibility.Visible ;
-            _menuItemHide.Visibility = Visibility.Collapsed;
-        }
-        else
-        {
-            _menuItemShow.Visibility = Visibility.Collapsed;
-            _menuItemHide.Visibility = Visibility.Visible;
-        }
-
-        var heightSettings = _settingsManager.CurrentSettings.HeightSettings ;
-
-        _menuItemStand.Visibility = heightSettings.StandingIsVisibleInContextMenu
-                                        ? Visibility.Visible
-                                        : Visibility.Collapsed;
-        _menuItemSit.Visibility = heightSettings.SeatingIsVisibleInContextMenu
-                                      ? Visibility.Visible
-                                      : Visibility.Collapsed;
-        _menuItemCustom1.Visibility = heightSettings.Custom1IsVisibleInContextMenu
-                                          ? Visibility.Visible
-                                          : Visibility.Collapsed;
-        _menuItemCustom2.Visibility = heightSettings.Custom2IsVisibleInContextMenu
-                                          ? Visibility.Visible
-                                          : Visibility.Collapsed;
-
-        _menuItemStop.Visibility = _settingsManager.CurrentSettings.DeviceSettings.StopIsVisibleInContextMenu
-                                       ? Visibility.Visible
-                                       : Visibility.Collapsed;
+        UpdateMenuVisibilities();
 
         var logBuilder = new StringBuilder();
 
