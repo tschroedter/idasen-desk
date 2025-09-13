@@ -28,6 +28,26 @@ public partial class IdasenDeskWindow : INavigationWindow
 
     public IdasenDeskWindowViewModel ViewModel { get ; }
 
+    private void IdasenNotifyIcon_OnLeftClick ( object sender , RoutedEventArgs e )
+    {
+        // Toggle: If visible -> hide; if hidden/minimized -> show and activate
+        if ( Visibility == Visibility.Visible )
+        {
+            Visibility = Visibility.Hidden ;
+            return ;
+        }
+
+        // Show and bring to foreground
+        Visibility = Visibility.Visible ;
+        if ( WindowState == WindowState.Minimized )
+            WindowState = WindowState.Normal ;
+
+        Activate ( ) ;
+        Focus ( ) ;
+        Topmost = true ;
+        Topmost = false ;
+    }
+
     INavigationView INavigationWindow.GetNavigation ( )
     {
         throw new NotImplementedException ( ) ;
@@ -57,6 +77,7 @@ public partial class IdasenDeskWindow : INavigationWindow
     public void ShowWindow ( )
     {
         Show ( ) ;
+        Activate ( ) ;
     }
 
     public void CloseWindow ( )

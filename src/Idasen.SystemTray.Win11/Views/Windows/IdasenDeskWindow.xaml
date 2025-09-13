@@ -69,9 +69,10 @@
 
         <tray:NotifyIcon
             Name="IdasenNotifyIcon"
-            FocusOnLeftClick="True"
+            FocusOnLeftClick="False"
             Icon="pack://application:,,,/Resources/cup-xl.ico"
-            MenuOnRightClick="True">
+            MenuOnRightClick="True"
+            LeftClick="IdasenNotifyIcon_OnLeftClick">
             <!-- ContextMenu set in code
             <tray:NotifyIcon.Menu>
                 <ContextMenu ItemsSource="{Binding ViewModel.TrayMenuItems, Mode=OneWay}" />
