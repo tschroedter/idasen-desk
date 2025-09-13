@@ -5,21 +5,21 @@ namespace Idasen.SystemTray.Win11.TraySettings ;
 
 public class SettingsChanges : IObserveSettingsChanges , INotifySettingsChanges , IDisposable
 {
-    private readonly Subject < bool > _lockSettingsChanged     = new ( ) ;
-    private readonly Subject < bool > _advancedSettingsChanged = new ( ) ;
+    private readonly Subject < bool > _lockSubject     = new ( ) ;
+    private readonly Subject < bool > _advancedSubject = new ( ) ;
 
-    public IObservable < bool > AdvancedSettingsChanged => _advancedSettingsChanged ;
-    public IObservable < bool > LockSettingsChanged     => _lockSettingsChanged ;
+    public ISubject < bool > LockSettingsChanged     => _lockSubject ;
+    public ISubject < bool > AdvancedSettingsChanged => _advancedSubject ;
 
-    public void NotifyAdvancedSettingsChanged ( bool hasChanged ) => _advancedSettingsChanged.OnNext ( hasChanged ) ;
-    public void NotifyLockSettingsChanged     ( bool isLocked )   => _lockSettingsChanged.OnNext ( isLocked ) ;
+    IObservable < bool > IObserveSettingsChanges.AdvancedSettingsChanged => _advancedSubject ;
+    IObservable < bool > IObserveSettingsChanges.LockSettingsChanged     => _lockSubject ;
 
     public void Dispose ( )
     {
-        _lockSettingsChanged .OnCompleted ( ) ;
-        _advancedSettingsChanged.OnCompleted ( ) ;
+        _lockSubject.OnCompleted ( ) ;
+        _advancedSubject.OnCompleted ( ) ;
 
-        _lockSettingsChanged .Dispose ( ) ;
-        _advancedSettingsChanged.Dispose ( ) ;
+        _lockSubject.Dispose ( ) ;
+        _advancedSubject.Dispose ( ) ;
     }
 }

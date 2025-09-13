@@ -4,6 +4,6 @@ namespace Idasen.SystemTray.Win11.Interfaces ;
 
 public interface INotifySettingsChanges
 {
-    void NotifyAdvancedSettingsChanged ( bool hasChanged ) ;
-    void NotifyLockSettingsChanged     ( bool isLocked ) ;
+    ISubject < bool > AdvancedSettingsChanged { get ; }
+    ISubject < bool > LockSettingsChanged     { get ; }
 }

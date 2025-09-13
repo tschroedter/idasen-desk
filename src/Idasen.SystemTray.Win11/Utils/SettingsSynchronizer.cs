@@ -161,14 +161,14 @@ public class SettingsSynchronizer ( ILogger                        logger ,
     {
         logger.Information ( "Advanced Locked settings have changed..." ) ;
 
-        settingsChanges.NotifyLockSettingsChanged ( settings.DeviceSettings.DeviceLocked ) ;
+        settingsChanges.LockSettingsChanged.OnNext ( settings.DeviceSettings.DeviceLocked ) ;
     }
 
     private void AdvancedSettingsChanged ( bool advancedChanged )
     {
         logger.Information ( "Advanced settings have changed, reconnecting..." ) ;
 
-        settingsChanges.NotifyAdvancedSettingsChanged ( advancedChanged ) ;
+        settingsChanges.AdvancedSettingsChanged.OnNext ( advancedChanged ) ;
     }
 
     private bool HaveAnySettingsChanged ( ISettingsViewModel model )
