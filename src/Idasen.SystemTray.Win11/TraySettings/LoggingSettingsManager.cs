@@ -17,7 +17,7 @@ public class LoggingSettingsManager ( ILogger          logger ,
         {
             logger.Debug ( $"Saving current setting [{CurrentSettings}] to '{SettingsFileName}'" ) ;
 
-            await settingsManager.SaveAsync ( token ) ;
+            await settingsManager.SaveAsync ( token ).ConfigureAwait ( false ) ;
         }
         catch ( Exception e )
         {
@@ -34,7 +34,7 @@ public class LoggingSettingsManager ( ILogger          logger ,
         {
             logger.Debug ( $"Loading setting from '{SettingsFileName}'" ) ;
 
-            await settingsManager.LoadAsync ( token ) ;
+            await settingsManager.LoadAsync ( token ).ConfigureAwait ( false ) ;
 
             logger.Debug ( $"Settings loaded: {CurrentSettings}" ) ;
         }
@@ -51,7 +51,7 @@ public class LoggingSettingsManager ( ILogger          logger ,
         {
             logger.Debug ( $"Check current setting from '{SettingsFileName}'" ) ;
 
-            var success = await settingsManager.UpgradeSettingsAsync ( token ) ;
+            var success = await settingsManager.UpgradeSettingsAsync ( token ).ConfigureAwait ( false ) ;
 
             if ( success )
             {
@@ -78,6 +78,6 @@ public class LoggingSettingsManager ( ILogger          logger ,
         logger.Debug ( $"{nameof ( SettingsManager )} updating last known desk height: {heightInCm}" ) ;
 
         await settingsManager.SetLastKnownDeskHeight ( heightInCm ,
-                                                       token ) ;
+                                                       token ).ConfigureAwait ( false ) ;
     }
 }

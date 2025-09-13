@@ -25,38 +25,45 @@ public class SettingsManager ( ILogger                logger ,
     {
         await settingsStorage.SaveSettingsAsync ( SettingsFileName ,
                                                   _current ,
-                                                  token ) ;
+                                                  token ).ConfigureAwait ( false ) ;
 
         _settingsSaved.OnNext ( _current ) ;
     }
 
     public async Task < bool > UpgradeSettingsAsync ( CancellationToken token )
     {
-        if ( ! File.Exists ( SettingsFileName ) )
-            return true ;
-
-        var settings = await File.ReadAllTextAsync ( SettingsFileName ,
-                                                     token )
-                                 .ConfigureAwait ( false ) ;
-
-        if ( ! settings.Contains ( nameof ( Settings.DeviceSettings.NotificationsEnabled ) ) )
+        try
         {
-            await AddMissingSettingsNotificationsEnabled ( token ) ;
-        }
+            if ( ! File.Exists ( SettingsFileName ) )
+                return true ; // Nothing to upgrade
 
-        return false ;
+            var settingsJson = await File.ReadAllTextAsync ( SettingsFileName ,
+                                                             token ).ConfigureAwait ( false ) ;
+
+            if ( ! settingsJson.Contains ( nameof ( Settings.DeviceSettings.NotificationsEnabled ) , StringComparison.Ordinal ) )
+            {
+                await AddMissingSettingsNotificationsEnabled ( token ).ConfigureAwait ( false ) ;
+            }
+
+            return true ; // Upgrade not needed or successfully completed
+        }
+        catch ( Exception e )
+        {
+            logger.Error ( e , "Failed to upgrade settings" ) ;
+            return false ;
+        }
     }
 
     public async Task SetLastKnownDeskHeight ( uint heightInCm , CancellationToken token )
     {
         CurrentSettings.HeightSettings.LastKnownDeskHeight = heightInCm ;
 
-        await SaveAsync ( token ) ;
+        await SaveAsync ( token ).ConfigureAwait ( false ) ;
     }
 
     public async Task LoadAsync ( CancellationToken token )
     {
-        _current = await settingsStorage.LoadSettingsAsync ( SettingsFileName, token ) ;
+        _current = await settingsStorage.LoadSettingsAsync ( SettingsFileName, token ).ConfigureAwait ( false ) ;
     }
 
     private async Task AddMissingSettingsNotificationsEnabled ( CancellationToken token )
@@ -69,6 +76,6 @@ public class SettingsManager ( ILogger                logger ,
 
         _current.DeviceSettings.NotificationsEnabled = Constants.NotificationsEnabled ;
 
-        await SaveAsync ( token ) ;
+        await SaveAsync ( token ).ConfigureAwait ( false ) ;
     }
 }

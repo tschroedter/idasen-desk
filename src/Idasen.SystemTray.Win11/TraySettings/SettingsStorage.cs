@@ -25,7 +25,7 @@ public class SettingsStorage ( IFileSystem fileSystem ) : ISettingsStorage
             await using var openStream = fileSystem.File.OpenRead ( settingsFileName ) ;
             var result = await JsonSerializer.DeserializeAsync < Settings > ( openStream ,
                                                                               JsonOptions ,
-                                                                              token ) ;
+                                                                              token ).ConfigureAwait ( false ) ;
 
             return result ?? new Settings ( ) ;
         }
@@ -55,7 +55,7 @@ public class SettingsStorage ( IFileSystem fileSystem ) : ISettingsStorage
             await JsonSerializer.SerializeAsync ( stream ,
                                                   settings ,
                                                   JsonOptions ,
-                                                  token ) ;
+                                                  token ).ConfigureAwait ( false ) ;
         }
         catch ( Exception ex )
         {
