@@ -365,30 +365,47 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
     }
 
 
-    private bool CanExecuteConnect ( object ? _ )
+    // Centralize repeated connection checks for CanExecute predicates
+    private bool IsReady ( bool mustBeConnected )
     {
-        return !_isActionInProgress && _uiDeskManager is { IsInitialize: true , IsConnected: false } ;
+        return ! _isActionInProgress &&
+               _uiDeskManager is { IsInitialize: true , IsConnected: var connected } &&
+               connected == mustBeConnected ;
     }
 
-    private bool CanExecuteDisconnect ( object ? _ )
+    // Centralized busy-guard execution on UI thread
+    private void WithBusyGuard ( Func < Task > action )
     {
-        return !_isActionInProgress && _uiDeskManager is { IsInitialize: true , IsConnected: true } ;
+        if ( _isActionInProgress || ! _uiDeskManager.IsInitialize )
+        {
+            return ;
+        }
+
+        Application.Current?.Dispatcher.InvokeAsync ( async ( ) =>
+        {
+            try
+            {
+                _isActionInProgress = true ;
+                CommandManager.InvalidateRequerySuggested ( ) ;
+                await action ( ) ;
+            }
+            catch ( Exception ex )
+            {
+                _logger.Error ( ex , "Action failed" ) ;
+            }
+            finally
+            {
+                _isActionInProgress = false ;
+                CommandManager.InvalidateRequerySuggested ( ) ;
+            }
+        } ) ;
     }
 
-    private bool CanExecuteStanding ( object ? _ )
-    {
-        return !_isActionInProgress && _uiDeskManager is { IsInitialize: true , IsConnected: true } ;
-    }
-
-    private bool CanExecuteSeating ( object ? _ )
-    {
-        return !_isActionInProgress && _uiDeskManager is { IsInitialize: true , IsConnected: true } ;
-    }
-
-    private bool CanExecuteStop ( object ? _ )
-    {
-        return !_isActionInProgress && _uiDeskManager is { IsInitialize: true , IsConnected: true } ;
-    }
+    private bool CanExecuteConnect ( object ? _ ) => IsReady ( false ) ;
+    private bool CanExecuteDisconnect ( object ? _ ) => IsReady ( true ) ;
+    private bool CanExecuteStanding ( object ? _ ) => IsReady ( true ) ;
+    private bool CanExecuteSeating ( object ? _ ) => IsReady ( true ) ;
+    private bool CanExecuteStop ( object ? _ ) => IsReady ( true ) ;
 
     private void OnClickExit ( object sender , MouseButtonEventArgs e )
     {
@@ -478,50 +495,14 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
                 return;
             }
 
-            try
-            {
-                _isActionInProgress = true;
-                CommandManager.InvalidateRequerySuggested();
-                await action();
-            }
-            catch ( Exception ex )
-            {
-                _logger.Error(ex, "Action failed for {Title}", title);
-            }
-            finally
-            {
-                _isActionInProgress = false;
-                CommandManager.InvalidateRequerySuggested();
-            }
+            WithBusyGuard(action);
         });
     }
 
     // Execute an action without confirmation but with busy guard
     private void ExecuteAsync(Func<Task> action)
     {
-        if (_isActionInProgress || !_uiDeskManager.IsInitialize)
-        {
-            return;
-        }
-
-        Application.Current?.Dispatcher.InvokeAsync(async () =>
-        {
-            try
-            {
-                _isActionInProgress = true;
-                CommandManager.InvalidateRequerySuggested();
-                await action();
-            }
-            catch ( Exception ex )
-            {
-                _logger.Error(ex, "Action failed");
-            }
-            finally
-            {
-                _isActionInProgress = false;
-                CommandManager.InvalidateRequerySuggested();
-            }
-        });
+        WithBusyGuard(action);
     }
 
     private void OnClickSitViewItem ( object sender , RoutedEventArgs e )
