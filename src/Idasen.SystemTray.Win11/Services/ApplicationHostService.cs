@@ -23,7 +23,7 @@ public class ApplicationHostService ( IServiceProvider serviceProvider ) : IHost
     /// <param name="cancellationToken">Indicates that the start process has been aborted.</param>
     public async Task StartAsync ( CancellationToken cancellationToken )
     {
-        await HandleActivationAsync ( ) ;
+        await HandleActivationAsync ( ).ConfigureAwait ( false ) ;
     }
 
     /// <summary>
@@ -32,7 +32,7 @@ public class ApplicationHostService ( IServiceProvider serviceProvider ) : IHost
     /// <param name="cancellationToken">Indicates that the shutdown process should no longer be graceful.</param>
     public async Task StopAsync ( CancellationToken cancellationToken )
     {
-        await Task.CompletedTask ;
+        await Task.CompletedTask.ConfigureAwait ( false ) ;
     }
 
     /// <summary>
@@ -52,6 +52,6 @@ public class ApplicationHostService ( IServiceProvider serviceProvider ) : IHost
             CurrentWindow.Visibility = Visibility.Hidden ;
         }
 
-        await Task.CompletedTask ;
+        await Task.CompletedTask.ConfigureAwait ( false ) ;
     }
 }

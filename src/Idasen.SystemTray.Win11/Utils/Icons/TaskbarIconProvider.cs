@@ -55,6 +55,8 @@ public class TaskbarIconProvider : ITaskbarIconProvider
             NotifyIcon?.Dispose ( ) ;
             NotifyIcon = null ;
 
+            _isInitialized = false ;
+
             _logger?.Information ( "TaskbarIconProvider disposed." ) ;
         }
     }
