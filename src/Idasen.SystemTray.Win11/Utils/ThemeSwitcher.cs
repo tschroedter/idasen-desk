@@ -1,8 +1,8 @@
-﻿using Wpf.Ui.Appearance;
+﻿using Wpf.Ui.Appearance ;
 
 namespace Idasen.SystemTray.Win11.Utils ;
 
-public class ThemeSwitcher (IApplicationThemeManager themeManager) : IThemeSwitcher
+public class ThemeSwitcher ( IApplicationThemeManager themeManager ) : IThemeSwitcher
 {
     public void ChangeTheme ( string parameter )
     {
@@ -12,7 +12,7 @@ public class ThemeSwitcher (IApplicationThemeManager themeManager) : IThemeSwitc
         {
             case "light" :
             case "theme_light" :
-                if (themeManager.GetAppTheme ( ) == ApplicationTheme.Light )
+                if ( themeManager.GetAppTheme ( ) == ApplicationTheme.Light )
                     break ;
 
                 themeManager.Apply ( ApplicationTheme.Light ) ;
@@ -21,7 +21,7 @@ public class ThemeSwitcher (IApplicationThemeManager themeManager) : IThemeSwitc
 
             case "dark" :
             case "theme_dark" :
-                if (themeManager.GetAppTheme ( ) == ApplicationTheme.Dark )
+                if ( themeManager.GetAppTheme ( ) == ApplicationTheme.Dark )
                     break ;
 
                 themeManager.Apply ( ApplicationTheme.Dark ) ;
@@ -31,7 +31,7 @@ public class ThemeSwitcher (IApplicationThemeManager themeManager) : IThemeSwitc
             case "highcontrast" :
             case "high_contrast" :
             case "theme_high_contrast" :
-                if (themeManager.GetAppTheme ( ) == ApplicationTheme.HighContrast )
+                if ( themeManager.GetAppTheme ( ) == ApplicationTheme.HighContrast )
                     break ;
 
                 themeManager.Apply ( ApplicationTheme.HighContrast ) ;
@@ -39,7 +39,7 @@ public class ThemeSwitcher (IApplicationThemeManager themeManager) : IThemeSwitc
                 break ;
 
             default :
-                if (themeManager.GetAppTheme ( ) == ApplicationTheme.Unknown )
+                if ( themeManager.GetAppTheme ( ) == ApplicationTheme.Unknown )
                     break ;
 
                 themeManager.Apply ( ApplicationTheme.Unknown ) ;

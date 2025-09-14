@@ -14,9 +14,9 @@ public class Notifications : INotifications
     private readonly ISettingsManager                   _manager ;
     private readonly Subject < NotificationParameters > _showSubject ;
     private readonly IDisposable                        _showSubscribe ;
-    private readonly IVersionProvider                   _version ;
     private readonly IToastService                      _toast ;
-    private volatile bool _disposed ;
+    private readonly IVersionProvider                   _version ;
+    private volatile bool                               _disposed ;
 
     public Notifications ( ILogger          logger ,
                            ISettingsManager manager ,
@@ -38,8 +38,8 @@ public class Notifications : INotifications
                                             severity ) ) ;
     }
 
-    public INotifications Initialize ( NotifyIcon notifyIcon ,
-                                       CancellationToken token)
+    public INotifications Initialize ( NotifyIcon        notifyIcon ,
+                                       CancellationToken token )
     {
         _logger.Debug ( "Notifications initializing..." ) ;
 
@@ -59,7 +59,8 @@ public class Notifications : INotifications
                            }
                            catch ( Exception ex )
                            {
-                               _logger.Error ( ex , "Failed to initialize notifications" ) ;
+                               _logger.Error ( ex ,
+                                               "Failed to initialize notifications" ) ;
                            }
                        } ,
                        token ) ;
@@ -96,7 +97,8 @@ public class Notifications : INotifications
 
         var appDispatcher = Application.Current?.Dispatcher ;
 
-        if ( appDispatcher != null && ! appDispatcher.CheckAccess ( ) )
+        if ( appDispatcher != null &&
+             ! appDispatcher.CheckAccess ( ) )
         {
             _logger.Debug ( "Dispatching call on UI thread" ) ;
             appDispatcher.BeginInvoke ( new Action ( ( ) => Show ( parameters ) ) ) ;

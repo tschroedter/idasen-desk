@@ -23,8 +23,8 @@ public class SettingsStorageTests
         // Arrange
 
         // Act
-        var result = await CreateSut ( ).LoadSettingsAsync ( TestFileName,
-                                                             CancellationToken.None );
+        var result = await CreateSut ( ).LoadSettingsAsync ( TestFileName ,
+                                                             CancellationToken.None ) ;
 
         // Assert
         result.Should ( ).NotBeNull ( ) ;
@@ -41,8 +41,8 @@ public class SettingsStorageTests
                                   new MockFileData ( serialize ) ) ;
 
         // Act
-        var result = await CreateSut ( ).LoadSettingsAsync ( TestFileName,
-                                                             CancellationToken.None);
+        var result = await CreateSut ( ).LoadSettingsAsync ( TestFileName ,
+                                                             CancellationToken.None ) ;
 
         // Assert
         result.Should ( ).NotBeNull ( ) ;
@@ -63,8 +63,8 @@ public class SettingsStorageTests
 
         // Act
         await CreateSut ( ).SaveSettingsAsync ( TestFileName ,
-                                                _settings,
-                                                CancellationToken.None );
+                                                _settings ,
+                                                CancellationToken.None ) ;
 
         // Assert
         _mockFileSystem.File
@@ -86,8 +86,8 @@ public class SettingsStorageTests
 
         // Act & Assert
         await FluentActions.Invoking ( ( ) => CreateSut ( ).SaveSettingsAsync ( invalidFileName ,
-                                                                                settings,
-                                                                                CancellationToken.None))
+                                                                                settings ,
+                                                                                CancellationToken.None ) )
                            .Should ( )
                            .ThrowAsync < IOException > ( ) ;
     }

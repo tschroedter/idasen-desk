@@ -47,8 +47,8 @@ public partial class StatusViewModel : ObservableObject , IDisposable
     }
 
     private void Init ( IUiDeskManager manager ,
-                        IScheduler scheduler ,
-                        ITimer timer )
+                        IScheduler     scheduler ,
+                        ITimer         timer )
     {
         _manager = manager ;
 
@@ -63,7 +63,7 @@ public partial class StatusViewModel : ObservableObject , IDisposable
         _timer = timer ;
     }
 
-    [ExcludeFromCodeCoverage]
+    [ ExcludeFromCodeCoverage ]
     internal void OnElapsed ( object ? state )
     {
         Application.Current.Dispatcher.BeginInvoke ( DefaultInfoBar ) ;

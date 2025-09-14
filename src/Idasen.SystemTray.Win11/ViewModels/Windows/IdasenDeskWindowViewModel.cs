@@ -21,35 +21,53 @@ namespace Idasen.SystemTray.Win11.ViewModels.Windows ;
 [ ExcludeFromCodeCoverage ]
 public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDisposable
 {
-    private readonly NavigationViewItem ?    _closeWindowViewItem ;
-    private readonly NavigationViewItem ?    _connectViewItem ;
-    private readonly NavigationViewItem ?    _disconnectViewItem ;
-    private readonly NavigationViewItem ?    _exitViewItem ;
-    private readonly NavigationViewItem ?    _sitViewItem ;
-    private readonly NavigationViewItem ?    _standViewItem ;
-    private readonly NavigationViewItem ?    _stopViewItem ;
-    private readonly NavigationViewItem ?    _custom1ViewItem ;
-    private readonly NavigationViewItem ?    _custom2ViewItem ;
+    private readonly NavigationViewItem ? _closeWindowViewItem ;
+    private readonly NavigationViewItem ? _connectViewItem ;
+    private readonly NavigationViewItem ? _custom1ViewItem ;
+    private readonly NavigationViewItem ? _custom2ViewItem ;
+    private readonly NavigationViewItem ? _disconnectViewItem ;
+    private readonly NavigationViewItem ? _exitViewItem ;
 
-    private readonly ILogger                 _logger;
-    private readonly IScheduler              _scheduler;
-    private readonly ISettingsManager        _settingsManager;
-    private readonly IObserveSettingsChanges _settingsChanges;
-    private readonly IUiDeskManager          _uiDeskManager ;
+    private readonly ILogger _logger ;
 
-    private NotifyIcon? _notifyIcon ;
+    private readonly MenuItem                _menuItemConnect ;
+    private readonly MenuItem                _menuItemCustom1 ;
+    private readonly MenuItem                _menuItemCustom2 ;
+    private readonly MenuItem                _menuItemDisconnect ;
+    private readonly MenuItem                _menuItemHide ;
+    private readonly MenuItem                _menuItemShow ;
+    private readonly MenuItem                _menuItemSit ;
+    private readonly MenuItem                _menuItemStand ;
+    private readonly MenuItem                _menuItemStop ;
+    private readonly IScheduler              _scheduler ;
+    private readonly IObserveSettingsChanges _settingsChanges ;
+    private readonly ISettingsManager        _settingsManager ;
+
+    // Cached commands
+    private readonly NavigationViewItem ? _sitViewItem ;
+    private readonly NavigationViewItem ? _standViewItem ;
+    private readonly NavigationViewItem ? _stopViewItem ;
+    private readonly IUiDeskManager       _uiDeskManager ;
+
+    private IDisposable ? _advancedSubscription ;
 
     [ ObservableProperty ]
     private string _applicationTitle = "Idasen Desk" ;
 
+    private ContextMenu ? _contextMenu ;
+
     [ ObservableProperty ]
     private ObservableCollection < object > _footerMenuItems = [] ;
 
-    private bool _isInitialized ;
     private bool _isActionInProgress ;
 
-    [ObservableProperty ]
+    private bool          _isInitialized ;
+    private IDisposable ? _lockSubscription ;
+
+    [ ObservableProperty ]
     private ObservableCollection < object > _menuItems = [] ;
+
+    private NotifyIcon ? _notifyIcon ;
 
     [ UsedImplicitly ]
     private IDisposable ? _onErrorChanged ;
@@ -57,30 +75,11 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
     [ ObservableProperty ]
     private ObservableCollection < MenuItem > _trayMenuItems = [] ;
 
-    private readonly MenuItem _menuItemConnect ;
-    private readonly MenuItem _menuItemDisconnect ;
-    private readonly MenuItem _menuItemShow ;
-    private readonly MenuItem _menuItemHide ;
-    private readonly MenuItem _menuItemStand;
-    private readonly MenuItem _menuItemSit;
-    private readonly MenuItem _menuItemCustom1;
-    private readonly MenuItem _menuItemCustom2;
-    private readonly MenuItem _menuItemStop;
-
-    private IDisposable?  _advancedSubscription;
-    private IDisposable?  _lockSubscription;
-
-    private ContextMenu? _contextMenu ;
-
-    // Cached commands
-    private readonly ICommand _showSettingsCommand ;
-    private readonly ICommand _hideSettingsCommand ;
-
     public IdasenDeskWindowViewModel ( ILogger                 logger ,
                                        IUiDeskManager          uiDeskManager ,
                                        IObserveSettingsChanges settingsChanges ,
-                                       IScheduler              scheduler,
-                                       ISettingsManager        settingsManager)
+                                       IScheduler              scheduler ,
+                                       ISettingsManager        settingsManager )
     {
         _logger          = logger ;
         _uiDeskManager   = uiDeskManager ;
@@ -202,16 +201,26 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
         // Cache commands
         // ReSharper disable AsyncVoidLambda
-        _showSettingsCommand = new DelegateCommand ( DoShowSettings , CanShowSettings ) ;
-        _hideSettingsCommand = new DelegateCommand ( DoHideSettings , CanHideSettings ) ;
-        ICommand connectCommand         = new DelegateCommand ( async _ => await _uiDeskManager.AutoConnectAsync ( ) , CanExecuteConnect ) ;
-        ICommand disconnectCommand      = new DelegateCommand ( DoDisconnect , CanExecuteDisconnect ) ;
-        ICommand standingCommand        = new DelegateCommand ( async _ => await _uiDeskManager.StandAsync ( ) , CanExecuteStanding ) ;
-        ICommand seatingCommand         = new DelegateCommand ( async _ => await _uiDeskManager.SitAsync ( ) , CanExecuteSeating ) ;
-        ICommand custom1Command         = new DelegateCommand ( async _ => await _uiDeskManager.Custom1Async ( ) , CanExecuteStanding ) ;
-        ICommand custom2Command         = new DelegateCommand ( async _ => await _uiDeskManager.Custom2Async ( ) , CanExecuteStanding ) ;
-        ICommand stopCommand            = new DelegateCommand ( async _ => await _uiDeskManager.StopAsync ( ) , CanExecuteStop ) ;
-        ICommand exitApplicationCommand = new DelegateCommand ( DoExitApplication , _ => true ) ;
+        ShowSettingsCommand = new DelegateCommand ( DoShowSettings ,
+                                                    CanShowSettings ) ;
+        HideSettingsCommand = new DelegateCommand ( DoHideSettings ,
+                                                    CanHideSettings ) ;
+        ICommand connectCommand = new DelegateCommand ( async _ => await _uiDeskManager.AutoConnectAsync ( ) ,
+                                                        CanExecuteConnect ) ;
+        ICommand disconnectCommand = new DelegateCommand ( DoDisconnect ,
+                                                           CanExecuteDisconnect ) ;
+        ICommand standingCommand = new DelegateCommand ( async _ => await _uiDeskManager.StandAsync ( ) ,
+                                                         CanExecuteStanding ) ;
+        ICommand seatingCommand = new DelegateCommand ( async _ => await _uiDeskManager.SitAsync ( ) ,
+                                                        CanExecuteSeating ) ;
+        ICommand custom1Command = new DelegateCommand ( async _ => await _uiDeskManager.Custom1Async ( ) ,
+                                                        CanExecuteStanding ) ;
+        ICommand custom2Command = new DelegateCommand ( async _ => await _uiDeskManager.Custom2Async ( ) ,
+                                                        CanExecuteStanding ) ;
+        ICommand stopCommand = new DelegateCommand ( async _ => await _uiDeskManager.StopAsync ( ) ,
+                                                     CanExecuteStop ) ;
+        ICommand exitApplicationCommand = new DelegateCommand ( DoExitApplication ,
+                                                                _ => true ) ;
 
         // ReSharper restore AsyncVoidLambda
         _menuItemConnect = new MenuItem
@@ -219,9 +228,9 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         _menuItemDisconnect = new MenuItem
             { Header = "Disconnect" , Command = disconnectCommand , Icon = new SymbolIcon { Symbol = SymbolRegular.PlugDisconnected24 } } ;
         _menuItemShow = new MenuItem
-            { Header = "Show Settings" , Command = _showSettingsCommand , Icon = new SymbolIcon { Symbol = SymbolRegular.SlideTransition24 } } ;
+            { Header = "Show Settings" , Command = ShowSettingsCommand , Icon = new SymbolIcon { Symbol = SymbolRegular.SlideTransition24 } } ;
         _menuItemHide = new MenuItem
-            { Header = "Hide Settings" , Command = _hideSettingsCommand , Icon = new SymbolIcon { Symbol = SymbolRegular.SlideHide24 } } ;
+            { Header = "Hide Settings" , Command = HideSettingsCommand , Icon = new SymbolIcon { Symbol = SymbolRegular.SlideHide24 } } ;
 
         _menuItemStand = new MenuItem
             { Header = "Stand" , Command = standingCommand , Icon = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleUp24 } } ;
@@ -231,10 +240,10 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
             { Header = "Custom 1" , Command = custom1Command , Icon = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleLeft24 } } ;
         _menuItemCustom2 = new MenuItem
             { Header = "Custom 2" , Command = custom2Command , Icon = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleRight24 } } ;
-        _menuItemStop = new MenuItem 
+        _menuItemStop = new MenuItem
             { Header = "Stop" , Command = stopCommand , Icon = new SymbolIcon { Symbol = SymbolRegular.Stop24 } } ;
-        var menuItemExit = new MenuItem 
-            { Header = "Exit" , Command = exitApplicationCommand, Icon = new SymbolIcon { Symbol = SymbolRegular.CallInbound24 } } ;
+        var menuItemExit = new MenuItem
+            { Header = "Exit" , Command = exitApplicationCommand , Icon = new SymbolIcon { Symbol = SymbolRegular.CallInbound24 } } ;
 
         TrayMenuItems =
         [
@@ -257,12 +266,12 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
     /// <summary>
     ///     Shows a window, if none is already open.
     /// </summary>
-    public ICommand ShowSettingsCommand => _showSettingsCommand ;
+    public ICommand ShowSettingsCommand { get ; }
 
     /// <summary>
     ///     Hides the main window. This command is only enabled if a window is open.
     /// </summary>
-    public ICommand HideSettingsCommand => _hideSettingsCommand ;
+    public ICommand HideSettingsCommand { get ; }
 
     public async ValueTask DisposeAsync ( )
     {
@@ -292,7 +301,9 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
             _contextMenu.Opened -= OnContextMenuOpened ;
 
             // If we set a context menu on the tray icon, clear it to avoid retaining the instance
-            if ( _notifyIcon != null && ReferenceEquals ( _notifyIcon.Menu , _contextMenu ) )
+            if ( _notifyIcon != null &&
+                 ReferenceEquals ( _notifyIcon.Menu ,
+                                   _contextMenu ) )
             {
                 _notifyIcon.Menu = null ;
             }
@@ -320,7 +331,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
     // Centralize repeated connection checks for CanExecute predicates
     private bool IsReady ( bool mustBeConnected )
     {
-        return ! _isActionInProgress &&
+        return ! _isActionInProgress                                                 &&
                _uiDeskManager is { IsInitialize: true , IsConnected: var connected } &&
                connected == mustBeConnected ;
     }
@@ -334,30 +345,50 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         }
 
         Application.Current?.Dispatcher.InvokeAsync ( async ( ) =>
-        {
-            try
-            {
-                _isActionInProgress = true ;
-                CommandManager.InvalidateRequerySuggested ( ) ;
-                await action ( ) ;
-            }
-            catch ( Exception ex )
-            {
-                _logger.Error ( ex , "Action failed" ) ;
-            }
-            finally
-            {
-                _isActionInProgress = false ;
-                CommandManager.InvalidateRequerySuggested ( ) ;
-            }
-        } ) ;
+                                                      {
+                                                          try
+                                                          {
+                                                              _isActionInProgress = true ;
+                                                              CommandManager.InvalidateRequerySuggested ( ) ;
+                                                              await action ( ) ;
+                                                          }
+                                                          catch ( Exception ex )
+                                                          {
+                                                              _logger.Error ( ex ,
+                                                                              "Action failed" ) ;
+                                                          }
+                                                          finally
+                                                          {
+                                                              _isActionInProgress = false ;
+                                                              CommandManager.InvalidateRequerySuggested ( ) ;
+                                                          }
+                                                      } ) ;
     }
 
-    private bool CanExecuteConnect ( object ? _ ) => IsReady ( false ) ;
-    private bool CanExecuteDisconnect ( object ? _ ) => IsReady ( true ) ;
-    private bool CanExecuteStanding ( object ? _ ) => IsReady ( true ) ;
-    private bool CanExecuteSeating ( object ? _ ) => IsReady ( true ) ;
-    private bool CanExecuteStop ( object ? _ ) => IsReady ( true ) ;
+    private bool CanExecuteConnect ( object ? _ )
+    {
+        return IsReady ( false ) ;
+    }
+
+    private bool CanExecuteDisconnect ( object ? _ )
+    {
+        return IsReady ( true ) ;
+    }
+
+    private bool CanExecuteStanding ( object ? _ )
+    {
+        return IsReady ( true ) ;
+    }
+
+    private bool CanExecuteSeating ( object ? _ )
+    {
+        return IsReady ( true ) ;
+    }
+
+    private bool CanExecuteStop ( object ? _ )
+    {
+        return IsReady ( true ) ;
+    }
 
     private void OnClickExit ( object sender , MouseButtonEventArgs e )
     {
@@ -371,10 +402,10 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
     private void DoHideWindow ( )
     {
-        ConfirmAndExecute("Hide ?",
-                          "Do you want to hide this window?",
-                          "Hide",
-                          () => _uiDeskManager.HideAsync());
+        ConfirmAndExecute ( "Hide ?" ,
+                            "Do you want to hide this window?" ,
+                            "Hide" ,
+                            ( ) => _uiDeskManager.HideAsync ( ) ) ;
     }
 
     private static bool CanShowSettings ( object ? _ )
@@ -407,107 +438,107 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         Application.Current.MainWindow.Visibility = Visibility.Hidden ;
     }
 
-    private void DoDisconnect(object? _)
+    private void DoDisconnect ( object ? _ )
     {
-        ConfirmAndExecute("Disconnect ?",
-                          "Do you want to disconnect from the desk?",
-                          "Disconnect",
-                          () => _uiDeskManager.DisconnectAsync());
+        ConfirmAndExecute ( "Disconnect ?" ,
+                            "Do you want to disconnect from the desk?" ,
+                            "Disconnect" ,
+                            ( ) => _uiDeskManager.DisconnectAsync ( ) ) ;
     }
 
     private void DoExitApplication ( object ? _ )
     {
-        ConfirmAndExecute("Exit ?",
-                          "Do you want to exit the application?",
-                          "Exit",
-                          () => _uiDeskManager.ExitAsync());
+        ConfirmAndExecute ( "Exit ?" ,
+                            "Do you want to exit the application?" ,
+                            "Exit" ,
+                            ( ) => _uiDeskManager.ExitAsync ( ) ) ;
     }
 
     // Generic helper to show a confirmation and run an async action if confirmed
-    private void ConfirmAndExecute(string title, string content, string primaryButtonText, Func<Task> action)
+    private void ConfirmAndExecute ( string title , string content , string primaryButtonText , Func < Task > action )
     {
-        if (_isActionInProgress || !_uiDeskManager.IsInitialize)
+        if ( _isActionInProgress || ! _uiDeskManager.IsInitialize )
         {
-            return;
+            return ;
         }
 
         var uiMessageBox = new MessageBox
         {
-            Title             = title,
-            Content           = content,
+            Title             = title ,
+            Content           = content ,
             PrimaryButtonText = primaryButtonText
-        };
+        } ;
 
-        Application.Current?.Dispatcher.InvokeAsync(async () =>
-        {
-            var result = await uiMessageBox.ShowDialogAsync();
+        Application.Current?.Dispatcher.InvokeAsync ( async ( ) =>
+                                                      {
+                                                          var result = await uiMessageBox.ShowDialogAsync ( ) ;
 
-            if (result != MessageBoxResult.Primary)
-            {
-                return;
-            }
+                                                          if ( result != MessageBoxResult.Primary )
+                                                          {
+                                                              return ;
+                                                          }
 
-            WithBusyGuard(action);
-        });
+                                                          WithBusyGuard ( action ) ;
+                                                      } ) ;
     }
 
     // Execute an action without confirmation but with busy guard
-    private void ExecuteAsync(Func<Task> action)
+    private void ExecuteAsync ( Func < Task > action )
     {
-        WithBusyGuard(action);
+        WithBusyGuard ( action ) ;
     }
 
     private void OnClickSitViewItem ( object sender , RoutedEventArgs e )
     {
-        ConfirmAndExecute("Sit ?",
-                           "Do you want to move the desk into the sitting position?",
-                           "Sit",
-                           () => _uiDeskManager.SitAsync());
+        ConfirmAndExecute ( "Sit ?" ,
+                            "Do you want to move the desk into the sitting position?" ,
+                            "Sit" ,
+                            ( ) => _uiDeskManager.SitAsync ( ) ) ;
     }
 
     private void OnClickStandViewItem ( object sender , RoutedEventArgs e )
     {
-        ConfirmAndExecute("Stand ?",
-                           "Do you want to move the desk into the standing position?",
-                           "Stand",
-                           () => _uiDeskManager.StandAsync());
+        ConfirmAndExecute ( "Stand ?" ,
+                            "Do you want to move the desk into the standing position?" ,
+                            "Stand" ,
+                            ( ) => _uiDeskManager.StandAsync ( ) ) ;
     }
 
     private void OnClickCustom1ViewItem ( object sender , RoutedEventArgs e )
     {
-        ConfirmAndExecute("Custom1",
-                           "Do you want to move the desk into the Custom1 position?",
-                           "Move",
-                           () => _uiDeskManager.Custom1Async());
+        ConfirmAndExecute ( "Custom1" ,
+                            "Do you want to move the desk into the Custom1 position?" ,
+                            "Move" ,
+                            ( ) => _uiDeskManager.Custom1Async ( ) ) ;
     }
 
     private void OnClickCustom2ViewItem ( object sender , RoutedEventArgs e )
     {
-        ConfirmAndExecute("Custom 2 ?",
-                           "Do you want to move the desk into the custom 2 position?",
-                           "Move",
-                           () => _uiDeskManager.Custom2Async());
+        ConfirmAndExecute ( "Custom 2 ?" ,
+                            "Do you want to move the desk into the custom 2 position?" ,
+                            "Move" ,
+                            ( ) => _uiDeskManager.Custom2Async ( ) ) ;
     }
 
     private void OnClickStopViewItem ( object sender , RoutedEventArgs e )
     {
-        ExecuteAsync ( () => _uiDeskManager.StopAsync ( ) ) ;
+        ExecuteAsync ( ( ) => _uiDeskManager.StopAsync ( ) ) ;
     }
 
     private void OnClickConnectViewItem ( object sender , RoutedEventArgs e )
     {
-        ConfirmAndExecute("Connect ?",
-                          "Do you want to connect to the desk?",
-                          "Connect",
-                          () => _uiDeskManager.AutoConnectAsync());
+        ConfirmAndExecute ( "Connect ?" ,
+                            "Do you want to connect to the desk?" ,
+                            "Connect" ,
+                            ( ) => _uiDeskManager.AutoConnectAsync ( ) ) ;
     }
 
     private void OnClickDisconnectViewItem ( object sender , RoutedEventArgs e )
     {
-        ConfirmAndExecute("Disconnect ?",
-                          "Do you want to disconnect from the desk?",
-                          "Disconnect",
-                          () => _uiDeskManager.DisconnectAsync());
+        ConfirmAndExecute ( "Disconnect ?" ,
+                            "Do you want to disconnect from the desk?" ,
+                            "Disconnect" ,
+                            ( ) => _uiDeskManager.DisconnectAsync ( ) ) ;
     }
 
     public IdasenDeskWindowViewModel Initialize ( NotifyIcon notifyIcon )
@@ -526,12 +557,12 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         _contextMenu = new ContextMenu
         {
             ItemsSource = TrayMenuItems
-        };
+        } ;
 
         // Attach event handler for ContextMenu.Opened
-        _contextMenu.Opened += OnContextMenuOpened;
+        _contextMenu.Opened += OnContextMenuOpened ;
 
-        notifyIcon.Menu = _contextMenu;
+        notifyIcon.Menu = _contextMenu ;
 
         // ReSharper disable AsyncVoidLambda
         _advancedSubscription = _settingsChanges.AdvancedSettingsChanged
@@ -546,52 +577,52 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         return this ;
     }
 
-    private void OnContextMenuOpened(object sender, EventArgs e)
+    private void OnContextMenuOpened ( object sender , EventArgs e )
     {
-        _logger.Debug("Context menu is about to be opened.");
+        _logger.Debug ( "Context menu is about to be opened." ) ;
 
-        if (_uiDeskManager.IsConnected)
+        if ( _uiDeskManager.IsConnected )
         {
-            _menuItemConnect.Visibility    = Visibility.Collapsed;
-            _menuItemDisconnect.Visibility = Visibility.Visible;
+            _menuItemConnect.Visibility    = Visibility.Collapsed ;
+            _menuItemDisconnect.Visibility = Visibility.Visible ;
         }
         else
         {
-            _menuItemConnect.Visibility = Visibility.Visible;
-            _menuItemDisconnect.Visibility = Visibility.Collapsed;
+            _menuItemConnect.Visibility    = Visibility.Visible ;
+            _menuItemDisconnect.Visibility = Visibility.Collapsed ;
         }
 
         if ( CanShowSettings ( null ) )
         {
             _menuItemShow.Visibility = Visibility.Visible ;
-            _menuItemHide.Visibility = Visibility.Collapsed;
+            _menuItemHide.Visibility = Visibility.Collapsed ;
         }
         else
         {
-            _menuItemShow.Visibility = Visibility.Collapsed;
-            _menuItemHide.Visibility = Visibility.Visible;
+            _menuItemShow.Visibility = Visibility.Collapsed ;
+            _menuItemHide.Visibility = Visibility.Visible ;
         }
 
         var heightSettings = _settingsManager.CurrentSettings.HeightSettings ;
 
         _menuItemStand.Visibility = heightSettings.StandingIsVisibleInContextMenu
                                         ? Visibility.Visible
-                                        : Visibility.Collapsed;
+                                        : Visibility.Collapsed ;
         _menuItemSit.Visibility = heightSettings.SeatingIsVisibleInContextMenu
                                       ? Visibility.Visible
-                                      : Visibility.Collapsed;
+                                      : Visibility.Collapsed ;
         _menuItemCustom1.Visibility = heightSettings.Custom1IsVisibleInContextMenu
                                           ? Visibility.Visible
-                                          : Visibility.Collapsed;
+                                          : Visibility.Collapsed ;
         _menuItemCustom2.Visibility = heightSettings.Custom2IsVisibleInContextMenu
                                           ? Visibility.Visible
-                                          : Visibility.Collapsed;
+                                          : Visibility.Collapsed ;
 
         _menuItemStop.Visibility = _settingsManager.CurrentSettings.DeviceSettings.StopIsVisibleInContextMenu
                                        ? Visibility.Visible
-                                       : Visibility.Collapsed;
+                                       : Visibility.Collapsed ;
 
-        var logBuilder = new StringBuilder();
+        var logBuilder = new StringBuilder ( ) ;
 
         foreach ( var item in TrayMenuItems )
         {
@@ -601,9 +632,9 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
             }
         }
 
-        _logger.Debug(logBuilder.ToString());
+        _logger.Debug ( logBuilder.ToString ( ) ) ;
 
-        CommandManager.InvalidateRequerySuggested();
+        CommandManager.InvalidateRequerySuggested ( ) ;
     }
 
     private async Task OnAdvancedSettingsChanged ( bool hasChanged )

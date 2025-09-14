@@ -1,20 +1,20 @@
-﻿using FluentAssertions ;
+﻿using System.IO.Abstractions ;
+using FluentAssertions ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.TraySettings ;
 using Idasen.SystemTray.Win11.Utils ;
 using NSubstitute ;
 using Serilog ;
-using System.IO.Abstractions ;
 
 namespace Idasen.SystemTray.Win11.Tests.TraySettings ;
 
 public class SettingsManagerTests
 {
     private readonly ICommonApplicationData _commonApplicationData = Substitute.For < ICommonApplicationData > ( ) ;
+    private readonly IFileSystem            _fileSystem            = Substitute.For < IFileSystem > ( ) ;
     private readonly ILogger                _logger                = Substitute.For < ILogger > ( ) ;
     private readonly SettingsManager        _settingsManager ;
     private readonly ISettingsStorage       _settingsStorage = Substitute.For < ISettingsStorage > ( ) ;
-    private readonly IFileSystem            _fileSystem      = Substitute.For < IFileSystem > ( ) ;
 
     public SettingsManagerTests ( )
     {
@@ -66,7 +66,8 @@ public class SettingsManagerTests
         await File.WriteAllTextAsync ( "TestSettingsFilePath" ,
                                        "{}" ) ;
         _fileSystem.File.Exists ( "TestSettingsFilePath" ).Returns ( true ) ;
-        _fileSystem.File.ReadAllTextAsync ( "TestSettingsFilePath" , CancellationToken.None ).Returns ( "{}" ) ;
+        _fileSystem.File.ReadAllTextAsync ( "TestSettingsFilePath" ,
+                                            CancellationToken.None ).Returns ( "{}" ) ;
         _settingsStorage.LoadSettingsAsync ( "TestSettingsFilePath" ,
                                              CancellationToken.None ).Returns ( new Settings ( ) ) ;
 

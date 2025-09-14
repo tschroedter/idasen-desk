@@ -1,8 +1,8 @@
-﻿using FluentAssertions;
-using Idasen.SystemTray.Win11.Interfaces;
-using Idasen.SystemTray.Win11.Utils;
-using Idasen.SystemTray.Win11.Utils.Converters;
-using NSubstitute;
+﻿using FluentAssertions ;
+using Idasen.SystemTray.Win11.Interfaces ;
+using Idasen.SystemTray.Win11.Utils ;
+using Idasen.SystemTray.Win11.Utils.Converters ;
+using NSubstitute ;
 
 namespace Idasen.SystemTray.Win11.Tests.Utils.Converters ;
 
@@ -51,7 +51,7 @@ public class DeviceAddressToULongConverterTests
               .Be ( expected ) ;
         _stringToUIntConverter.Received ( 1 )
                               .ConvertStringToUlongOrDefault ( deviceAddress ,
-                                                                              defaultValue ) ;
+                                                               defaultValue ) ;
     }
 
     [ Fact ]

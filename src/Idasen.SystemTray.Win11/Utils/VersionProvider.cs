@@ -23,13 +23,13 @@ public class VersionProvider ( ILogger logger ) : IVersionProvider
                 versionAsText = $"V{version.Major}.{version.Minor}.{version.Build}" ;
 
                 logger.Information ( "Version fetched successfully: {Version}" ,
-                                      versionAsText ) ;
+                                     versionAsText ) ;
             }
         }
         catch ( Exception e )
         {
             logger.Error ( e ,
-                            "Failed to get version" ) ;
+                           "Failed to get version" ) ;
         }
 
         return versionAsText ;

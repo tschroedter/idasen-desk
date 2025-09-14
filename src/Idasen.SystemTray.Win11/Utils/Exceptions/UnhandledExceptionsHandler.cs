@@ -9,7 +9,7 @@ namespace Idasen.SystemTray.Win11.Utils.Exceptions ;
 [ ExcludeFromCodeCoverage ]
 public static class UnhandledExceptionsHandler
 {
-    private static readonly ErrorHandler ErrorHandler = new( ) ;
+    private static readonly ErrorHandler ErrorHandler = new ( ) ;
 
     public static void RegisterGlobalExceptionHandling ( )
     {
@@ -45,7 +45,8 @@ public static class UnhandledExceptionsHandler
         UnobservedTaskExceptionEventArgs args ,
         ILogger                          log )
     {
-        ErrorHandler.Handle ( args.Exception , log ) ;
+        ErrorHandler.Handle ( args.Exception ,
+                              log ) ;
 
         args.SetObserved ( ) ;
     }
@@ -56,11 +57,13 @@ public static class UnhandledExceptionsHandler
     {
         if ( args.Exception.IsBluetoothDisabledException ( ) )
         {
-            HandleBluetoothDisabledException ( args , log ) ;
+            HandleBluetoothDisabledException ( args ,
+                                               log ) ;
         }
         else
         {
-            HandleGeneralException ( args , log ) ;
+            HandleGeneralException ( args ,
+                                     log ) ;
         }
     }
 
@@ -69,11 +72,13 @@ public static class UnhandledExceptionsHandler
     {
         if ( args.Exception.IsBluetoothDisabledException ( ) )
         {
-            HandleBluetoothDisabledException ( args , log ) ;
+            HandleBluetoothDisabledException ( args ,
+                                               log ) ;
         }
         else
         {
-            HandleGeneralException ( args , log ) ;
+            HandleGeneralException ( args ,
+                                     log ) ;
         }
     }
 

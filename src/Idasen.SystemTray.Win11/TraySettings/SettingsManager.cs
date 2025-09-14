@@ -50,13 +50,11 @@ public class SettingsManager ( ILogger                logger ,
         }
         catch ( Exception e )
         {
-            logger.Error ( e , "Failed to upgrade settings" ) ;
+            logger.Error ( e ,
+                           "Failed to upgrade settings" ) ;
             return false ;
         }
     }
-
-    private static bool MissingNotificationsEnabled ( string settingsJson )
-        => ! settingsJson.Contains ( nameof ( Settings.DeviceSettings.NotificationsEnabled ) , StringComparison.Ordinal ) ;
 
     public async Task SetLastKnownDeskHeight ( uint heightInCm , CancellationToken token )
     {
@@ -67,7 +65,14 @@ public class SettingsManager ( ILogger                logger ,
 
     public async Task LoadAsync ( CancellationToken token )
     {
-        _current = await settingsStorage.LoadSettingsAsync ( SettingsFileName, token ).ConfigureAwait ( false ) ;
+        _current = await settingsStorage.LoadSettingsAsync ( SettingsFileName ,
+                                                             token ).ConfigureAwait ( false ) ;
+    }
+
+    private static bool MissingNotificationsEnabled ( string settingsJson )
+    {
+        return ! settingsJson.Contains ( nameof ( Settings.DeviceSettings.NotificationsEnabled ) ,
+                                         StringComparison.Ordinal ) ;
     }
 
     private async Task AddMissingSettingsNotificationsEnabled ( CancellationToken token )

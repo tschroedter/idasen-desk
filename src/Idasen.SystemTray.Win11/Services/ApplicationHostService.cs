@@ -9,7 +9,7 @@ namespace Idasen.SystemTray.Win11.Services ;
 /// <summary>
 ///     Managed host of the application.
 /// </summary>
-[ExcludeFromCodeCoverage] // "Depends on WPF WindowCollection class"
+[ ExcludeFromCodeCoverage ] // "Depends on WPF WindowCollection class"
 public class ApplicationHostService ( IServiceProvider serviceProvider ) : IHostedService
 {
     private INavigationWindow ? _navigationWindow ;

@@ -242,21 +242,21 @@
                             TickPlacement="TopLeft" />
                     <TextBlock Grid.Row="0"
                                Grid.Column="3"
-                               VerticalAlignment="Center" 
+                               VerticalAlignment="Center"
                                HorizontalAlignment="Right"
                                Text="{Binding ElementName=Standing, Path=Value, StringFormat='0', UpdateSourceTrigger=LostFocus}"
                                Padding="5,0,5,0" />
                     <Label Grid.Row="0"
                            Grid.Column="4"
-                           VerticalAlignment="Center" 
+                           VerticalAlignment="Center"
                            HorizontalAlignment="Right"
                            Content="cm" />
                     <CheckBox Grid.Row="0"
-                              Grid.Column="5" 
-                              VerticalAlignment="Center" 
-                              MinWidth="75" 
+                              Grid.Column="5"
+                              VerticalAlignment="Center"
+                              MinWidth="75"
                               Content="Tray"
-                              ToolTip="Show in tray context menu" 
+                              ToolTip="Show in tray context menu"
                               IsChecked="{Binding ViewModel.StandingIsVisibleInContextMenu, Mode=TwoWay}" />
                     <!-- Row 1 - Blank -->
                     <!-- Row 2 -->
@@ -279,21 +279,21 @@
                             TickPlacement="TopLeft" />
                     <TextBlock Grid.Row="2"
                                Grid.Column="3"
-                               VerticalAlignment="Center" 
+                               VerticalAlignment="Center"
                                HorizontalAlignment="Right"
                                Text="{Binding ElementName=Seating, Path=Value, StringFormat='0',UpdateSourceTrigger=LostFocus}"
                                Padding="5,0,5,0" />
                     <Label Grid.Row="2"
                            Grid.Column="4"
-                           VerticalAlignment="Center" 
+                           VerticalAlignment="Center"
                            HorizontalAlignment="Right"
                            Content="cm" />
                     <CheckBox Grid.Row="2"
-                              Grid.Column="5" 
-                              VerticalAlignment="Center" 
-                              MinWidth="75" 
-                              Content="Tray" 
-                              ToolTip="Show in tray context menu" 
+                              Grid.Column="5"
+                              VerticalAlignment="Center"
+                              MinWidth="75"
+                              Content="Tray"
+                              ToolTip="Show in tray context menu"
                               IsChecked="{Binding ViewModel.SeatingIsVisibleInContextMenu, Mode=TwoWay}" />
                     <!-- Row 3 - Blank -->
                     <!-- Row 4 -->
@@ -316,21 +316,21 @@
                             TickPlacement="TopLeft" />
                     <TextBlock Grid.Row="4"
                                Grid.Column="3"
-                               VerticalAlignment="Center" 
+                               VerticalAlignment="Center"
                                HorizontalAlignment="Right"
                                Text="{Binding ElementName=Custom1, Path=Value, StringFormat='0',UpdateSourceTrigger=LostFocus}"
                                Padding="5,0,5,0" />
                     <Label Grid.Row="4"
                            Grid.Column="4"
-                           VerticalAlignment="Center" 
+                           VerticalAlignment="Center"
                            HorizontalAlignment="Right"
                            Content="cm" />
                     <CheckBox Grid.Row="4"
-                              Grid.Column="5" 
-                              VerticalAlignment="Center" 
-                              MinWidth="75" 
-                              Content="Tray" 
-                              ToolTip="Show in tray context menu" 
+                              Grid.Column="5"
+                              VerticalAlignment="Center"
+                              MinWidth="75"
+                              Content="Tray"
+                              ToolTip="Show in tray context menu"
                               IsChecked="{Binding ViewModel.Custom1IsVisibleInContextMenu, Mode=TwoWay}" />
                     <!-- Row 5 - Blank -->
                     <!-- Row 6 -->
@@ -338,7 +338,7 @@
                                    Grid.Column="0"
                                    Symbol="{x:Static ui:SymbolRegular.ArrowCircleRight24}"
                                    HorizontalAlignment="Center"
-                                   VerticalAlignment="Center"/>
+                                   VerticalAlignment="Center" />
                     <Label Grid.Row="6"
                            Grid.Column="1"
                            Content="Custom 2"
@@ -353,21 +353,21 @@
                             TickPlacement="TopLeft" />
                     <TextBlock Grid.Row="6"
                                Grid.Column="3"
-                               VerticalAlignment="Center" 
+                               VerticalAlignment="Center"
                                HorizontalAlignment="Right"
                                Text="{Binding ElementName=Custom2, Path=Value, StringFormat='0',UpdateSourceTrigger=LostFocus}"
                                Padding="5,0,5,0" />
                     <Label Grid.Row="6"
                            Grid.Column="4"
-                           VerticalAlignment="Center" 
+                           VerticalAlignment="Center"
                            HorizontalAlignment="Right"
                            Content="cm" />
                     <CheckBox Grid.Row="6"
-                              Grid.Column="5" 
+                              Grid.Column="5"
                               VerticalAlignment="Center"
-                              MinWidth="75" 
-                              Content="Tray" 
-                              ToolTip="Show in tray context menu" 
+                              MinWidth="75"
+                              Content="Tray"
+                              ToolTip="Show in tray context menu"
                               IsChecked="{Binding ViewModel.Custom2IsVisibleInContextMenu, Mode=TwoWay}" />
                 </Grid>
             </StackPanel>

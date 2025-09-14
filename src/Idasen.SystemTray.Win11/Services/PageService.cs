@@ -1,12 +1,12 @@
 using System.Diagnostics.CodeAnalysis ;
-using Wpf.Ui.Abstractions;
+using Wpf.Ui.Abstractions ;
 
 namespace Idasen.SystemTray.Win11.Services ;
 
 /// <summary>
 ///     Service that provides pages for navigation.
 /// </summary>
-[ExcludeFromCodeCoverage] // Dependency on WPF FrameworkElement
+[ ExcludeFromCodeCoverage ] // Dependency on WPF FrameworkElement
 public class PageService : INavigationViewPageProvider
 {
     /// <summary>
@@ -25,9 +25,9 @@ public class PageService : INavigationViewPageProvider
     /// <inheritdoc />
     public object ? GetPage ( Type pageType )
     {
-        if (!typeof(FrameworkElement).IsAssignableFrom(pageType))
-            throw new InvalidOperationException("The page should be a WPF control.");
+        if ( ! typeof ( FrameworkElement ).IsAssignableFrom ( pageType ) )
+            throw new InvalidOperationException ( "The page should be a WPF control." ) ;
 
-        return _serviceProvider.GetService(pageType);
+        return _serviceProvider.GetService ( pageType ) ;
     }
 }

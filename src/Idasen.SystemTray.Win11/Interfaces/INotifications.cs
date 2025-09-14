@@ -6,7 +6,7 @@ namespace Idasen.SystemTray.Win11.Interfaces ;
 public interface INotifications : IDisposable
 {
     INotifications Initialize ( NotifyIcon        notifyIcon ,
-                                CancellationToken token) ;
+                                CancellationToken token ) ;
 
     void Show ( string          title ,
                 string          text ,

@@ -37,7 +37,7 @@ public class HeightSettings
     /// <summary>
     ///     The last known height of the desk.
     /// </summary>
-    public uint LastKnownDeskHeight { get ; set ; } = Constants.DefaultDeskMinHeightInCm;
+    public uint LastKnownDeskHeight { get ; set ; } = Constants.DefaultDeskMinHeightInCm ;
 
     /// <summary>
     ///     Indicates whether the seating height is visible in the context menu.

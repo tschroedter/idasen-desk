@@ -9,7 +9,9 @@ public class CommonApplicationData : ICommonApplicationData
     private readonly IFileSystem     _fileSystem ;
     private readonly Lazy < string > _folderName ;
 
-    public CommonApplicationData ( ) : this ( new FileSystem ( ) ) { }
+    public CommonApplicationData ( ) : this ( new FileSystem ( ) )
+    {
+    }
 
     public CommonApplicationData ( IFileSystem fileSystem )
     {

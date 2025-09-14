@@ -1,7 +1,7 @@
 using FluentAssertions ;
 using Idasen.SystemTray.Win11.Utils ;
-using Serilog ;
 using NSubstitute ;
+using Serilog ;
 
 namespace Idasen.SystemTray.Win11.Tests.Utils ;
 
@@ -19,10 +19,10 @@ public class VersionProviderTests
         result.Should ( ).StartWith ( "V" ) ;
     }
 
-    private static VersionProvider CreateSut()
+    private static VersionProvider CreateSut ( )
     {
-        var logger = Substitute.For<ILogger>();
+        var logger = Substitute.For < ILogger > ( ) ;
 
-        return new VersionProvider(logger);
+        return new VersionProvider ( logger ) ;
     }
 }

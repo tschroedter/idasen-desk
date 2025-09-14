@@ -1,11 +1,11 @@
-﻿using Idasen.Launcher ;
-using Idasen.SystemTray.Win11.Interfaces ;
-using Idasen.SystemTray.Win11.Utils ;
-using Serilog ;
-using System.Diagnostics.CodeAnalysis ;
+﻿using System.Diagnostics.CodeAnalysis ;
 using System.Reactive.Concurrency ;
 using System.Reactive.Linq ;
 using System.Reflection ;
+using Idasen.Launcher ;
+using Idasen.SystemTray.Win11.Interfaces ;
+using Idasen.SystemTray.Win11.Utils ;
+using Serilog ;
 using Wpf.Ui.Abstractions.Controls ;
 using Wpf.Ui.Appearance ;
 
@@ -23,6 +23,18 @@ public partial class SettingsViewModel ( ILogger                 logger ,
 
     [ ObservableProperty ]
     private ApplicationTheme _currentTheme = ApplicationTheme.Unknown ;
+
+    [ ObservableProperty ]
+    private uint _custom1 = 100 ;
+
+    [ ObservableProperty ]
+    private bool _custom1IsVisibleInContextMenu = true ;
+
+    [ ObservableProperty ]
+    private uint _custom2 = 90 ;
+
+    [ ObservableProperty ]
+    private bool _custom2IsVisibleInContextMenu = true ;
 
     [ ObservableProperty ]
     private string _deskAddress = string.Empty ;
@@ -50,11 +62,11 @@ public partial class SettingsViewModel ( ILogger                 logger ,
     [ ObservableProperty ]
     private bool _parentalLock ;
 
-    [ObservableProperty]
-    private bool _stopIsVisibleInContextMenu = true ;
-
     [ ObservableProperty ]
     private uint _seating = 90 ;
+
+    [ ObservableProperty ]
+    private bool _seatingIsVisibleInContextMenu = true ;
 
     [ ObservableProperty ]
     private string _settingsFileFullPath = string.Empty ;
@@ -64,32 +76,11 @@ public partial class SettingsViewModel ( ILogger                 logger ,
     [ ObservableProperty ]
     private uint _standing = 100 ;
 
-    [ObservableProperty]
-    private uint _custom1 = 100;
+    [ ObservableProperty ]
+    private bool _standingIsVisibleInContextMenu = true ;
 
-    [ObservableProperty]
-    private uint _custom2 = 90;
-
-    [ObservableProperty]
-    private bool _seatingIsVisibleInContextMenu = true;
-
-    [ObservableProperty]
-    private bool _standingIsVisibleInContextMenu = true;
-
-    [ObservableProperty]
-    private bool _custom1IsVisibleInContextMenu = true;
-
-    [ObservableProperty]
-    private bool _custom2IsVisibleInContextMenu = true;
-
-    public void Dispose ( )
-    {
-        if ( _settingsSaved is null )
-            return ;
-
-        _settingsSaved.Dispose ( ) ;
-        _settingsSaved = null ;
-    }
+    [ ObservableProperty ]
+    private bool _stopIsVisibleInContextMenu = true ;
 
     public async Task OnNavigatedToAsync ( )
     {
@@ -103,6 +94,15 @@ public partial class SettingsViewModel ( ILogger                 logger ,
     {
         await synchronizer.StoreSettingsAsync ( this ,
                                                 CancellationToken.None ).ConfigureAwait ( false ) ;
+    }
+
+    public void Dispose ( )
+    {
+        if ( _settingsSaved is null )
+            return ;
+
+        _settingsSaved.Dispose ( ) ;
+        _settingsSaved = null ;
     }
 
     public async Task InitializeAsync ( CancellationToken token )
@@ -123,7 +123,8 @@ public partial class SettingsViewModel ( ILogger                 logger ,
         // Always marshal back to the main application dispatcher to update bindable properties
         var appDispatcher = Application.Current?.Dispatcher ;
 
-        if ( appDispatcher != null && ! appDispatcher.CheckAccess ( ) )
+        if ( appDispatcher != null &&
+             ! appDispatcher.CheckAccess ( ) )
         {
             logger.Debug ( "Dispatching call on UI thread" ) ;
 
@@ -150,6 +151,8 @@ public partial class SettingsViewModel ( ILogger                 logger ,
     }
 
     [ RelayCommand ]
-    internal void OnChangeTheme ( string parameter ) => 
+    internal void OnChangeTheme ( string parameter )
+    {
         synchronizer.ChangeTheme ( parameter ) ;
+    }
 }

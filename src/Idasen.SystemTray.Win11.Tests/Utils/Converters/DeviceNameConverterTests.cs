@@ -1,6 +1,6 @@
-﻿using FluentAssertions;
-using Idasen.SystemTray.Win11.Utils;
-using Idasen.SystemTray.Win11.Utils.Converters;
+﻿using FluentAssertions ;
+using Idasen.SystemTray.Win11.Utils ;
+using Idasen.SystemTray.Win11.Utils.Converters ;
 
 namespace Idasen.SystemTray.Win11.Tests.Utils.Converters ;
 

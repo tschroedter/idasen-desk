@@ -2,6 +2,6 @@
 
 public interface IThemeSwitcher
 {
-    void   ChangeTheme ( string parameter ) ;
     string CurrentThemeName { get ; }
+    void   ChangeTheme ( string parameter ) ;
 }

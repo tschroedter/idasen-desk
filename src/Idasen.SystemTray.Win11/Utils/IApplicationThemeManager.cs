@@ -1,4 +1,4 @@
-﻿using Wpf.Ui.Appearance;
+﻿using Wpf.Ui.Appearance ;
 
 namespace Idasen.SystemTray.Win11.Utils ;
 

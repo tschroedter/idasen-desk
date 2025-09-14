@@ -1,8 +1,8 @@
-using Idasen.SystemTray.Win11.Utils;
+using Idasen.SystemTray.Win11.Utils ;
 
-namespace Idasen.SystemTray.Win11.Interfaces;
+namespace Idasen.SystemTray.Win11.Interfaces ;
 
 public interface IToastService
 {
-    void Show(NotificationParameters parameters);
+    void Show ( NotificationParameters parameters ) ;
 }

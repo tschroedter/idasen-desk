@@ -16,7 +16,7 @@ public class StatusViewModelTests
     private readonly Subject < StatusBarInfo > _statusBarInfoSubject ;
     private readonly ITimer                    _timer ;
 
-    public StatusViewModelTests( )
+    public StatusViewModelTests ( )
     {
         _manager              = Substitute.For < IUiDeskManager > ( ) ;
         _statusBarInfoSubject = new Subject < StatusBarInfo > ( ) ;
@@ -100,15 +100,15 @@ public class StatusViewModelTests
         sut.Severity.Should ( ).Be ( InfoBarSeverity.Informational ) ;
     }
 
-    private StatusViewModel CreateSut()
+    private StatusViewModel CreateSut ( )
     {
-        return new StatusViewModel(_manager,
-                                   _scheduler,
-                                   TimerFactory);
+        return new StatusViewModel ( _manager ,
+                                     _scheduler ,
+                                     TimerFactory ) ;
     }
 
-    private ITimer TimerFactory(TimerCallback arg1, object? arg2, TimeSpan arg3, TimeSpan arg4)
+    private ITimer TimerFactory ( TimerCallback arg1 , object ? arg2 , TimeSpan arg3 , TimeSpan arg4 )
     {
-        return _timer;
+        return _timer ;
     }
 }

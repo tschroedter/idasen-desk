@@ -6,73 +6,73 @@ namespace Idasen.SystemTray.Win11.Tests.TraySettings ;
 
 public class DeviceSettingsTests
 {
-    [Fact]
-    public void DeviceName_ShouldReturnDefaultValue()
+    [ Fact ]
+    public void DeviceName_ShouldReturnDefaultValue ( )
     {
         // Arrange
-        var settings = new DeviceSettings();
+        var settings = new DeviceSettings ( ) ;
 
         // Act
-        var deviceName = settings.DeviceName;
+        var deviceName = settings.DeviceName ;
 
         // Assert
-        deviceName.Should()
-                  .Be(Constants.DefaultDeviceName);
+        deviceName.Should ( )
+                  .Be ( Constants.DefaultDeviceName ) ;
     }
 
-    [Fact]
-    public void DeviceAddress_ShouldReturnDefaultValue()
+    [ Fact ]
+    public void DeviceAddress_ShouldReturnDefaultValue ( )
     {
         // Arrange
-        var settings = new DeviceSettings();
+        var settings = new DeviceSettings ( ) ;
 
         // Act
-        var deviceAddress = settings.DeviceAddress;
+        var deviceAddress = settings.DeviceAddress ;
 
         // Assert
-        deviceAddress.Should()
-                     .Be(Constants.DefaultDeviceAddress);
+        deviceAddress.Should ( )
+                     .Be ( Constants.DefaultDeviceAddress ) ;
     }
 
-    [Fact]
-    public void DeviceMonitoringTimeout_ShouldReturnDefaultValue()
+    [ Fact ]
+    public void DeviceMonitoringTimeout_ShouldReturnDefaultValue ( )
     {
         // Arrange
-        var settings = new DeviceSettings();
+        var settings = new DeviceSettings ( ) ;
 
         // Act
-        var timeout = settings.DeviceMonitoringTimeout;
+        var timeout = settings.DeviceMonitoringTimeout ;
 
         // Assert
-        timeout.Should()
-               .Be(Constants.DefaultDeviceMonitoringTimeout);
+        timeout.Should ( )
+               .Be ( Constants.DefaultDeviceMonitoringTimeout ) ;
     }
 
-    [Fact]
-    public void DeviceLocked_ShouldReturnDefaultValue()
+    [ Fact ]
+    public void DeviceLocked_ShouldReturnDefaultValue ( )
     {
         // Arrange
-        var settings = new DeviceSettings();
+        var settings = new DeviceSettings ( ) ;
 
         // Act
-        var locked = settings.DeviceLocked;
+        var locked = settings.DeviceLocked ;
 
         // Assert
-        locked.Should()
-              .Be(Constants.DefaultLocked);
+        locked.Should ( )
+              .Be ( Constants.DefaultLocked ) ;
     }
 
-    [Fact]
-    public void NotificationsEnabled_ShouldReturnDefaultValue()
+    [ Fact ]
+    public void NotificationsEnabled_ShouldReturnDefaultValue ( )
     {
         // Arrange
-        var settings = new DeviceSettings();
+        var settings = new DeviceSettings ( ) ;
 
         // Act
-        var notificationsEnabled = settings.NotificationsEnabled;
+        var notificationsEnabled = settings.NotificationsEnabled ;
 
         // Assert
-        notificationsEnabled.Should()
-                            .Be(Constants.NotificationsEnabled);
+        notificationsEnabled.Should ( )
+                            .Be ( Constants.NotificationsEnabled ) ;
     }
 }

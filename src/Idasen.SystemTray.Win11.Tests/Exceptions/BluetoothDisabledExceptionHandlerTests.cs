@@ -13,11 +13,11 @@ public class BluetoothDisabledExceptionHandlerTests
 
     [ Theory ]
     [ InlineData ( - 2147023729 ) ] // Simulating a Bluetooth disabled exception
-    [ InlineData ( - 2147020577 )] // Simulating a Bluetooth disabled exception
+    [ InlineData ( - 2147020577 ) ] // Simulating a Bluetooth disabled exception
     public void CanHandle_ShouldReturnTrue_WhenExceptionIsBluetoothDisabledException ( int hresult )
     {
         // Arrange  
-        var exception = new Exception("Bluetooth Exception")
+        var exception = new Exception ( "Bluetooth Exception" )
         {
             HResult = hresult
         } ;
@@ -34,7 +34,7 @@ public class BluetoothDisabledExceptionHandlerTests
     public void CanHandle_ShouldReturnFalse_WhenExceptionIsNotBluetoothDisabledException ( )
     {
         // Arrange  
-        var exception = new Exception("Exception") ;
+        var exception = new Exception ( "Exception" ) ;
 
         // Act  
         var result = CreateSut ( ).CanHandle ( exception ) ;

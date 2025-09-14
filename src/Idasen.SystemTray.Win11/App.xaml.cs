@@ -29,7 +29,7 @@ using Microsoft.Extensions.Configuration ;
 using Microsoft.Extensions.DependencyInjection ;
 using Microsoft.Extensions.Hosting ;
 using Wpf.Ui ;
-using Wpf.Ui.Abstractions;
+using Wpf.Ui.Abstractions ;
 using Wpf.Ui.Tray.Controls ;
 using ILogger = Serilog.ILogger ;
 
@@ -38,7 +38,7 @@ namespace Idasen.SystemTray.Win11 ;
 /// <summary>
 ///     Interaction logic for App.xaml
 /// </summary>
-[ExcludeFromCodeCoverage]
+[ ExcludeFromCodeCoverage ]
 public partial class App
 {
     // The.NET Generic Host provides dependency injection, configuration, logging, and other services.
@@ -63,7 +63,7 @@ public partial class App
                                                                            services.AddHostedService < ApplicationHostService > ( ) ;
 
                                                                            // Page resolver service
-                                                                           services.AddSingleton< INavigationViewPageProvider , PageService > ( ) ;
+                                                                           services.AddSingleton < INavigationViewPageProvider , PageService > ( ) ;
                                                                            services.AddSingleton < INavigationService , NavigationService > ( ) ;
 
                                                                            // Theme manipulation
@@ -100,17 +100,20 @@ public partial class App
                                                                            services.AddTransient < IDoubleToUIntConverter , DoubleToUIntConverter > ( ) ;
                                                                            services.AddTransient < IStringToUIntConverter , StringToUIntConverter > ( ) ;
                                                                            services.AddTransient < IDeviceAddressToULongConverter , DeviceAddressToULongConverter > ( ) ;
-                                                                           services.AddSingleton ( provider =>
-                                                                                                      new Func < IDeskProvider > ( provider
-                                                                                                         .GetRequiredService <
-                                                                                                              IDeskProvider > ) ) ;
+                                                                           services.AddSingleton ( provider => new Func < IDeskProvider > ( provider.GetRequiredService < IDeskProvider > ) ) ;
                                                                            services.AddSingleton < IFileSystem , FileSystem > ( ) ;
-                                                                           services.AddTransient<IThemeSwitcher, ThemeSwitcher>();
+                                                                           services.AddTransient < IThemeSwitcher , ThemeSwitcher > ( ) ;
                                                                            services.AddTransient < ISettingsSynchronizer , SettingsSynchronizer > ( ) ;
-                                                                           services.AddSingleton <IApplicationThemeManager, MyApplicationThemeManager> ( );
-                                                                           services.AddSingleton<Func<TimerCallback, object?, TimeSpan, TimeSpan, ITimer>>( _ =>
-                                                                               (callback, state, dueTime, period) => new Timer(callback, state, dueTime, period) );
-                                                                       }).Build ( ) ;
+                                                                           services.AddSingleton < IApplicationThemeManager , MyApplicationThemeManager > ( ) ;
+                                                                           services.AddSingleton < Func < TimerCallback , object ? , TimeSpan , TimeSpan , ITimer > > ( _ =>
+                                                                                                           ( callback ,
+                                                                                                               state ,
+                                                                                                               dueTime ,
+                                                                                                               period ) => new Timer ( callback ,
+                                                                                                                    state ,
+                                                                                                                    dueTime ,
+                                                                                                                    period ) ) ;
+                                                                       } ).Build ( ) ;
 
     private readonly ILogger _logger = LoggerProvider.CreateLogger ( Constants.ApplicationName ,
                                                                      Constants.LogFilename ) ;
@@ -160,36 +163,36 @@ public partial class App
     /// <summary>
     ///     Occurs when the application is loading.
     /// </summary>
-    private async void OnStartup(object sender, StartupEventArgs args)
+    private async void OnStartup ( object sender , StartupEventArgs args )
     {
         try
         {
-            AvoidRunningTwoInstances();
+            AvoidRunningTwoInstances ( ) ;
 
-            await Host.StartAsync();
+            await Host.StartAsync ( ) ;
 
-            UnhandledExceptionsHandler.RegisterGlobalExceptionHandling();
+            UnhandledExceptionsHandler.RegisterGlobalExceptionHandling ( ) ;
 
-            _logger.Information("##### Startup...");
+            _logger.Information ( "##### Startup..." ) ;
 
-            var test = GetService<ILogger>();
-            test?.Information("Test");
+            var test = GetService < ILogger > ( ) ;
+            test?.Information ( "Test" ) ;
 
-            var notifyIcon = FindNotifyIcon(); // todo maybe we can get the icon from the view?
+            var notifyIcon = FindNotifyIcon ( ) ; // todo maybe we can get the icon from the view?
 
-            var main = GetService<IdasenDeskWindowViewModel>();
+            var main = GetService < IdasenDeskWindowViewModel > ( ) ;
 
-            main!.Initialize(notifyIcon);
+            main!.Initialize ( notifyIcon ) ;
 
-            var settings = GetService<SettingsViewModel>();
+            var settings = GetService < SettingsViewModel > ( ) ;
 
-            await settings!.InitializeAsync(CancellationToken.None);
+            await settings!.InitializeAsync ( CancellationToken.None ) ;
 
-            var versionProvider = GetVersionProvider();
+            var versionProvider = GetVersionProvider ( ) ;
 
-            CurrentWindow.StateChanged += OnStateChanged_HideOnMinimize;
+            CurrentWindow.StateChanged += OnStateChanged_HideOnMinimize ;
 
-            _logger.Information($"##### Idasen.SystemTray {versionProvider.GetVersion()}");
+            _logger.Information ( $"##### Idasen.SystemTray {versionProvider.GetVersion ( )}" ) ;
         }
         catch ( Exception ex )
         {
@@ -232,17 +235,17 @@ public partial class App
         catch ( Exception ex )
         {
             _logger.Error ( ex ,
-                            "Failed to stop application" );
+                            "Failed to stop application" ) ;
         }
     }
 
-    private void OnStateChanged_HideOnMinimize(object? sender, EventArgs e)
+    private void OnStateChanged_HideOnMinimize ( object ? sender , EventArgs e )
     {
-        if (CurrentWindow.WindowState != WindowState.Minimized)
-            return;
+        if ( CurrentWindow.WindowState != WindowState.Minimized )
+            return ;
 
-        CurrentWindow.Visibility  = Visibility.Hidden;
-        CurrentWindow.WindowState = WindowState.Normal;
+        CurrentWindow.Visibility  = Visibility.Hidden ;
+        CurrentWindow.WindowState = WindowState.Normal ;
     }
 
     /// <summary>
@@ -252,7 +255,7 @@ public partial class App
     {
         // For more info see https://docs.microsoft.com/en-us/dotnet/api/system.windows.application.dispatcherunhandledexception?view=windowsdesktop-6.0
         _logger.Error ( e.Exception ,
-                         "Unhandled exception" ) ;
+                        "Unhandled exception" ) ;
     }
 
     private static NotifyIcon FindNotifyIcon ( )

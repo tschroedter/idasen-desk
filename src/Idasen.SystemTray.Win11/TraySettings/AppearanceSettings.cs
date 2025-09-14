@@ -4,5 +4,5 @@ namespace Idasen.SystemTray.Win11.TraySettings ;
 
 public class AppearanceSettings
 {
-    public string ThemeName { get ; set ; } = Constants.DefaultAppearanceThemeName;
+    public string ThemeName { get ; set ; } = Constants.DefaultAppearanceThemeName ;
 }

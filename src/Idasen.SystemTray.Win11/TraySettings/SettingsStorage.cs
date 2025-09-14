@@ -4,7 +4,7 @@ using System.Text.Json ;
 using System.Text.Json.Serialization ;
 using Idasen.SystemTray.Win11.Interfaces ;
 
-namespace Idasen.SystemTray.Win11.TraySettings;
+namespace Idasen.SystemTray.Win11.TraySettings ;
 
 public class SettingsStorage ( IFileSystem fileSystem ) : ISettingsStorage
 {
