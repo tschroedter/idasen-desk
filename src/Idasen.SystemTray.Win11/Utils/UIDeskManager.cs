@@ -194,7 +194,15 @@ public sealed class UiDeskManager : IUiDeskManager
 
     public Task ExitAsync()
     {
-        Application.Current.Shutdown();
+        try
+        {
+            Application.Current.Shutdown();
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e, "Failed to shutdown application");
+        }
+
         return Task.CompletedTask;
     }
 
@@ -525,10 +533,10 @@ public sealed class UiDeskManager : IUiDeskManager
 
             var token = GetTokenOrThrow();
 
-            var (isSuccess, desk) = await _deskProvider.TryGetDesk(token).ConfigureAwait(false);
+                var (isSuccess, desk) = await _deskProvider.TryGetDesk(token).ConfigureAwait(false);
 
-            if (isSuccess)
-                ConnectSuccessful(desk!);
+                if (isSuccess)
+                    ConnectSuccessful(desk!);
             else
                 ConnectFailed();
         }
