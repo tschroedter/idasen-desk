@@ -13,6 +13,6 @@ public partial class DashboardViewModel : ObservableObject
         Guard.ArgumentNotNull ( versionProvider ,
                                 nameof ( versionProvider ) ) ;
 
-        _title = "Idasen Desk Application " + versionProvider.GetVersion ( ) ;
+        _title = $"Idasen Desk Application {versionProvider.GetVersion ( )}" ;
     }
 }

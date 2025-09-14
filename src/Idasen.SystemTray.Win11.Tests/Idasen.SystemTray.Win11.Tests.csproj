@@ -37,8 +37,4 @@
         <Using Include="Xunit" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="ViewModels\Windows\" />
-    </ItemGroup>
-
 </Project>

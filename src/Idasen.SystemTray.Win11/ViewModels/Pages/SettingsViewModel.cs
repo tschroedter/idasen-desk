@@ -102,7 +102,7 @@ public partial class SettingsViewModel ( ILogger                 logger ,
     public async Task OnNavigatedFromAsync ( )
     {
         await synchronizer.StoreSettingsAsync ( this ,
-                                                CancellationToken.None ) ;
+                                                CancellationToken.None ).ConfigureAwait ( false ) ;
     }
 
     public async Task InitializeAsync ( CancellationToken token )
@@ -137,7 +137,8 @@ public partial class SettingsViewModel ( ILogger                 logger ,
 
     private async Task InitializeViewModelAsync ( )
     {
-        CurrentTheme = await Task.Run ( ApplicationThemeManager.GetAppTheme ).ConfigureAwait ( false ) ;
+        // Keep continuation on UI thread to safely update bindable properties
+        CurrentTheme = await Task.Run ( ApplicationThemeManager.GetAppTheme ) ;
         AppVersion   = $"UiDesktopApp1 - {GetAssemblyVersion ( )}" ;
 
         _isInitialized = true ;
