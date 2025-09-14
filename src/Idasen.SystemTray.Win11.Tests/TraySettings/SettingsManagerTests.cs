@@ -4,6 +4,7 @@ using Idasen.SystemTray.Win11.TraySettings ;
 using Idasen.SystemTray.Win11.Utils ;
 using NSubstitute ;
 using Serilog ;
+using System.IO.Abstractions ;
 
 namespace Idasen.SystemTray.Win11.Tests.TraySettings ;
 
@@ -13,13 +14,15 @@ public class SettingsManagerTests
     private readonly ILogger                _logger                = Substitute.For < ILogger > ( ) ;
     private readonly SettingsManager        _settingsManager ;
     private readonly ISettingsStorage       _settingsStorage = Substitute.For < ISettingsStorage > ( ) ;
+    private readonly IFileSystem            _fileSystem      = Substitute.For < IFileSystem > ( ) ;
 
     public SettingsManagerTests ( )
     {
         _commonApplicationData.ToFullPath ( Constants.SettingsFileName ).Returns ( "TestSettingsFilePath" ) ;
         _settingsManager = new SettingsManager ( _logger ,
                                                  _commonApplicationData ,
-                                                 _settingsStorage ) ;
+                                                 _settingsStorage ,
+                                                 _fileSystem ) ;
     }
 
     [ Fact ]
@@ -62,6 +65,8 @@ public class SettingsManagerTests
         // Arrange
         await File.WriteAllTextAsync ( "TestSettingsFilePath" ,
                                        "{}" ) ;
+        _fileSystem.File.Exists ( "TestSettingsFilePath" ).Returns ( true ) ;
+        _fileSystem.File.ReadAllTextAsync ( "TestSettingsFilePath" , CancellationToken.None ).Returns ( "{}" ) ;
         _settingsStorage.LoadSettingsAsync ( "TestSettingsFilePath" ,
                                              CancellationToken.None ).Returns ( new Settings ( ) ) ;
 
@@ -69,7 +74,7 @@ public class SettingsManagerTests
         var result = await _settingsManager.UpgradeSettingsAsync ( CancellationToken.None ) ;
 
         // Assert
-        result.Should ( ).BeFalse ( ) ;
+        result.Should ( ).BeTrue ( ) ;
         _settingsManager.CurrentSettings
                         .DeviceSettings
                         .NotificationsEnabled

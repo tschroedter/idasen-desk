@@ -42,13 +42,13 @@ public class SettingsStorage ( IFileSystem fileSystem ) : ISettingsStorage
     {
         try
         {
-            var directoryName = Path.GetDirectoryName ( settingsFileName ) ;
+            var directoryName = fileSystem.Path.GetDirectoryName ( settingsFileName ) ;
 
             if ( string.IsNullOrEmpty ( directoryName ) )
                 throw new IOException ( $"Failed to get directory name from {settingsFileName}" ) ;
 
-            if ( ! Directory.Exists ( directoryName ) )
-                Directory.CreateDirectory ( directoryName ) ;
+            if ( ! fileSystem.Directory.Exists ( directoryName ) )
+                fileSystem.Directory.CreateDirectory ( directoryName ) ;
 
             await using var stream = fileSystem.File.Create ( settingsFileName ) ;
 

@@ -1,4 +1,5 @@
 ﻿using System.IO ;
+using System.IO.Abstractions ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.Utils ;
 
@@ -6,24 +7,33 @@ namespace Idasen.SystemTray.Win11.TraySettings ;
 
 public class CommonApplicationData : ICommonApplicationData
 {
+    private readonly IFileSystem     _fileSystem ;
     private readonly Lazy < string > _folderName ;
 
-    public CommonApplicationData ( )
+    public CommonApplicationData ( ) : this ( new FileSystem ( ) ) { }
+
+    public CommonApplicationData ( IFileSystem fileSystem )
     {
+        _fileSystem = fileSystem ;
         _folderName = new Lazy < string > ( FolderName ) ;
     }
 
     public string ToFullPath ( string fileName )
     {
-        return Path.Combine ( _folderName.Value ,
-                              fileName ) ;
+        var folder = _folderName.Value ;
+
+        if ( ! _fileSystem.Directory.Exists ( folder ) )
+            _fileSystem.Directory.CreateDirectory ( folder ) ;
+
+        return _fileSystem.Path.Combine ( folder ,
+                                          fileName ) ;
     }
 
     public string FolderName ( )
     {
         var appData = Environment.GetFolderPath ( Environment.SpecialFolder.CommonApplicationData ) ;
 
-        return Path.Combine ( appData ,
-                              Constants.ApplicationName ) ;
+        return _fileSystem.Path.Combine ( appData ,
+                                          Constants.ApplicationName ) ;
     }
 }

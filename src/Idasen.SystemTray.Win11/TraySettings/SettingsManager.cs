@@ -1,4 +1,5 @@
 ﻿using System.IO ;
+using System.IO.Abstractions ;
 using System.Reactive.Subjects ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.Utils ;
@@ -8,7 +9,8 @@ namespace Idasen.SystemTray.Win11.TraySettings ;
 
 public class SettingsManager ( ILogger                logger ,
                                ICommonApplicationData commonApplicationData ,
-                               ISettingsStorage       settingsStorage )
+                               ISettingsStorage       settingsStorage ,
+                               IFileSystem            fileSystem )
     : ISettingsManager
 {
     private readonly ISubject < ISettings > _settingsSaved = new Subject < ISettings > ( ) ;
@@ -34,13 +36,13 @@ public class SettingsManager ( ILogger                logger ,
     {
         try
         {
-            if ( ! File.Exists ( SettingsFileName ) )
+            if ( ! fileSystem.File.Exists ( SettingsFileName ) )
                 return true ; // Nothing to upgrade
 
-            var settingsJson = await File.ReadAllTextAsync ( SettingsFileName ,
-                                                             token ).ConfigureAwait ( false ) ;
+            var settingsJson = await fileSystem.File.ReadAllTextAsync ( SettingsFileName ,
+                                                                        token ).ConfigureAwait ( false ) ;
 
-            if ( ! settingsJson.Contains ( nameof ( Settings.DeviceSettings.NotificationsEnabled ) , StringComparison.Ordinal ) )
+            if ( MissingNotificationsEnabled ( settingsJson ) )
             {
                 await AddMissingSettingsNotificationsEnabled ( token ).ConfigureAwait ( false ) ;
             }
@@ -53,6 +55,9 @@ public class SettingsManager ( ILogger                logger ,
             return false ;
         }
     }
+
+    private static bool MissingNotificationsEnabled ( string settingsJson )
+        => ! settingsJson.Contains ( nameof ( Settings.DeviceSettings.NotificationsEnabled ) , StringComparison.Ordinal ) ;
 
     public async Task SetLastKnownDeskHeight ( uint heightInCm , CancellationToken token )
     {
