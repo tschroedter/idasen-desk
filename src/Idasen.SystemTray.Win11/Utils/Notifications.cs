@@ -16,6 +16,7 @@ public class Notifications : INotifications
     private readonly IDisposable                        _showSubscribe ;
     private readonly IVersionProvider                   _version ;
     private readonly IToastService                      _toast ;
+    private volatile bool _disposed ;
 
     public Notifications ( ILogger          logger ,
                            ISettingsManager manager ,
@@ -68,17 +69,24 @@ public class Notifications : INotifications
 
     public void Dispose ( )
     {
+        _disposed = true ;
         _showSubscribe.Dispose ( ) ;
         _showSubject.Dispose ( ) ;
     }
 
     public void Show ( NotificationParameters parameters )
     {
+        if ( _disposed )
+            return ;
+
         _showSubject.OnNext ( parameters ) ;
     }
 
     private void OnShow ( NotificationParameters parameters )
     {
+        if ( _disposed )
+            return ;
+
         if ( ! _manager.CurrentSettings.DeviceSettings.NotificationsEnabled )
         {
             _logger.Information ( "Notifications are disabled. {Parameters}" ,
