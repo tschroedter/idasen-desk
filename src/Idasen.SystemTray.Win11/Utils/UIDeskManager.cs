@@ -99,23 +99,24 @@ public sealed class UiDeskManager : IUiDeskManager
 
     public bool IsInitialize => _notifyIcon is not null;
 
-    public void Dispose()
+    public void Dispose ( )
     {
-        if (_disposed)
-            return;
+        if ( _disposed )
+            return ;
 
-        _disposed = true;
+        _disposed = true ;
 
-        _logger.Information("Disposing {TypeName}...", nameof(UiDeskManager));
+        _logger.Information ( "Disposing {TypeName}..." ,
+                              nameof ( UiDeskManager ) ) ;
 
         // Unregister static/global hotkeys to avoid retaining this instance
         try
         {
-            HotkeyManager.HotkeyAlreadyRegistered -= HotkeyManager_HotkeyAlreadyRegistered;
-            HotkeyManager.Current.Remove(HotkeyNameStanding);
-            HotkeyManager.Current.Remove(HotkeyNameSeating);
-            HotkeyManager.Current.Remove(HotkeyNameCustom1);
-            HotkeyManager.Current.Remove(HotkeyNameCustom2);
+            HotkeyManager.HotkeyAlreadyRegistered -= HotkeyManager_HotkeyAlreadyRegistered ;
+            HotkeyManager.Current.Remove ( HotkeyNameStanding ) ;
+            HotkeyManager.Current.Remove ( HotkeyNameSeating ) ;
+            HotkeyManager.Current.Remove ( HotkeyNameCustom1 ) ;
+            HotkeyManager.Current.Remove ( HotkeyNameCustom2 ) ;
         }
         catch
         {
@@ -123,25 +124,32 @@ public sealed class UiDeskManager : IUiDeskManager
         }
 
         // Cancel any pending operations
-        try { _tokenSource?.Cancel(); } catch { }
-
-        DisposeDesk();
-
-        _heightChanged?.Dispose();
-        _finished?.Dispose();
-        _onErrorChanged?.Dispose();
-        _deskProvider?.Dispose();
-        _tokenSource?.Dispose();
-
-        // Complete and dispose the subject to release subscriptions
         try
         {
-            _statusBarInfoSubject.OnCompleted();
-            _statusBarInfoSubject.Dispose();
+            _tokenSource?.Cancel ( ) ;
         }
         catch
         {
-            // ignore
+            // ignored }
+
+            DisposeDesk ( ) ;
+
+            _heightChanged?.Dispose ( ) ;
+            _finished?.Dispose ( ) ;
+            _onErrorChanged?.Dispose ( ) ;
+            _deskProvider?.Dispose ( ) ;
+            _tokenSource?.Dispose ( ) ;
+
+            // Complete and dispose the subject to release subscriptions
+            try
+            {
+                _statusBarInfoSubject.OnCompleted ( ) ;
+                _statusBarInfoSubject.Dispose ( ) ;
+            }
+            catch
+            {
+                // ignore
+            }
         }
     }
 
@@ -158,13 +166,22 @@ public sealed class UiDeskManager : IUiDeskManager
     }
 
     // Helper to run an action only when connected
-    private Task ExecuteIfConnected(Action action)
+    private Task ExecuteIfConnected ( Action action )
     {
-        if (!IsDeskConnected())
-            return Task.CompletedTask;
+        if ( ! IsDeskConnected ( ) )
+            return Task.CompletedTask ;
 
-        try { action(); } catch (Exception e) { _logger.Error(e, "Action failed while connected"); }
-        return Task.CompletedTask;
+        try
+        {
+            action ( ) ;
+        }
+        catch ( Exception e )
+        {
+            _logger.Error ( e ,
+                            "Action failed while connected" ) ;
+        }
+
+        return Task.CompletedTask ;
     }
 
     public Task StopAsync()
@@ -487,11 +504,14 @@ public sealed class UiDeskManager : IUiDeskManager
                                      message,
                                      severity);
 
+        // Update the last known info under lock
         lock (_statusLock)
         {
             LastStatusBarInfo = info;
-            _statusBarInfoSubject.OnNext(info);
         }
+
+        // Publish to observers outside the lock to avoid "used inside a lock" warnings and potential deadlocks
+        _statusBarInfoSubject.OnNext(info);
 
         _notifications.Show(title,
                             message,

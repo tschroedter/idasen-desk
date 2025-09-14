@@ -1,5 +1,4 @@
-﻿using System.IO ;
-using System.IO.Abstractions ;
+﻿using System.IO.Abstractions ;
 using System.Reactive.Subjects ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.Utils ;

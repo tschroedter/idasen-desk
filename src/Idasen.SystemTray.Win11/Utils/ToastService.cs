@@ -1,6 +1,5 @@
 using Idasen.SystemTray.Win11.Interfaces;
 using Microsoft.Toolkit.Uwp.Notifications;
-using Wpf.Ui.Controls;
 
 namespace Idasen.SystemTray.Win11.Utils;
 
