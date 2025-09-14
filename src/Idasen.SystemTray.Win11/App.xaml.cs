@@ -83,6 +83,7 @@ public partial class App
                                                                            services.AddSingleton < SettingsViewModel > ( ) ;
                                                                            services.AddSingleton < IVersionProvider , VersionProvider > ( ) ;
                                                                            services.AddSingleton < INotifications , Notifications > ( ) ;
+                                                                           services.AddSingleton < IToastService , ToastService > ( ) ;
                                                                            services.AddSingleton < SettingsChanges > ( ) ;
                                                                            services.AddSingleton < IObserveSettingsChanges > ( GetSettingsChanged ) ;
                                                                            services.AddSingleton < INotifySettingsChanges > ( GetSettingsChanged ) ;

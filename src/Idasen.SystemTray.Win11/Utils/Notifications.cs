@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis ;
 using System.Reactive.Subjects ;
 using Idasen.SystemTray.Win11.Interfaces ;
-using Microsoft.Toolkit.Uwp.Notifications ;
 using Serilog ;
 using Wpf.Ui.Controls ;
 using Wpf.Ui.Tray.Controls ;
@@ -16,14 +15,17 @@ public class Notifications : INotifications
     private readonly Subject < NotificationParameters > _showSubject ;
     private readonly IDisposable                        _showSubscribe ;
     private readonly IVersionProvider                   _version ;
+    private readonly IToastService                      _toast ;
 
     public Notifications ( ILogger          logger ,
                            ISettingsManager manager ,
-                           IVersionProvider version )
+                           IVersionProvider version ,
+                           IToastService    toast )
     {
         _logger        = logger ;
         _manager       = manager ;
         _version       = version ;
+        _toast         = toast ;
         _showSubject   = new Subject < NotificationParameters > ( ) ;
         _showSubscribe = _showSubject.Subscribe ( OnShow ) ;
     }
@@ -40,14 +42,26 @@ public class Notifications : INotifications
     {
         _logger.Debug ( "Notifications initializing..." ) ;
 
-        Task.Run ( async ( ) =>
-                   {
-                       await _manager.LoadAsync ( token ) ;
-                       Show ( $"Idasen System Tray {_version.GetVersion ( )}" ,
-                              "Running..." ,
-                              InfoBarSeverity.Informational ) ;
-                   } ,
-                   token ) ;
+        _ = Task.Run ( async ( ) =>
+                       {
+                           try
+                           {
+                               await _manager.LoadAsync ( token ).ConfigureAwait ( false ) ;
+
+                               Show ( $"Idasen System Tray {_version.GetVersion ( )}" ,
+                                      "Running..." ,
+                                      InfoBarSeverity.Informational ) ;
+                           }
+                           catch ( OperationCanceledException )
+                           {
+                               _logger.Information ( "Notifications initialization canceled" ) ;
+                           }
+                           catch ( Exception ex )
+                           {
+                               _logger.Error ( ex , "Failed to initialize notifications" ) ;
+                           }
+                       } ,
+                       token ) ;
 
         return this ;
     }
@@ -84,11 +98,6 @@ public class Notifications : INotifications
         _logger.Debug ( "Parameters = {Parameters}" ,
                         parameters ) ;
 
-        var builder = new ToastContentBuilder ( )
-                     .AddText ( parameters.Title )
-                     .AddText ( parameters.Text )
-                     .SetToastDuration ( ToastDuration.Short ) ;
-
-        builder.Show ( ) ;
+        _toast.Show ( parameters ) ;
     }
 }
