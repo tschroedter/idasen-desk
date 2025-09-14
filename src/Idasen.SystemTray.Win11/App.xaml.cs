@@ -224,7 +224,9 @@ public partial class App
         {
             _logger.Information ( "##### Exiting..." ) ;
 
-            CurrentWindow.StateChanged -= OnStateChanged_HideOnMinimize;
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+            if (CurrentWindow != null)
+                CurrentWindow.StateChanged -= OnStateChanged_HideOnMinimize;
 
             await Host.StopAsync ( ) ;
 
