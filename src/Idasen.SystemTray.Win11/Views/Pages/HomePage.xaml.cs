@@ -3,6 +3,7 @@ using Idasen.SystemTray.Win11.ViewModels.Pages ;
 using Wpf.Ui.Abstractions.Controls ;
 using System.Diagnostics;
 using System.Windows.Navigation;
+using System.Windows.Input;
 
 namespace Idasen.SystemTray.Win11.Views.Pages ;
 
@@ -34,5 +35,22 @@ public partial class HomePage : INavigableView < DashboardViewModel >
         }
 
         e.Handled = true ;
+    }
+
+    private void DonateImage_OnClick ( object sender , MouseButtonEventArgs e )
+    {
+        try
+        {
+            var uri = new Uri ( "https://www.paypal.com/donate/?hosted_button_id=KAWJDNVJTD7SJ" ) ;
+
+            Process.Start ( new ProcessStartInfo ( uri.AbsoluteUri )
+            {
+                UseShellExecute = true
+            } ) ;
+        }
+        catch
+        {
+            // Ignored
+        }
     }
 }

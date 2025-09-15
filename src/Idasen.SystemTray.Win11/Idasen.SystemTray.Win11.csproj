@@ -24,7 +24,12 @@
 
     <ItemGroup>
       <None Remove="Resources\cup-xl.ico" />
+      <None Remove="Resources\Donate-Button.png" />
       <None Remove="Resources\small-green-light-bulb.png" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Resource Include="Resources\Donate-Button.png" />
     </ItemGroup>
 
     <ItemGroup>

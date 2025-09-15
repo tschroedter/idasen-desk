@@ -16,6 +16,12 @@
     Foreground="{DynamicResource TextFillColorPrimaryBrush}"
     mc:Ignorable="d">
 
+    <!--
+      Notes:
+      - Ensure 'Resources/Donate-Button.png' exists in the project and Build Action = Resource.
+      - Using assembly-qualified pack URI below.
+    -->
+
     <StackPanel>
         <ui:CardExpander
             DockPanel.Dock="Top"
@@ -47,15 +53,15 @@
                     FontStyle="Italic">
                     If you enjoy what I’m building and want to keep the momentum going, feel free to buy me a coffee or support via PayPal. Every bit helps—and I’m truly grateful!
                 </TextBlock>
-                <TextBlock
-                    Margin="0,12,0,0"
-                    HorizontalAlignment="Left"
-                    TextWrapping="Wrap">
-                    <Hyperlink NavigateUri="https://www.paypal.com/donate/?hosted_button_id=KAWJDNVJTD7SJ"
-                               RequestNavigate="Hyperlink_RequestNavigate">
-                        PayPal Donation
-                    </Hyperlink>
-                </TextBlock>
+                <Image
+                    Margin="0,24,0,0"
+                    Source="pack://application:,,,/Resources/Donate-Button.png"
+                    SnapsToDevicePixels="True"
+                    UseLayoutRounding="True"
+                    Stretch="None"
+                    Cursor="Hand"
+                    MouseLeftButtonUp="DonateImage_OnClick"
+                    ToolTip="Support via PayPal (https://www.paypal.com/donate/?hosted_button_id=KAWJDNVJTD7SJ)"/>
             </StackPanel>
         </ui:CardExpander>
     </StackPanel>
