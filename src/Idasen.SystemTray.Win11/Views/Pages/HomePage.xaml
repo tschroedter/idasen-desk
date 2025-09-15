@@ -40,6 +40,22 @@
                     HorizontalAlignment="Left"
                     TextWrapping="Wrap"
                     Text="This application is controlling Ikea's Idasen Desk using Windows 10/11 and BluetoothLE. Ikea only provides an Android and IOs app to control the desk. I thought it would be far more convenient to control the desk using a Windows 10/11." />
+                <TextBlock
+                    Margin="0,12,0,0"
+                    HorizontalAlignment="Left"
+                    TextWrapping="Wrap"
+                    FontStyle="Italic">
+                    If you enjoy what I’m building and want to keep the momentum going, feel free to buy me a coffee or support via PayPal. Every bit helps—and I’m truly grateful!
+                </TextBlock>
+                <TextBlock
+                    Margin="0,12,0,0"
+                    HorizontalAlignment="Left"
+                    TextWrapping="Wrap">
+                    <Hyperlink NavigateUri="https://www.paypal.com/donate/?hosted_button_id=KAWJDNVJTD7SJ"
+                               RequestNavigate="Hyperlink_RequestNavigate">
+                        PayPal Donation
+                    </Hyperlink>
+                </TextBlock>
             </StackPanel>
         </ui:CardExpander>
     </StackPanel>
