@@ -1,8 +1,8 @@
-﻿using System.Diagnostics.CodeAnalysis ;
+﻿using System.Diagnostics ;
+using System.Diagnostics.CodeAnalysis ;
+using System.Windows.Input ;
 using Idasen.SystemTray.Win11.ViewModels.Pages ;
 using Wpf.Ui.Abstractions.Controls ;
-using System.Diagnostics;
-using System.Windows.Input;
 
 namespace Idasen.SystemTray.Win11.Views.Pages ;
 

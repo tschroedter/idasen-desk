@@ -26,7 +26,7 @@ public class LoggingSettingsManagerTests
         await _manager.SaveAsync ( CancellationToken.None ) ;
 
         var debugCalls = _logger.ReceivedCalls ( )
-                                 .Where ( c => c.GetMethodInfo ( ).Name == nameof ( _logger.Debug ) ) ;
+                                .Where ( c => c.GetMethodInfo ( ).Name == nameof ( _logger.Debug ) ) ;
 
         debugCalls.Count ( ).Should ( ).BeGreaterThanOrEqualTo ( 1 ) ;
 
@@ -40,7 +40,7 @@ public class LoggingSettingsManagerTests
         await _manager.LoadAsync ( CancellationToken.None ) ;
 
         var debugCalls = _logger.ReceivedCalls ( )
-                                 .Where ( c => c.GetMethodInfo ( ).Name == nameof ( _logger.Debug ) ) ;
+                                .Where ( c => c.GetMethodInfo ( ).Name == nameof ( _logger.Debug ) ) ;
 
         debugCalls.Count ( ).Should ( ).BeGreaterThanOrEqualTo ( 1 ) ;
 
@@ -59,7 +59,7 @@ public class LoggingSettingsManagerTests
               .BeTrue ( ) ;
 
         var debugCalls = _logger.ReceivedCalls ( )
-                                 .Where ( c => c.GetMethodInfo ( ).Name == nameof ( _logger.Debug ) ) ;
+                                .Where ( c => c.GetMethodInfo ( ).Name == nameof ( _logger.Debug ) ) ;
 
         debugCalls.Count ( ).Should ( ).BeGreaterThanOrEqualTo ( 1 ) ;
     }
@@ -88,7 +88,7 @@ public class LoggingSettingsManagerTests
                                                 CancellationToken.None ) ;
 
         var debugCalls = _logger.ReceivedCalls ( )
-                                 .Where ( c => c.GetMethodInfo ( ).Name == nameof ( _logger.Debug ) ) ;
+                                .Where ( c => c.GetMethodInfo ( ).Name == nameof ( _logger.Debug ) ) ;
 
         debugCalls.Count ( ).Should ( ).BeGreaterThanOrEqualTo ( 1 ) ;
 

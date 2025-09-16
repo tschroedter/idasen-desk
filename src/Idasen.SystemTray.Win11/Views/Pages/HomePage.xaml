@@ -61,7 +61,7 @@
                     Stretch="None"
                     Cursor="Hand"
                     MouseLeftButtonUp="DonateImage_OnClick"
-                    ToolTip="Support via PayPal (https://www.paypal.com/donate/?hosted_button_id=KAWJDNVJTD7SJ)"/>
+                    ToolTip="Support via PayPal (https://www.paypal.com/donate/?hosted_button_id=KAWJDNVJTD7SJ)" />
             </StackPanel>
         </ui:CardExpander>
     </StackPanel>

@@ -44,11 +44,6 @@ public partial class App
     private static readonly ILogger AppLogger = LoggerProvider.CreateLogger ( Constants.ApplicationName ,
                                                                               Constants.LogFilename ) ;
 
-    static App ( )
-    {
-        Log.Logger = AppLogger ;
-    }
-
     // The.NET Generic Host provides dependency injection, configuration, logging, and other services.
     // https://docs.microsoft.com/dotnet/core/extensions/generic-host
     // https://docs.microsoft.com/dotnet/core/extensions/dependency-injection
@@ -108,24 +103,32 @@ public partial class App
                                                                            services.AddTransient < IDoubleToUIntConverter , DoubleToUIntConverter > ( ) ;
                                                                            services.AddTransient < IStringToUIntConverter , StringToUIntConverter > ( ) ;
                                                                            services.AddTransient < IDeviceAddressToULongConverter , DeviceAddressToULongConverter > ( ) ;
-                                                                           services.AddSingleton ( provider => new Func < IDeskProvider > ( provider.GetRequiredService < IDeskProvider > ) ) ;
+                                                                           services.AddSingleton ( provider =>
+                                                                                                      new Func < IDeskProvider > ( provider
+                                                                                                         .GetRequiredService <
+                                                                                                              IDeskProvider > ) ) ;
                                                                            services.AddSingleton < IFileSystem , FileSystem > ( ) ;
                                                                            services.AddTransient < IThemeSwitcher , ThemeSwitcher > ( ) ;
                                                                            services.AddTransient < ISettingsSynchronizer , SettingsSynchronizer > ( ) ;
                                                                            services.AddSingleton < IApplicationThemeManager , MyApplicationThemeManager > ( ) ;
                                                                            services.AddSingleton < Func < TimerCallback , object ? , TimeSpan , TimeSpan , ITimer > > ( _ =>
-                                                                                                           ( callback ,
-                                                                                                               state ,
-                                                                                                               dueTime ,
-                                                                                                               period ) => new Timer ( callback ,
-                                                                                                                    state ,
-                                                                                                                    dueTime ,
-                                                                                                                    period ) ) ;
+                                                                                                   ( callback ,
+                                                                                                       state ,
+                                                                                                       dueTime ,
+                                                                                                       period ) => new Timer ( callback ,
+                                                                                                       state ,
+                                                                                                       dueTime ,
+                                                                                                       period ) ) ;
                                                                        } ).Build ( ) ;
+
+    private static Mutex ? _singleInstanceMutex ;
 
     private readonly ILogger _logger = AppLogger ;
 
-    private static Mutex ? _singleInstanceMutex ;
+    static App ( )
+    {
+        Log.Logger = AppLogger ;
+    }
 
     private static Window CurrentWindow =>
         Current.MainWindow ?? throw new Exception ( "Can't find the main window!" ) ;
@@ -219,7 +222,9 @@ public partial class App
 
         try
         {
-            _singleInstanceMutex = new Mutex ( true , mutexName , out var createdNew ) ;
+            _singleInstanceMutex = new Mutex ( true ,
+                                               mutexName ,
+                                               out var createdNew ) ;
 
             return createdNew ;
         }
