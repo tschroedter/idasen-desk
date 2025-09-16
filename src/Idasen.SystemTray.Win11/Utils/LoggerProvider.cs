@@ -1,8 +1,8 @@
 using Serilog ;
 
-namespace Idasen.Launcher ;
+namespace Idasen.SystemTray.Win11.Utils ;
 
-public static class LoggerProvider
+public static class AppLoggerProvider
 {
     public static ILogger CreateLogger ( string appName , string fileName )
     {

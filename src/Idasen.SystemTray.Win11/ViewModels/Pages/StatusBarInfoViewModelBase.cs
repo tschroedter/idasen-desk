@@ -21,6 +21,8 @@ public abstract partial class StatusBarInfoViewModelBase : ObservableObject, IDi
     [ObservableProperty]
     private string _title = "Desk Status";
 
+    protected IScheduler Scheduler { get; }
+
     private readonly IUiDeskManager _uiDeskManager;
     private readonly IDisposable _statusBarInfoChanged;
     private readonly ITimer _timer;
@@ -31,10 +33,11 @@ public abstract partial class StatusBarInfoViewModelBase : ObservableObject, IDi
         Func<TimerCallback, object?, TimeSpan, TimeSpan, ITimer> timerFactory)
     {
         _uiDeskManager = uiDeskManager;
+        Scheduler = scheduler;
 
         // Subscribe to changes on provided scheduler
         _statusBarInfoChanged = uiDeskManager.StatusBarInfoChanged
-            .ObserveOn(scheduler)
+            .ObserveOn(Scheduler)
             .Subscribe(OnStatusBarInfoChangedInternal);
 
         // Create timer; fire once after 10s, no periodic interval

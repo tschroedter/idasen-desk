@@ -41,7 +41,7 @@ namespace Idasen.SystemTray.Win11 ;
 public partial class App
 {
     // Configure a single Serilog logger instance for the entire app
-    private static readonly ILogger AppLogger = LoggerProvider.CreateLogger ( Constants.ApplicationName ,
+    private static readonly ILogger AppLogger = AppLoggerProvider.CreateLogger ( Constants.ApplicationName ,
                                                                               Constants.LogFilename ) ;
 
     // The.NET Generic Host provides dependency injection, configuration, logging, and other services.
