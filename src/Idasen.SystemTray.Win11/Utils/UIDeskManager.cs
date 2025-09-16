@@ -141,8 +141,11 @@ public sealed class UiDeskManager : IUiDeskManager
         finally
         {
             // Dispose managed resources safely
+            // ReSharper disable EmptyGeneralCatchClause
             try { _onErrorChanged?.Dispose ( ) ; } catch { }
+
             try { _heightChanged?.Dispose ( ) ; } catch { }
+
             try { _finished?.Dispose ( ) ; } catch { }
 
             try
@@ -169,6 +172,7 @@ public sealed class UiDeskManager : IUiDeskManager
             _tokenSource    = null ;
             _token          = null ;
             _notifyIcon     = null ;
+            // ReSharper restore EmptyGeneralCatchClause
         }
     }
 

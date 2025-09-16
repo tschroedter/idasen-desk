@@ -2,8 +2,6 @@
 using System.Diagnostics.CodeAnalysis ;
 using System.Reactive.Concurrency ;
 using System.Reactive.Linq ;
-using System.Linq ;
-using System.Text ;
 using System.Windows.Controls ;
 using System.Windows.Input ;
 using Idasen.SystemTray.Win11.Interfaces ;
@@ -626,14 +624,12 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
                                        ? Visibility.Visible
                                        : Visibility.Collapsed ;
 
-        var itemsSnapshot = TrayMenuItems
-                           .OfType < MenuItem > ( )
-                           .Select ( mi => new
-                                           {
-                                               Header     = mi.Header?.ToString ( ) ,
-                                               Visibility = mi.Visibility.ToString ( )
-                                           } )
-                           .ToArray ( ) ;
+        var itemsSnapshot = TrayMenuItems.Select ( mi => new
+                                          {
+                                              Header     = mi.Header?.ToString ( ) ,
+                                              Visibility = mi.Visibility.ToString ( )
+                                          } )
+                                         .ToArray ( ) ;
 
         _logger.Debug ( "Tray menu snapshot: {TrayItems}" ,
                         itemsSnapshot ) ;

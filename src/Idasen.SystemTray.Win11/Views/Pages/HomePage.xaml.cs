@@ -2,7 +2,6 @@
 using Idasen.SystemTray.Win11.ViewModels.Pages ;
 using Wpf.Ui.Abstractions.Controls ;
 using System.Diagnostics;
-using System.Windows.Navigation;
 using System.Windows.Input;
 
 namespace Idasen.SystemTray.Win11.Views.Pages ;
@@ -19,23 +18,6 @@ public partial class HomePage : INavigableView < DashboardViewModel >
     }
 
     public DashboardViewModel ViewModel { get ; }
-
-    private void Hyperlink_RequestNavigate ( object sender , RequestNavigateEventArgs e )
-    {
-        try
-        {
-            Process.Start ( new ProcessStartInfo ( e.Uri.AbsoluteUri )
-            {
-                UseShellExecute = true
-            } ) ;
-        }
-        catch
-        {
-            // Ignored
-        }
-
-        e.Handled = true ;
-    }
 
     private void DonateImage_OnClick ( object sender , MouseButtonEventArgs e )
     {

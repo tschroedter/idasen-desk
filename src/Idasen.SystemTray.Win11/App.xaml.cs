@@ -1,12 +1,9 @@
-﻿using System.Diagnostics ;
-using System.Diagnostics.CodeAnalysis ;
+﻿using System.Diagnostics.CodeAnalysis ;
 using System.IO ;
 using System.IO.Abstractions ;
 using System.Reactive.Concurrency ;
 using System.Reflection ;
-using System.Threading ;
 using System.Windows.Media ;
-using System.Windows.Threading ;
 using Autofac ;
 using Autofac.Extensions.DependencyInjection ;
 using AutofacSerilogIntegration ;
@@ -222,8 +219,8 @@ public partial class App
 
         try
         {
-            var createdNew = false ;
-            _singleInstanceMutex = new Mutex ( true , mutexName , out createdNew ) ;
+            _singleInstanceMutex = new Mutex ( true , mutexName , out var createdNew ) ;
+
             return createdNew ;
         }
         catch ( Exception ex )

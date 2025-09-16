@@ -3,7 +3,6 @@ using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.TraySettings ;
 using NSubstitute ;
 using Serilog ;
-using System.Linq ;
 
 namespace Idasen.SystemTray.Win11.Tests.TraySettings ;
 
