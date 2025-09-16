@@ -20,17 +20,15 @@
         <helpers:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
     </Page.Resources>
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="440" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-
-        <ScrollViewer Grid.Row="0"
-                      VerticalScrollBarVisibility="Visible"
-                      HorizontalScrollBarVisibility="Disabled"
-                      CanContentScroll="True">
-            <StackPanel>
+    <DockPanel LastChildFill="True">
+        <ui:InfoBar DockPanel.Dock="Bottom"
+                    Margin="0,12,0,12"
+                    Title="{Binding ViewModel.Title}"
+                    Message="{Binding ViewModel.Message}"
+                    Severity="{Binding ViewModel.Severity}"
+                    IsOpen="True"
+                    IsClosable="False" />
+        <StackPanel DockPanel.Dock="Top">
                 <!-- Todo add icons-->
                 <ui:CardExpander
                     CornerRadius="0,0,8,8"
@@ -476,14 +474,5 @@
                     </StackPanel>
                 </ui:CardExpander>
             </StackPanel>
-        </ScrollViewer>
-
-        <ui:InfoBar Grid.Row="1"
-                    Margin="0,12,0,12"
-                    Title="{Binding ViewModel.Title}"
-                    Message="{Binding ViewModel.Message}"
-                    Severity="{Binding ViewModel.Severity}"
-                    IsOpen="True"
-                    IsClosable="False" />
-    </Grid>
+    </DockPanel>
 </Page>

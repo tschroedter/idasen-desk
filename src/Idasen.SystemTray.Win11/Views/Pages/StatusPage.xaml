@@ -24,6 +24,7 @@
                     IsClosable="False" />
         <StackPanel DockPanel.Dock="Top"
                     Orientation="Vertical"
+                    VerticalAlignment="Top"
                     Height="440">
             <Label Margin="0,0,0,10">Double-click the menu item on the left.</Label>
             <Label Margin="10,0,0,0">- Connect</Label>
