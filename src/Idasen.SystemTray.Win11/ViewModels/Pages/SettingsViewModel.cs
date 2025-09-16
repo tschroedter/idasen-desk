@@ -18,7 +18,9 @@ public partial class SettingsViewModel ( ILogger                                
                                          ISettingsSynchronizer                                            synchronizer ,
                                          IUiDeskManager                                                   uiDeskManager ,
                                          Func < TimerCallback , object ? , TimeSpan , TimeSpan , ITimer > timerFactory )
-    : StatusBarInfoViewModelBase ( uiDeskManager , scheduler , timerFactory ) , INavigationAware , ISettingsViewModel
+    : StatusBarInfoViewModelBase ( uiDeskManager ,
+                                   scheduler ,
+                                   timerFactory ) , INavigationAware , ISettingsViewModel
 {
     [ ObservableProperty ]
     private string _appVersion = string.Empty ;

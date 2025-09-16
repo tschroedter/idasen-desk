@@ -9,7 +9,7 @@ namespace Idasen.SystemTray.Win11.Utils.Exceptions ;
 public static class UnhandledExceptionsHandler
 {
     private static readonly ErrorHandler ErrorHandler = new ( ) ;
-    private static bool                  _registered ;
+    private static          bool         _registered ;
 
     public static void RegisterGlobalExceptionHandling ( )
     {

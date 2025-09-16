@@ -17,11 +17,11 @@ public class SettingsViewModelTests
     private readonly IScheduler              _scheduler       = Scheduler.Immediate ;
     private readonly ILoggingSettingsManager _settingsManager = Substitute.For < ILoggingSettingsManager > ( ) ;
 
-    private readonly Subject < ISettings >      _settingsSaved  = new ( ) ;
-    private readonly ISettingsSynchronizer      _synchronizer   = Substitute.For < ISettingsSynchronizer > ( ) ;
-    private readonly IUiDeskManager             _uiDeskManager  = Substitute.For < IUiDeskManager > ( ) ;
-    private readonly Subject < StatusBarInfo >  _statusSubject  = new ( ) ;
-    private readonly ITimer                     _timer          = Substitute.For < ITimer > ( ) ;
+    private readonly Subject < ISettings >     _settingsSaved = new ( ) ;
+    private readonly Subject < StatusBarInfo > _statusSubject = new ( ) ;
+    private readonly ISettingsSynchronizer     _synchronizer  = Substitute.For < ISettingsSynchronizer > ( ) ;
+    private readonly ITimer                    _timer         = Substitute.For < ITimer > ( ) ;
+    private readonly IUiDeskManager            _uiDeskManager = Substitute.For < IUiDeskManager > ( ) ;
 
     public SettingsViewModelTests ( )
     {
@@ -78,7 +78,10 @@ public class SettingsViewModelTests
         await vm.InitializeAsync ( CancellationToken.None ) ;
 
         // Act
-        var newInfo = new StatusBarInfo ( "Updated Title" , 120 , "Updated Message" , InfoBarSeverity.Warning ) ;
+        var newInfo = new StatusBarInfo ( "Updated Title" ,
+                                          120 ,
+                                          "Updated Message" ,
+                                          InfoBarSeverity.Warning ) ;
         _statusSubject.OnNext ( newInfo ) ;
 
         // Assert
@@ -86,7 +89,8 @@ public class SettingsViewModelTests
         vm.Severity.Should ( ).Be ( InfoBarSeverity.Warning ) ;
         vm.Height.Should ( ).Be ( 120 ) ;
         // Timer should be reset to 10s
-        _timer.Received ( 1 ).Change ( TimeSpan.FromSeconds ( 10 ) , Timeout.InfiniteTimeSpan ) ;
+        _timer.Received ( 1 ).Change ( TimeSpan.FromSeconds ( 10 ) ,
+                                       Timeout.InfiniteTimeSpan ) ;
     }
 
     [ Fact ]
@@ -175,7 +179,7 @@ public class SettingsViewModelTests
                                        TimerFactory ) ;
     }
 
-    private ITimer TimerFactory ( TimerCallback callback , object? state , TimeSpan dueTime , TimeSpan period )
+    private ITimer TimerFactory ( TimerCallback callback , object ? state , TimeSpan dueTime , TimeSpan period )
     {
         // We don't need to simulate the timer's callback in these tests;
         // we only assert that Change and Dispose are called.

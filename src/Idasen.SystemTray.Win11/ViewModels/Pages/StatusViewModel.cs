@@ -1,6 +1,5 @@
 ﻿using System.Reactive.Concurrency ;
 using Idasen.SystemTray.Win11.Interfaces ;
-using Idasen.SystemTray.Win11.Utils ;
 
 namespace Idasen.SystemTray.Win11.ViewModels.Pages ;
 
