@@ -4,6 +4,7 @@ using System.IO ;
 using System.IO.Abstractions ;
 using System.Reactive.Concurrency ;
 using System.Reflection ;
+using System.Threading ;
 using System.Windows.Media ;
 using System.Windows.Threading ;
 using Autofac ;
@@ -28,6 +29,7 @@ using Idasen.SystemTray.Win11.Views.Windows ;
 using Microsoft.Extensions.Configuration ;
 using Microsoft.Extensions.DependencyInjection ;
 using Microsoft.Extensions.Hosting ;
+using Serilog ;
 using Wpf.Ui ;
 using Wpf.Ui.Abstractions ;
 using Wpf.Ui.Tray.Controls ;
@@ -41,6 +43,15 @@ namespace Idasen.SystemTray.Win11 ;
 [ ExcludeFromCodeCoverage ]
 public partial class App
 {
+    // Configure a single Serilog logger instance for the entire app
+    private static readonly ILogger AppLogger = LoggerProvider.CreateLogger ( Constants.ApplicationName ,
+                                                                              Constants.LogFilename ) ;
+
+    static App ( )
+    {
+        Log.Logger = AppLogger ;
+    }
+
     // The.NET Generic Host provides dependency injection, configuration, logging, and other services.
     // https://docs.microsoft.com/dotnet/core/extensions/generic-host
     // https://docs.microsoft.com/dotnet/core/extensions/dependency-injection
@@ -52,11 +63,11 @@ public partial class App
                                                   .UseServiceProviderFactory ( new AutofacServiceProviderFactory ( ) )
                                                   .ConfigureContainer < ContainerBuilder > ( builder =>
                                                                                              {
-                                                                                                 builder.RegisterLogger ( ) ;
+                                                                                                 // Register Serilog logger instance for DI
+                                                                                                 builder.RegisterLogger ( AppLogger ) ;
                                                                                                  builder.RegisterModule < BluetoothLEAop > ( ) ;
                                                                                                  builder.RegisterModule < BluetoothLECoreModule > ( ) ;
                                                                                                  builder.RegisterModule < BluetoothLELinakModule > ( ) ;
-                                                                                                 builder.RegisterLogger ( LoggerProvider.CreateLogger ( Constants.ApplicationName , Constants.LogFilename ) ) ;
                                                                                              } )
                                                   .ConfigureServices ( ( _ , services ) =>
                                                                        {
@@ -115,8 +126,9 @@ public partial class App
                                                                                                                     period ) ) ;
                                                                        } ).Build ( ) ;
 
-    private readonly ILogger _logger = LoggerProvider.CreateLogger ( Constants.ApplicationName ,
-                                                                     Constants.LogFilename ) ;
+    private readonly ILogger _logger = AppLogger ;
+
+    private static Mutex ? _singleInstanceMutex ;
 
     private static Window CurrentWindow =>
         Current.MainWindow ?? throw new Exception ( "Can't find the main window!" ) ;
@@ -167,16 +179,18 @@ public partial class App
     {
         try
         {
-            AvoidRunningTwoInstances ( ) ;
+            if ( ! EnsureSingleInstance ( ) )
+            {
+                _logger.Information ( "##### Application already running!" ) ;
+                Current.Shutdown ( ) ;
+                return ;
+            }
 
             await Host.StartAsync ( ) ;
 
             UnhandledExceptionsHandler.RegisterGlobalExceptionHandling ( ) ;
 
             _logger.Information ( "##### Startup..." ) ;
-
-            var test = GetService < ILogger > ( ) ;
-            test?.Information ( "Test" ) ;
 
             var notifyIcon = FindNotifyIcon ( ) ; // todo maybe we can get the icon from the view?
 
@@ -202,17 +216,24 @@ public partial class App
         }
     }
 
-    private void AvoidRunningTwoInstances ( )
+    private bool EnsureSingleInstance ( )
     {
-        var location                 = Assembly.GetEntryAssembly ( )?.Location ?? throw new Exception ( "Can't get entry assembly!" ) ;
-        var fileNameWithoutExtension = Path.GetFileNameWithoutExtension ( location ) ;
+        var mutexName = $"Global\\{Constants.ApplicationName}_SingleInstance" ;
 
-        if ( Process.GetProcessesByName ( fileNameWithoutExtension ).Length <= 1 )
-            return ;
-
-        _logger.Information ( "##### Application already running!" ) ;
-
-        Process.GetCurrentProcess ( ).Kill ( ) ;
+        try
+        {
+            var createdNew = false ;
+            _singleInstanceMutex = new Mutex ( true , mutexName , out createdNew ) ;
+            return createdNew ;
+        }
+        catch ( Exception ex )
+        {
+            _logger.Error ( ex ,
+                            "Failed to create/open single-instance mutex {MutexName}" ,
+                            mutexName ) ;
+            // In doubt, allow startup to avoid blocking the app due to mutex issues.
+            return true ;
+        }
     }
 
     private static IVersionProvider GetVersionProvider ( )
@@ -238,6 +259,19 @@ public partial class App
             _logger.Error ( ex ,
                             "Failed to stop application" ) ;
         }
+        finally
+        {
+            try
+            {
+                _singleInstanceMutex?.ReleaseMutex ( ) ;
+                _singleInstanceMutex?.Dispose ( ) ;
+                _singleInstanceMutex = null ;
+            }
+            catch
+            {
+                // ignore mutex release errors
+            }
+        }
     }
 
     private void OnStateChanged_HideOnMinimize ( object ? sender , EventArgs e )
@@ -247,16 +281,6 @@ public partial class App
 
         CurrentWindow.Visibility  = Visibility.Hidden ;
         CurrentWindow.WindowState = WindowState.Normal ;
-    }
-
-    /// <summary>
-    ///     Occurs when an exception is thrown by an application but not handled.
-    /// </summary>
-    private void OnDispatcherUnhandledException ( object sender , DispatcherUnhandledExceptionEventArgs e )
-    {
-        // For more info see https://docs.microsoft.com/en-us/dotnet/api/system.windows.application.dispatcherunhandledexception?view=windowsdesktop-6.0
-        _logger.Error ( e.Exception ,
-                        "Unhandled exception" ) ;
     }
 
     private static NotifyIcon FindNotifyIcon ( )

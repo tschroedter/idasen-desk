@@ -13,7 +13,6 @@ using NHotkey.Wpf ;
 using Serilog ;
 using Wpf.Ui.Controls ;
 using Wpf.Ui.Tray.Controls ;
-using MessageBox = System.Windows.MessageBox ;
 
 namespace Idasen.SystemTray.Win11.Utils ;
 
@@ -116,7 +115,7 @@ public sealed class UiDeskManager : IUiDeskManager
         _logger.Information ( "Disposing {TypeName}..." ,
                               nameof ( UiDeskManager ) ) ;
 
-        // Unregister static/global hotkeys to avoid retaining this instance
+        // Always attempt to unregister hotkeys and event handlers
         try
         {
             HotkeyManager.HotkeyAlreadyRegistered -= HotkeyManager_HotkeyAlreadyRegistered ;
@@ -130,24 +129,22 @@ public sealed class UiDeskManager : IUiDeskManager
             // ignore cleanup errors
         }
 
-        // Cancel any pending operations
+        // Attempt to cancel any pending operations, then clean up regardless
         try
         {
             _tokenSource?.Cancel ( ) ;
         }
         catch
         {
-            // ignored }
+            // ignore cancellation errors
+        }
+        finally
+        {
+            // Dispose managed resources safely
+            try { _onErrorChanged?.Dispose ( ) ; } catch { }
+            try { _heightChanged?.Dispose ( ) ; } catch { }
+            try { _finished?.Dispose ( ) ; } catch { }
 
-            DisposeDesk ( ) ;
-
-            _heightChanged?.Dispose ( ) ;
-            _finished?.Dispose ( ) ;
-            _onErrorChanged?.Dispose ( ) ;
-            _deskProvider?.Dispose ( ) ;
-            _tokenSource?.Dispose ( ) ;
-
-            // Complete and dispose the subject to release subscriptions
             try
             {
                 _statusBarInfoSubject.OnCompleted ( ) ;
@@ -155,8 +152,23 @@ public sealed class UiDeskManager : IUiDeskManager
             }
             catch
             {
-                // ignore
+                // ignore subject disposal errors
             }
+
+            // Dispose desk and provider
+            try { DisposeDesk ( ) ; } catch { }
+
+            // Dispose token source
+            try { _tokenSource?.Dispose ( ) ; } catch { }
+
+            _onErrorChanged = null ;
+            _heightChanged  = null ;
+            _finished       = null ;
+            _deskProvider   = null ;
+            _desk           = null ;
+            _tokenSource    = null ;
+            _token          = null ;
+            _notifyIcon     = null ;
         }
     }
 
@@ -410,22 +422,27 @@ public sealed class UiDeskManager : IUiDeskManager
         }
     }
 
-    private static void HotkeyManager_HotkeyAlreadyRegistered ( object ? sender , HotkeyAlreadyRegisteredEventArgs e )
+    private void HotkeyManager_HotkeyAlreadyRegistered ( object ? sender , HotkeyAlreadyRegisteredEventArgs e )
     {
-        MessageBox.Show ( $"The hotkey {e.Name} is already registered by another application" ) ;
+        _logger.Warning ( "The hotkey {Name} is already registered by another application" ,
+                          e.Name ) ;
+
+        _notifications.Show ( "Hotkey already registered" ,
+                              $"The hotkey '{e.Name}' is already registered by another application." ,
+                              InfoBarSeverity.Warning ) ;
     }
 
     private void OnErrorChanged ( IErrorDetails details )
     {
         var deviceName = _desk?.DeviceName ?? "Unknown" ;
-        var message    = $"[{deviceName}] {details.Message}" ;
+        var msg        = $"[{deviceName}] {details.Message}" ;
 
-        _logger.Error ( "{ErrorMessage}" ,
-                        message ) ;
+        _logger.Error ( "Desk error: {Message}" ,
+                        msg ) ;
 
         OnStatusChanged ( 0 ,
                           "Error" ,
-                          message ,
+                          msg ,
                           InfoBarSeverity.Error ) ;
     }
 
@@ -509,14 +526,10 @@ public sealed class UiDeskManager : IUiDeskManager
         string          message  = "" ,
         InfoBarSeverity severity = InfoBarSeverity.Informational )
     {
-        _logger.Debug ( "{HeightName} = {height}, {TitleName} = {title}, {Message} = {messageName}, {SeverityName} = {severity}" ,
-                        nameof ( height ) ,
+        _logger.Debug ( "Status update Height={Height} Title={Title} Message={Message} Severity={Severity}" ,
                         height ,
-                        nameof ( title ) ,
                         title ,
-                        nameof ( message ) ,
                         message ,
-                        nameof ( severity ) ,
                         severity ) ;
 
         if ( height == 0 )

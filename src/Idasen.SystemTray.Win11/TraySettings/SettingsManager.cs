@@ -77,8 +77,7 @@ public class SettingsManager ( ILogger                logger ,
 
     private async Task AddMissingSettingsNotificationsEnabled ( CancellationToken token )
     {
-        logger.Debug ( "Add missing setting {SettingName} to current settings from '{SettingsFileName}'" ,
-                       nameof ( Settings.DeviceSettings.NotificationsEnabled ) ,
+        logger.Debug ( "Adding missing setting NotificationsEnabled to settings file {SettingsFileName}" ,
                        SettingsFileName ) ;
 
         await LoadAsync ( token ).ConfigureAwait ( false ) ;

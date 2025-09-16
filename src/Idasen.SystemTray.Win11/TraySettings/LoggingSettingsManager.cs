@@ -47,6 +47,8 @@ public class LoggingSettingsManager ( ILogger          logger ,
         {
             logger.Error ( e ,
                            "Failed to load settings" ) ;
+
+            throw ;
         }
     }
 

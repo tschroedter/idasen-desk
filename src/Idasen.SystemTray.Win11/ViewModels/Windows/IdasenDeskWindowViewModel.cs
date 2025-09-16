@@ -635,7 +635,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
                                            } )
                            .ToArray ( ) ;
 
-        _logger.Debug ( "Tray menu snapshot: {Items}" ,
+        _logger.Debug ( "Tray menu snapshot: {TrayItems}" ,
                         itemsSnapshot ) ;
 
         CommandManager.InvalidateRequerySuggested ( ) ;
@@ -645,7 +645,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
     {
         try
         {
-            _logger.Debug ( "{Method}: hasChanged={HasChanged}" ,
+            _logger.Debug ( "{Method} hasChanged={HasChanged}" ,
                             nameof ( OnAdvancedSettingsChanged ) ,
                             hasChanged ) ;
 
@@ -668,7 +668,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
     {
         try
         {
-            _logger.Debug ( "{Method}: hasChanged={IsLocked}" ,
+            _logger.Debug ( "{Method} isLocked={IsLocked}" ,
                             nameof ( OnLockSettingsChanged ) ,
                             isLocked ) ;
 

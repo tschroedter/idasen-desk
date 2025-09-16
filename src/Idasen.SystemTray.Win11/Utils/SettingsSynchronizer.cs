@@ -163,6 +163,7 @@ public class SettingsSynchronizer ( ILogger                        logger ,
         {
             logger.Error ( e ,
                            "Failed to store settings" ) ;
+            throw ;
         }
     }
 
