@@ -8,14 +8,17 @@ using Idasen.SystemTray.Win11.Utils ;
 using Serilog ;
 using Wpf.Ui.Abstractions.Controls ;
 using Wpf.Ui.Appearance ;
+using Wpf.Ui.Controls ;
 
 namespace Idasen.SystemTray.Win11.ViewModels.Pages ;
 
 [ ExcludeFromCodeCoverage ]
-public partial class SettingsViewModel ( ILogger                 logger ,
-                                         ILoggingSettingsManager settingsManager ,
-                                         IScheduler              scheduler ,
-                                         ISettingsSynchronizer   synchronizer )
+public partial class SettingsViewModel ( ILogger                                                          logger ,
+                                         ILoggingSettingsManager                                          settingsManager ,
+                                         IScheduler                                                       scheduler ,
+                                         ISettingsSynchronizer                                            synchronizer ,
+                                         IUiDeskManager                                                   uiDeskManager ,
+                                         Func < TimerCallback , object ? , TimeSpan , TimeSpan , ITimer > timerFactory )
     : ObservableObject , INavigationAware , ISettingsViewModel
 {
     [ ObservableProperty ]
@@ -42,6 +45,9 @@ public partial class SettingsViewModel ( ILogger                 logger ,
     [ ObservableProperty ]
     private string _deskName = string.Empty ;
 
+    [ ObservableProperty ]
+    private uint _height ;
+
     private bool _isInitialized ;
 
     [ ObservableProperty ]
@@ -52,6 +58,9 @@ public partial class SettingsViewModel ( ILogger                 logger ,
 
     [ ObservableProperty ]
     private uint _maxHeight = 90 ;
+
+    [ ObservableProperty ]
+    private string _message = "Unknown" ;
 
     [ ObservableProperty ]
     private uint _minHeight = 90 ;
@@ -74,13 +83,23 @@ public partial class SettingsViewModel ( ILogger                 logger ,
     private IDisposable ? _settingsSaved ;
 
     [ ObservableProperty ]
+    private InfoBarSeverity _severity = InfoBarSeverity.Informational ;
+
+    [ ObservableProperty ]
     private uint _standing = 100 ;
 
     [ ObservableProperty ]
     private bool _standingIsVisibleInContextMenu = true ;
 
+    private IDisposable ? _statusBarInfoChanged ;
+
     [ ObservableProperty ]
     private bool _stopIsVisibleInContextMenu = true ;
+
+    private ITimer ? _timer ;
+
+    [ ObservableProperty ]
+    private string _title = "Desk Status" ;
 
     public async Task OnNavigatedToAsync ( )
     {
@@ -98,11 +117,20 @@ public partial class SettingsViewModel ( ILogger                 logger ,
 
     public void Dispose ( )
     {
-        if ( _settingsSaved is null )
-            return ;
+        if ( _settingsSaved is not null )
+        {
+            _settingsSaved.Dispose ( ) ;
+            _settingsSaved = null ;
+        }
 
-        _settingsSaved.Dispose ( ) ;
-        _settingsSaved = null ;
+        if ( _statusBarInfoChanged is not null )
+        {
+            _statusBarInfoChanged.Dispose ( ) ;
+            _statusBarInfoChanged = null ;
+        }
+
+        _timer?.Dispose();
+        _timer = null ;
     }
 
     public async Task InitializeAsync ( CancellationToken token )
@@ -116,7 +144,21 @@ public partial class SettingsViewModel ( ILogger                 logger ,
         _settingsSaved = settingsManager.SettingsSaved
                                         .ObserveOn ( scheduler )
                                         .Subscribe ( OnSettingsSaved ) ;
+
+        // Initialize InfoBar with the latest known status and subscribe to changes
+        Message  = uiDeskManager.LastStatusBarInfo.Message ;
+        Severity = uiDeskManager.LastStatusBarInfo.Severity ;
+
+        _statusBarInfoChanged = uiDeskManager.StatusBarInfoChanged
+                                             .ObserveOn ( scheduler )
+                                             .Subscribe ( OnStatusBarInfoChanged ) ;
+
+        _timer = timerFactory ( OnElapsed ,
+                                null ,
+                                TimeSpan.FromSeconds ( 10 ) ,
+                                Timeout.InfiniteTimeSpan ) ;
     }
+
 
     private void OnSettingsSaved ( ISettings settings )
     {
@@ -154,5 +196,33 @@ public partial class SettingsViewModel ( ILogger                 logger ,
     internal void OnChangeTheme ( string parameter )
     {
         synchronizer.ChangeTheme ( parameter ) ;
+    }
+
+    private void OnStatusBarInfoChanged ( StatusBarInfo info )
+    {
+        Message  = info.Message ;
+        Severity = info.Severity ;
+        Height   = info.Height ;
+
+        _timer?.Change ( TimeSpan.FromSeconds ( 10 ) ,
+                         Timeout.InfiniteTimeSpan ) ;
+    }
+
+    [ ExcludeFromCodeCoverage ]
+    internal void OnElapsed ( object ? state )
+    {
+        Application.Current.Dispatcher.BeginInvoke ( DefaultInfoBar ) ;
+    }
+
+    internal void DefaultInfoBar ( )
+    {
+        if ( uiDeskManager is not { IsConnected: true } )
+            return ;
+
+        Message = Height == 0
+                      ? "Can't determine desk height."
+                      : $"Current desk height {Height} cm" ;
+
+        Severity = InfoBarSeverity.Informational ;
     }
 }

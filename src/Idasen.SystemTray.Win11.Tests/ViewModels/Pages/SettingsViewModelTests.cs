@@ -7,6 +7,7 @@ using Idasen.SystemTray.Win11.Utils ;
 using Idasen.SystemTray.Win11.ViewModels.Pages ;
 using NSubstitute ;
 using Serilog ;
+using Wpf.Ui.Controls ;
 
 namespace Idasen.SystemTray.Win11.Tests.ViewModels.Pages ;
 
@@ -16,13 +17,22 @@ public class SettingsViewModelTests
     private readonly IScheduler              _scheduler       = Scheduler.Immediate ;
     private readonly ILoggingSettingsManager _settingsManager = Substitute.For < ILoggingSettingsManager > ( ) ;
 
-    private readonly Subject < ISettings > _settingsSaved = new ( ) ;
-    private readonly ISettingsSynchronizer _synchronizer  = Substitute.For < ISettingsSynchronizer > ( ) ;
+    private readonly Subject < ISettings >      _settingsSaved  = new ( ) ;
+    private readonly ISettingsSynchronizer      _synchronizer   = Substitute.For < ISettingsSynchronizer > ( ) ;
+    private readonly IUiDeskManager             _uiDeskManager  = Substitute.For < IUiDeskManager > ( ) ;
+    private readonly Subject < StatusBarInfo >  _statusSubject  = new ( ) ;
+    private readonly ITimer                     _timer          = Substitute.For < ITimer > ( ) ;
 
     public SettingsViewModelTests ( )
     {
         _settingsManager.SettingsFileName.Returns ( "TestSettings.json" ) ;
         _settingsManager.SettingsSaved.Returns ( _settingsSaved ) ;
+
+        _uiDeskManager.StatusBarInfoChanged.Returns ( _statusSubject ) ;
+        _uiDeskManager.LastStatusBarInfo.Returns ( new StatusBarInfo ( "Initial Title" ,
+                                                                       100 ,
+                                                                       "Initial Message" ,
+                                                                       InfoBarSeverity.Informational ) ) ;
     }
 
     [ Fact ]
@@ -47,6 +57,86 @@ public class SettingsViewModelTests
     }
 
     [ Fact ]
+    public async Task InitializeAsync_ShouldSetInfoBar_FromLastStatusBarInfo ( )
+    {
+        // Arrange
+        var vm = CreateSut ( ) ;
+
+        // Act
+        await vm.InitializeAsync ( CancellationToken.None ) ;
+
+        // Assert
+        vm.Message.Should ( ).Be ( "Initial Message" ) ;
+        vm.Severity.Should ( ).Be ( InfoBarSeverity.Informational ) ;
+    }
+
+    [ Fact ]
+    public async Task OnStatusBarInfoChanged_ShouldUpdateProperties_AndResetTimer ( )
+    {
+        // Arrange
+        var vm = CreateSut ( ) ;
+        await vm.InitializeAsync ( CancellationToken.None ) ;
+
+        // Act
+        var newInfo = new StatusBarInfo ( "Updated Title" , 120 , "Updated Message" , InfoBarSeverity.Warning ) ;
+        _statusSubject.OnNext ( newInfo ) ;
+
+        // Assert
+        vm.Message.Should ( ).Be ( "Updated Message" ) ;
+        vm.Severity.Should ( ).Be ( InfoBarSeverity.Warning ) ;
+        vm.Height.Should ( ).Be ( 120 ) ;
+        // Timer should be reset to 10s
+        _timer.Received ( 1 ).Change ( TimeSpan.FromSeconds ( 10 ) , Timeout.InfiniteTimeSpan ) ;
+    }
+
+    [ Fact ]
+    public void DefaultInfoBar_ShouldSetMessageAndSeverity_WhenHeightIsZero_AndConnected ( )
+    {
+        // Arrange
+        var vm = CreateSut ( ) ;
+        _uiDeskManager.IsConnected.Returns ( true ) ;
+        vm.Height = 0 ;
+
+        // Act
+        vm.DefaultInfoBar ( ) ;
+
+        // Assert
+        vm.Message.Should ( ).Be ( "Can't determine desk height." ) ;
+        vm.Severity.Should ( ).Be ( InfoBarSeverity.Informational ) ;
+    }
+
+    [ Fact ]
+    public void DefaultInfoBar_ShouldSetMessageAndSeverity_WhenHeightIsNonZero_AndConnected ( )
+    {
+        // Arrange
+        var vm = CreateSut ( ) ;
+        _uiDeskManager.IsConnected.Returns ( true ) ;
+        vm.Height = 123 ;
+
+        // Act
+        vm.DefaultInfoBar ( ) ;
+
+        // Assert
+        vm.Message.Should ( ).Be ( "Current desk height 123 cm" ) ;
+        vm.Severity.Should ( ).Be ( InfoBarSeverity.Informational ) ;
+    }
+
+    [ Fact ]
+    public void DefaultInfoBar_ShouldNotUpdate_WhenManagerIsNotConnected ( )
+    {
+        // Arrange
+        var vm = CreateSut ( ) ;
+        _uiDeskManager.IsConnected.Returns ( false ) ;
+
+        // Act
+        vm.DefaultInfoBar ( ) ;
+
+        // Assert
+        vm.Message.Should ( ).Be ( "Unknown" ) ;
+        vm.Severity.Should ( ).Be ( InfoBarSeverity.Informational ) ;
+    }
+
+    [ Fact ]
     public async Task OnNavigatedFromAsync_ShouldStoreSettings ( )
     {
         // Arrange
@@ -61,11 +151,34 @@ public class SettingsViewModelTests
                                                  CancellationToken.None ) ;
     }
 
+    [ Fact ]
+    public async Task Dispose_ShouldDisposeTimer ( )
+    {
+        // Arrange
+        var vm = CreateSut ( ) ;
+        await vm.InitializeAsync ( CancellationToken.None ) ;
+
+        // Act
+        vm.Dispose ( ) ;
+
+        // Assert
+        _timer.Received ( 1 ).Dispose ( ) ;
+    }
+
     private SettingsViewModel CreateSut ( )
     {
         return new SettingsViewModel ( _logger ,
                                        _settingsManager ,
                                        _scheduler ,
-                                       _synchronizer ) ;
+                                       _synchronizer ,
+                                       _uiDeskManager ,
+                                       TimerFactory ) ;
+    }
+
+    private ITimer TimerFactory ( TimerCallback callback , object? state , TimeSpan dueTime , TimeSpan period )
+    {
+        // We don't need to simulate the timer's callback in these tests;
+        // we only assert that Change and Dispose are called.
+        return _timer ;
     }
 }

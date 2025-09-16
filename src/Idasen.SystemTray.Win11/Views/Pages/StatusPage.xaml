@@ -7,8 +7,8 @@
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       Title="StatusPage"
       d:DataContext="{d:DesignInstance local:StatusPage, IsDesignTimeCreatable=False}"
-      d:DesignHeight="450"
-      d:DesignWidth="800"
+      d:DesignHeight="640"
+      d:DesignWidth="480"
       ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
       ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
       Foreground="{DynamicResource TextFillColorPrimaryBrush}"
@@ -16,13 +16,15 @@
 
     <DockPanel LastChildFill="True">
         <ui:InfoBar DockPanel.Dock="Bottom"
+                    Margin="0,12,0,12"
                     Title="{Binding ViewModel.Title}"
                     Message="{Binding ViewModel.Message}"
                     Severity="{Binding ViewModel.Severity}"
                     IsOpen="True"
                     IsClosable="False" />
         <StackPanel DockPanel.Dock="Top"
-                    Orientation="Vertical">
+                    Orientation="Vertical"
+                    Height="440">
             <Label Margin="0,0,0,10">Double-click the menu item on the left.</Label>
             <Label Margin="10,0,0,0">- Connect</Label>
             <Label Margin="10,0,0,0">- Disconnect</Label>
