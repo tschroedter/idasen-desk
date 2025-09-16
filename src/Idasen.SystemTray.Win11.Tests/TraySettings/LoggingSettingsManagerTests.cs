@@ -3,6 +3,7 @@ using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.TraySettings ;
 using NSubstitute ;
 using Serilog ;
+using System.Linq ;
 
 namespace Idasen.SystemTray.Win11.Tests.TraySettings ;
 
@@ -25,8 +26,10 @@ public class LoggingSettingsManagerTests
     {
         await _manager.SaveAsync ( CancellationToken.None ) ;
 
-        _logger.Received ( 1 )
-               .Debug ( Arg.Any < string > ( ) ) ;
+        var debugCalls = _logger.ReceivedCalls ( )
+                                 .Where ( c => c.GetMethodInfo ( ).Name == nameof ( _logger.Debug ) ) ;
+
+        debugCalls.Should ( ).HaveCount ( 1 ) ;
 
         await _settingsManager.Received ( 1 )
                               .SaveAsync ( CancellationToken.None ) ;
@@ -37,8 +40,10 @@ public class LoggingSettingsManagerTests
     {
         await _manager.LoadAsync ( CancellationToken.None ) ;
 
-        _logger.Received ( 2 )
-               .Debug ( Arg.Any < string > ( ) ) ;
+        var debugCalls = _logger.ReceivedCalls ( )
+                                 .Where ( c => c.GetMethodInfo ( ).Name == nameof ( _logger.Debug ) ) ;
+
+        debugCalls.Should ( ).HaveCount ( 2 ) ;
 
         await _settingsManager.Received ( 1 )
                               .LoadAsync ( CancellationToken.None ) ;
@@ -54,8 +59,10 @@ public class LoggingSettingsManagerTests
         result.Should ( )
               .BeTrue ( ) ;
 
-        _logger.Received ( 2 )
-               .Debug ( Arg.Any < string > ( ) ) ;
+        var debugCalls = _logger.ReceivedCalls ( )
+                                 .Where ( c => c.GetMethodInfo ( ).Name == nameof ( _logger.Debug ) ) ;
+
+        debugCalls.Should ( ).HaveCount ( 2 ) ;
     }
 
     [ Fact ]
@@ -67,8 +74,10 @@ public class LoggingSettingsManagerTests
 
         result.Should ( ).BeFalse ( ) ;
 
-        _logger.Received ( 1 )
-               .Error ( Arg.Any < string > ( ) ) ;
+        var errorCalls = _logger.ReceivedCalls ( )
+                                .Where ( c => c.GetMethodInfo ( ).Name == nameof ( _logger.Error ) ) ;
+
+        errorCalls.Should ( ).HaveCount ( 1 ) ;
     }
 
     [ Fact ]
@@ -79,8 +88,10 @@ public class LoggingSettingsManagerTests
         await _manager.SetLastKnownDeskHeight ( heightInCm ,
                                                 CancellationToken.None ) ;
 
-        _logger.Received ( 1 )
-               .Debug ( Arg.Any < string > ( ) ) ;
+        var debugCalls = _logger.ReceivedCalls ( )
+                                 .Where ( c => c.GetMethodInfo ( ).Name == nameof ( _logger.Debug ) ) ;
+
+        debugCalls.Should ( ).HaveCount ( 1 ) ;
 
         await _settingsManager.Received ( 1 )
                               .SetLastKnownDeskHeight ( heightInCm ,

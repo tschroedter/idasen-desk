@@ -15,14 +15,17 @@ public class LoggingSettingsManager ( ILogger          logger ,
     {
         try
         {
-            logger.Debug ( $"Saving current setting [{CurrentSettings}] to '{SettingsFileName}'" ) ;
+            logger.Debug ( "Saving current settings to file {SettingsFileName}. Settings: {Settings}" ,
+                           SettingsFileName ,
+                           CurrentSettings ) ;
 
             await settingsManager.SaveAsync ( token ).ConfigureAwait ( false ) ;
         }
         catch ( Exception e )
         {
             logger.Error ( e ,
-                           $"Failed to save settings in file '{SettingsFileName}'" ) ;
+                           "Failed to save settings in file {SettingsFileName}" ,
+                           SettingsFileName ) ;
 
             throw ;
         }
@@ -32,11 +35,13 @@ public class LoggingSettingsManager ( ILogger          logger ,
     {
         try
         {
-            logger.Debug ( $"Loading setting from '{SettingsFileName}'" ) ;
+            logger.Debug ( "Loading settings from {SettingsFileName}" ,
+                           SettingsFileName ) ;
 
             await settingsManager.LoadAsync ( token ).ConfigureAwait ( false ) ;
 
-            logger.Debug ( $"Settings loaded: {CurrentSettings}" ) ;
+            logger.Debug ( "Settings loaded: {Settings}" ,
+                           CurrentSettings ) ;
         }
         catch ( Exception e )
         {
@@ -49,17 +54,20 @@ public class LoggingSettingsManager ( ILogger          logger ,
     {
         try
         {
-            logger.Debug ( $"Check current setting from '{SettingsFileName}'" ) ;
+            logger.Debug ( "Checking for settings upgrade in {SettingsFileName}" ,
+                           SettingsFileName ) ;
 
             var success = await settingsManager.UpgradeSettingsAsync ( token ).ConfigureAwait ( false ) ;
 
             if ( success )
             {
-                logger.Debug ( $"Upgrade check completed for current setting from '{SettingsFileName}'" ) ;
+                logger.Debug ( "Upgrade check completed for {SettingsFileName}" ,
+                               SettingsFileName ) ;
             }
             else
             {
-                logger.Error ( $"Failed to upgrade current settings from '{SettingsFileName}'" ) ;
+                logger.Error ( "Failed to upgrade settings from {SettingsFileName}" ,
+                               SettingsFileName ) ;
             }
 
             return success ;
@@ -75,7 +83,9 @@ public class LoggingSettingsManager ( ILogger          logger ,
 
     public async Task SetLastKnownDeskHeight ( uint heightInCm , CancellationToken token )
     {
-        logger.Debug ( $"{nameof ( SettingsManager )} updating last known desk height: {heightInCm}" ) ;
+        logger.Debug ( "{Component} updating last known desk height: {HeightInCm}" ,
+                       nameof ( SettingsManager ) ,
+                       heightInCm ) ;
 
         await settingsManager.SetLastKnownDeskHeight ( heightInCm ,
                                                        token ).ConfigureAwait ( false ) ;

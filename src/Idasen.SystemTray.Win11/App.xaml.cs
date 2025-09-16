@@ -192,7 +192,8 @@ public partial class App
 
             CurrentWindow.StateChanged += OnStateChanged_HideOnMinimize ;
 
-            _logger.Information ( $"##### Idasen.SystemTray {versionProvider.GetVersion ( )}" ) ;
+            _logger.Information ( "##### Idasen.SystemTray {Version}" ,
+                                  versionProvider.GetVersion ( ) ) ;
         }
         catch ( Exception ex )
         {

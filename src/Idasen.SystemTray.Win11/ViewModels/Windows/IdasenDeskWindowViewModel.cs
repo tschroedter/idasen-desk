@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis ;
 using System.Reactive.Concurrency ;
 using System.Reactive.Linq ;
+using System.Linq ;
 using System.Text ;
 using System.Windows.Controls ;
 using System.Windows.Input ;
@@ -423,7 +424,8 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         if ( Application.Current.MainWindow == null )
             return ;
 
-        _logger.Debug ( $"{nameof ( ShowSettingsCommand )}" ) ;
+        _logger.Debug ( "Executing command {Command}" ,
+                        nameof ( ShowSettingsCommand ) ) ;
 
         Application.Current.MainWindow.Visibility = Visibility.Visible ;
     }
@@ -433,7 +435,8 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         if ( Application.Current.MainWindow == null )
             return ;
 
-        _logger.Debug ( $"{nameof ( HideSettingsCommand )}" ) ;
+        _logger.Debug ( "Executing command {Command}" ,
+                        nameof ( HideSettingsCommand ) ) ;
 
         Application.Current.MainWindow.Visibility = Visibility.Hidden ;
     }
@@ -548,7 +551,8 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
         _isInitialized = true ;
 
-        _logger.Debug ( $"{nameof ( IdasenDeskWindowViewModel )}: Initializing..." ) ;
+        _logger.Debug ( "{Component} initializing..." ,
+                        nameof ( IdasenDeskWindowViewModel ) ) ;
 
         _uiDeskManager.Initialize ( notifyIcon ) ;
 
@@ -622,17 +626,17 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
                                        ? Visibility.Visible
                                        : Visibility.Collapsed ;
 
-        var logBuilder = new StringBuilder ( ) ;
+        var itemsSnapshot = TrayMenuItems
+                           .OfType < MenuItem > ( )
+                           .Select ( mi => new
+                                           {
+                                               Header     = mi.Header?.ToString ( ) ,
+                                               Visibility = mi.Visibility.ToString ( )
+                                           } )
+                           .ToArray ( ) ;
 
-        foreach ( var item in TrayMenuItems )
-        {
-            if ( item is { } menuItem )
-            {
-                logBuilder.Append ( $"TrayMenuItem: {menuItem.Header}, Visibility: {menuItem.Visibility}," ) ;
-            }
-        }
-
-        _logger.Debug ( logBuilder.ToString ( ) ) ;
+        _logger.Debug ( "Tray menu snapshot: {Items}" ,
+                        itemsSnapshot ) ;
 
         CommandManager.InvalidateRequerySuggested ( ) ;
     }
@@ -641,7 +645,9 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
     {
         try
         {
-            _logger.Debug ( $"{nameof ( OnAdvancedSettingsChanged )}: hasChanged={hasChanged}" ) ;
+            _logger.Debug ( "{Method}: hasChanged={HasChanged}" ,
+                            nameof ( OnAdvancedSettingsChanged ) ,
+                            hasChanged ) ;
 
             // ReSharper disable once MethodSupportsCancellation
             await Task.Delay ( 3000 )
@@ -662,7 +668,9 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
     {
         try
         {
-            _logger.Debug ( $"{nameof ( OnLockSettingsChanged )}: hasChanged={isLocked}" ) ;
+            _logger.Debug ( "{Method}: hasChanged={IsLocked}" ,
+                            nameof ( OnLockSettingsChanged ) ,
+                            isLocked ) ;
 
             if ( isLocked )
                 await _uiDeskManager.MoveLockAsync ( ) ;
