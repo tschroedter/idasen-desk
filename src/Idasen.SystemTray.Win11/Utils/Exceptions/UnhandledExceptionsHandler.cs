@@ -9,9 +9,13 @@ namespace Idasen.SystemTray.Win11.Utils.Exceptions ;
 public static class UnhandledExceptionsHandler
 {
     private static readonly ErrorHandler ErrorHandler = new ( ) ;
+    private static bool                  _registered ;
 
     public static void RegisterGlobalExceptionHandling ( )
     {
+        if ( _registered )
+            return ;
+
         // Reuse the application-wide configured Serilog logger to avoid duplicate sinks
         var logger = Log.Logger ;
 
@@ -31,6 +35,8 @@ public static class UnhandledExceptionsHandler
         TaskScheduler.UnobservedTaskException +=
             ( _ , args ) => TaskSchedulerOnUnobservedTaskException ( args ,
                                                                      logger ) ;
+
+        _registered = true ;
     }
 
     private static void TaskSchedulerOnUnobservedTaskException (

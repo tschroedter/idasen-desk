@@ -9,6 +9,11 @@ public static class LoggerProvider
         return new LoggerConfiguration ( )
               .Enrich.WithProperty ( "Application" ,
                                      appName )
+              .Enrich.WithThreadId ( )
+              .Enrich.WithProcessId ( )
+              .Enrich.WithProcessName ( )
+              .Enrich.WithMachineName ( )
+              .Enrich.WithEnvironmentUserName ( )
               .WriteTo.Async ( w => w.File ( fileName ,
                                              rollingInterval : RollingInterval.Day ,
                                              retainedFileCountLimit : 7 ,
