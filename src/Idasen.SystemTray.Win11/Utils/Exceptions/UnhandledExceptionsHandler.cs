@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis ;
 using System.Windows.Threading ;
 using Idasen.BluetoothLE.Characteristics.Common ;
-using Idasen.Launcher ;
 using Serilog ;
 
 namespace Idasen.SystemTray.Win11.Utils.Exceptions ;
@@ -13,29 +12,22 @@ public static class UnhandledExceptionsHandler
 
     public static void RegisterGlobalExceptionHandling ( )
     {
-        var logger = LoggerProvider.CreateLogger ( Constants.ApplicationName ,
-                                                   Constants.LogFilename ) ;
+        // Reuse the application-wide configured Serilog logger to avoid duplicate sinks
+        var logger = Log.Logger ;
 
         logger.Debug ( "Registering global exception handlers..." ) ;
 
-        // this is the line you really want
+        // AppDomain unhandled exceptions
         AppDomain.CurrentDomain.UnhandledException +=
-        ( _ ,
-          args ) => CurrentDomainOnUnhandledException ( args ,
-                                                        logger ) ;
+            ( _ , args ) => CurrentDomainOnUnhandledException ( args ,
+                                                                logger ) ;
 
-        // optional: hooking up some more handlers, remember that you need
-        // to hook up additional handlers when logging from other dispatchers,
-        // schedulers, or applications
-
-        Application.Current.Dispatcher.UnhandledException +=
-            ( _ , args ) => DispatcherOnUnhandledException ( args ,
-                                                             logger ) ;
-
+        // Register a single dispatcher-level handler to avoid duplicate logging
         Application.Current.DispatcherUnhandledException +=
             ( _ , args ) => CurrentOnDispatcherUnhandledException ( args ,
                                                                     logger ) ;
 
+        // Observe unhandled task exceptions
         TaskScheduler.UnobservedTaskException +=
             ( _ , args ) => TaskSchedulerOnUnobservedTaskException ( args ,
                                                                      logger ) ;
@@ -54,21 +46,6 @@ public static class UnhandledExceptionsHandler
     private static void CurrentOnDispatcherUnhandledException (
         DispatcherUnhandledExceptionEventArgs args ,
         ILogger                               log )
-    {
-        if ( args.Exception.IsBluetoothDisabledException ( ) )
-        {
-            HandleBluetoothDisabledException ( args ,
-                                               log ) ;
-        }
-        else
-        {
-            HandleGeneralException ( args ,
-                                     log ) ;
-        }
-    }
-
-    private static void DispatcherOnUnhandledException ( DispatcherUnhandledExceptionEventArgs args ,
-                                                         ILogger                               log )
     {
         if ( args.Exception.IsBluetoothDisabledException ( ) )
         {
