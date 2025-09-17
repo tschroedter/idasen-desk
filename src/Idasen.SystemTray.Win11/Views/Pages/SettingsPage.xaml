@@ -28,8 +28,8 @@
                     Severity="{Binding ViewModel.Severity}"
                     IsOpen="True"
                     IsClosable="False" />
-        <StackPanel DockPanel.Dock="Top">
-            <!-- Todo add icons-->
+
+        <StackPanel Height="430">
             <ui:CardExpander
                 CornerRadius="0,0,8,8"
                 Header="Advanced">
