@@ -1,3 +1,4 @@
+using Idasen.Launcher ;
 using Serilog ;
 
 namespace Idasen.SystemTray.Win11.Utils ;
@@ -17,7 +18,8 @@ public static class AppLoggerProvider
               .WriteTo.Async ( w => w.File ( fileName ,
                                              rollingInterval : RollingInterval.Day ,
                                              retainedFileCountLimit : 7 ,
-                                             shared : true ) )
+                                             shared : false,
+                                             hooks : new LoggingFileHooks (  )) )
               .CreateLogger ( ) ;
     }
 }
