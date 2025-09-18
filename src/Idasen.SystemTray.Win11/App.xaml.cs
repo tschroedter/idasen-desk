@@ -57,10 +57,8 @@ public partial class App
                                                                                                  // Register Serilog logger instance for DI
                                                                                                  builder.RegisterLogger ( AppLogger ) ;
                                                                                                  builder.RegisterModule < BluetoothLEAop > ( ) ;
-                                                                                                 builder
-                                                                                                    .RegisterModule < BluetoothLECoreModule > ( ) ;
-                                                                                                 builder
-                                                                                                    .RegisterModule < BluetoothLELinakModule > ( ) ;
+                                                                                                 builder.RegisterModule < BluetoothLECoreModule > ( ) ;
+                                                                                                 builder.RegisterModule < BluetoothLELinakModule > ( ) ;
                                                                                              } )
                                                   .ConfigureServices ( ( _ , services ) =>
                                                                        {
@@ -92,11 +90,8 @@ public partial class App
                                                                            services.AddSingleton < IObserveSettingsChanges > ( GetSettingsChanged ) ;
                                                                            services.AddSingleton < INotifySettingsChanges > ( GetSettingsChanged ) ;
                                                                            services.AddSingleton < ISettingsManager , SettingsManager > ( ) ;
-                                                                           services
-                                                                              .AddSingleton < ILoggingSettingsManager ,
-                                                                                   LoggingSettingsManager > ( ) ;
-                                                                           services
-                                                                              .AddSingleton < ICommonApplicationData , CommonApplicationData > ( ) ;
+                                                                           services.AddSingleton < ILoggingSettingsManager , LoggingSettingsManager > ( ) ;
+                                                                           services.AddSingleton < ICommonApplicationData , CommonApplicationData > ( ) ;
                                                                            services.AddSingleton < ISettingsStorage , SettingsStorage > ( ) ;
                                                                            services.AddSingleton < ITaskbarIconProvider , TaskbarIconProvider > ( ) ;
                                                                            services.AddSingleton < IUiDeskManager , UiDeskManager > ( ) ;
@@ -104,35 +99,28 @@ public partial class App
                                                                            services.AddSingleton ( _ => CreateScheduler ( ) ) ;
                                                                            services.AddSingleton ( CreateTaskbarIconProvider ) ;
                                                                            services.AddTransient < IDeviceNameConverter , DeviceNameConverter > ( ) ;
-                                                                           services
-                                                                              .AddTransient < IDoubleToUIntConverter , DoubleToUIntConverter > ( ) ;
-                                                                           services
-                                                                              .AddTransient < IStringToUIntConverter , StringToUIntConverter > ( ) ;
-                                                                           services
-                                                                              .AddTransient < IDeviceAddressToULongConverter ,
-                                                                                   DeviceAddressToULongConverter > ( ) ;
+                                                                           services.AddTransient < IDoubleToUIntConverter , DoubleToUIntConverter > ( ) ;
+                                                                           services.AddTransient < IStringToUIntConverter , StringToUIntConverter > ( ) ;
+                                                                           services.AddTransient < IDeviceAddressToULongConverter , DeviceAddressToULongConverter > ( ) ;
                                                                            services.AddSingleton ( provider =>
                                                                                                       new Func < IDeskProvider > ( provider
                                                                                                          .GetRequiredService <
                                                                                                               IDeskProvider > ) ) ;
                                                                            services.AddSingleton < IFileSystem , FileSystem > ( ) ;
                                                                            services.AddTransient < IThemeSwitcher , ThemeSwitcher > ( ) ;
+                                                                           services.AddTransient < ISettingsSynchronizer , SettingsSynchronizer > ( ) ;
+                                                                           services.AddSingleton < IApplicationThemeManager , MyApplicationThemeManager > ( ) ;
                                                                            services
-                                                                              .AddTransient < ISettingsSynchronizer , SettingsSynchronizer > ( ) ;
-                                                                           services
-                                                                              .AddSingleton < IApplicationThemeManager ,
-                                                                                   MyApplicationThemeManager > ( ) ;
-                                                                           services
-                                                                              .AddSingleton <
-                                                                                   Func < TimerCallback , object ? , TimeSpan , TimeSpan ,
-                                                                                       ITimer > > ( _ =>
-                                                                                                   ( callback ,
-                                                                                                       state ,
-                                                                                                       dueTime ,
-                                                                                                       period ) => new Timer ( callback ,
-                                                                                                       state ,
-                                                                                                       dueTime ,
-                                                                                                       period ) ) ;
+                                                                              .AddSingleton < Func < TimerCallback , object ? , TimeSpan , TimeSpan ,
+                                                                                       ITimer > >
+                                                                                   ( _ =>
+                                                                                     ( callback ,
+                                                                                       state ,
+                                                                                       dueTime ,
+                                                                                       period ) => new Timer ( callback ,
+                                                                                         state ,
+                                                                                         dueTime ,
+                                                                                         period ) ) ;
                                                                        } ).Build ( ) ;
 
     private static Mutex ? _singleInstanceMutex ;
