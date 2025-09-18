@@ -14,9 +14,8 @@ public static class AppLoggerProvider
     ///     ToDo: This needs to be fixed properly later and involves create a crash dump file.
     /// </summary>
     /// <param name="appName"></param>
-    /// <param name="fileName"></param>
     /// <returns></returns>
-    public static ILogger CreateLogger ( string appName , string fileName )
+    public static ILogger CreateLogger ( string appName )
     {
         return new LoggerConfiguration ( )
               .Enrich.WithProperty ( "Application" ,
@@ -28,7 +27,7 @@ public static class AppLoggerProvider
               .Enrich.WithMachineName ( )
               .Enrich.WithEnvironmentUserName ( )
               .Enrich.WithCaller ( ) // requires package: Serilog.Enrichers.WithCaller
-              .WriteTo.Async ( w => w.File ( @".\logs\Idasen.SystemTray.log" ,
+              .WriteTo.Async ( w => w.File ( @".\logs\" + Constants.LogFilename,
                                              outputTemplate :
                                              "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level}] [ProcessId:{ProcessId}] [ThreadId:{ThreadId}] [Class:{SourceContext}] [Method:{CallerMemberName}] {Message}{NewLine}{Exception}" ,
                                              rollingInterval : RollingInterval.Day ,
