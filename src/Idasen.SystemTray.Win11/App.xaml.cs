@@ -205,8 +205,6 @@ public partial class App
 
             var versionProvider = GetVersionProvider ( ) ;
 
-            CurrentWindow.StateChanged += OnStateChanged_HideOnMinimize ;
-
             _logger.Information ( "##### Idasen.SystemTray {Version}" ,
                                   versionProvider.GetVersion ( ) ) ;
         }
@@ -275,15 +273,6 @@ public partial class App
                 // ignore mutex release errors
             }
         }
-    }
-
-    private void OnStateChanged_HideOnMinimize ( object ? sender , EventArgs e )
-    {
-        if ( CurrentWindow.WindowState != WindowState.Minimized )
-            return ;
-
-        CurrentWindow.Visibility  = Visibility.Hidden ;
-        CurrentWindow.WindowState = WindowState.Normal ;
     }
 
     private static NotifyIcon FindNotifyIcon ( )

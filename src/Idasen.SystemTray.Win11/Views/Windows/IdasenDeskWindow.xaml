@@ -36,6 +36,10 @@
             x:Name="TitleBar"
             Title="{Binding ViewModel.ApplicationTitle}"
             Grid.Row="0"
+            ShowMinimize="False"
+            ShowMaximize="False"
+            ShowHelp="False"
+            ShowClose="True"
             CloseWindowByDoubleClickOnIcon="True" >
             <ui:TitleBar.Icon>
                 <ui:ImageIcon Source="pack://application:,,,/Resources/cup-xl.ico" />
