@@ -398,13 +398,17 @@ public sealed class UiDeskManager : IUiDeskManager
     private async Task MoveToConfiguredHeightAsync ( string                    methodName ,
                                                      Func < ISettings , uint > pickHeightInCm )
     {
-        _logger.Debug ( "Executing {MethodName}..." ,
-                        methodName ) ;
+        _logger.Debug ( "Executing {MethodName}( pickHeightInCm = {PickHeightInCm} )..." ,
+                        methodName ,
+                        pickHeightInCm ) ;
 
         await _manager.LoadAsync ( CancellationToken.None ).ConfigureAwait ( false ) ;
 
         var heightInCm = pickHeightInCm ( _manager.CurrentSettings ) ;
         var height     = HeightToDeskHeight ( heightInCm ) ;
+
+        _logger.Information ( "Move desk to height {Height} cm..." ,
+                              height ) ;
 
         _desk?.MoveTo ( height ) ;
     }
