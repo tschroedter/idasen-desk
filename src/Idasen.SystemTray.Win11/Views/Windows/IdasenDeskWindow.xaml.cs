@@ -1,6 +1,7 @@
-﻿using System.Diagnostics.CodeAnalysis ;
-using Idasen.SystemTray.Win11.ViewModels.Windows ;
+﻿using Idasen.SystemTray.Win11.ViewModels.Windows ;
 using JetBrains.Annotations ;
+using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis ;
 using Wpf.Ui ;
 using Wpf.Ui.Abstractions ;
 using Wpf.Ui.Appearance ;
@@ -83,5 +84,21 @@ public partial class IdasenDeskWindow : INavigationWindow
     public INavigationView GetNavigation ( )
     {
         return RootNavigation ;
+    }
+
+    protected override void OnInitialized(EventArgs e)
+    {
+        base.OnInitialized(e);
+
+        // Prevent duplicate subscriptions if re-initialized
+        Closing -= OnWindowClosing;
+        Closing += OnWindowClosing;
+    }
+
+    private void OnWindowClosing(object? sender, CancelEventArgs e)
+    {
+        // Cancel close and hide instead
+        e.Cancel = true;
+        Hide();
     }
 }
