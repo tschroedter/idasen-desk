@@ -23,7 +23,9 @@
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d"
     ShowInTaskbar="False"
-    WindowStyle="None">
+    WindowStyle="None"
+    ResizeMode="NoResize"
+    SizeToContent="WidthAndHeight">
     <ui:FluentWindow.InputBindings>
         <KeyBinding
             Key="F"
