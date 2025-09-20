@@ -59,7 +59,6 @@
                                 <RowDefinition Height="5" />
                                 <RowDefinition />
                                 <RowDefinition Height="5" />
-                                <RowDefinition />
                             </Grid.RowDefinitions>
                             <!-- Row 0 -->
                             <Label Grid.Row="0" Grid.Column="0" Content="Log Folder" ToolTip="Show the location of the log files." VerticalContentAlignment="Center" Padding="5,0,5,0" />
@@ -89,9 +88,6 @@
                             <Label Grid.Row="12" Grid.Column="0" Content="Notifications" ToolTip="Show or hide all notifications." VerticalContentAlignment="Center" Padding="5,0,5,0" />
                             <CheckBox Grid.Row="12" Grid.Column="1" Content="Enabled" Name="Notifications" HorizontalAlignment="Left" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="4,0,0,0" IsChecked="{Binding ViewModel.Notifications}" />
                             <!-- Row 13 Blank -->
-                            <!-- Row 14 -->
-                            <Label Grid.Row="14" Grid.Column="0" Content="'Stop' visibility" ToolTip="Show or hide all 'Stop' in the context menu." VerticalContentAlignment="Center" Padding="5,0,5,0" />
-                            <CheckBox Grid.Row="14" Grid.Column="1" Content="Enabled" Name="StopIsVisibleInContextMenu" HorizontalAlignment="Left" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="4,0,0,0" IsChecked="{Binding ViewModel.StopIsVisibleInContextMenu}" />
                         </Grid>
                     </StackPanel>
                 </ui:CardExpander>
@@ -159,6 +155,27 @@
                             <TextBlock Grid.Row="6" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Right" Text="{Binding ElementName=Custom2, Path=Value, StringFormat='0',UpdateSourceTrigger=LostFocus}" Padding="5,0,5,0" />
                             <Label Grid.Row="6" Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Right" Content="cm" />
                             <CheckBox Grid.Row="6" Grid.Column="5" VerticalAlignment="Center" MinWidth="75" Content="Tray" ToolTip="Show in tray context menu" IsChecked="{Binding ViewModel.Custom2IsVisibleInContextMenu, Mode=TwoWay}" />
+                        </Grid>
+                        <TextBlock Margin="0,12,0,0" Text="Tray Menu" />
+                        <Grid Margin="0,12,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="32" />
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="50" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition Height="5" />
+                            </Grid.RowDefinitions>
+                            <!-- Row 0 -->
+                            <ui:SymbolIcon Grid.Row="0" Grid.Column="0" Symbol="{x:Static ui:SymbolRegular.Stop24}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            <Label Grid.Row="0" Grid.Column="1" Content="Stop" VerticalAlignment="Center" Padding="5,0,5,0" />
+                            <Label Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="3" VerticalAlignment="Center" Padding="5,0,5,0" HorizontalAlignment="Left">Show in tray context menu.</Label>
+                            <CheckBox Grid.Row="0" Grid.Column="5" VerticalAlignment="Center" MinWidth="75" Content="Tray" ToolTip="Show in tray context menu" IsChecked="{Binding ViewModel.StopIsVisibleInContextMenu, Mode=TwoWay}" />
+                            <!-- Row 1 - Blank -->
                         </Grid>
                     </StackPanel>
                 </ui:CardExpander>
