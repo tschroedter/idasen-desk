@@ -22,7 +22,7 @@
     WindowCornerPreference="Round"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d"
-    ShowInTaskbar="False"
+    ShowInTaskbar="True"
     WindowStyle="None"
     ResizeMode="NoResize"
     SizeToContent="WidthAndHeight">

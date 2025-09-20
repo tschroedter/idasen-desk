@@ -51,6 +51,7 @@ public partial class IdasenDeskWindow : INavigationWindow
 
     public void ShowWindow ( )
     {
+        ShowInTaskbar = true ;
         Show ( ) ;
         Activate ( ) ;
     }
@@ -65,11 +66,13 @@ public partial class IdasenDeskWindow : INavigationWindow
         // Toggle: If visible -> hide; if hidden/minimized -> show and activate
         if ( Visibility == Visibility.Visible )
         {
+            ShowInTaskbar = false ;
             Visibility = Visibility.Hidden ;
             return ;
         }
 
         // Show and bring to foreground
+        ShowInTaskbar = true ;
         Visibility = Visibility.Visible ;
         if ( WindowState == WindowState.Minimized )
             WindowState = WindowState.Normal ;
@@ -99,6 +102,7 @@ public partial class IdasenDeskWindow : INavigationWindow
     {
         // Cancel close and hide instead
         e.Cancel = true;
+        ShowInTaskbar = false ;
         Hide();
     }
 }
