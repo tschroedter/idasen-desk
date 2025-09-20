@@ -2,7 +2,6 @@
 using System.Reactive.Concurrency ;
 using System.Reactive.Linq ;
 using System.Reflection ;
-using System.ComponentModel ;
 using Idasen.Launcher ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.Utils ;
@@ -151,7 +150,7 @@ public partial class SettingsViewModel ( ILogger                                
                h => ((System.ComponentModel.INotifyPropertyChanged)this).PropertyChanged -= h )
            .Where ( _ => ! _isLoadingSettings )
            .Throttle ( TimeSpan.FromMilliseconds ( 300 ) , Scheduler )
-           .Select ( _ => Observable.FromAsync ( ( CancellationToken ct ) => synchronizer.StoreSettingsAsync ( this , ct ) ) )
+           .Select ( _ => Observable.FromAsync ( cancellationToken => synchronizer.StoreSettingsAsync ( this , cancellationToken ) ) )
            .Switch ( )
            .Subscribe ( _ => { } ,
                         ex => logger.Error ( ex , "Failed to auto-save settings" ) ) ;
