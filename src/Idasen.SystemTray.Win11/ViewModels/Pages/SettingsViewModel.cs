@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis ;
+﻿using System.ComponentModel ;
+using System.Diagnostics.CodeAnalysis ;
 using System.Reactive.Concurrency ;
 using System.Reactive.Linq ;
 using System.Reflection ;
@@ -18,10 +19,14 @@ public partial class SettingsViewModel ( ILogger                                
                                          ISettingsSynchronizer                                            synchronizer ,
                                          IUiDeskManager                                                   uiDeskManager ,
                                          Func < TimerCallback , object ? , TimeSpan , TimeSpan , ITimer > timerFactory )
-    : StatusBarInfoViewModelBase ( uiDeskManager , scheduler , timerFactory ) , INavigationAware , ISettingsViewModel
+    : StatusBarInfoViewModelBase ( uiDeskManager ,
+                                   scheduler ,
+                                   timerFactory ) , INavigationAware , ISettingsViewModel
 {
     [ ObservableProperty ]
     private string _appVersion = string.Empty ;
+
+    private IDisposable ? _autoSaveSubscription ;
 
     [ ObservableProperty ]
     private ApplicationTheme _currentTheme = ApplicationTheme.Unknown ;
@@ -75,7 +80,6 @@ public partial class SettingsViewModel ( ILogger                                
     private string _settingsFileFullPath = string.Empty ;
 
     private IDisposable ? _settingsSaved ;
-    private IDisposable ? _autoSaveSubscription ;
 
     [ ObservableProperty ]
     private uint _standing = 100 ;
@@ -145,15 +149,18 @@ public partial class SettingsViewModel ( ILogger                                
 
         // Observe property changes from INotifyPropertyChanged, debounce and persist settings
         _autoSaveSubscription = Observable
-           .FromEventPattern<System.ComponentModel.PropertyChangedEventHandler, System.ComponentModel.PropertyChangedEventArgs>(
-               h => ((System.ComponentModel.INotifyPropertyChanged)this).PropertyChanged += h ,
-               h => ((System.ComponentModel.INotifyPropertyChanged)this).PropertyChanged -= h )
-           .Where ( _ => ! _isLoadingSettings )
-           .Throttle ( TimeSpan.FromMilliseconds ( 300 ) , Scheduler )
-           .Select ( _ => Observable.FromAsync ( cancellationToken => synchronizer.StoreSettingsAsync ( this , cancellationToken ) ) )
-           .Switch ( )
-           .Subscribe ( _ => { } ,
-                        ex => logger.Error ( ex , "Failed to auto-save settings" ) ) ;
+                               .FromEventPattern < PropertyChangedEventHandler , PropertyChangedEventArgs > (
+                                     h => ( ( INotifyPropertyChanged ) this ).PropertyChanged += h ,
+                                     h => ( ( INotifyPropertyChanged ) this ).PropertyChanged -= h )
+                               .Where ( _ => ! _isLoadingSettings )
+                               .Throttle ( TimeSpan.FromMilliseconds ( 300 ) ,
+                                           Scheduler )
+                               .Select ( _ => Observable.FromAsync ( cancellationToken => synchronizer.StoreSettingsAsync ( this ,
+                                                                              cancellationToken ) ) )
+                               .Switch ( )
+                               .Subscribe ( _ => { } ,
+                                            ex => logger.Error ( ex ,
+                                                                 "Failed to auto-save settings" ) ) ;
     }
 
     private void OnSettingsSaved ( ISettings settings )

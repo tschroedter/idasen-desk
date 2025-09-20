@@ -42,7 +42,7 @@
             ShowMaximize="False"
             ShowHelp="False"
             ShowClose="True"
-            CloseWindowByDoubleClickOnIcon="True" >
+            CloseWindowByDoubleClickOnIcon="True">
             <ui:TitleBar.Icon>
                 <ui:ImageIcon Source="pack://application:,,,/Resources/cup-xl.ico" />
             </ui:TitleBar.Icon>

@@ -407,9 +407,9 @@ public sealed class UiDeskManager : IUiDeskManager
         var heightInCm = pickHeightInCm ( _manager.CurrentSettings ) ;
         var height     = HeightToDeskHeight ( heightInCm ) ;
 
-        _logger.Information ("Executing {MethodName} which moves the desk to height {HeightInCm} cm...",
-                              methodName,
-                              heightInCm) ;
+        _logger.Information ( "Executing {MethodName} which moves the desk to height {HeightInCm} cm..." ,
+                              methodName ,
+                              heightInCm ) ;
 
         _desk?.MoveTo ( height ) ;
     }

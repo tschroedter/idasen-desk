@@ -1,7 +1,7 @@
-﻿using Idasen.SystemTray.Win11.ViewModels.Windows ;
-using JetBrains.Annotations ;
-using System.ComponentModel;
+﻿using System.ComponentModel ;
 using System.Diagnostics.CodeAnalysis ;
+using Idasen.SystemTray.Win11.ViewModels.Windows ;
+using JetBrains.Annotations ;
 using Wpf.Ui ;
 using Wpf.Ui.Abstractions ;
 using Wpf.Ui.Appearance ;
@@ -67,13 +67,13 @@ public partial class IdasenDeskWindow : INavigationWindow
         if ( Visibility == Visibility.Visible )
         {
             ShowInTaskbar = false ;
-            Visibility = Visibility.Hidden ;
+            Visibility    = Visibility.Hidden ;
             return ;
         }
 
         // Show and bring to foreground
         ShowInTaskbar = true ;
-        Visibility = Visibility.Visible ;
+        Visibility    = Visibility.Visible ;
         if ( WindowState == WindowState.Minimized )
             WindowState = WindowState.Normal ;
 
@@ -89,20 +89,20 @@ public partial class IdasenDeskWindow : INavigationWindow
         return RootNavigation ;
     }
 
-    protected override void OnInitialized(EventArgs e)
+    protected override void OnInitialized ( EventArgs e )
     {
-        base.OnInitialized(e);
+        base.OnInitialized ( e ) ;
 
         // Prevent duplicate subscriptions if re-initialized
-        Closing -= OnWindowClosing;
-        Closing += OnWindowClosing;
+        Closing -= OnWindowClosing ;
+        Closing += OnWindowClosing ;
     }
 
-    private void OnWindowClosing(object? sender, CancelEventArgs e)
+    private void OnWindowClosing ( object ? sender , CancelEventArgs e )
     {
         // Cancel close and hide instead
-        e.Cancel = true;
+        e.Cancel      = true ;
         ShowInTaskbar = false ;
-        Hide();
+        Hide ( ) ;
     }
 }
