@@ -245,12 +245,8 @@
                             <!-- Row 0 -->
                             <ui:SymbolIcon Grid.Row="0" Grid.Column="0" Symbol="{x:Static ui:SymbolRegular.Stop24}"
                                            HorizontalAlignment="Center" VerticalAlignment="Center" />
-                            <Label Grid.Row="0" Grid.Column="1" Content="Stop" VerticalAlignment="Center"
+                            <Label Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="4" Content="Stop" VerticalAlignment="Center"
                                    Padding="5,0,5,0" />
-                            <Label Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="3" VerticalAlignment="Center"
-                                   Padding="5,0,5,0" HorizontalAlignment="Left">
-                                Show in tray context menu.
-                            </Label>
                             <CheckBox Grid.Row="0" Grid.Column="5" VerticalAlignment="Center" MinWidth="75"
                                       Content="Tray" ToolTip="Show in tray context menu"
                                       IsChecked="{Binding ViewModel.StopIsVisibleInContextMenu, Mode=TwoWay}" />
