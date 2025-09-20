@@ -2,6 +2,7 @@
 using System.Reactive.Concurrency ;
 using System.Reactive.Linq ;
 using System.Reflection ;
+using System.ComponentModel ;
 using Idasen.Launcher ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.Utils ;
@@ -45,6 +46,7 @@ public partial class SettingsViewModel ( ILogger                                
     private string _deskName = string.Empty ;
 
     private bool _isInitialized ;
+    private bool _isLoadingSettings ;
 
     [ ObservableProperty ]
     private uint _lastKnownDeskHeight = Constants.DefaultDeskMinHeightInCm ;
@@ -74,6 +76,7 @@ public partial class SettingsViewModel ( ILogger                                
     private string _settingsFileFullPath = string.Empty ;
 
     private IDisposable ? _settingsSaved ;
+    private IDisposable ? _autoSaveSubscription ;
 
     [ ObservableProperty ]
     private uint _standing = 100 ;
@@ -106,11 +109,19 @@ public partial class SettingsViewModel ( ILogger                                
             _settingsSaved = null ;
         }
 
+        if ( _autoSaveSubscription is not null )
+        {
+            _autoSaveSubscription.Dispose ( ) ;
+            _autoSaveSubscription = null ;
+        }
+
         base.Dispose ( ) ;
     }
 
     public async Task InitializeAsync ( CancellationToken token )
     {
+        _isLoadingSettings = true ;
+
         await synchronizer.LoadSettingsAsync ( this ,
                                                token ) ;
 
@@ -121,8 +132,29 @@ public partial class SettingsViewModel ( ILogger                                
                                         .ObserveOn ( Scheduler )
                                         .Subscribe ( OnSettingsSaved ) ;
 
+        // Start auto-save after load
+        SetupAutoSave ( ) ;
+        _isLoadingSettings = false ;
+
         // Initialize InfoBar from last known status now that the VM is initialized
         InitializeFromLastStatusBarInfo ( ) ;
+    }
+
+    private void SetupAutoSave ( )
+    {
+        _autoSaveSubscription?.Dispose ( ) ;
+
+        // Observe property changes from INotifyPropertyChanged, debounce and persist settings
+        _autoSaveSubscription = Observable
+           .FromEventPattern<System.ComponentModel.PropertyChangedEventHandler, System.ComponentModel.PropertyChangedEventArgs>(
+               h => ((System.ComponentModel.INotifyPropertyChanged)this).PropertyChanged += h ,
+               h => ((System.ComponentModel.INotifyPropertyChanged)this).PropertyChanged -= h )
+           .Where ( _ => ! _isLoadingSettings )
+           .Throttle ( TimeSpan.FromMilliseconds ( 300 ) , Scheduler )
+           .Select ( _ => Observable.FromAsync ( ( CancellationToken ct ) => synchronizer.StoreSettingsAsync ( this , ct ) ) )
+           .Switch ( )
+           .Subscribe ( _ => { } ,
+                        ex => logger.Error ( ex , "Failed to auto-save settings" ) ) ;
     }
 
     private void OnSettingsSaved ( ISettings settings )
