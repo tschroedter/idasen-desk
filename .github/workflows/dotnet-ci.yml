@@ -96,36 +96,12 @@ jobs:
           "exe_path=$exeRel" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
           "publish_dir=$publishDirRel" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
 
-      - id: checksums
-        name: Generate SHA256 checksum
-        run: |
-          $publishDir = "Idasen.SystemTray.Win11/bin/$env:BUILD_CONFIGURATION/net8.0-windows10.0.19041/win-x64/publish"
-          $exe = Join-Path $publishDir "Idasen.SystemTray.exe"
-          if (-not (Test-Path $exe)) { throw "Executable not found: $exe" }
-
-          $version = '${{ steps.determine_version.outputs.version }}'
-
-          $exeHash = Get-FileHash -Algorithm SHA256 -Path $exe
-          $exeHashLine = "{0}  {1}" -f $exeHash.Hash, (Split-Path -Leaf $exe)
-          $exeShaPath = Join-Path $publishDir ("Idasen.SystemTray-{0}-win-x64.exe.sha256" -f $version)
-          Set-Content -Path $exeShaPath -Value $exeHashLine -NoNewline
-
-          $exeShaRel = (Join-Path "src" $exeShaPath) -replace '\\','/'
-          "exe_sha=$exeShaRel" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
-
       - name: Upload artifact (publish directory)
         uses: actions/upload-artifact@v4
         with:
           name: Idasen.SystemTray.Win11-win-x64-publish-${{ steps.determine_version.outputs.version }}
           if-no-files-found: error
           path: ${{ steps.determine_version.outputs.publish_dir }}/**
-
-      - name: Upload exe checksum
-        uses: actions/upload-artifact@v4
-        with:
-          name: Idasen.SystemTray-${{ steps.determine_version.outputs.version }}-win-x64-exe-sha256
-          if-no-files-found: error
-          path: ${{ steps.checksums.outputs.exe_sha }}
 
       - name: Create GitHub Release
         if: startsWith(github.ref, 'refs/tags/V')
@@ -137,4 +113,3 @@ jobs:
           prerelease: false
           files: |
             ${{ steps.determine_version.outputs.exe_path }}
-            ${{ steps.checksums.outputs.exe_sha }}
