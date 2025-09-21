@@ -57,7 +57,7 @@ jobs:
           [xml]$projXml = Get-Content $projPath
           $pg = $projXml.Project.PropertyGroup | Select-Object -First 1
 
-          $runNumber = $env:GITHUB_RUN_NUMBER
+          $runNumber = [int]$env:GITHUB_RUN_NUMBER
           $ref = $env:GITHUB_REF
           $refName = $env:GITHUB_REF_NAME
 
@@ -66,14 +66,7 @@ jobs:
             $newVersion = $Matches['ver']
           }
           else {
-            $base = $pg.Version
-            if ($base -and $base -match '^(?<maj>\d+)\.(?<min>\d+)') {
-              $maj = $Matches['maj']; $min = $Matches['min']
-            }
-            else {
-              $maj = '0'; $min = '0'
-            }
-            $newVersion = "$maj.$min.$runNumber"
+            $newVersion = "0.1.$runNumber"
           }
 
           if (-not $pg.Version) { $node = $projXml.CreateElement('Version'); [void]$pg.AppendChild($node) }
