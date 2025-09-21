@@ -83,6 +83,23 @@ jobs:
           $zipRel = (Join-Path "src" $zip) -replace '\\','/'
           "zip_path=$zipRel" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
 
+      - name: Generate SHA256 checksums
+        run: |
+          $publishDir = "Idasen.SystemTray.Win11/bin/Release/net8.0-windows10.0.19041/win-x64/publish"
+          $exe = Join-Path $publishDir "Idasen.SystemTray.exe"
+          if (-not (Test-Path $exe)) { throw "Executable not found: $exe" }
+
+          $zip = Get-ChildItem -Path $publishDir -Filter "Idasen.SystemTray-*-win-x64.zip" | Select-Object -First 1
+          if (-not $zip) { throw "Zip not found in $publishDir" }
+
+          $exeHash = Get-FileHash -Algorithm SHA256 -Path $exe
+          $exeHashLine = "{0}  {1}" -f $exeHash.Hash, (Split-Path -Leaf $exe)
+          Set-Content -Path (Join-Path $publishDir "Idasen.SystemTray.exe.sha256") -Value $exeHashLine -NoNewline
+
+          $zipHash = Get-FileHash -Algorithm SHA256 -Path $zip.FullName
+          $zipHashLine = "{0}  {1}" -f $zipHash.Hash, $zip.Name
+          Set-Content -Path (Join-Path $publishDir ("{0}.sha256" -f $zip.Name)) -Value $zipHashLine -NoNewline
+
       - name: Upload artifact (publish directory)
         uses: actions/upload-artifact@v4
         with:
@@ -97,6 +114,14 @@ jobs:
           name: Idasen.SystemTray-win-x64-zip
           if-no-files-found: error
           path: ${{ steps.zip_exe.outputs.zip_path }}
+
+      - name: Upload checksums
+        uses: actions/upload-artifact@v4
+        with:
+          name: sha256-checksums
+          if-no-files-found: error
+          path: |
+            src/Idasen.SystemTray.Win11/bin/Release/net8.0-windows10.0.19041/win-x64/publish/*.sha256
 
       - name: Create GitHub Release
         if: startsWith(github.ref, 'refs/tags/V')
