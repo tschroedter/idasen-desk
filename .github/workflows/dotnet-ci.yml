@@ -63,8 +63,8 @@ jobs:
           -p:PublishSingleFile=true
           -p:PublishReadyToRun=true
 
-      - id: zip_exe
-        name: Zip executable with version
+      - id: determine_version
+        name: Determine version and paths
         run: |
           $projPath = "Idasen.SystemTray.Win11/Idasen.SystemTray.Win11.csproj"
           [xml]$projXml = Get-Content $projPath
@@ -75,69 +75,43 @@ jobs:
           $exe = Join-Path $publishDir "Idasen.SystemTray.exe"
           if (-not (Test-Path $exe)) { throw "Executable not found: $exe" }
 
-          $zipName = "Idasen.SystemTray-$version-win-x64.zip"
-          $zip = Join-Path $publishDir $zipName
-          if (Test-Path $zip) { Remove-Item $zip -Force }
-          Compress-Archive -Path $exe -DestinationPath $zip -Force
+          $exeRel = (Join-Path "src" $exe) -replace '\\','/'
 
-          $zipRel = (Join-Path "src" $zip) -replace '\\','/'
-          "zip_path=$zipRel" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          "version=$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          "exe_path=$exeRel" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
 
       - id: checksums
-        name: Generate SHA256 checksums
+        name: Generate SHA256 checksum
         run: |
           $publishDir = "Idasen.SystemTray.Win11/bin/Release/net8.0-windows10.0.19041/win-x64/publish"
           $exe = Join-Path $publishDir "Idasen.SystemTray.exe"
           if (-not (Test-Path $exe)) { throw "Executable not found: $exe" }
 
-          $zip = Get-ChildItem -Path $publishDir -Filter "Idasen.SystemTray-*-win-x64.zip" | Select-Object -First 1
-          if (-not $zip) { throw "Zip not found in $publishDir" }
+          $version = '${{ steps.determine_version.outputs.version }}'
 
           $exeHash = Get-FileHash -Algorithm SHA256 -Path $exe
           $exeHashLine = "{0}  {1}" -f $exeHash.Hash, (Split-Path -Leaf $exe)
-          $exeShaPath = Join-Path $publishDir "Idasen.SystemTray.exe.sha256"
+          $exeShaPath = Join-Path $publishDir ("Idasen.SystemTray-{0}-win-x64.exe.sha256" -f $version)
           Set-Content -Path $exeShaPath -Value $exeHashLine -NoNewline
-
-          $zipHash = Get-FileHash -Algorithm SHA256 -Path $zip.FullName
-          $zipHashLine = "{0}  {1}" -f $zipHash.Hash, $zip.Name
-          $zipShaPath = Join-Path $publishDir ("{0}.sha256" -f $zip.Name)
-          Set-Content -Path $zipShaPath -Value $zipHashLine -NoNewline
 
           $exeShaRel = (Join-Path "src" $exeShaPath) -replace '\\','/'
 
-          $zipShaRel = (Join-Path "src" $zipShaPath) -replace '\\','/'
-
           "exe_sha=$exeShaRel" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
-          "zip_sha=$zipShaRel" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
 
       - name: Upload artifact (publish directory)
         uses: actions/upload-artifact@v4
         with:
-          name: Idasen.SystemTray.Win11-win-x64-publish
+          name: Idasen.SystemTray.Win11-win-x64-publish-${{ steps.determine_version.outputs.version }}
           if-no-files-found: error
           path: |
             src/Idasen.SystemTray.Win11/bin/Release/net8.0-windows10.0.19041/win-x64/publish/**
 
-      - name: Upload zip
-        uses: actions/upload-artifact@v4
-        with:
-          name: Idasen.SystemTray-win-x64-zip
-          if-no-files-found: error
-          path: ${{ steps.zip_exe.outputs.zip_path }}
-
       - name: Upload exe checksum
         uses: actions/upload-artifact@v4
         with:
-          name: Idasen.SystemTray.exe.sha256
+          name: Idasen.SystemTray-${{ steps.determine_version.outputs.version }}-win-x64-exe-sha256
           if-no-files-found: error
           path: ${{ steps.checksums.outputs.exe_sha }}
-
-      - name: Upload zip checksum
-        uses: actions/upload-artifact@v4
-        with:
-          name: Idasen.SystemTray-zip.sha256
-          if-no-files-found: error
-          path: ${{ steps.checksums.outputs.zip_sha }}
 
       - name: Create GitHub Release
         if: startsWith(github.ref, 'refs/tags/V')
@@ -148,6 +122,5 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            ${{ steps.zip_exe.outputs.zip_path }}
+            ${{ steps.determine_version.outputs.exe_path }}
             ${{ steps.checksums.outputs.exe_sha }}
-            ${{ steps.checksums.outputs.zip_sha }}
