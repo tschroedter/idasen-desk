@@ -80,7 +80,7 @@ jobs:
           if (Test-Path $zip) { Remove-Item $zip -Force }
           Compress-Archive -Path $exe -DestinationPath $zip -Force
 
-          $zipRel = (Join-Path "src" $zip) -replace '\\','/
+          $zipRel = (Join-Path "src" $zip) -replace '\\','/'
           "zip_path=$zipRel" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
 
       - name: Upload artifact (publish directory)
