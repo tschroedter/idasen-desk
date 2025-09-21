@@ -1,0 +1,29 @@
+{
+  "version": "0.0.312",
+  "description": "Idasen Desk System Tray for Windows 11",
+  "homepage": "https://github.com/tschroedter/idasen-desk",
+  "license": "UNKNOWN",
+  "architecture": {
+    "64bit": {
+      "url": "https://github.com/tschroedter/idasen-desk/releases/download/v$version/Idasen.SystemTray.exe",
+      "hash": "REPLACE_WITH_SHA256"
+    }
+  },
+  "bin": "Idasen.SystemTray.exe",
+  "shortcuts": [
+    [
+      "Idasen.SystemTray.exe",
+      "Idasen Desk"
+    ]
+  ],
+  "checkver": {
+    "github": "tschroedter/idasen-desk"
+  },
+  "autoupdate": {
+    "architecture": {
+      "64bit": {
+        "url": "https://github.com/tschroedter/idasen-desk/releases/download/v$version/Idasen.SystemTray.exe"
+      }
+    }
+  }
+}

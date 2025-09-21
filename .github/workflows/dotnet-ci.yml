@@ -1,0 +1,109 @@
+name: .NET CI
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'V*' ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build, Test and Publish
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: pwsh
+        working-directory: src
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8.x SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~\AppData\Local\NuGet\v3-cache
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      - name: .NET info
+        run: dotnet --info
+
+      - name: Restore
+        run: |
+          dotnet restore Idasen.SystemTray.Win11/Idasen.SystemTray.Win11.csproj
+          dotnet restore Idasen.SystemTray.Win11.Tests/Idasen.SystemTray.Win11.Tests.csproj
+
+      - name: Build (Release)
+        run: |
+          dotnet build Idasen.SystemTray.Win11/Idasen.SystemTray.Win11.csproj --configuration Release --no-restore
+          dotnet build Idasen.SystemTray.Win11.Tests/Idasen.SystemTray.Win11.Tests.csproj --configuration Release --no-restore
+
+      - name: Test (Release)
+        run: |
+          dotnet test Idasen.SystemTray.Win11.Tests/Idasen.SystemTray.Win11.Tests.csproj --configuration Release --no-build --verbosity normal
+
+      - name: Publish win-x64 (self-contained single file)
+        run: >-
+          dotnet publish
+          Idasen.SystemTray.Win11/Idasen.SystemTray.Win11.csproj
+          --configuration Release
+          --runtime win-x64
+          --self-contained true
+          -p:PublishSingleFile=true
+          -p:PublishReadyToRun=true
+
+      - id: zip_exe
+        name: Zip executable with version
+        run: |
+          $projPath = "Idasen.SystemTray.Win11/Idasen.SystemTray.Win11.csproj"
+          [xml]$projXml = Get-Content $projPath
+          $version = ($projXml.Project.PropertyGroup | ForEach-Object { $_.Version } | Where-Object { $_ } | Select-Object -First 1)
+          if (-not $version) { throw "Version not found in $projPath" }
+
+          $publishDir = "Idasen.SystemTray.Win11/bin/Release/net8.0-windows10.0.19041/win-x64/publish"
+          $exe = Join-Path $publishDir "Idasen.SystemTray.exe"
+          if (-not (Test-Path $exe)) { throw "Executable not found: $exe" }
+
+          $zipName = "Idasen.SystemTray-$version-win-x64.zip"
+          $zip = Join-Path $publishDir $zipName
+          if (Test-Path $zip) { Remove-Item $zip -Force }
+          Compress-Archive -Path $exe -DestinationPath $zip -Force
+
+          $zipRel = (Join-Path "src" $zip) -replace '\\','/
+          "zip_path=$zipRel" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+
+      - name: Upload artifact (publish directory)
+        uses: actions/upload-artifact@v4
+        with:
+          name: Idasen.SystemTray.Win11-win-x64-publish
+          if-no-files-found: error
+          path: |
+            src/Idasen.SystemTray.Win11/bin/Release/net8.0-windows10.0.19041/win-x64/publish/**
+
+      - name: Upload zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: Idasen.SystemTray-win-x64-zip
+          if-no-files-found: error
+          path: ${{ steps.zip_exe.outputs.zip_path }}
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/V')
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+          files: ${{ steps.zip_exe.outputs.zip_path }}
