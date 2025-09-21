@@ -34,6 +34,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
 
       - name: Setup .NET 8.x SDK
         uses: actions/setup-dotnet@v4
@@ -148,6 +151,22 @@ jobs:
           name: Idasen.SystemTray-${{ steps.determine_version.outputs.version }}-win-x64
           if-no-files-found: error
           path: ${{ steps.determine_version.outputs.publish_dir }}/**
+
+      - name: Create and push git tag V<version>
+        if: github.event_name != 'pull_request' && github.ref_type != 'tag'
+        shell: pwsh
+        working-directory: .
+        run: |
+          $tag = "V${{ steps.determine_version.outputs.version }}"
+          git fetch --tags --quiet
+          if (git rev-parse -q --verify "refs/tags/$tag") {
+            Write-Host "Tag $tag already exists, skipping."
+          } else {
+            git config user.name "github-actions"
+            git config user.email "github-actions@github.com"
+            git tag -a $tag -m "Release $tag"
+            git push origin $tag
+          }
 
       - name: Create GitHub Release (draft)
         if: startsWith(github.ref, 'refs/tags/V')
