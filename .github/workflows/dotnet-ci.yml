@@ -1,6 +1,16 @@
 name: .NET CI
 
 on:
+  workflow_dispatch:
+    inputs:
+      configuration:
+        description: Build configuration
+        required: true
+        default: Release
+        type: choice
+        options:
+          - Release
+          - Debug
   push:
     branches: [ main ]
     tags: [ 'V*' ]
@@ -18,6 +28,8 @@ jobs:
       run:
         shell: pwsh
         working-directory: src
+    env:
+      BUILD_CONFIGURATION: ${{ github.event_name == 'workflow_dispatch' && inputs.configuration || 'Release' }}
 
     steps:
       - name: Checkout
@@ -44,20 +56,20 @@ jobs:
           dotnet restore Idasen.SystemTray.Win11/Idasen.SystemTray.Win11.csproj
           dotnet restore Idasen.SystemTray.Win11.Tests/Idasen.SystemTray.Win11.Tests.csproj
 
-      - name: Build (Release)
+      - name: Build (${{ env.BUILD_CONFIGURATION }})
         run: |
-          dotnet build Idasen.SystemTray.Win11/Idasen.SystemTray.Win11.csproj --configuration Release --no-restore
-          dotnet build Idasen.SystemTray.Win11.Tests/Idasen.SystemTray.Win11.Tests.csproj --configuration Release --no-restore
+          dotnet build Idasen.SystemTray.Win11/Idasen.SystemTray.Win11.csproj --configuration $env:BUILD_CONFIGURATION --no-restore
+          dotnet build Idasen.SystemTray.Win11.Tests/Idasen.SystemTray.Win11.Tests.csproj --configuration $env:BUILD_CONFIGURATION --no-restore
 
-      - name: Test (Release)
+      - name: Test (${{ env.BUILD_CONFIGURATION }})
         run: |
-          dotnet test Idasen.SystemTray.Win11.Tests/Idasen.SystemTray.Win11.Tests.csproj --configuration Release --no-build --verbosity normal
+          dotnet test Idasen.SystemTray.Win11.Tests/Idasen.SystemTray.Win11.Tests.csproj --configuration $env:BUILD_CONFIGURATION --no-build --verbosity normal
 
       - name: Publish win-x64 (self-contained single file)
         run: >-
           dotnet publish
           Idasen.SystemTray.Win11/Idasen.SystemTray.Win11.csproj
-          --configuration Release
+          --configuration $env:BUILD_CONFIGURATION
           --runtime win-x64
           --self-contained true
           -p:PublishSingleFile=true
@@ -71,19 +83,23 @@ jobs:
           $version = ($projXml.Project.PropertyGroup | ForEach-Object { $_.Version } | Where-Object { $_ } | Select-Object -First 1)
           if (-not $version) { throw "Version not found in $projPath" }
 
-          $publishDir = "Idasen.SystemTray.Win11/bin/Release/net8.0-windows10.0.19041/win-x64/publish"
+          $publishDir = "Idasen.SystemTray.Win11/bin/$env:BUILD_CONFIGURATION/net8.0-windows10.0.19041/win-x64/publish"
           $exe = Join-Path $publishDir "Idasen.SystemTray.exe"
           if (-not (Test-Path $exe)) { throw "Executable not found: $exe" }
 
+          $publishDirRel = (Join-Path "src" $publishDir) -replace '\\','/'
+
+          # Only exeRel needs to be inside src for artifact upload to work
           $exeRel = (Join-Path "src" $exe) -replace '\\','/'
 
           "version=$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
           "exe_path=$exeRel" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          "publish_dir=$publishDirRel" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
 
       - id: checksums
         name: Generate SHA256 checksum
         run: |
-          $publishDir = "Idasen.SystemTray.Win11/bin/Release/net8.0-windows10.0.19041/win-x64/publish"
+          $publishDir = "Idasen.SystemTray.Win11/bin/$env:BUILD_CONFIGURATION/net8.0-windows10.0.19041/win-x64/publish"
           $exe = Join-Path $publishDir "Idasen.SystemTray.exe"
           if (-not (Test-Path $exe)) { throw "Executable not found: $exe" }
 
@@ -95,7 +111,6 @@ jobs:
           Set-Content -Path $exeShaPath -Value $exeHashLine -NoNewline
 
           $exeShaRel = (Join-Path "src" $exeShaPath) -replace '\\','/'
-
           "exe_sha=$exeShaRel" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
 
       - name: Upload artifact (publish directory)
@@ -103,8 +118,7 @@ jobs:
         with:
           name: Idasen.SystemTray.Win11-win-x64-publish-${{ steps.determine_version.outputs.version }}
           if-no-files-found: error
-          path: |
-            src/Idasen.SystemTray.Win11/bin/Release/net8.0-windows10.0.19041/win-x64/publish/**
+          path: ${{ steps.determine_version.outputs.publish_dir }}/**
 
       - name: Upload exe checksum
         uses: actions/upload-artifact@v4
