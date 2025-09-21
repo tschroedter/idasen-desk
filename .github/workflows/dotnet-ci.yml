@@ -83,7 +83,8 @@ jobs:
           $zipRel = (Join-Path "src" $zip) -replace '\\','/'
           "zip_path=$zipRel" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
 
-      - name: Generate SHA256 checksums
+      - id: checksums
+        name: Generate SHA256 checksums
         run: |
           $publishDir = "Idasen.SystemTray.Win11/bin/Release/net8.0-windows10.0.19041/win-x64/publish"
           $exe = Join-Path $publishDir "Idasen.SystemTray.exe"
@@ -94,11 +95,20 @@ jobs:
 
           $exeHash = Get-FileHash -Algorithm SHA256 -Path $exe
           $exeHashLine = "{0}  {1}" -f $exeHash.Hash, (Split-Path -Leaf $exe)
-          Set-Content -Path (Join-Path $publishDir "Idasen.SystemTray.exe.sha256") -Value $exeHashLine -NoNewline
+          $exeShaPath = Join-Path $publishDir "Idasen.SystemTray.exe.sha256"
+          Set-Content -Path $exeShaPath -Value $exeHashLine -NoNewline
 
           $zipHash = Get-FileHash -Algorithm SHA256 -Path $zip.FullName
           $zipHashLine = "{0}  {1}" -f $zipHash.Hash, $zip.Name
-          Set-Content -Path (Join-Path $publishDir ("{0}.sha256" -f $zip.Name)) -Value $zipHashLine -NoNewline
+          $zipShaPath = Join-Path $publishDir ("{0}.sha256" -f $zip.Name)
+          Set-Content -Path $zipShaPath -Value $zipHashLine -NoNewline
+
+          $exeShaRel = (Join-Path "src" $exeShaPath) -replace '\\','/'
+
+          $zipShaRel = (Join-Path "src" $zipShaPath) -replace '\\','/'
+
+          "exe_sha=$exeShaRel" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          "zip_sha=$zipShaRel" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
 
       - name: Upload artifact (publish directory)
         uses: actions/upload-artifact@v4
@@ -115,13 +125,19 @@ jobs:
           if-no-files-found: error
           path: ${{ steps.zip_exe.outputs.zip_path }}
 
-      - name: Upload checksums
+      - name: Upload exe checksum
         uses: actions/upload-artifact@v4
         with:
-          name: sha256-checksums
+          name: Idasen.SystemTray.exe.sha256
           if-no-files-found: error
-          path: |
-            src/Idasen.SystemTray.Win11/bin/Release/net8.0-windows10.0.19041/win-x64/publish/*.sha256
+          path: ${{ steps.checksums.outputs.exe_sha }}
+
+      - name: Upload zip checksum
+        uses: actions/upload-artifact@v4
+        with:
+          name: Idasen.SystemTray-zip.sha256
+          if-no-files-found: error
+          path: ${{ steps.checksums.outputs.zip_sha }}
 
       - name: Create GitHub Release
         if: startsWith(github.ref, 'refs/tags/V')
@@ -131,4 +147,7 @@ jobs:
           name: ${{ github.ref_name }}
           draft: false
           prerelease: false
-          files: ${{ steps.zip_exe.outputs.zip_path }}
+          files: |
+            ${{ steps.zip_exe.outputs.zip_path }}
+            ${{ steps.checksums.outputs.exe_sha }}
+            ${{ steps.checksums.outputs.zip_sha }}
