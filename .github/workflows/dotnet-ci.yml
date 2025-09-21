@@ -99,7 +99,7 @@ jobs:
       - name: Upload artifact (publish directory)
         uses: actions/upload-artifact@v4
         with:
-          name: Idasen.SystemTray.Win11-win-x64-publish-${{ steps.determine_version.outputs.version }}
+          name: Idasen.SystemTray-${{ steps.determine_version.outputs.version }}-win-x64
           if-no-files-found: error
           path: ${{ steps.determine_version.outputs.publish_dir }}/**
 
