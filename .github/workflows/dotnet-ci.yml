@@ -51,6 +51,42 @@ jobs:
       - name: .NET info
         run: dotnet --info
 
+      - name: Set project version from GitHub run/tag
+        run: |
+          $projPath = "Idasen.SystemTray.Win11/Idasen.SystemTray.Win11.csproj"
+          [xml]$projXml = Get-Content $projPath
+          $pg = $projXml.Project.PropertyGroup | Select-Object -First 1
+
+          $runNumber = $env:GITHUB_RUN_NUMBER
+          $ref = $env:GITHUB_REF
+          $refName = $env:GITHUB_REF_NAME
+
+          $newVersion = $null
+          if ($ref -like 'refs/tags/V*' -and $refName -match '^V(?<ver>\d+\.\d+\.\d+)$') {
+            $newVersion = $Matches['ver']
+          }
+          else {
+            $base = $pg.Version
+            if ($base -and $base -match '^(?<maj>\d+)\.(?<min>\d+)') {
+              $maj = $Matches['maj']; $min = $Matches['min']
+            }
+            else {
+              $maj = '0'; $min = '0'
+            }
+            $newVersion = "$maj.$min.$runNumber"
+          }
+
+          if (-not $pg.Version) { $node = $projXml.CreateElement('Version'); [void]$pg.AppendChild($node) }
+          if (-not $pg.AssemblyVersion) { $node = $projXml.CreateElement('AssemblyVersion'); [void]$pg.AppendChild($node) }
+          if (-not $pg.FileVersion) { $node = $projXml.CreateElement('FileVersion'); [void]$pg.AppendChild($node) }
+
+          $pg.Version = $newVersion
+          $pg.AssemblyVersion = "$newVersion.0"
+          $pg.FileVersion = "$newVersion.0"
+
+          $projXml.Save($projPath)
+          Write-Host "Set Version=$($pg.Version), AssemblyVersion=$($pg.AssemblyVersion), FileVersion=$($pg.FileVersion)"
+
       - name: Restore
         run: |
           dotnet restore Idasen.SystemTray.Win11/Idasen.SystemTray.Win11.csproj
