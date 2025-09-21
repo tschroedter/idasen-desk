@@ -153,7 +153,7 @@ jobs:
           path: ${{ steps.determine_version.outputs.publish_dir }}/**
 
       - name: Create and push git tag V<version>
-        if: github.event_name != 'pull_request' && github.ref_type != 'tag'
+        if: github.event_name != 'pull_request' && !startsWith(github.ref, 'refs/tags/')
         shell: pwsh
         working-directory: .
         run: |
@@ -169,11 +169,11 @@ jobs:
           }
 
       - name: Create GitHub Release (draft)
-        if: startsWith(github.ref, 'refs/tags/V')
+        if: github.event_name != 'pull_request'
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.ref_name }}
-          name: ${{ github.ref_name }}
+          tag_name: V${{ steps.determine_version.outputs.version }}
+          name: V${{ steps.determine_version.outputs.version }}
           draft: true
           prerelease: false
           files: |
