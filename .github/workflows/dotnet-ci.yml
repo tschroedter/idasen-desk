@@ -125,6 +125,23 @@ jobs:
           "exe_path=$exeRel" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
           "publish_dir=$publishDirRel" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
 
+      - id: zip_exe
+        name: Zip executable
+        run: |
+          $publishDir = "Idasen.SystemTray.Win11/bin/$env:BUILD_CONFIGURATION/net8.0-windows10.0.19041/win-x64/publish"
+          $exe = Join-Path $publishDir "Idasen.SystemTray.exe"
+          if (-not (Test-Path $exe)) { throw "Executable not found: $exe" }
+
+          $version = '${{ steps.determine_version.outputs.version }}'
+          $zipName = "Idasen.SystemTray-$version-win-x64.zip"
+          $zip = Join-Path $publishDir $zipName
+          if (Test-Path $zip) { Remove-Item $zip -Force }
+          Compress-Archive -Path $exe -DestinationPath $zip -Force
+
+          $zipRel = (Join-Path "src" $zip) -replace '\\','/'
+
+          "zip_path=$zipRel" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+
       - name: Upload artifact (publish directory)
         uses: actions/upload-artifact@v4
         with:
@@ -132,13 +149,14 @@ jobs:
           if-no-files-found: error
           path: ${{ steps.determine_version.outputs.publish_dir }}/**
 
-      - name: Create GitHub Release
+      - name: Create GitHub Release (draft)
         if: startsWith(github.ref, 'refs/tags/V')
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
           name: ${{ github.ref_name }}
-          draft: false
+          draft: true
           prerelease: false
           files: |
             ${{ steps.determine_version.outputs.exe_path }}
+            ${{ steps.zip_exe.outputs.zip_path }}
