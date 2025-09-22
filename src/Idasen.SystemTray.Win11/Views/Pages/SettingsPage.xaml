@@ -29,11 +29,11 @@
 
         <!-- Scrollable content within fixed-height row -->
         <ScrollViewer Grid.Row="0"
-                      VerticalScrollBarVisibility="Auto"
-                      HorizontalScrollBarVisibility="Disabled"
-                      CanContentScroll="True"
-                      PanningMode="VerticalOnly"
-                      Padding="0,0,24,0">
+              VerticalScrollBarVisibility="Auto"
+              HorizontalScrollBarVisibility="Disabled"
+              CanContentScroll="False"
+              PanningMode="VerticalOnly"
+              Padding="0,0,24,0">
             <StackPanel>
                 <!-- Advanced -->
                 <ui:CardExpander CornerRadius="0,0,8,8" Header="Advanced">
