@@ -91,7 +91,7 @@ public class UiDeskManagerTests
 
         await sut.StopAsync ( ) ;
 
-        desk.Received ( 1 ).MoveStop ( ) ;
+        await desk.Received ( 1 ).MoveStopAsync ( ) ;
     }
 
     [ Fact ]
@@ -109,9 +109,10 @@ public class UiDeskManagerTests
         await sut.StopAsync ( ) ;
 
         desk.DidNotReceive ( ).MoveTo ( Arg.Any < uint > ( ) ) ;
-        desk.DidNotReceive ( ).MoveStop ( ) ;
-        desk.DidNotReceive ( ).MoveLock ( ) ;
-        desk.DidNotReceive ( ).MoveUnlock ( ) ;
+
+        await desk.DidNotReceive ( ).MoveStopAsync ( ) ;
+        await desk.DidNotReceive ( ).MoveStopAsync ( ) ;
+        await desk.DidNotReceive ( ).MoveUnlockAsync ( ) ;
     }
 
     [ Fact ]
@@ -123,7 +124,7 @@ public class UiDeskManagerTests
 
         await sut.MoveLockAsync ( ) ;
 
-        desk.Received ( 1 ).MoveLock ( ) ;
+        await desk.Received ( 1 ).MoveLockAsync( ) ;
     }
 
     [ Fact ]
@@ -135,7 +136,7 @@ public class UiDeskManagerTests
 
         await sut.MoveUnlockAsync ( ) ;
 
-        desk.Received ( 1 ).MoveUnlock ( ) ;
+        await desk.Received ( 1 ).MoveUnlockAsync( ) ;
     }
 
     [ Fact ]

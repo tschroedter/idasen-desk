@@ -220,17 +220,17 @@ public sealed class UiDeskManager : IUiDeskManager
 
     public Task StopAsync ( )
     {
-        return ExecuteIfConnected ( ( ) => _desk?.MoveStop ( ) ) ;
+        return ExecuteIfConnected ( ( ) => _desk?.MoveStopAsync ( ) ) ;
     }
 
     public Task MoveLockAsync ( )
     {
-        return ExecuteIfConnected ( ( ) => _desk?.MoveLock ( ) ) ;
+        return ExecuteIfConnected ( ( ) => _desk?.MoveLockAsync ( ) ) ;
     }
 
     public Task MoveUnlockAsync ( )
     {
-        return ExecuteIfConnected ( ( ) => _desk?.MoveUnlock ( ) ) ;
+        return ExecuteIfConnected ( ( ) => _desk?.MoveUnlockAsync ( ) ) ;
     }
 
     public Task HideAsync ( )
@@ -708,6 +708,6 @@ public sealed class UiDeskManager : IUiDeskManager
 
         _logger.Information ( "Locking desk movement" ) ;
 
-        _desk?.MoveLock ( ) ;
+        _desk?.MoveLockAsync ( ) ;
     }
 }
