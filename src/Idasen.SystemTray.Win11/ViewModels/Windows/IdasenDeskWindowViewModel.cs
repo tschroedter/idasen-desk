@@ -7,7 +7,6 @@ using System.Windows.Input ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.Utils ;
 using Idasen.SystemTray.Win11.Views.Pages ;
-using JetBrains.Annotations ;
 using Wpf.Ui.Controls ;
 using ILogger = Serilog.ILogger ;
 using MenuItem = Wpf.Ui.Controls.MenuItem ;
@@ -67,9 +66,6 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
     private ObservableCollection < object > _menuItems = [] ;
 
     private NotifyIcon ? _notifyIcon ;
-
-    [ UsedImplicitly ]
-    private IDisposable ? _onErrorChanged ;
 
     [ ObservableProperty ]
     private ObservableCollection < MenuItem > _trayMenuItems = [] ;
@@ -315,7 +311,6 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         await CastAndDispose ( _uiDeskManager ) ;
         await CastAndDispose ( _advancedSubscription ) ;
         await CastAndDispose ( _lockSubscription ) ;
-        await CastAndDispose ( _onErrorChanged ) ;
     }
 
     private async static ValueTask CastAndDispose ( IDisposable ? resource )
