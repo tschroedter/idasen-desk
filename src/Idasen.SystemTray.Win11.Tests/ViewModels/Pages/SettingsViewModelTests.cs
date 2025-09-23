@@ -9,6 +9,7 @@ using NSubstitute ;
 using Serilog ;
 using Wpf.Ui.Controls ;
 using Microsoft.Reactive.Testing ;
+using System.Reflection ;
 
 namespace Idasen.SystemTray.Win11.Tests.ViewModels.Pages ;
 
@@ -229,6 +230,25 @@ public class SettingsViewModelTests
 
         await _synchronizer.DidNotReceive ( )
                            .StoreSettingsAsync ( Arg.Any < ISettingsViewModel > ( ) , Arg.Any < CancellationToken > ( ) ) ;
+    }
+
+    [ Fact ]
+    public async Task ResetSettings_ShouldCallManagerAndReload ( )
+    {
+        // Arrange
+        var vm = CreateSut ( ) ;
+        _settingsManager.ResetSettingsAsync ( Arg.Any<CancellationToken> ( ) ).Returns ( Task.CompletedTask ) ;
+        _synchronizer.LoadSettingsAsync ( vm , Arg.Any<CancellationToken> ( ) ).Returns ( Task.CompletedTask ) ;
+
+        // Act: invoke the internal async method via reflection
+        var method = typeof ( SettingsViewModel ).GetMethod ( "OnResetSettings" , BindingFlags.Instance | BindingFlags.NonPublic ) ;
+        method.Should ( ).NotBeNull ( ) ;
+        var task = ( Task? ) method!.Invoke ( vm , null ) ;
+        if ( task != null ) await task ;
+
+        // Assert
+        await _settingsManager.Received ( 1 ).ResetSettingsAsync ( Arg.Any<CancellationToken> ( ) ) ;
+        await _synchronizer.Received ( 1 ).LoadSettingsAsync ( vm , Arg.Any<CancellationToken> ( ) ) ;
     }
 
     private SettingsViewModel CreateSut ( )

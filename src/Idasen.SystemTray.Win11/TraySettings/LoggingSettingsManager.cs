@@ -92,4 +92,11 @@ public class LoggingSettingsManager ( ILogger          logger ,
         await settingsManager.SetLastKnownDeskHeight ( heightInCm ,
                                                        token ).ConfigureAwait ( false ) ;
     }
+
+    public Task ResetSettingsAsync ( CancellationToken token )
+    {
+        logger.Information ( "Resetting settings to default" ) ;
+
+        return settingsManager.ResetSettingsAsync ( token ) ;
+    }
 }

@@ -9,4 +9,5 @@ public interface ISettingsManager
     Task                      LoadAsync ( CancellationToken            token ) ;
     Task < bool >             UpgradeSettingsAsync ( CancellationToken token ) ;
     Task                      SetLastKnownDeskHeight ( uint            heightInCm , CancellationToken token ) ;
+    Task                      ResetSettingsAsync ( CancellationToken   token ) ;
 }

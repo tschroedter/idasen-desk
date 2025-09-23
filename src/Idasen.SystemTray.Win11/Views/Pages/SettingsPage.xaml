@@ -59,6 +59,10 @@
                                 <RowDefinition Height="5" />
                                 <RowDefinition />
                                 <RowDefinition Height="5" />
+                                <RowDefinition />
+                                <RowDefinition Height="5" />
+                                <RowDefinition />
+                                <RowDefinition Height="5" />
                             </Grid.RowDefinitions>
                             <!-- Row 0 -->
                             <Label Grid.Row="0" Grid.Column="0" Content="Log Folder"
@@ -113,6 +117,20 @@
                                       VerticalContentAlignment="Center" Margin="4,0,0,0"
                                       IsChecked="{Binding ViewModel.Notifications}" />
                             <!-- Row 13 Blank -->
+                            <!-- Row 14 -->
+                            <!-- Row 15 Blank -->
+                            <Separator Grid.Row="15" Grid.Column="0" Grid.ColumnSpan="2" />
+                            <!-- Row 16 -->
+                            <Label Grid.Row="16" Grid.Column="0" Content="Settings"
+                                   ToolTip="Show or hide all notifications." 
+                                   Padding="5,7,5,0" />
+                            <ui:Button Grid.Row="16"
+                                       Grid.Column="1"
+                                       HorizontalAlignment="Right"
+                                       Content="Reset All"
+                                       ToolTip="Reset all settings to their default values."
+                                       Command="{Binding ViewModel.ResetSettingsCommand}" />
+
                         </Grid>
                     </StackPanel>
                 </ui:CardExpander>

@@ -9,6 +9,9 @@ using Idasen.SystemTray.Win11.Utils ;
 using Serilog ;
 using Wpf.Ui.Abstractions.Controls ;
 using Wpf.Ui.Appearance ;
+// Alias Wpf.Ui dialog types to avoid ambiguity with System.Windows.MessageBox
+using UiMessageBox = Wpf.Ui.Controls.MessageBox ;
+using UiMessageBoxResult = Wpf.Ui.Controls.MessageBoxResult ;
 
 namespace Idasen.SystemTray.Win11.ViewModels.Pages ;
 
@@ -49,9 +52,6 @@ public partial class SettingsViewModel ( ILogger                                
     [ ObservableProperty ]
     private string _deskName = string.Empty ;
 
-    private bool _isInitialized ;
-    private bool _isLoadingSettings ;
-
     [ ObservableProperty ]
     private uint _lastKnownDeskHeight = Constants.DefaultDeskMinHeightInCm ;
 
@@ -89,6 +89,9 @@ public partial class SettingsViewModel ( ILogger                                
 
     [ ObservableProperty ]
     private bool _stopIsVisibleInContextMenu = true ;
+
+    private bool _isInitialized;
+    private bool _isLoadingSettings;
 
     public async Task OnNavigatedToAsync ( )
     {
@@ -199,5 +202,62 @@ public partial class SettingsViewModel ( ILogger                                
     internal void OnChangeTheme ( string parameter )
     {
         synchronizer.ChangeTheme ( parameter ) ;
+    }
+
+    [ RelayCommand ]
+    internal async Task OnResetSettings ( )
+    {
+        try
+        {
+            // Confirm with the user (only if we have a UI dispatcher; in tests we proceed without the dialog)
+            var dispatcher = Application.Current?.Dispatcher ;
+
+            if ( dispatcher != null )
+            {
+                var uiMessageBox = new UiMessageBox
+                {
+                    Title             = "Reset settings?" ,
+                    Content           = "Do you want to reset all settings to their default values?" ,
+                    PrimaryButtonText = "Reset" ,
+                    CloseButtonText   = "Cancel"
+                } ;
+
+                UiMessageBoxResult result ;
+
+                if ( dispatcher.CheckAccess ( ) )
+                {
+                    result = await uiMessageBox.ShowDialogAsync ( ) ;
+                }
+                else
+                {
+                    var showTask = dispatcher.Invoke ( ( ) => uiMessageBox.ShowDialogAsync ( ) ) ;
+
+                    result = await showTask ;
+                }
+
+                if ( result != UiMessageBoxResult.Primary )
+                    return ;
+            }
+
+            _isLoadingSettings = true ;
+
+            // Reset settings to defaults at the source and persist once
+            await settingsManager.ResetSettingsAsync ( CancellationToken.None ) ;
+
+            // Reload the ViewModel from the freshly reset settings
+            await synchronizer.LoadSettingsAsync ( this ,
+                                                   CancellationToken.None ) ;
+        }
+        catch ( Exception ex )
+        {
+            logger.Error ( ex ,
+                           "Failed to reset settings" ) ;
+        }
+        finally
+        {
+            _isLoadingSettings = false ;
+        }
+
+        // No extra save here; reset already persisted defaults
     }
 }

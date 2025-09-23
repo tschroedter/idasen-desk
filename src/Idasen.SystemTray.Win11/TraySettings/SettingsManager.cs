@@ -69,6 +69,24 @@ public class SettingsManager ( ILogger                logger ,
                                                              token ).ConfigureAwait ( false ) ;
     }
 
+    public async Task ResetSettingsAsync ( CancellationToken token )
+    {
+        try
+        {
+            logger.Information ( "Resetting settings to defaults" ) ;
+
+            // Create a fresh default settings instance
+            _current = new Settings ( ) ;
+
+            await SaveAsync ( token ).ConfigureAwait ( false ) ;
+        }
+        catch ( Exception ex )
+        {
+            logger.Error ( ex , "Failed to reset settings" ) ;
+            throw ;
+        }
+    }
+
     private static bool MissingNotificationsEnabled ( string settingsJson )
     {
         return ! settingsJson.Contains ( nameof ( Settings.DeviceSettings.NotificationsEnabled ) ,

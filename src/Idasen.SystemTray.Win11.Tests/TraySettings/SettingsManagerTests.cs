@@ -105,4 +105,25 @@ public class SettingsManagerTests
                                                    Arg.Is < Settings > ( s => s.HeightSettings.LastKnownDeskHeight == heightInCm ) ,
                                                    CancellationToken.None ) ;
     }
+
+    [ Fact ]
+    public async Task ResetSettingsAsync_ShouldCreateDefaults_Save_AndNotify ( )
+    {
+        // Arrange
+        var notified = false ;
+        _settingsManager.SettingsSaved.Subscribe ( _ => notified = true ) ;
+
+        _settingsManager.CurrentSettings.DeviceSettings.DeviceName = "Changed" ;
+
+        // Act
+        await _settingsManager.ResetSettingsAsync ( CancellationToken.None ) ;
+
+        // Assert
+        _settingsStorage.Received ( 1 )
+                        .SaveSettingsAsync ( "TestSettingsFilePath" ,
+                                             Arg.Is<Settings> ( s => s.DeviceSettings.DeviceName == Constants.DefaultDeviceName &&
+                                                                     s.HeightSettings.StandingHeightInCm == Constants.DefaultHeightStandingInCm ) ,
+                                             CancellationToken.None ) ;
+        notified.Should ( ).BeTrue ( ) ;
+    }
 }
