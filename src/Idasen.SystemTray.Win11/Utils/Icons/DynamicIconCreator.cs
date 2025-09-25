@@ -1,5 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis ;
 using System.Drawing ;
+using System.Drawing.Drawing2D ;
+using System.Drawing.Text ;
 using System.Runtime.InteropServices ;
 using System.Windows.Interop ;
 using System.Windows.Media ;
@@ -9,14 +11,20 @@ using Idasen.SystemTray.Win11.Interfaces ;
 using Wpf.Ui.Tray.Controls ;
 using Color = System.Drawing.Color ;
 using Pen = System.Drawing.Pen ;
+using DFont = System.Drawing.Font ;
+using DFontStyle = System.Drawing.FontStyle ;
+using DGraphics = System.Drawing.Graphics ;
+using DGraphicsUnit = System.Drawing.GraphicsUnit ;
+using DPixelFormat = System.Drawing.Imaging.PixelFormat ;
+using DSolidBrush = System.Drawing.SolidBrush ;
 
 namespace Idasen.SystemTray.Win11.Utils.Icons ;
 
 [ ExcludeFromCodeCoverage ]
 public class DynamicIconCreator : IDynamicIconCreator
 {
-    private const           int    IconHeight     = 16 ;
-    private const           int    FontSize       = 8 ;
+    private const           int    IconHeight     = 16 ; // base logical height at 100% DPI
+    private const           int    FontSize       = 8 ;  // base logical font size (px) at 100% DPI (used as fallback)
     private const           string FontFamily     = "Consolas" ;
     private static readonly Color  BrushDarkBlue  = ColorTranslator.FromHtml ( "#FF0048A3" ) ;
     private static readonly Color  BrushLightBlue = ColorTranslator.FromHtml ( "#FF0098F3" ) ;
@@ -26,45 +34,70 @@ public class DynamicIconCreator : IDynamicIconCreator
         Guard.ArgumentNotNull ( taskbarIcon ,
                                 nameof ( taskbarIcon ) ) ;
 
-        var image = CreateImageSource ( height ) ;
+        // Get per-monitor DPI scale for crisp rendering in the tray
+        var dpi = VisualTreeHelper.GetDpi ( taskbarIcon ) ;
+
+        var image = CreateImageSource ( height ,
+                                        dpi.DpiScaleX ,
+                                        dpi.DpiScaleY ) ;
 
         PushIcons ( taskbarIcon ,
                     image ,
                     height ) ;
     }
 
-    private ImageSource CreateImageSource ( int height )
+    private ImageSource CreateImageSource ( int height , double scaleX , double scaleY )
     {
-        var width = height >= 100
-                        ? 24
-                        : 16 ;
+        // Height text
+        var text = height.ToString ( ) ;
 
-        using var bitmap = new Bitmap ( width ,
-                                        IconHeight ) ;
-        using var graphics = Graphics.FromImage ( bitmap ) ;
-        using var pen      = new Pen ( BrushDarkBlue ) ;
-        using var brush    = new SolidBrush ( BrushLightBlue ) ;
-        using var font = new Font ( FontFamily ,
-                                    FontSize ) ;
+        // Compute pixel bounds based on DPI and text length for better readability
+        var pixelHeight = Math.Max ( 16 , ( int ) Math.Round ( IconHeight * scaleY ) ) ;
 
-        // Draw top and bottom horizontal lines
+        // Make font fill most of the icon height for readability
+        var fontSizePx = ( int ) Math.Max ( 10 , Math.Floor ( pixelHeight * 0.90 ) ) ;
+
+        // Estimate width based on monospace character width (~0.6 of height), plus small padding
+        var estimatedCharWidth = Math.Max ( 8 , ( int ) Math.Round ( fontSizePx * 0.60 ) ) ;
+        var pixelWidth         = Math.Max ( 16 , estimatedCharWidth * text.Length + 4 ) ;
+
+        using var bitmap = new Bitmap ( pixelWidth ,
+                                        pixelHeight ,
+                                        DPixelFormat.Format32bppPArgb ) ;
+        bitmap.SetResolution ( ( float ) ( 96.0 * scaleX ) ,
+                               ( float ) ( 96.0 * scaleY ) ) ;
+
+        using var graphics = DGraphics.FromImage ( bitmap ) ;
+        graphics.SmoothingMode     = SmoothingMode.AntiAlias ;
+        graphics.PixelOffsetMode   = PixelOffsetMode.HighQuality ;
+        graphics.TextRenderingHint = TextRenderingHint.ClearTypeGridFit ;
+        graphics.Clear ( Color.Transparent ) ;
+
+        using var pen   = new Pen ( BrushDarkBlue , 1.0f ) ;
+        using var brush = new DSolidBrush ( BrushLightBlue ) ;
+        using var font  = new DFont ( FontFamily ,
+                                      fontSizePx ,
+                                      DFontStyle.Bold ,
+                                      DGraphicsUnit.Pixel ) ;
+
+        // Draw top and bottom horizontal lines across the full scaled width
         graphics.DrawLine ( pen ,
                             0 ,
                             0 ,
-                            width ,
+                            pixelWidth ,
                             0 ) ;
         graphics.DrawLine ( pen ,
                             0 ,
-                            IconHeight - 1 ,
-                            width ,
-                            IconHeight - 1 ) ;
+                            pixelHeight - 1 ,
+                            pixelWidth ,
+                            pixelHeight - 1 ) ;
 
-        // Draw the height value string
-        graphics.DrawString ( $"{height}" ,
+        // Draw the height value string (slightly inset)
+        graphics.DrawString ( text ,
                               font ,
                               brush ,
-                              new PointF ( - 1 ,
-                                           1 ) ) ;
+                              new PointF ( 1f ,
+                                           Math.Max ( 0f , pixelHeight - fontSizePx - 1f ) ) ) ;
 
         // Convert the GDI bitmap to a WPF ImageSource and make it cross-thread safe
         var hBitmap = bitmap.GetHbitmap ( ) ;
