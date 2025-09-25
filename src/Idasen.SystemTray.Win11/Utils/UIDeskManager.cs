@@ -438,7 +438,8 @@ public sealed class UiDeskManager : IUiDeskManager
 
     private static uint MmToCm ( uint height )
     {
-        return ( uint ) Math.Round ( height / 100.0 ) ;
+        // Use double division and specify midpoint rounding to avoid ambiguous overloads and banker's rounding
+        return ( uint ) Math.Round ( height / ( double ) DeskHeightFactor , MidpointRounding.AwayFromZero ) ;
     }
 
     private void DoDisconnectAsync ( )

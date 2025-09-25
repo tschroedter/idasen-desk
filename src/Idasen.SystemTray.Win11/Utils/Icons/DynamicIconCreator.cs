@@ -1,8 +1,14 @@
 ﻿using System.Diagnostics.CodeAnalysis ;
 using System.Drawing ;
+using System.Runtime.InteropServices ;
+using System.Windows.Interop ;
+using System.Windows.Media ;
+using System.Windows.Media.Imaging ;
 using Idasen.BluetoothLE.Core ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Wpf.Ui.Tray.Controls ;
+using Color = System.Drawing.Color ;
+using Pen = System.Drawing.Pen ;
 
 namespace Idasen.SystemTray.Win11.Utils.Icons ;
 
@@ -19,13 +25,15 @@ public class DynamicIconCreator : IDynamicIconCreator
     {
         Guard.ArgumentNotNull ( taskbarIcon ,
                                 nameof ( taskbarIcon ) ) ;
-        var icon = CreateIcon ( height ) ;
+
+        var image = CreateImageSource ( height ) ;
+
         PushIcons ( taskbarIcon ,
-                    icon ,
+                    image ,
                     height ) ;
     }
 
-    private Icon CreateIcon ( int height )
+    private ImageSource CreateImageSource ( int height )
     {
         var width = height >= 100
                         ? 24
@@ -58,21 +66,40 @@ public class DynamicIconCreator : IDynamicIconCreator
                               new PointF ( - 1 ,
                                            1 ) ) ;
 
-        var iconHandle = bitmap.GetHicon ( ) ;
-        return Icon.FromHandle ( iconHandle ) ;
+        // Convert the GDI bitmap to a WPF ImageSource and make it cross-thread safe
+        var hBitmap = bitmap.GetHbitmap ( ) ;
+
+        try
+        {
+            var imageSource = Imaging.CreateBitmapSourceFromHBitmap ( hBitmap ,
+                                                                      IntPtr.Zero ,
+                                                                      Int32Rect.Empty ,
+                                                                      BitmapSizeOptions.FromEmptyOptions ( ) ) ;
+            imageSource.Freeze ( ) ;
+            return imageSource ;
+        }
+        finally
+        {
+            // Avoid GDI handle leaks
+            DeleteObject ( hBitmap ) ;
+        }
     }
 
-    private void PushIcons ( NotifyIcon taskbarIcon , Icon icon , int value )
+    private void PushIcons ( NotifyIcon taskbarIcon , ImageSource imageSource , int value )
     {
         if ( ! taskbarIcon.Dispatcher.CheckAccess ( ) )
         {
             taskbarIcon.Dispatcher.BeginInvoke ( new Action ( ( ) => PushIcons ( taskbarIcon ,
-                                                                                 icon ,
+                                                                                 imageSource ,
                                                                                  value ) ) ) ;
             return ;
         }
 
-        taskbarIcon.Icon        = icon.ToImageSource ( ) ;
+        taskbarIcon.Icon        = imageSource ;
         taskbarIcon.TooltipText = $"Desk Height: {value} cm" ;
     }
+
+    [ DllImport ( "gdi32.dll" ) ]
+    [ return : MarshalAs ( UnmanagedType.Bool ) ]
+    private static extern bool DeleteObject ( IntPtr hObject ) ;
 }
