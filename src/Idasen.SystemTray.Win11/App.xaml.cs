@@ -9,6 +9,7 @@ using Idasen.Aop ;
 using Idasen.BluetoothLE.Core ;
 using Idasen.BluetoothLE.Linak ;
 using Idasen.BluetoothLE.Linak.Interfaces ;
+using Idasen.Launcher ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.Services ;
 using Idasen.SystemTray.Win11.TraySettings ;
@@ -38,37 +39,22 @@ namespace Idasen.SystemTray.Win11 ;
 public partial class App
 {
     // Configure a single Serilog logger instance for the entire app
-    private static readonly ILogger AppLogger = Launcher.LoggerProvider.CreateLogger ( AppContext.BaseDirectory ) ;
+    private static readonly ILogger AppLogger = LoggerProvider.CreateLogger ( AppContext.BaseDirectory ) ;
 
     // Generic Host with explicit configuration pipeline ensuring single-file friendly base path
     private static readonly IHost Host = Microsoft.Extensions.Hosting.Host
                                                   .CreateDefaultBuilder ( )
-                                                  .ConfigureAppConfiguration ( ( context ,
-                                                                                 config ) =>
-                                                                               {
-                                                                                   // Replace defaults so we control order and base path explicitly
-                                                                                   config.Sources.Clear ( ) ;
-
-                                                                                   config
-                                                                                      .SetBasePath ( AppContext.BaseDirectory ) // Works for single-file
-                                                                                      .AddJsonFile ( "appsettings.json" ,
-                                                                                                     optional : true ,
-                                                                                                     reloadOnChange : false )
-                                                                                      .AddJsonFile (
-                                                                                          $"appsettings.{context.HostingEnvironment.EnvironmentName}.json" ,
-                                                                                          optional : true ,
-                                                                                          reloadOnChange : false )
-                                                                                      .AddEnvironmentVariables ( ) ;
-                                                                                   // Environment defaults to Production if not set (DOTNET_ENVIRONMENT)
-                                                                               } )
+                                                  .ConfigureAppConfiguration ( GetBasePath )
                                                   .UseServiceProviderFactory ( new AutofacServiceProviderFactory ( ) )
                                                   .ConfigureContainer < ContainerBuilder > ( builder =>
                                                                                              {
                                                                                                  // Register Serilog logger instance for DI
                                                                                                  builder.RegisterLogger ( AppLogger ) ;
                                                                                                  builder.RegisterModule < BluetoothLEAop > ( ) ;
-                                                                                                 builder.RegisterModule < BluetoothLECoreModule > ( ) ;
-                                                                                                 builder.RegisterModule < BluetoothLELinakModule > ( ) ;
+                                                                                                 builder
+                                                                                                    .RegisterModule < BluetoothLECoreModule > ( ) ;
+                                                                                                 builder
+                                                                                                    .RegisterModule < BluetoothLELinakModule > ( ) ;
                                                                                              } )
                                                   .ConfigureServices ( ( _ ,
                                                                          services ) =>
@@ -101,8 +87,11 @@ public partial class App
                                                                            services.AddSingleton < IObserveSettingsChanges > ( GetSettingsChanged ) ;
                                                                            services.AddSingleton < INotifySettingsChanges > ( GetSettingsChanged ) ;
                                                                            services.AddSingleton < ISettingsManager , SettingsManager > ( ) ;
-                                                                           services.AddSingleton < ILoggingSettingsManager , LoggingSettingsManager > ( ) ;
-                                                                           services.AddSingleton < ICommonApplicationData , CommonApplicationData > ( ) ;
+                                                                           services
+                                                                              .AddSingleton < ILoggingSettingsManager ,
+                                                                                   LoggingSettingsManager > ( ) ;
+                                                                           services
+                                                                              .AddSingleton < ICommonApplicationData , CommonApplicationData > ( ) ;
                                                                            services.AddSingleton < ISettingsStorage , SettingsStorage > ( ) ;
                                                                            services.AddSingleton < ITaskbarIconProvider , TaskbarIconProvider > ( ) ;
                                                                            services.AddSingleton < IUiDeskManager , UiDeskManager > ( ) ;
@@ -110,17 +99,24 @@ public partial class App
                                                                            services.AddSingleton ( _ => CreateScheduler ( ) ) ;
                                                                            services.AddSingleton ( CreateTaskbarIconProvider ) ;
                                                                            services.AddTransient < IDeviceNameConverter , DeviceNameConverter > ( ) ;
-                                                                           services.AddTransient < IDoubleToUIntConverter , DoubleToUIntConverter > ( ) ;
-                                                                           services.AddTransient < IStringToUIntConverter , StringToUIntConverter > ( ) ;
-                                                                           services.AddTransient < IDeviceAddressToULongConverter , DeviceAddressToULongConverter > ( ) ;
+                                                                           services
+                                                                              .AddTransient < IDoubleToUIntConverter , DoubleToUIntConverter > ( ) ;
+                                                                           services
+                                                                              .AddTransient < IStringToUIntConverter , StringToUIntConverter > ( ) ;
+                                                                           services
+                                                                              .AddTransient < IDeviceAddressToULongConverter ,
+                                                                                   DeviceAddressToULongConverter > ( ) ;
                                                                            services.AddSingleton ( provider =>
                                                                                                       new Func < IDeskProvider > ( provider
                                                                                                          .GetRequiredService <
                                                                                                               IDeskProvider > ) ) ;
                                                                            services.AddSingleton < IFileSystem , FileSystem > ( ) ;
                                                                            services.AddTransient < IThemeSwitcher , ThemeSwitcher > ( ) ;
-                                                                           services.AddTransient < ISettingsSynchronizer , SettingsSynchronizer > ( ) ;
-                                                                           services.AddSingleton < IApplicationThemeManager , MyApplicationThemeManager > ( ) ;
+                                                                           services
+                                                                              .AddTransient < ISettingsSynchronizer , SettingsSynchronizer > ( ) ;
+                                                                           services
+                                                                              .AddSingleton < IApplicationThemeManager ,
+                                                                                   MyApplicationThemeManager > ( ) ;
                                                                            services
                                                                               .AddSingleton < Func < TimerCallback , object ? , TimeSpan , TimeSpan ,
                                                                                        ITimer > >
@@ -182,7 +178,7 @@ public partial class App
     /// <summary>
     ///     Occurs when the application is loading.
     /// </summary>
-    private async void OnStartup ( object sender ,
+    private async void OnStartup ( object           sender ,
                                    StartupEventArgs args )
     {
         try
@@ -251,7 +247,7 @@ public partial class App
     /// <summary>
     ///     Occurs when the application is closing.
     /// </summary>
-    private async void OnExit ( object sender ,
+    private async void OnExit ( object        sender ,
                                 ExitEventArgs e )
     {
         try
@@ -292,6 +288,12 @@ public partial class App
         var notifyIcons = FindVisualChildren < NotifyIcon > ( CurrentWindow ) ;
 
         return notifyIcons.FirstOrDefault ( ) ?? throw new Exception ( "Can't find the main notify icon!" ) ;
+    }
+
+    private static void GetBasePath ( IConfigurationBuilder c )
+    {
+        c.SetBasePath ( AppContext.BaseDirectory ??
+                        throw new InvalidOperationException ( "Couldn't get directory name from entry assembly" ) ) ;
     }
 
     public static IEnumerable < T > FindVisualChildren < T > ( DependencyObject parent )
