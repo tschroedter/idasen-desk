@@ -48,6 +48,9 @@
         <PackageReference Include="Serilog.Enrichers.Thread" Version="4.0.0" />
         <PackageReference Include="Serilog.Extensions.Autofac.DependencyInjection" Version="5.0.0" />
         <PackageReference Include="Serilog.Sinks.Async" Version="2.1.0" />
+        <PackageReference Include="Serilog.Settings.Configuration" Version="9.0.0" />
+        <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+        <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
         <PackageReference Include="System.IO.Abstractions" Version="22.0.16" />
         <PackageReference Include="Testably.Abstractions.FileSystem.Interface" Version="9.0.0" />
         <PackageReference Include="WPF-UI" Version="4.0.3" />
