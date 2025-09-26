@@ -120,34 +120,16 @@ jobs:
           if (-not (Test-Path $exe)) { throw "Executable not found: $exe" }
 
           $publishDirRel = (Join-Path "src" $publishDir) -replace '\\','/'
-
-          # Only exeRel needs to be inside src for artifact upload to work
           $exeRel = (Join-Path "src" $exe) -replace '\\','/'
 
           "version=$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
           "exe_path=$exeRel" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
           "publish_dir=$publishDirRel" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
 
-      - name: Diagnose publish directory (before upload)
-        run: |
-          $publishDir = "Idasen.SystemTray.Win11/bin/$env:BUILD_CONFIGURATION/net8.0-windows10.0.19041/win-x64/publish"
-          Write-Host "Publish directory content:" -ForegroundColor Cyan
-          Get-ChildItem -Path $publishDir | Select-Object Name,Length | Format-Table -AutoSize
-          if (Get-ChildItem -Path $publishDir -Filter *.zip) {
-            Write-Warning "Unexpected zip file(s) found in publish directory. They will be removed." 
-          }
-
-      - name: Remove stray zip files (safety)
-        run: |
-          $publishDir = "Idasen.SystemTray.Win11/bin/$env:BUILD_CONFIGURATION/net8.0-windows10.0.19041/win-x64/publish"
-          Get-ChildItem -Path $publishDir -Filter *.zip -ErrorAction SilentlyContinue | Remove-Item -Force -ErrorAction SilentlyContinue
-          Write-Host "Remaining files:" -ForegroundColor Cyan
-          Get-ChildItem -Path $publishDir | Select-Object Name,Length | Format-Table -AutoSize
-
-      - name: Upload artifact (exe only)
+      - name: Upload artifact (executable only)
         uses: actions/upload-artifact@v4
         with:
-          name: Idasen.SystemTray-exe-${{ steps.determine_version.outputs.version }}-win-x64
+          name: Idasen.SystemTray-${{ steps.determine_version.outputs.version }}-win-x64
           if-no-files-found: error
           path: ${{ steps.determine_version.outputs.exe_path }}
 

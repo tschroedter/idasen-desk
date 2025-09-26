@@ -73,7 +73,7 @@ jobs:
           }
 
           if (-not $pg.Version) { $node = $projXml.CreateElement('Version'); [void]$pg.AppendChild($node) }
-          if (-not $pg.AssemblyVersion) { $node = $projXml.CreateElement('AssemblyVersion'); [void]$pg.AppendChild($node) }
+            if (-not $pg.AssemblyVersion) { $node = $projXml.CreateElement('AssemblyVersion'); [void]$pg.AppendChild($node) }
           if (-not $pg.FileVersion) { $node = $projXml.CreateElement('FileVersion'); [void]$pg.AppendChild($node) }
 
           $pg.Version = $newVersion
@@ -120,38 +120,18 @@ jobs:
           if (-not (Test-Path $exe)) { throw "Executable not found: $exe" }
 
           $publishDirRel = (Join-Path "src" $publishDir) -replace '\\','/'
-
-          # Only exeRel needs to be inside src for artifact upload to work
           $exeRel = (Join-Path "src" $exe) -replace '\\','/'
 
           "version=$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
           "exe_path=$exeRel" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
           "publish_dir=$publishDirRel" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
 
-      - id: zip_exe
-        name: Zip executable
-        run: |
-          $publishDir = "Idasen.SystemTray.Win11/bin/$env:BUILD_CONFIGURATION/net8.0-windows10.0.19041/win-x64/publish"
-          $exe = Join-Path $publishDir "Idasen.SystemTray.exe"
-          if (-not (Test-Path $exe)) { throw "Executable not found: $exe" }
-
-          $version = '${{ steps.determine_version.outputs.version }}'
-          $zipName = "Idasen.SystemTray-$version-win-x64.zip"
-          $zip = Join-Path $publishDir $zipName
-          if (Test-Path $zip) { Remove-Item $zip -Force }
-          # Ensure only the EXE is zipped; treat path literally (no wildcard expansion)
-          Compress-Archive -LiteralPath $exe -DestinationPath $zip -Force
-
-          $zipRel = (Join-Path "src" $zip) -replace '\\','/'
-
-          "zip_path=$zipRel" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
-
-      - name: Upload artifact (zipped executable only)
+      - name: Upload artifact (executable)
         uses: actions/upload-artifact@v4
         with:
           name: Idasen.SystemTray-${{ steps.determine_version.outputs.version }}-win-x64
           if-no-files-found: error
-          path: ${{ steps.zip_exe.outputs.zip_path }}
+          path: ${{ steps.determine_version.outputs.exe_path }}
 
       - name: Create and push git tag V<version>
         if: github.event_name != 'pull_request' && !startsWith(github.ref, 'refs/tags/')
@@ -179,4 +159,3 @@ jobs:
           prerelease: false
           files: |
             ${{ steps.determine_version.outputs.exe_path }}
-            ${{ steps.zip_exe.outputs.zip_path }}
