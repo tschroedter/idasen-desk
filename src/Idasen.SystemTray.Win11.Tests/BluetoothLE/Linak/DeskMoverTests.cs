@@ -1,5 +1,3 @@
-using System.Linq;
-using System.Reactive.Concurrency;
 using System.Reactive.Subjects;
 using FluentAssertions;
 using Idasen.BluetoothLE.Linak; // for HeightSpeedDetails
@@ -94,8 +92,7 @@ public class DeskMoverTests
         out Subject<uint> subjectFinished,
         out IDeskHeightMonitor heightMonitor,
         uint initialHeight,
-        int initialSpeed,
-        DeskMoverSettings? settings = null)
+        int initialSpeed)
     {
         var logger = Substitute.For<ILogger>();
         executor = Substitute.For<IDeskCommandExecutor>();
@@ -135,8 +132,7 @@ public class DeskMoverTests
             heightAndSpeed,
             calculator,
             subjectFinished,
-            heightMonitor,
-            settings ?? new DeskMoverSettings { TimerInterval = TimeSpan.FromMilliseconds(50), NearTargetBaseTolerance = 2, NearTargetMaxDynamicTolerance = 4 }
+            heightMonitor
         );
 
         return mover;
@@ -146,15 +142,17 @@ public class DeskMoverTests
     public void Move_ReissuesCommand_AsKeepAlive_OnEachTick()
     {
         var scheduler = new TestScheduler();
-        var sut = CreateSut(
-            scheduler,
-            out var executor,
-            out var heightAndSpeed,
-            out var initialProvider,
-            out var subjectFinished,
-            out var heightMonitor,
-            initialHeight: 60000,
-            initialSpeed: 30);
+
+        // ReSharper disable UnusedVariable
+        var sut = CreateSut( scheduler,
+                             out var executor,
+                             out var heightAndSpeed,
+                             out var initialProvider,
+                             out var subjectFinished,
+                             out var heightMonitor,
+                             initialHeight: 60000,
+                             initialSpeed: 30);
+        // ReSharper restore UnusedVariable
 
         sut.TargetHeight = 60500;
         sut.Initialize();
@@ -177,23 +175,17 @@ public class DeskMoverTests
     public void Move_Stops_WhenWithinTolerance_AndPublishesFinished()
     {
         var scheduler = new TestScheduler();
-        var settings = new DeskMoverSettings
-        {
-            TimerInterval = TimeSpan.FromMilliseconds(50),
-            NearTargetBaseTolerance = 4,
-            NearTargetMaxDynamicTolerance = 4
-        };
 
-        var sut = CreateSut(
-            scheduler,
-            out var executor,
-            out var heightAndSpeed,
-            out var initialProvider,
-            out var subjectFinished,
-            out var heightMonitor,
-            initialHeight: 60000,
-            initialSpeed: 30,
-            settings: settings);
+        // ReSharper disable UnusedVariable
+        var sut = CreateSut( scheduler,
+                             out var executor,
+                             out var heightAndSpeed,
+                             out var initialProvider,
+                             out var subjectFinished,
+                             out var heightMonitor,
+                             initialHeight: 60000,
+                             initialSpeed: 0); // deterministic (no movement state)
+        // ReSharper restore UnusedVariable
 
         sut.TargetHeight = 60003; // Within base tolerance (4)
         sut.Initialize();
@@ -202,12 +194,12 @@ public class DeskMoverTests
         uint? finishedHeight = null;
         using var finishedSub = sut.Finished.Subscribe(h => finishedHeight = h);
 
-        // Start movement
+        // Start movement evaluation by providing the initial height
         initialProvider.Emit(60000);
         scheduler.AdvanceBy(TimeSpan.FromMilliseconds(1).Ticks);
 
-        // First tick will evaluate and immediately stop due to tolerance
-        scheduler.AdvanceBy(TimeSpan.FromMilliseconds(60).Ticks);
+        // Advance virtual time long enough to guarantee at least one evaluation tick
+        scheduler.AdvanceBy(TimeSpan.FromSeconds(1000).Ticks);
 
         executor.Received(1).Stop();
         finishedHeight.Should().Be(60000u);
