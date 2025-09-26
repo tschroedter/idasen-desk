@@ -1,4 +1,4 @@
-﻿    <Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
@@ -17,9 +17,11 @@
         <RuntimeIdentifier>win-x64</RuntimeIdentifier>
         <SelfContained>true</SelfContained>
         <PublishSingleFile>true</PublishSingleFile>
+        <!-- Remove or set to false so JSON isn't auto-bundled -->
+        <IncludeAllContentForSelfExtract>false</IncludeAllContentForSelfExtract>
         <PublishReadyToRun>true</PublishReadyToRun>
-        <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
         <UserSecretsId>5d8a1b1f-079f-4b54-b2fa-83756cd66cd1</UserSecretsId>
+        <LangVersion>preview</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
@@ -30,9 +32,6 @@
 
     <ItemGroup>
       <Resource Include="Resources\Donate-Button.png" />
-    </ItemGroup>
-
-    <ItemGroup>
       <Resource Include="Resources\cup-xl.ico" />
     </ItemGroup>
 
@@ -58,18 +57,12 @@
         <PackageReference Include="xunit.abstractions" Version="2.0.3" />
     </ItemGroup>
 
-    <!-- Ensure all appsettings variants are included in publish (single-file still needs external JSON files) -->
+    <!-- Single concise include; prevent bundling -->
     <ItemGroup>
-        <Content Include="appsettings.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="Always" />
-        <Content Include="appsettings.Development.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="Always" />
-        <Content Include="appsettings.Production.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="Always" />
+      <Content Include="appsettings*.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      </Content>
     </ItemGroup>
-
-    <PropertyGroup>
-        <AssemblyAttributes>
-            <InternalsVisibleTo Include="Idasen.SystemTray.Win11.Tests" />
-        </AssemblyAttributes>
-        <LangVersion>preview</LangVersion>
-    </PropertyGroup>
-
 </Project>
