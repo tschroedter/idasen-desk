@@ -139,18 +139,19 @@ jobs:
           $zipName = "Idasen.SystemTray-$version-win-x64.zip"
           $zip = Join-Path $publishDir $zipName
           if (Test-Path $zip) { Remove-Item $zip -Force }
-          Compress-Archive -Path $exe -DestinationPath $zip -Force
+          # Ensure only the EXE is zipped; treat path literally (no wildcard expansion)
+          Compress-Archive -LiteralPath $exe -DestinationPath $zip -Force
 
           $zipRel = (Join-Path "src" $zip) -replace '\\','/'
 
           "zip_path=$zipRel" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
 
-      - name: Upload artifact (publish directory)
+      - name: Upload artifact (zipped executable only)
         uses: actions/upload-artifact@v4
         with:
           name: Idasen.SystemTray-${{ steps.determine_version.outputs.version }}-win-x64
           if-no-files-found: error
-          path: ${{ steps.determine_version.outputs.publish_dir }}/**
+          path: ${{ steps.zip_exe.outputs.zip_path }}
 
       - name: Create and push git tag V<version>
         if: github.event_name != 'pull_request' && !startsWith(github.ref, 'refs/tags/')
