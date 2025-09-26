@@ -1,8 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis ;
-using System.IO ;
 using System.IO.Abstractions ;
 using System.Reactive.Concurrency ;
-using System.Reflection ;
 using System.Windows.Media ;
 using Autofac ;
 using Autofac.Extensions.DependencyInjection ;
@@ -42,14 +40,27 @@ public partial class App
     // Configure a single Serilog logger instance for the entire app
     private static readonly ILogger AppLogger = Launcher.LoggerProvider.CreateLogger ( AppContext.BaseDirectory ) ;
 
-    // The.NET Generic Host provides dependency injection, configuration, logging, and other services.
-    // https://docs.microsoft.com/dotnet/core/extensions/generic-host
-    // https://docs.microsoft.com/dotnet/core/extensions/dependency-injection
-    // https://docs.microsoft.com/dotnet/core/extensions/configuration
-    // https://docs.microsoft.com/dotnet/core/extensions/logging
+    // Generic Host with explicit configuration pipeline ensuring single-file friendly base path
     private static readonly IHost Host = Microsoft.Extensions.Hosting.Host
                                                   .CreateDefaultBuilder ( )
-                                                  .ConfigureAppConfiguration ( GetBasePath )
+                                                  .ConfigureAppConfiguration ( ( context ,
+                                                                                 config ) =>
+                                                                               {
+                                                                                   // Replace defaults so we control order and base path explicitly
+                                                                                   config.Sources.Clear ( ) ;
+
+                                                                                   config
+                                                                                      .SetBasePath ( AppContext.BaseDirectory ) // Works for single-file
+                                                                                      .AddJsonFile ( "appsettings.json" ,
+                                                                                                     optional : true ,
+                                                                                                     reloadOnChange : false )
+                                                                                      .AddJsonFile (
+                                                                                          $"appsettings.{context.HostingEnvironment.EnvironmentName}.json" ,
+                                                                                          optional : true ,
+                                                                                          reloadOnChange : false )
+                                                                                      .AddEnvironmentVariables ( ) ;
+                                                                                   // Environment defaults to Production if not set (DOTNET_ENVIRONMENT)
+                                                                               } )
                                                   .UseServiceProviderFactory ( new AutofacServiceProviderFactory ( ) )
                                                   .ConfigureContainer < ContainerBuilder > ( builder =>
                                                                                              {
@@ -59,7 +70,8 @@ public partial class App
                                                                                                  builder.RegisterModule < BluetoothLECoreModule > ( ) ;
                                                                                                  builder.RegisterModule < BluetoothLELinakModule > ( ) ;
                                                                                              } )
-                                                  .ConfigureServices ( ( _ , services ) =>
+                                                  .ConfigureServices ( ( _ ,
+                                                                         services ) =>
                                                                        {
                                                                            services.AddHostedService < ApplicationHostService > ( ) ;
 
@@ -156,12 +168,6 @@ public partial class App
                                          manager ) ;
     }
 
-    private static void GetBasePath ( IConfigurationBuilder c )
-    {
-        c.SetBasePath ( Path.GetDirectoryName ( Assembly.GetEntryAssembly ( )!.Location ) ??
-                        throw new InvalidOperationException ( "Couldn't get directory name from entry assembly" ) ) ;
-    }
-
     /// <summary>
     ///     Gets registered service.
     /// </summary>
@@ -176,7 +182,8 @@ public partial class App
     /// <summary>
     ///     Occurs when the application is loading.
     /// </summary>
-    private async void OnStartup ( object sender , StartupEventArgs args )
+    private async void OnStartup ( object sender ,
+                                   StartupEventArgs args )
     {
         try
         {
@@ -193,7 +200,7 @@ public partial class App
 
             _logger.Information ( "##### Startup..." ) ;
 
-            var notifyIcon = FindNotifyIcon ( ) ; // todo maybe we can get the icon from the view?
+            var notifyIcon = FindNotifyIcon ( ) ;
 
             var main = GetService < IdasenDeskWindowViewModel > ( ) ;
 
@@ -232,7 +239,6 @@ public partial class App
             _logger.Error ( ex ,
                             "Failed to create/open single-instance mutex {MutexName}" ,
                             mutexName ) ;
-            // In doubt, allow startup to avoid blocking the app due to mutex issues.
             return true ;
         }
     }
@@ -245,7 +251,8 @@ public partial class App
     /// <summary>
     ///     Occurs when the application is closing.
     /// </summary>
-    private async void OnExit ( object sender , ExitEventArgs e )
+    private async void OnExit ( object sender ,
+                                ExitEventArgs e )
     {
         try
         {
@@ -279,7 +286,6 @@ public partial class App
     {
         if ( ! CurrentWindow.CheckAccess ( ) )
         {
-            // Ensure we access visual tree on UI thread and return the result
             return CurrentWindow.Dispatcher.Invoke ( FindNotifyIcon ) ;
         }
 
