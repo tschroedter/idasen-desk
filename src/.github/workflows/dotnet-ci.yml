@@ -1,0 +1,183 @@
+name: .NET CI
+
+on:
+  workflow_dispatch:
+    inputs:
+      configuration:
+        description: Build configuration
+        required: true
+        default: Release
+        type: choice
+        options:
+          - Release
+          - Debug
+  push:
+    branches: [ main ]
+    tags: [ 'V*' ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build, Test and Publish
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: pwsh
+        working-directory: src
+    env:
+      BUILD_CONFIGURATION: ${{ github.event_name == 'workflow_dispatch' && inputs.configuration || 'Release' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Setup .NET 8.x SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~\AppData\Local\NuGet\v3-cache
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      - name: .NET info
+        run: dotnet --info
+
+      - name: Set project version from GitHub run/tag
+        run: |
+          $projPath = "Idasen.SystemTray.Win11/Idasen.SystemTray.Win11.csproj"
+          [xml]$projXml = Get-Content $projPath
+          $pg = $projXml.Project.PropertyGroup | Select-Object -First 1
+
+          $runNumber = [int]$env:GITHUB_RUN_NUMBER
+          $ref = $env:GITHUB_REF
+          $refName = $env:GITHUB_REF_NAME
+
+          $newVersion = $null
+          if ($ref -like 'refs/tags/V*' -and $refName -match '^V(?<ver>\d+\.\d+\.\d+)$') {
+            $newVersion = $Matches['ver']
+          }
+          else {
+            $newVersion = "0.1.$runNumber"
+          }
+
+          if (-not $pg.Version) { $node = $projXml.CreateElement('Version'); [void]$pg.AppendChild($node) }
+          if (-not $pg.AssemblyVersion) { $node = $projXml.CreateElement('AssemblyVersion'); [void]$pg.AppendChild($node) }
+          if (-not $pg.FileVersion) { $node = $projXml.CreateElement('FileVersion'); [void]$pg.AppendChild($node) }
+
+          $pg.Version = $newVersion
+          $pg.AssemblyVersion = "$newVersion.0"
+          $pg.FileVersion = "$newVersion.0"
+
+          $projXml.Save($projPath)
+          Write-Host "Set Version=$($pg.Version), AssemblyVersion=$($pg.AssemblyVersion), FileVersion=$($pg.FileVersion)"
+
+      - name: Restore
+        run: |
+          dotnet restore Idasen.SystemTray.Win11/Idasen.SystemTray.Win11.csproj
+          dotnet restore Idasen.SystemTray.Win11.Tests/Idasen.SystemTray.Win11.Tests.csproj
+
+      - name: Build (${{ env.BUILD_CONFIGURATION }})
+        run: |
+          dotnet build Idasen.SystemTray.Win11/Idasen.SystemTray.Win11.csproj --configuration $env:BUILD_CONFIGURATION --no-restore
+          dotnet build Idasen.SystemTray.Win11.Tests/Idasen.SystemTray.Win11.Tests.csproj --configuration $env:BUILD_CONFIGURATION --no-restore
+
+      - name: Test (${{ env.BUILD_CONFIGURATION }})
+        run: |
+          dotnet test Idasen.SystemTray.Win11.Tests/Idasen.SystemTray.Win11.Tests.csproj --configuration $env:BUILD_CONFIGURATION --no-build --verbosity normal
+
+      - name: Publish win-x64 (self-contained single file)
+        run: >-
+          dotnet publish
+          Idasen.SystemTray.Win11/Idasen.SystemTray.Win11.csproj
+          --configuration $env:BUILD_CONFIGURATION
+          --runtime win-x64
+          --self-contained true
+          -p:PublishSingleFile=true
+          -p:PublishReadyToRun=true
+
+      - id: determine_version
+        name: Determine version and paths
+        run: |
+          $projPath = "Idasen.SystemTray.Win11/Idasen.SystemTray.Win11.csproj"
+          [xml]$projXml = Get-Content $projPath
+          $version = ($projXml.Project.PropertyGroup | ForEach-Object { $_.Version } | Where-Object { $_ } | Select-Object -First 1)
+          if (-not $version) { throw "Version not found in $projPath" }
+
+          $publishDir = "Idasen.SystemTray.Win11/bin/$env:BUILD_CONFIGURATION/net8.0-windows10.0.19041/win-x64/publish"
+          $exe = Join-Path $publishDir "Idasen.SystemTray.exe"
+          if (-not (Test-Path $exe)) { throw "Executable not found: $exe" }
+
+          $publishDirRel = (Join-Path "src" $publishDir) -replace '\\','/'
+
+          # Only exeRel needs to be inside src for artifact upload to work
+          $exeRel = (Join-Path "src" $exe) -replace '\\','/'
+
+          "version=$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          "exe_path=$exeRel" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          "publish_dir=$publishDirRel" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+
+      - id: zip_exe
+        name: Zip executable
+        run: |
+          $publishDir = "Idasen.SystemTray.Win11/bin/$env:BUILD_CONFIGURATION/net8.0-windows10.0.19041/win-x64/publish"
+          $exe = Join-Path $publishDir "Idasen.SystemTray.exe"
+          if (-not (Test-Path $exe)) { throw "Executable not found: $exe" }
+
+          $version = '${{ steps.determine_version.outputs.version }}'
+          $zipName = "Idasen.SystemTray-$version-win-x64.zip"
+          $zip = Join-Path $publishDir $zipName
+          if (Test-Path $zip) { Remove-Item $zip -Force }
+          # Ensure only the EXE is zipped; treat path literally (no wildcard expansion)
+          Compress-Archive -LiteralPath $exe -DestinationPath $zip -Force
+
+          $zipRel = (Join-Path "src" $zip) -replace '\\','/'
+
+          "zip_path=$zipRel" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+
+      - name: Upload artifact (exe only)
+        uses: actions/upload-artifact@v4
+        with:
+          name: Idasen.SystemTray-${{ steps.determine_version.outputs.version }}-win-x64
+          if-no-files-found: error
+          # Upload the raw exe so the artifact contains only one zip level
+          path: ${{ steps.determine_version.outputs.exe_path }}
+
+      - name: Create and push git tag V<version>
+        if: github.event_name != 'pull_request' && !startsWith(github.ref, 'refs/tags/')
+        shell: pwsh
+        working-directory: .
+        run: |
+          $tag = "V${{ steps.determine_version.outputs.version }}"
+          git fetch --tags --quiet
+          if (git rev-parse -q --verify "refs/tags/$tag") {
+            Write-Host "Tag $tag already exists, skipping."
+          } else {
+            git config user.name "github-actions"
+            git config user.email "github-actions@github.com"
+            git tag -a $tag -m "Release $tag"
+            git push origin $tag
+          }
+
+      - name: Create GitHub Release (draft)
+        if: github.event_name != 'pull_request'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: V${{ steps.determine_version.outputs.version }}
+          name: V${{ steps.determine_version.outputs.version }}
+          draft: true
+          prerelease: false
+          files: |
+            ${{ steps.determine_version.outputs.exe_path }}
+            ${{ steps.zip_exe.outputs.zip_path }}
