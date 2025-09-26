@@ -15,7 +15,7 @@
       mc:Ignorable="d">
 
     <DockPanel LastChildFill="True"
-               Width="450">
+               Width="490">
         <ui:InfoBar DockPanel.Dock="Bottom"
                     Margin="0,12,0,12"
                     Title="{Binding ViewModel.Title}"

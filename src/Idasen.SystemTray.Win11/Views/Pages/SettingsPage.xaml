@@ -19,7 +19,7 @@
         <helpers:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
     </Page.Resources>
 
-    <Grid Width="450">
+    <Grid Width="490">
         <Grid.RowDefinitions>
             <!-- Fixed content height (same as your old StackPanel Height) -->
             <RowDefinition Height="450" />
