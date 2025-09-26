@@ -119,11 +119,12 @@ public class SettingsManagerTests
         await _settingsManager.ResetSettingsAsync ( CancellationToken.None ) ;
 
         // Assert
-        _settingsStorage.Received ( 1 )
-                        .SaveSettingsAsync ( "TestSettingsFilePath" ,
-                                             Arg.Is<Settings> ( s => s.DeviceSettings.DeviceName == Constants.DefaultDeviceName &&
-                                                                     s.HeightSettings.StandingHeightInCm == Constants.DefaultHeightStandingInCm ) ,
-                                             CancellationToken.None ) ;
+        await _settingsStorage.Received ( 1 )
+                              .SaveSettingsAsync ( "TestSettingsFilePath" ,
+                                                   Arg.Is < Settings > ( s => s.DeviceSettings.DeviceName == Constants.DefaultDeviceName &&
+                                                                              s.HeightSettings.StandingHeightInCm ==
+                                                                              Constants.DefaultHeightStandingInCm ) ,
+                                                   CancellationToken.None ) ;
         notified.Should ( ).BeTrue ( ) ;
     }
 }
