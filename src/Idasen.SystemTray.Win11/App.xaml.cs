@@ -196,6 +196,16 @@ public partial class App
 
             _logger.Information ( "##### Startup..." ) ;
 
+            var environmentName =
+                Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") ??
+                Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ??
+                "Production";
+
+            _logger.Information ("BaseDirectory={BaseDirectory}, EnvironmentName={EnvironmentName}",
+                                 AppContext.BaseDirectory,
+                                 environmentName);
+
+
             var notifyIcon = FindNotifyIcon ( ) ;
 
             var main = GetService < IdasenDeskWindowViewModel > ( ) ;
