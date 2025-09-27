@@ -37,4 +37,8 @@
         <Using Include="Xunit" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="BluetoothLE\" />
+    </ItemGroup>
+
 </Project>
