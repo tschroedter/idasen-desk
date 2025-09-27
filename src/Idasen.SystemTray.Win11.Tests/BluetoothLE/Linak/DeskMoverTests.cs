@@ -184,7 +184,7 @@ public class DeskMoverTests
                              out var subjectFinished,
                              out var heightMonitor,
                              initialHeight: 60000,
-                             initialSpeed: 0); // deterministic (no movement state)
+                             initialSpeed: 10); // use non-zero speed to ensure a stop command is issued
         // ReSharper restore UnusedVariable
 
         sut.TargetHeight = 60003; // Within base tolerance (4)
