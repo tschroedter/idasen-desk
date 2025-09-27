@@ -14,14 +14,6 @@
         <AssemblyVersion>0.0.312.0</AssemblyVersion>
         <FileVersion>0.0.312.0</FileVersion>
         <Version>0.0.312</Version>
-        <RuntimeIdentifier>win-x64</RuntimeIdentifier>
-        <SelfContained>true</SelfContained>
-        <PublishSingleFile>true</PublishSingleFile>
-        <!-- Remove or set to false so JSON isn't auto-bundled -->
-        <IncludeAllContentForSelfExtract>false</IncludeAllContentForSelfExtract>
-        <PublishReadyToRun>true</PublishReadyToRun>
-        <UserSecretsId>5d8a1b1f-079f-4b54-b2fa-83756cd66cd1</UserSecretsId>
-        <LangVersion>preview</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
@@ -59,6 +51,18 @@
         <PackageReference Include="WPF-UI.Tray" Version="4.0.3" />
         <PackageReference Include="xunit.abstractions" Version="2.0.3" />
     </ItemGroup>
+
+    <!-- Publish Single  -->
+    <PropertyGroup>
+        <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+        <SelfContained>true</SelfContained>
+        <!-- or false if you want .NET installed separately -->
+        <PublishSingleFile>true</PublishSingleFile>
+        <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+        <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+        <PublishTrimmed>false</PublishTrimmed>
+        <!-- keep false until you handle trimming warnings -->
+    </PropertyGroup>
 
     <!-- Single concise include; prevent bundling -->
     <ItemGroup>
