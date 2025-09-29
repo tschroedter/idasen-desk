@@ -25,7 +25,6 @@ namespace Idasen.SystemTray.Win11.Utils.Icons ;
 public class DynamicIconCreator : IDynamicIconCreator
 {
     private const           int    IconHeight     = 16 ; // base logical height at 100% DPI
-    private const           int    FontSize       = 8 ;  // base logical font size (px) at 100% DPI (used as fallback)
     private const           string FontFamily     = "Consolas" ;
     private static readonly Color  BrushDarkBlue  = ColorTranslator.FromHtml ( "#FF0048A3" ) ;
     private static readonly Color  BrushLightBlue = ColorTranslator.FromHtml ( "#FF0098F3" ) ;
