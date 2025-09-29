@@ -44,9 +44,9 @@ public partial class IdasenDeskWindow : INavigationWindow
         throw new NotImplementedException ( ) ;
     }
 
-    public void SetPageService ( INavigationViewPageProvider pageService )
+    public void SetPageService ( INavigationViewPageProvider navigationViewPageProvider )
     {
-        RootNavigation.SetPageProviderService ( pageService ) ;
+        RootNavigation.SetPageProviderService ( navigationViewPageProvider ) ;
     }
 
     public void ShowWindow ( )

@@ -31,11 +31,11 @@ public class Notifications : INotifications
         _showSubscribe = _showSubject.Subscribe ( OnShow ) ;
     }
 
-    public void Show ( string title , string text , InfoBarSeverity severity )
+    public void Show ( string title , string text , InfoBarSeverity serverity )
     {
         Show ( new NotificationParameters ( title ,
                                             text ,
-                                            severity ) ) ;
+                                            serverity ) ) ;
     }
 
     public INotifications Initialize ( NotifyIcon        notifyIcon ,
@@ -73,6 +73,8 @@ public class Notifications : INotifications
         _disposed = true ;
         _showSubscribe.Dispose ( ) ;
         _showSubject.Dispose ( ) ;
+
+        GC.SuppressFinalize ( this ) ;
     }
 
     public void Show ( NotificationParameters parameters )

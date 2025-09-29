@@ -1,4 +1,5 @@
-﻿using FluentAssertions ;
+﻿using System.Globalization ;
+using FluentAssertions ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.Utils ;
 using Idasen.SystemTray.Win11.Utils.Converters ;
@@ -79,6 +80,6 @@ public class DeviceAddressToULongConverterTests
 
         // Assert
         result.Should ( )
-              .Be ( deviceAddress.ToString ( ) ) ;
+              .Be ( deviceAddress.ToString ( CultureInfo.InvariantCulture ) ) ;
     }
 }

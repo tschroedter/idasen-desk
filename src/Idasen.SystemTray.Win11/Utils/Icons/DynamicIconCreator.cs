@@ -2,6 +2,7 @@
 using System.Drawing ;
 using System.Drawing.Drawing2D ;
 using System.Drawing.Text ;
+using System.Globalization ;
 using System.Runtime.InteropServices ;
 using System.Windows.Interop ;
 using System.Windows.Media ;
@@ -46,10 +47,10 @@ public class DynamicIconCreator : IDynamicIconCreator
                     height ) ;
     }
 
-    private ImageSource CreateImageSource ( int height , double scaleX , double scaleY )
+    private static BitmapSource CreateImageSource ( int height , double scaleX , double scaleY )
     {
         // Height text
-        var text = height.ToString ( ) ;
+        var text = height.ToString ( CultureInfo.InvariantCulture ) ;
 
         // Compute pixel bounds based on DPI and text length for better readability
         var pixelHeight = Math.Max ( 16 , ( int ) Math.Round ( IconHeight * scaleY ) ) ;
@@ -118,7 +119,7 @@ public class DynamicIconCreator : IDynamicIconCreator
         }
     }
 
-    private void PushIcons ( NotifyIcon taskbarIcon , ImageSource imageSource , int value )
+    private static void PushIcons ( NotifyIcon taskbarIcon , ImageSource imageSource , int value )
     {
         if ( ! taskbarIcon.Dispatcher.CheckAccess ( ) )
         {

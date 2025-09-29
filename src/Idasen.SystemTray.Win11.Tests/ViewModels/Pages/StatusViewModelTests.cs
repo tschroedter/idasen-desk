@@ -10,6 +10,7 @@ using Wpf.Ui.Controls ;
 namespace Idasen.SystemTray.Win11.Tests.ViewModels.Pages ;
 
 public class StatusViewModelTests
+    : IDisposable
 {
     private readonly IUiDeskManager            _manager ;
     private readonly TestScheduler             _scheduler ;
@@ -110,5 +111,14 @@ public class StatusViewModelTests
     private ITimer TimerFactory ( TimerCallback arg1 , object ? arg2 , TimeSpan arg3 , TimeSpan arg4 )
     {
         return _timer ;
+    }
+
+    public void Dispose ( )
+    {
+        _manager.Dispose ( ) ;
+        _statusBarInfoSubject.Dispose ( ) ;
+        _timer.Dispose ( ) ;
+
+        GC.SuppressFinalize ( this );
     }
 }

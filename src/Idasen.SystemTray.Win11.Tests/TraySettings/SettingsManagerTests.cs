@@ -9,6 +9,7 @@ using Serilog ;
 namespace Idasen.SystemTray.Win11.Tests.TraySettings ;
 
 public class SettingsManagerTests
+    : IDisposable
 {
     private readonly ICommonApplicationData _commonApplicationData = Substitute.For < ICommonApplicationData > ( ) ;
     private readonly IFileSystem            _fileSystem            = Substitute.For < IFileSystem > ( ) ;
@@ -126,5 +127,12 @@ public class SettingsManagerTests
                                                                               Constants.DefaultHeightStandingInCm ) ,
                                                    CancellationToken.None ) ;
         notified.Should ( ).BeTrue ( ) ;
+    }
+
+    public void Dispose ( )
+    {
+        _settingsManager.Dispose ( ) ;
+
+        GC.SuppressFinalize ( this );
     }
 }

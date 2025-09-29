@@ -17,8 +17,8 @@ public static class IconExtensions
     /// <exception cref="ArgumentNullException">Thrown if <paramref name="icon" /> is null.</exception>
     public static ImageSource ToImageSource ( this Icon icon )
     {
-        if ( icon == null )
-            throw new ArgumentNullException ( nameof ( icon ) ) ;
+        ArgumentNullException.ThrowIfNull ( icon ,
+                                            nameof ( icon ) ) ;
 
         var imageSource = Imaging.CreateBitmapSourceFromHIcon ( icon.Handle ,
                                                                 Int32Rect.Empty ,

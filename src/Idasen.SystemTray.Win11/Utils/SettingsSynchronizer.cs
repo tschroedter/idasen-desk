@@ -15,7 +15,8 @@ public class SettingsSynchronizer ( ILogger                        logger ,
     public async Task LoadSettingsAsync ( ISettingsViewModel model ,
                                           CancellationToken  token )
     {
-        if ( model == null ) throw new ArgumentNullException ( nameof ( model ) ) ;
+        ArgumentNullException.ThrowIfNull ( model ,
+                                            nameof ( model ) ) ;
 
         try
         {
@@ -65,7 +66,8 @@ public class SettingsSynchronizer ( ILogger                        logger ,
     public async Task StoreSettingsAsync ( ISettingsViewModel model ,
                                            CancellationToken  token )
     {
-        if ( model == null ) throw new ArgumentNullException ( nameof ( model ) ) ;
+        ArgumentNullException.ThrowIfNull ( model ,
+                                            nameof ( model ) ) ;
 
         var lockChanged     = HasParentalLockChanged ( model ) ;
         var advancedChanged = HaveAdvancedSettingsChanged ( model ) ;

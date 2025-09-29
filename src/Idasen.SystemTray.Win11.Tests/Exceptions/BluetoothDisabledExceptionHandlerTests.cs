@@ -17,7 +17,7 @@ public class BluetoothDisabledExceptionHandlerTests
     public void CanHandle_ShouldReturnTrue_WhenExceptionIsBluetoothDisabledException ( int hresult )
     {
         // Arrange  
-        var exception = new Exception ( "Bluetooth Exception" )
+        var exception = new InvalidOperationException( "Bluetooth Exception" )
         {
             HResult = hresult
         } ;
@@ -34,7 +34,7 @@ public class BluetoothDisabledExceptionHandlerTests
     public void CanHandle_ShouldReturnFalse_WhenExceptionIsNotBluetoothDisabledException ( )
     {
         // Arrange  
-        var exception = new Exception ( "Exception" ) ;
+        var exception = new InvalidOperationException( "Exception" ) ;
 
         // Act  
         var result = CreateSut ( ).CanHandle ( exception ) ;

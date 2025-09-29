@@ -122,6 +122,8 @@ public partial class SettingsViewModel ( ILogger                                
         }
 
         base.Dispose ( ) ;
+
+        GC.SuppressFinalize ( this );
     }
 
     public async Task InitializeAsync ( CancellationToken token )
@@ -193,7 +195,7 @@ public partial class SettingsViewModel ( ILogger                                
         _isInitialized = true ;
     }
 
-    private string GetAssemblyVersion ( )
+    private static string GetAssemblyVersion ( )
     {
         return Assembly.GetExecutingAssembly ( ).GetName ( ).Version?.ToString ( ) ?? string.Empty ;
     }

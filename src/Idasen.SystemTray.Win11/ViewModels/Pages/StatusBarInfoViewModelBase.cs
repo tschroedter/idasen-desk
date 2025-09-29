@@ -53,6 +53,8 @@ public abstract partial class StatusBarInfoViewModelBase : ObservableObject , ID
     {
         _timer.Dispose ( ) ;
         _statusBarInfoChanged.Dispose ( ) ;
+
+        GC.SuppressFinalize ( this );
     }
 
     protected void InitializeFromLastStatusBarInfo ( )

@@ -15,7 +15,7 @@ public class ErrorHandlerTests
     {
         // Arrange  
         var sut       = CreateSut ( ) ;
-        var exception = new Exception { HResult = hresult } ;
+        var exception = new InvalidOperationException { HResult = hresult } ;
 
         // Act  
         sut.Handle ( exception ,
@@ -31,7 +31,7 @@ public class ErrorHandlerTests
     {
         // Arrange  
         var sut       = CreateSut ( ) ;
-        var exception = new Exception ( "Test" ) ;
+        var exception = new InvalidOperationException( "Test" ) ;
 
         // Act  
         sut.Handle ( exception ,
@@ -43,7 +43,7 @@ public class ErrorHandlerTests
                         exception.Message ) ;
     }
 
-    private ErrorHandler CreateSut ( )
+    private static ErrorHandler CreateSut ( )
     {
         return new ErrorHandler ( ) ;
     }

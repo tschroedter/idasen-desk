@@ -50,8 +50,8 @@ public class DoubleToUIntConverterTests
     public void TryConvertToUInt_ShouldReturnExpectedResult ( double input , bool expectedSuccess , uint expectedValue )
     {
         // Act  
-        var success = CreateSut ( ).TryConvertToUInt ( input ,
-                                                       out var result ) ;
+        var success = DoubleToUIntConverter.TryConvertToUInt ( input ,
+                                                               out var result ) ;
 
         // Assert  
         success.Should ( ).Be ( expectedSuccess ) ;

@@ -10,9 +10,10 @@ public class SettingsManager ( ILogger                logger ,
                                ICommonApplicationData commonApplicationData ,
                                ISettingsStorage       settingsStorage ,
                                IFileSystem            fileSystem )
-    : ISettingsManager
+    : ISettingsManager , IDisposable
 {
-    private readonly ISubject < ISettings > _settingsSaved = new Subject < ISettings > ( ) ;
+    private readonly Subject < ISettings > _settingsSaved = new( ) ;
+    private          bool                  _disposed ;
 
     private Settings _current = new ( ) ;
 
@@ -103,5 +104,25 @@ public class SettingsManager ( ILogger                logger ,
         _current.DeviceSettings.NotificationsEnabled = Constants.NotificationsEnabled ;
 
         await SaveAsync ( token ).ConfigureAwait ( false ) ;
+    }
+
+    public void Dispose ( )
+    {
+        Dispose ( true ) ;
+
+        GC.SuppressFinalize ( this ) ;
+    }
+
+    protected virtual void Dispose ( bool disposing )
+    {
+        if ( _disposed )
+            return ;
+
+        if ( disposing )
+        {
+            _settingsSaved.Dispose ( ) ;
+        }
+
+        _disposed = true ;
     }
 }

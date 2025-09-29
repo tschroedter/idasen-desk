@@ -14,8 +14,8 @@ public class DoubleToUIntConverter
                    : uintValue ;
     }
 
-    public bool TryConvertToUInt ( double   value ,
-                                   out uint uintValue )
+    public static bool TryConvertToUInt ( double   value ,
+                                          out uint uintValue )
     {
         try
         {

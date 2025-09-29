@@ -1,4 +1,3 @@
-using System.Reactive.Concurrency ;
 using System.Reactive.Subjects ;
 using FluentAssertions ;
 using Idasen.SystemTray.Win11.Interfaces ;
@@ -14,6 +13,7 @@ using System.Reflection ;
 namespace Idasen.SystemTray.Win11.Tests.ViewModels.Pages ;
 
 public class SettingsViewModelTests
+    : IDisposable
 {
     private readonly ILogger                 _logger          = Substitute.For < ILogger > ( ) ;
     private readonly TestScheduler           _scheduler       = new ( ) ;
@@ -243,7 +243,7 @@ public class SettingsViewModelTests
         // Act: invoke the internal async method via reflection
         var method = typeof ( SettingsViewModel ).GetMethod ( "OnResetSettings" , BindingFlags.Instance | BindingFlags.NonPublic ) ;
         method.Should ( ).NotBeNull ( ) ;
-        var task = ( Task? ) method!.Invoke ( vm , null ) ;
+        var task = ( Task? ) method.Invoke ( vm , null ) ;
         if ( task != null ) await task ;
 
         // Assert
@@ -266,5 +266,13 @@ public class SettingsViewModelTests
         // We don't need to simulate the timer's callback in these tests;
         // we only assert that Change and Dispose are called.
         return _timer ;
+    }
+
+    public void Dispose ( )
+    {
+        _settingsSaved.Dispose ( ) ;
+        _statusSubject.Dispose ( ) ;
+
+        GC.SuppressFinalize ( this );
     }
 }

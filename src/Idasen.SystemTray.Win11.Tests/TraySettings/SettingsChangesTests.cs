@@ -4,6 +4,7 @@ using NSubstitute ;
 namespace Idasen.SystemTray.Win11.Tests.TraySettings ;
 
 public class SettingsChangesTests
+    : IDisposable
 {
     private readonly SettingsChanges _settingsChanges = new ( ) ;
 
@@ -37,5 +38,12 @@ public class SettingsChangesTests
         // Assert  
         observer.Received ( 1 )
                 .OnNext ( false ) ;
+    }
+
+    public void Dispose ( )
+    {
+        _settingsChanges.Dispose ( ) ;
+
+        GC.SuppressFinalize ( this );
     }
 }

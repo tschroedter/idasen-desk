@@ -15,6 +15,8 @@ public class SettingsChanges : IObserveSettingsChanges , INotifySettingsChanges 
 
         _lockSubject.Dispose ( ) ;
         _advancedSubject.Dispose ( ) ;
+
+        GC.SuppressFinalize ( this ) ;
     }
 
     public ISubject < bool > LockSettingsChanged     => _lockSubject ;

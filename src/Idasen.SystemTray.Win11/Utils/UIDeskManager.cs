@@ -392,7 +392,7 @@ public sealed class UiDeskManager : IUiDeskManager
 
     private CancellationToken GetTokenOrThrow ( )
     {
-        return _token ?? throw new Exception ( "Token is null" ) ;
+        return _token ?? throw new InvalidOperationException( "Token is null" ) ;
     }
 
     private async Task MoveToConfiguredHeightAsync ( string                    methodName ,
@@ -651,7 +651,7 @@ public sealed class UiDeskManager : IUiDeskManager
     private void CheckIfInitialized ( )
     {
         if ( ! IsInitialize )
-            throw new Exception ( "Initialize needs to be called first!" ) ;
+            throw new InvalidOperationException( "Initialize needs to be called first!" ) ;
     }
 
     private void ConnectFailed ( )

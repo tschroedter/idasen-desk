@@ -140,7 +140,7 @@ public partial class App
     }
 
     private static Window CurrentWindow =>
-        Current.MainWindow ?? throw new Exception ( "Can't find the main window!" ) ;
+        Current.MainWindow ?? throw new InvalidOperationException( "Can't find the main window!" ) ;
 
     private static SettingsChanges GetSettingsChanged ( IServiceProvider provider )
     {
@@ -148,7 +148,7 @@ public partial class App
                throw new InvalidOperationException ( $"Failed to resolve {nameof ( SettingsChanges )}" ) ;
     }
 
-    private static IScheduler CreateScheduler ( )
+    private static TaskPoolScheduler CreateScheduler ( )
     {
         return TaskPoolScheduler.Default ;
     }
@@ -297,7 +297,7 @@ public partial class App
 
         var notifyIcons = FindVisualChildren < NotifyIcon > ( CurrentWindow ) ;
 
-        return notifyIcons.FirstOrDefault ( ) ?? throw new Exception ( "Can't find the main notify icon!" ) ;
+        return notifyIcons.FirstOrDefault ( ) ?? throw new InvalidOperationException( "Can't find the main notify icon!" ) ;
     }
 
     private static void GetBasePath ( IConfigurationBuilder c )

@@ -59,6 +59,8 @@ public class TaskbarIconProvider : ITaskbarIconProvider
 
             _logger?.Information ( "TaskbarIconProvider disposed." ) ;
         }
+
+        GC.SuppressFinalize ( this );
     }
 
     public void Initialize (

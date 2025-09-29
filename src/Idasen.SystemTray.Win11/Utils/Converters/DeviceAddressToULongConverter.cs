@@ -1,4 +1,5 @@
-﻿using Idasen.SystemTray.Win11.Interfaces ;
+﻿using System.Globalization ;
+using Idasen.SystemTray.Win11.Interfaces ;
 
 namespace Idasen.SystemTray.Win11.Utils.Converters ;
 
@@ -17,6 +18,6 @@ public class DeviceAddressToULongConverter ( IStringToUIntConverter converter )
     {
         return deviceAddress == Constants.DefaultDeviceAddress
                    ? string.Empty
-                   : deviceAddress.ToString ( ) ;
+                   : deviceAddress.ToString ( CultureInfo.InvariantCulture ) ;
     }
 }

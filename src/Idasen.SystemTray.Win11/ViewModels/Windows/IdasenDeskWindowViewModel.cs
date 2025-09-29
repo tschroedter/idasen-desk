@@ -311,6 +311,8 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         await CastAndDispose ( _uiDeskManager ) ;
         await CastAndDispose ( _advancedSubscription ) ;
         await CastAndDispose ( _lockSubscription ) ;
+
+        GC.SuppressFinalize ( this ) ;
     }
 
     private async static ValueTask CastAndDispose ( IDisposable ? resource )
