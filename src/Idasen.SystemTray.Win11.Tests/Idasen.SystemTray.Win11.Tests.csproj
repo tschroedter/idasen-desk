@@ -3,6 +3,7 @@
     <PropertyGroup>
         <AssemblyName>Idasen.SystemTray.Win11.Tests</AssemblyName>
         <TargetFramework>net8.0-windows10.0.19041</TargetFramework>
+        <PlatformTarget>x64</PlatformTarget>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
 
