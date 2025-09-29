@@ -53,20 +53,24 @@ public class DynamicIconCreator : IDynamicIconCreator
         var text = height.ToString ( CultureInfo.InvariantCulture ) ;
 
         // Compute pixel bounds based on DPI and text length for better readability
-        var pixelHeight = Math.Max ( 16 , ( int ) Math.Round ( IconHeight * scaleY ) ) ;
+        var pixelHeight = Math.Max ( 16 ,
+                                     ( int )Math.Round ( IconHeight * scaleY ) ) ;
 
         // Make font fill most of the icon height for readability
-        var fontSizePx = ( int ) Math.Max ( 10 , Math.Floor ( pixelHeight * 0.90 ) ) ;
+        var fontSizePx = ( int )Math.Max ( 10 ,
+                                           Math.Floor ( pixelHeight * 0.90 ) ) ;
 
         // Estimate width based on monospace character width (~0.6 of height), plus small padding
-        var estimatedCharWidth = Math.Max ( 8 , ( int ) Math.Round ( fontSizePx * 0.60 ) ) ;
-        var pixelWidth         = Math.Max ( 16 , estimatedCharWidth * text.Length + 4 ) ;
+        var estimatedCharWidth = Math.Max ( 8 ,
+                                            ( int )Math.Round ( fontSizePx * 0.60 ) ) ;
+        var pixelWidth = Math.Max ( 16 ,
+                                    estimatedCharWidth * text.Length + 4 ) ;
 
         using var bitmap = new Bitmap ( pixelWidth ,
                                         pixelHeight ,
                                         DPixelFormat.Format32bppPArgb ) ;
-        bitmap.SetResolution ( ( float ) ( 96.0 * scaleX ) ,
-                               ( float ) ( 96.0 * scaleY ) ) ;
+        bitmap.SetResolution ( ( float )( 96.0 * scaleX ) ,
+                               ( float )( 96.0 * scaleY ) ) ;
 
         using var graphics = DGraphics.FromImage ( bitmap ) ;
         graphics.SmoothingMode     = SmoothingMode.AntiAlias ;
@@ -74,12 +78,13 @@ public class DynamicIconCreator : IDynamicIconCreator
         graphics.TextRenderingHint = TextRenderingHint.ClearTypeGridFit ;
         graphics.Clear ( Color.Transparent ) ;
 
-        using var pen   = new Pen ( BrushDarkBlue , 1.0f ) ;
+        using var pen = new Pen ( BrushDarkBlue ,
+                                  1.0f ) ;
         using var brush = new DSolidBrush ( BrushLightBlue ) ;
-        using var font  = new DFont ( FontFamily ,
-                                      fontSizePx ,
-                                      DFontStyle.Bold ,
-                                      DGraphicsUnit.Pixel ) ;
+        using var font = new DFont ( FontFamily ,
+                                     fontSizePx ,
+                                     DFontStyle.Bold ,
+                                     DGraphicsUnit.Pixel ) ;
 
         // Draw top and bottom horizontal lines across the full scaled width
         graphics.DrawLine ( pen ,
@@ -98,7 +103,8 @@ public class DynamicIconCreator : IDynamicIconCreator
                               font ,
                               brush ,
                               new PointF ( 1f ,
-                                           Math.Max ( 0f , pixelHeight - fontSizePx - 1f ) ) ) ;
+                                           Math.Max ( 0f ,
+                                                      pixelHeight - fontSizePx - 1f ) ) ) ;
 
         // Convert the GDI bitmap to a WPF ImageSource and make it cross-thread safe
         var hBitmap = bitmap.GetHbitmap ( ) ;
@@ -124,8 +130,8 @@ public class DynamicIconCreator : IDynamicIconCreator
         if ( ! taskbarIcon.Dispatcher.CheckAccess ( ) )
         {
             taskbarIcon.Dispatcher.BeginInvoke ( new Action ( ( ) => PushIcons ( taskbarIcon ,
-                                                                                 imageSource ,
-                                                                                 value ) ) ) ;
+                                                                                    imageSource ,
+                                                                                    value ) ) ) ;
             return ;
         }
 

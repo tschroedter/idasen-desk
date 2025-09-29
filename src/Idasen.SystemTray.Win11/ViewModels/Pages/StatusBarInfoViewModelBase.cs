@@ -14,17 +14,13 @@ public abstract partial class StatusBarInfoViewModelBase : ObservableObject , ID
 
     private readonly IUiDeskManager _uiDeskManager ;
 
-    [ ObservableProperty ]
-    private uint _height ;
+    [ ObservableProperty ] private uint _height ;
 
-    [ ObservableProperty ]
-    private string _message = "Unknown" ;
+    [ ObservableProperty ] private string _message = "Unknown" ;
 
-    [ ObservableProperty ]
-    private InfoBarSeverity _severity = InfoBarSeverity.Informational ;
+    [ ObservableProperty ] private InfoBarSeverity _severity = InfoBarSeverity.Informational ;
 
-    [ ObservableProperty ]
-    private string _title = "Desk Status" ;
+    [ ObservableProperty ] private string _title = "Desk Status" ;
 
     protected StatusBarInfoViewModelBase (
         IUiDeskManager                                                   uiDeskManager ,
@@ -54,7 +50,7 @@ public abstract partial class StatusBarInfoViewModelBase : ObservableObject , ID
         _timer.Dispose ( ) ;
         _statusBarInfoChanged.Dispose ( ) ;
 
-        GC.SuppressFinalize ( this );
+        GC.SuppressFinalize ( this ) ;
     }
 
     protected void InitializeFromLastStatusBarInfo ( )

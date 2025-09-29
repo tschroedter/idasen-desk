@@ -6,7 +6,14 @@ namespace Idasen.SystemTray.Win11.Tests.TraySettings ;
 public class SettingsChangesTests
     : IDisposable
 {
-    private readonly SettingsChanges _settingsChanges = new ( ) ;
+    private readonly SettingsChanges _settingsChanges = new( ) ;
+
+    public void Dispose ( )
+    {
+        _settingsChanges.Dispose ( ) ;
+
+        GC.SuppressFinalize ( this ) ;
+    }
 
     [ Fact ]
     public void LockSettingsChanged_ShouldEmitValue_WhenTriggered ( )
@@ -38,12 +45,5 @@ public class SettingsChangesTests
         // Assert  
         observer.Received ( 1 )
                 .OnNext ( false ) ;
-    }
-
-    public void Dispose ( )
-    {
-        _settingsChanges.Dispose ( ) ;
-
-        GC.SuppressFinalize ( this );
     }
 }

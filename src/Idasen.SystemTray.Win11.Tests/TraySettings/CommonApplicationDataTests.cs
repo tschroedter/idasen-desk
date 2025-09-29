@@ -11,9 +11,10 @@ public class CommonApplicationDataTests
     {
         // Arrange  
         var fileName = "test.txt" ;
-        var expectedPath = Path.Combine ( Environment.GetFolderPath ( Environment.SpecialFolder.CommonApplicationData ) ,
-                                          Constants.ApplicationName ,
-                                          fileName ) ;
+        var expectedPath =
+            Path.Combine ( Environment.GetFolderPath ( Environment.SpecialFolder.CommonApplicationData ) ,
+                           Constants.ApplicationName ,
+                           fileName ) ;
 
         // Act  
         var result = CreateSut ( ).ToFullPath ( fileName ) ;
@@ -27,8 +28,9 @@ public class CommonApplicationDataTests
     public void FolderName_ShouldReturnCorrectPath ( )
     {
         // Arrange  
-        var expectedFolder = Path.Combine ( Environment.GetFolderPath ( Environment.SpecialFolder.CommonApplicationData ) ,
-                                            Constants.ApplicationName ) ;
+        var expectedFolder =
+            Path.Combine ( Environment.GetFolderPath ( Environment.SpecialFolder.CommonApplicationData ) ,
+                           Constants.ApplicationName ) ;
 
         // Act  
         var result = CreateSut ( ).FolderName ( ) ;

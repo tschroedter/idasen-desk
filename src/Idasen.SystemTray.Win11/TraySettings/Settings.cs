@@ -5,10 +5,12 @@ namespace Idasen.SystemTray.Win11.TraySettings ;
 
 public class Settings : ISettings
 {
-    public DeviceSettings DeviceSettings { get ; set ; } = new ( ) ;
+    public DeviceSettings DeviceSettings { get ; set ; } = new( ) ;
 
-    public HeightSettings     HeightSettings     { get ; set ; } = new ( ) ;
-    public AppearanceSettings AppearanceSettings { get ; set ; } = new ( ) { ThemeName = ThemeDefaults.GetDefaultThemeName ( ) } ;
+    public HeightSettings HeightSettings { get ; set ; } = new( ) ;
+
+    public AppearanceSettings AppearanceSettings { get ; set ; } =
+        new( ) { ThemeName = ThemeDefaults.GetDefaultThemeName ( ) } ;
 
     public override string ToString ( )
     {

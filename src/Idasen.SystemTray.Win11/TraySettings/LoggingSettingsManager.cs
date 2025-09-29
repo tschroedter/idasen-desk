@@ -3,8 +3,9 @@ using Serilog ;
 
 namespace Idasen.SystemTray.Win11.TraySettings ;
 
-public class LoggingSettingsManager ( ILogger          logger ,
-                                      ISettingsManager settingsManager )
+public class LoggingSettingsManager (
+    ILogger          logger ,
+    ISettingsManager settingsManager )
     : ILoggingSettingsManager
 {
     public ISettings                 CurrentSettings  => settingsManager.CurrentSettings ;
@@ -62,15 +63,11 @@ public class LoggingSettingsManager ( ILogger          logger ,
             var success = await settingsManager.UpgradeSettingsAsync ( token ).ConfigureAwait ( false ) ;
 
             if ( success )
-            {
                 logger.Debug ( "Upgrade check completed for {SettingsFileName}" ,
                                SettingsFileName ) ;
-            }
             else
-            {
                 logger.Error ( "Failed to upgrade settings from {SettingsFileName}" ,
                                SettingsFileName ) ;
-            }
 
             return success ;
         }

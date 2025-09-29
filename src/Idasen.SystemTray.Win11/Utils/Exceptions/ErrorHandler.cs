@@ -15,7 +15,6 @@ public class ErrorHandler
     public void Handle ( Exception exception , ILogger logger )
     {
         foreach ( var handler in _handlers )
-        {
             if ( handler.CanHandle ( exception ) )
             {
                 handler.Handle ( exception ,
@@ -23,6 +22,5 @@ public class ErrorHandler
 
                 return ;
             }
-        }
     }
 }

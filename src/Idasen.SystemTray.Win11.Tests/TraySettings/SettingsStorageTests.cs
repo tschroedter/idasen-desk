@@ -9,9 +9,9 @@ public class SettingsStorageTests
 {
     private const string TestFileName = "/temp/testSettings.json" ;
 
-    private readonly MockFileSystem _mockFileSystem = new ( ) ;
+    private readonly MockFileSystem _mockFileSystem = new( ) ;
 
-    private readonly Settings _settings = new ( )
+    private readonly Settings _settings = new( )
     {
         DeviceSettings = new DeviceSettings { DeviceName         = "TestDevice" } ,
         HeightSettings = new HeightSettings { StandingHeightInCm = 120 }
@@ -86,8 +86,8 @@ public class SettingsStorageTests
 
         // Act & Assert
         await FluentActions.Invoking ( ( ) => CreateSut ( ).SaveSettingsAsync ( invalidFileName ,
-                                                                                settings ,
-                                                                                CancellationToken.None ) )
+                                                                                   settings ,
+                                                                                   CancellationToken.None ) )
                            .Should ( )
                            .ThrowAsync < IOException > ( ) ;
     }

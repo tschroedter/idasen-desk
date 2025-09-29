@@ -2,9 +2,10 @@
 
 namespace Idasen.SystemTray.Win11.Utils ;
 
-public record NotificationParameters ( string          Title ,
-                                       string          Text ,
-                                       InfoBarSeverity Severity )
+public record NotificationParameters (
+    string          Title ,
+    string          Text ,
+    InfoBarSeverity Severity )
 {
     public override string ToString ( )
     {

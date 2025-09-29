@@ -71,10 +71,10 @@ public class EnumToBooleanConverterTests
     public void Convert_ThrowsInvalidEnumArgumentException_WhenValueIsInvalidEnum ( )
     {
         Assert.Throws < InvalidEnumArgumentException > ( ( ) =>
-                                                             CreateSut ( ).Convert ( ( ApplicationTheme ) 999 ,
-                                                                                     typeof ( bool ) ,
-                                                                                     "Light" ,
-                                                                                     CultureInfo.InvariantCulture ) ) ;
+                                                             CreateSut ( ).Convert ( ( ApplicationTheme )999 ,
+                                                                      typeof ( bool ) ,
+                                                                      "Light" ,
+                                                                      CultureInfo.InvariantCulture ) ) ;
     }
 
     [ Fact ]
@@ -102,9 +102,9 @@ public class EnumToBooleanConverterTests
     {
         Assert.Throws < ArgumentNullException > ( ( ) =>
                                                       CreateSut ( ).ConvertBack ( null ,
-                                                                                  typeof ( ApplicationTheme ) ,
-                                                                                  "Light" ,
-                                                                                  CultureInfo.InvariantCulture ) ) ;
+                                                               typeof ( ApplicationTheme ) ,
+                                                               "Light" ,
+                                                               CultureInfo.InvariantCulture ) ) ;
     }
 
     [ Fact ]

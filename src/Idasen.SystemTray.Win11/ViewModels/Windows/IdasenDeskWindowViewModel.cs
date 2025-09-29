@@ -49,26 +49,22 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
     private IDisposable ? _advancedSubscription ;
 
-    [ ObservableProperty ]
-    private string _applicationTitle = "Idasen Desk" ;
+    [ ObservableProperty ] private string _applicationTitle = "Idasen Desk" ;
 
     private ContextMenu ? _contextMenu ;
 
-    [ ObservableProperty ]
-    private ObservableCollection < object > _footerMenuItems = [] ;
+    [ ObservableProperty ] private ObservableCollection < object > _footerMenuItems = [] ;
 
     private bool _isActionInProgress ;
 
     private bool          _isInitialized ;
     private IDisposable ? _lockSubscription ;
 
-    [ ObservableProperty ]
-    private ObservableCollection < object > _menuItems = [] ;
+    [ ObservableProperty ] private ObservableCollection < object > _menuItems = [] ;
 
     private NotifyIcon ? _notifyIcon ;
 
-    [ ObservableProperty ]
-    private ObservableCollection < MenuItem > _trayMenuItems = [] ;
+    [ ObservableProperty ] private ObservableCollection < MenuItem > _trayMenuItems = [] ;
 
     public IdasenDeskWindowViewModel ( ILogger                 logger ,
                                        IUiDeskManager          uiDeskManager ,
@@ -219,26 +215,53 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
         // ReSharper restore AsyncVoidLambda
         _menuItemConnect = new MenuItem
-            { Header = "Connect" , Command = connectCommand , Icon = new SymbolIcon { Symbol = SymbolRegular.PlugConnected24 } } ;
+        {
+            Header = "Connect" , Command = connectCommand ,
+            Icon   = new SymbolIcon { Symbol = SymbolRegular.PlugConnected24 }
+        } ;
         _menuItemDisconnect = new MenuItem
-            { Header = "Disconnect" , Command = disconnectCommand , Icon = new SymbolIcon { Symbol = SymbolRegular.PlugDisconnected24 } } ;
+        {
+            Header = "Disconnect" , Command = disconnectCommand ,
+            Icon   = new SymbolIcon { Symbol = SymbolRegular.PlugDisconnected24 }
+        } ;
         _menuItemShow = new MenuItem
-            { Header = "Show Settings" , Command = ShowSettingsCommand , Icon = new SymbolIcon { Symbol = SymbolRegular.SlideTransition24 } } ;
+        {
+            Header = "Show Settings" , Command = ShowSettingsCommand ,
+            Icon   = new SymbolIcon { Symbol = SymbolRegular.SlideTransition24 }
+        } ;
         _menuItemHide = new MenuItem
-            { Header = "Hide Settings" , Command = HideSettingsCommand , Icon = new SymbolIcon { Symbol = SymbolRegular.SlideHide24 } } ;
+        {
+            Header = "Hide Settings" , Command = HideSettingsCommand ,
+            Icon   = new SymbolIcon { Symbol = SymbolRegular.SlideHide24 }
+        } ;
 
         _menuItemStand = new MenuItem
-            { Header = "Stand" , Command = standingCommand , Icon = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleUp24 } } ;
+        {
+            Header = "Stand" , Command = standingCommand ,
+            Icon   = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleUp24 }
+        } ;
         _menuItemSit = new MenuItem
-            { Header = "Sit" , Command = seatingCommand , Icon = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleDown24 } } ;
+        {
+            Header = "Sit" , Command = seatingCommand ,
+            Icon   = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleDown24 }
+        } ;
         _menuItemCustom1 = new MenuItem
-            { Header = "Custom 1" , Command = custom1Command , Icon = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleLeft24 } } ;
+        {
+            Header = "Custom 1" , Command = custom1Command ,
+            Icon   = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleLeft24 }
+        } ;
         _menuItemCustom2 = new MenuItem
-            { Header = "Custom 2" , Command = custom2Command , Icon = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleRight24 } } ;
+        {
+            Header = "Custom 2" , Command = custom2Command ,
+            Icon   = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleRight24 }
+        } ;
         _menuItemStop = new MenuItem
             { Header = "Stop" , Command = stopCommand , Icon = new SymbolIcon { Symbol = SymbolRegular.Stop24 } } ;
         var menuItemExit = new MenuItem
-            { Header = "Exit" , Command = exitApplicationCommand , Icon = new SymbolIcon { Symbol = SymbolRegular.CallInbound24 } } ;
+        {
+            Header = "Exit" , Command = exitApplicationCommand ,
+            Icon   = new SymbolIcon { Symbol = SymbolRegular.CallInbound24 }
+        } ;
 
         TrayMenuItems =
         [
@@ -299,9 +322,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
             if ( _notifyIcon != null &&
                  ReferenceEquals ( _notifyIcon.Menu ,
                                    _contextMenu ) )
-            {
                 _notifyIcon.Menu = null ;
-            }
 
             _contextMenu = null ;
         }
@@ -315,7 +336,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         GC.SuppressFinalize ( this ) ;
     }
 
-    private async static ValueTask CastAndDispose ( IDisposable ? resource )
+    private static async ValueTask CastAndDispose ( IDisposable ? resource )
     {
         if ( resource is IAsyncDisposable resourceAsyncDisposable )
             await resourceAsyncDisposable.DisposeAsync ( ) ;
@@ -335,10 +356,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
     // Centralized busy-guard execution on UI thread
     private void WithBusyGuard ( Func < Task > action )
     {
-        if ( _isActionInProgress || ! _uiDeskManager.IsInitialize )
-        {
-            return ;
-        }
+        if ( _isActionInProgress || ! _uiDeskManager.IsInitialize ) return ;
 
         Application.Current?.Dispatcher.InvokeAsync ( async ( ) =>
                                                       {
@@ -406,12 +424,14 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
     private static bool CanShowSettings ( object ? _ )
     {
-        return Application.Current.MainWindow != null && Application.Current.MainWindow.Visibility != Visibility.Visible ;
+        return Application.Current.MainWindow            != null &&
+               Application.Current.MainWindow.Visibility != Visibility.Visible ;
     }
 
     private static bool CanHideSettings ( object ? _ )
     {
-        return Application.Current.MainWindow != null && Application.Current.MainWindow.Visibility != Visibility.Hidden ;
+        return Application.Current.MainWindow            != null &&
+               Application.Current.MainWindow.Visibility != Visibility.Hidden ;
     }
 
     private void DoShowSettings ( object ? _ )
@@ -455,10 +475,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
     // Generic helper to show a confirmation and run an async action if confirmed
     private void ConfirmAndExecute ( string title , string content , string primaryButtonText , Func < Task > action )
     {
-        if ( _isActionInProgress || ! _uiDeskManager.IsInitialize )
-        {
-            return ;
-        }
+        if ( _isActionInProgress || ! _uiDeskManager.IsInitialize ) return ;
 
         var uiMessageBox = new MessageBox
         {
@@ -471,10 +488,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
                                                       {
                                                           var result = await uiMessageBox.ShowDialogAsync ( ) ;
 
-                                                          if ( result != MessageBoxResult.Primary )
-                                                          {
-                                                              return ;
-                                                          }
+                                                          if ( result != MessageBoxResult.Primary ) return ;
 
                                                           WithBusyGuard ( action ) ;
                                                       } ) ;
@@ -566,7 +580,8 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         // ReSharper disable AsyncVoidLambda
         _advancedSubscription = _settingsChanges.AdvancedSettingsChanged
                                                 .ObserveOn ( _scheduler )
-                                                .Subscribe ( async hasChanged => await OnAdvancedSettingsChanged ( hasChanged ) ) ;
+                                                .Subscribe ( async hasChanged =>
+                                                                 await OnAdvancedSettingsChanged ( hasChanged ) ) ;
 
         _lockSubscription = _settingsChanges.LockSettingsChanged
                                             .ObserveOn ( _scheduler )

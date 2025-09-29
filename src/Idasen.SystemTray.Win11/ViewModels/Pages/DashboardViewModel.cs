@@ -5,8 +5,7 @@ namespace Idasen.SystemTray.Win11.ViewModels.Pages ;
 
 public partial class DashboardViewModel : ObservableObject
 {
-    [ ObservableProperty ]
-    private string _title ;
+    [ ObservableProperty ] private string _title ;
 
     public DashboardViewModel ( IVersionProvider versionProvider )
     {

@@ -5,8 +5,8 @@ namespace Idasen.SystemTray.Win11.TraySettings ;
 
 public class SettingsChanges : IObserveSettingsChanges , INotifySettingsChanges , IDisposable
 {
-    private readonly Subject < bool > _advancedSubject = new ( ) ;
-    private readonly Subject < bool > _lockSubject     = new ( ) ;
+    private readonly Subject < bool > _advancedSubject = new( ) ;
+    private readonly Subject < bool > _lockSubject     = new( ) ;
 
     public void Dispose ( )
     {

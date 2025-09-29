@@ -8,21 +8,22 @@ namespace Idasen.SystemTray.Win11.TraySettings ;
 
 public class SettingsStorage ( IFileSystem fileSystem ) : ISettingsStorage
 {
-    public static readonly JsonSerializerOptions JsonOptions = new ( )
+    // Win32 HResults for sharing / lock violations.
+    private const int SharingViolationHResult = unchecked ( ( int )0x80070020 ) ; // ERROR_SHARING_VIOLATION
+    private const int LockViolationHResult    = unchecked ( ( int )0x80070021 ) ; // ERROR_LOCK_VIOLATION
+
+    private const int MaxSaveAttempts  = 5 ;
+    private const int InitialBackoffMs = 50 ;
+
+    public static readonly JsonSerializerOptions JsonOptions = new( )
     {
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull ,
         PropertyNamingPolicy   = JsonNamingPolicy.CamelCase
     } ;
 
     // In-process coordination (cheap). Prevents overlapping Save/Load inside this process.
-    private static readonly SemaphoreSlim IoLock = new ( 1 , 1 ) ;
-
-    // Win32 HResults for sharing / lock violations.
-    private const int SharingViolationHResult = unchecked ( (int)0x80070020 ) ; // ERROR_SHARING_VIOLATION
-    private const int LockViolationHResult    = unchecked ( (int)0x80070021 ) ; // ERROR_LOCK_VIOLATION
-
-    private const int MaxSaveAttempts = 5 ;
-    private const int InitialBackoffMs = 50 ;
+    private static readonly SemaphoreSlim IoLock = new(1 ,
+                                                       1) ;
 
     public async Task < Settings > LoadSettingsAsync ( string            settingsFileName ,
                                                        CancellationToken token )
@@ -41,8 +42,8 @@ public class SettingsStorage ( IFileSystem fileSystem ) : ISettingsStorage
                                                                     FileAccess.Read ,
                                                                     FileShare.Read ) ;
                 var result = await JsonSerializer.DeserializeAsync < Settings > ( openStream ,
-                                                                                  JsonOptions ,
-                                                                                  token ).ConfigureAwait ( false ) ;
+                                 JsonOptions ,
+                                 token ).ConfigureAwait ( false ) ;
 
                 return result ?? new Settings ( ) ;
             }
@@ -84,7 +85,7 @@ public class SettingsStorage ( IFileSystem fileSystem ) : ISettingsStorage
 
             var tempFile = settingsFileName + ".tmp" ;
 
-            for ( var attempt = 1 ; attempt <= MaxSaveAttempts ; attempt++ )
+            for ( var attempt = 1 ; attempt <= MaxSaveAttempts ; attempt ++ )
             {
                 token.ThrowIfCancellationRequested ( ) ;
 
@@ -97,34 +98,32 @@ public class SettingsStorage ( IFileSystem fileSystem ) : ISettingsStorage
                                                                   FileShare.None ) )
                     {
                         ms.Position = 0 ;
-                        await ms.CopyToAsync ( fs , token ).ConfigureAwait ( false ) ;
+                        await ms.CopyToAsync ( fs ,
+                                               token ).ConfigureAwait ( false ) ;
                         await fs.FlushAsync ( token ).ConfigureAwait ( false ) ;
                     }
 
                     // Atomic replace if target exists, otherwise move.
                     if ( fileSystem.File.Exists ( settingsFileName ) )
-                    {
                         // Prefer atomic replace if available
                         fileSystem.File.Replace ( tempFile ,
                                                   settingsFileName ,
                                                   null ) ;
-                    }
                     else
-                    {
                         fileSystem.File.Move ( tempFile ,
                                                settingsFileName ) ;
-                    }
 
                     return ; // Success
                 }
                 catch ( IOException ioEx ) when ( IsSharingOrLockViolation ( ioEx ) && attempt < MaxSaveAttempts )
                 {
                     // Backoff with simple exponential delay
-                    var delay = InitialBackoffMs * ( 1 << ( attempt - 1 ) );
+                    var delay = InitialBackoffMs * ( 1 << ( attempt - 1 ) ) ;
 
                     try
                     {
-                        await Task.Delay ( delay , token ).ConfigureAwait ( false ) ;
+                        await Task.Delay ( delay ,
+                                           token ).ConfigureAwait ( false ) ;
                     }
                     finally
                     {
@@ -142,7 +141,8 @@ public class SettingsStorage ( IFileSystem fileSystem ) : ISettingsStorage
             }
 
             // If all retries failed we throw a final explicit error
-            throw new IOException ( $"Failed to save settings to {settingsFileName} after {MaxSaveAttempts} attempts due to sharing/lock violations." ) ;
+            throw new
+                IOException ( $"Failed to save settings to {settingsFileName} after {MaxSaveAttempts} attempts due to sharing/lock violations." ) ;
         }
         finally
         {
@@ -151,7 +151,9 @@ public class SettingsStorage ( IFileSystem fileSystem ) : ISettingsStorage
     }
 
     private static bool IsSharingOrLockViolation ( IOException ex )
-        => ex.HResult == SharingViolationHResult || ex.HResult == LockViolationHResult ;
+    {
+        return ex.HResult == SharingViolationHResult || ex.HResult == LockViolationHResult ;
+    }
 
     private void SafeDelete ( string path )
     {

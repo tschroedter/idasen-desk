@@ -16,7 +16,7 @@ public class TaskbarIconProvider : ITaskbarIconProvider
     private readonly IDynamicIconCreator _creator ;
     private readonly ISettingsManager    _manager ;
     private readonly IScheduler          _scheduler ;
-    private readonly object              _syncRoot = new ( ) ;
+    private readonly object              _syncRoot = new( ) ;
     private          IDisposable ?       _disposable ;
     private          bool                _isDisposed ;
     private          bool                _isInitialized ;
@@ -60,7 +60,7 @@ public class TaskbarIconProvider : ITaskbarIconProvider
             _logger?.Information ( "TaskbarIconProvider disposed." ) ;
         }
 
-        GC.SuppressFinalize ( this );
+        GC.SuppressFinalize ( this ) ;
     }
 
     public void Initialize (
@@ -97,13 +97,11 @@ public class TaskbarIconProvider : ITaskbarIconProvider
             var heightInCm = _manager.CurrentSettings.HeightSettings.LastKnownDeskHeight ;
 
             if ( heightInCm is >= Constants.DefaultDeskMinHeightInCm and <= Constants.DefaultDeskMaxHeightInCm )
-            {
                 // HeightSpeedDetails expects height in millimeters
                 OnHeightAndSpeedChanged ( new HeightSpeedDetails (
                                                                   DateTimeOffset.Now ,
                                                                   heightInCm * 100 ,
                                                                   0 ) ) ;
-            }
 
             _isInitialized = true ;
         }
@@ -129,7 +127,7 @@ public class TaskbarIconProvider : ITaskbarIconProvider
             return ;
         }
 
-        var heightInCm = ( int ) Math.Round ( details.Height / 100.0 ) ;
+        var heightInCm = ( int )Math.Round ( details.Height / 100.0 ) ;
 
         _creator.Update ( notifyIcon ,
                           heightInCm ) ;

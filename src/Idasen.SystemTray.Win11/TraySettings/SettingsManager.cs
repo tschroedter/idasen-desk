@@ -6,16 +6,24 @@ using Serilog ;
 
 namespace Idasen.SystemTray.Win11.TraySettings ;
 
-public class SettingsManager ( ILogger                logger ,
-                               ICommonApplicationData commonApplicationData ,
-                               ISettingsStorage       settingsStorage ,
-                               IFileSystem            fileSystem )
+public class SettingsManager (
+    ILogger                logger ,
+    ICommonApplicationData commonApplicationData ,
+    ISettingsStorage       settingsStorage ,
+    IFileSystem            fileSystem )
     : ISettingsManager , IDisposable
 {
     private readonly Subject < ISettings > _settingsSaved = new( ) ;
-    private          bool                  _disposed ;
 
-    private Settings _current = new ( ) ;
+    private Settings _current = new( ) ;
+    private bool     _disposed ;
+
+    public void Dispose ( )
+    {
+        Dispose ( true ) ;
+
+        GC.SuppressFinalize ( this ) ;
+    }
 
     public IObservable < ISettings > SettingsSaved => _settingsSaved ;
 
@@ -43,9 +51,7 @@ public class SettingsManager ( ILogger                logger ,
                                                                         token ).ConfigureAwait ( false ) ;
 
             if ( MissingNotificationsEnabled ( settingsJson ) )
-            {
                 await AddMissingSettingsNotificationsEnabled ( token ).ConfigureAwait ( false ) ;
-            }
 
             return true ; // Upgrade not needed or successfully completed
         }
@@ -83,7 +89,8 @@ public class SettingsManager ( ILogger                logger ,
         }
         catch ( Exception ex )
         {
-            logger.Error ( ex , "Failed to reset settings" ) ;
+            logger.Error ( ex ,
+                           "Failed to reset settings" ) ;
             throw ;
         }
     }
@@ -106,22 +113,12 @@ public class SettingsManager ( ILogger                logger ,
         await SaveAsync ( token ).ConfigureAwait ( false ) ;
     }
 
-    public void Dispose ( )
-    {
-        Dispose ( true ) ;
-
-        GC.SuppressFinalize ( this ) ;
-    }
-
     protected virtual void Dispose ( bool disposing )
     {
         if ( _disposed )
             return ;
 
-        if ( disposing )
-        {
-            _settingsSaved.Dispose ( ) ;
-        }
+        if ( disposing ) _settingsSaved.Dispose ( ) ;
 
         _disposed = true ;
     }

@@ -19,7 +19,8 @@ public class EnumToBooleanConverter : IValueConverter
 
         if ( ! Enum.IsDefined ( typeof ( ApplicationTheme ) ,
                                 value ) )
-            throw new InvalidEnumArgumentException ( $"{nameof ( value )} must be a valid {nameof ( ApplicationTheme )} enum value" ) ;
+            throw new
+                InvalidEnumArgumentException ( $"{nameof ( value )} must be a valid {nameof ( ApplicationTheme )} enum value" ) ;
 
         if ( ! Enum.TryParse ( typeof ( ApplicationTheme ) ,
                                enumString ,

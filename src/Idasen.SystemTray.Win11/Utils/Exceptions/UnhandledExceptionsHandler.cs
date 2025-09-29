@@ -8,7 +8,7 @@ namespace Idasen.SystemTray.Win11.Utils.Exceptions ;
 [ ExcludeFromCodeCoverage ]
 public static class UnhandledExceptionsHandler
 {
-    private static readonly ErrorHandler ErrorHandler = new ( ) ;
+    private static readonly ErrorHandler ErrorHandler = new( ) ;
     private static          bool         _registered ;
 
     public static void RegisterGlobalExceptionHandling ( )
@@ -54,15 +54,11 @@ public static class UnhandledExceptionsHandler
         ILogger                               log )
     {
         if ( args.Exception.IsBluetoothDisabledException ( ) )
-        {
             HandleBluetoothDisabledException ( args ,
                                                log ) ;
-        }
         else
-        {
             HandleGeneralException ( args ,
                                      log ) ;
-        }
     }
 
     private static void HandleGeneralException ( DispatcherUnhandledExceptionEventArgs args ,

@@ -29,11 +29,11 @@
 
         <!-- Scrollable content within fixed-height row -->
         <ScrollViewer Grid.Row="0"
-              VerticalScrollBarVisibility="Auto"
-              HorizontalScrollBarVisibility="Disabled"
-              CanContentScroll="False"
-              PanningMode="VerticalOnly"
-              Padding="0,0,24,0">
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled"
+                      CanContentScroll="False"
+                      PanningMode="VerticalOnly"
+                      Padding="0,0,24,0">
             <StackPanel>
                 <!-- Advanced -->
                 <ui:CardExpander CornerRadius="0,0,8,8" Header="Advanced">
@@ -122,7 +122,7 @@
                             <Separator Grid.Row="15" Grid.Column="0" Grid.ColumnSpan="2" />
                             <!-- Row 16 -->
                             <Label Grid.Row="16" Grid.Column="0" Content="Settings"
-                                   ToolTip="Show or hide all notifications." 
+                                   ToolTip="Show or hide all notifications."
                                    Padding="5,7,5,0" />
                             <ui:Button Grid.Row="16"
                                        Grid.Column="1"
@@ -263,7 +263,8 @@
                             <!-- Row 0 -->
                             <ui:SymbolIcon Grid.Row="0" Grid.Column="0" Symbol="{x:Static ui:SymbolRegular.Stop24}"
                                            HorizontalAlignment="Center" VerticalAlignment="Center" />
-                            <Label Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="4" Content="Stop" VerticalAlignment="Center"
+                            <Label Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="4" Content="Stop"
+                                   VerticalAlignment="Center"
                                    Padding="5,0,5,0" />
                             <CheckBox Grid.Row="0" Grid.Column="5" VerticalAlignment="Center" MinWidth="75"
                                       Content="Tray" ToolTip="Show in tray context menu"

@@ -5,11 +5,12 @@ namespace Idasen.SystemTray.Win11.Utils ;
 /// <summary>
 ///     Simplistic delegate command for the demo.
 /// </summary>
-public class DelegateCommand ( Action < object ? >        execute ,
-                               Func < object ? , bool > ? canExecute = null ) : ICommand
+public class DelegateCommand (
+    Action < object ? >        execute ,
+    Func < object ? , bool > ? canExecute = null ) : ICommand
 {
     private readonly Func < object ? , bool > _canExecute = canExecute ?? ( _ => true ) ;
-    private readonly Action < object ? >      _execute    = execute    ?? throw new ArgumentNullException ( nameof ( execute ) ) ;
+    private readonly Action < object ? > _execute = execute ?? throw new ArgumentNullException ( nameof ( execute ) ) ;
 
     public void Execute ( object ? parameter )
     {

@@ -4,13 +4,14 @@ using Wpf.Ui.Appearance ;
 
 namespace Idasen.SystemTray.Win11.Utils ;
 
-public class SettingsSynchronizer ( ILogger                        logger ,
-                                    ILoggingSettingsManager        settingsManager ,
-                                    IDoubleToUIntConverter         toUIntConverter ,
-                                    IDeviceNameConverter           nameConverter ,
-                                    IDeviceAddressToULongConverter addressConverter ,
-                                    INotifySettingsChanges         settingsChanges ,
-                                    IThemeSwitcher                 themeSwitcher ) : ISettingsSynchronizer
+public class SettingsSynchronizer (
+    ILogger                        logger ,
+    ILoggingSettingsManager        settingsManager ,
+    IDoubleToUIntConverter         toUIntConverter ,
+    IDeviceNameConverter           nameConverter ,
+    IDeviceAddressToULongConverter addressConverter ,
+    INotifySettingsChanges         settingsChanges ,
+    IThemeSwitcher                 themeSwitcher ) : ISettingsSynchronizer
 {
     public async Task LoadSettingsAsync ( ISettingsViewModel model ,
                                           CancellationToken  token )
@@ -51,9 +52,7 @@ public class SettingsSynchronizer ( ILogger                        logger ,
             if ( ! string.Equals ( themeSwitcher.CurrentThemeName ,
                                    themeName ,
                                    StringComparison.Ordinal ) )
-            {
                 themeSwitcher.ChangeTheme ( current.AppearanceSettings.ThemeName ) ;
-            }
         }
         catch ( Exception ex )
         {
@@ -117,13 +116,13 @@ public class SettingsSynchronizer ( ILogger                        logger ,
         var newNotificationsEnabled = model.Notifications ;
 
         settings.HeightSettings.StandingHeightInCm = toUIntConverter.ConvertToUInt ( model.Standing ,
-                                                                                     Constants.DefaultHeightStandingInCm ) ;
+            Constants.DefaultHeightStandingInCm ) ;
         settings.HeightSettings.SeatingHeightInCm = toUIntConverter.ConvertToUInt ( model.Seating ,
-                                                                                    Constants.DefaultHeightSeatingInCm ) ;
+            Constants.DefaultHeightSeatingInCm ) ;
         settings.HeightSettings.Custom1HeightInCm = toUIntConverter.ConvertToUInt ( model.Custom1 ,
-                                                                                    Constants.DefaultHeightStandingInCm ) ;
+            Constants.DefaultHeightStandingInCm ) ;
         settings.HeightSettings.Custom2HeightInCm = toUIntConverter.ConvertToUInt ( model.Custom2 ,
-                                                                                    Constants.DefaultHeightSeatingInCm ) ;
+            Constants.DefaultHeightSeatingInCm ) ;
         settings.HeightSettings.LastKnownDeskHeight = model.LastKnownDeskHeight ;
 
         settings.HeightSettings.StandingIsVisibleInContextMenu = model.StandingIsVisibleInContextMenu ;
@@ -151,15 +150,9 @@ public class SettingsSynchronizer ( ILogger                        logger ,
 
             await settingsManager.SaveAsync ( token ).ConfigureAwait ( false ) ;
 
-            if ( advancedChanged )
-            {
-                AdvancedSettingsChanged ( advancedChanged ) ;
-            }
+            if ( advancedChanged ) AdvancedSettingsChanged ( advancedChanged ) ;
 
-            if ( lockChanged )
-            {
-                LockChanged ( settingsManager.CurrentSettings ) ;
-            }
+            if ( lockChanged ) LockChanged ( settingsManager.CurrentSettings ) ;
         }
         catch ( Exception e )
         {

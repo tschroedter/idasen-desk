@@ -26,17 +26,21 @@ public sealed class UiDeskManager : IUiDeskManager
     private const string HotkeyNameCustom1  = "Custom 1" ;
     private const string HotkeyNameCustom2  = "Custom 2" ;
 
-    private static readonly KeyGesture StandingGesture = new ( Key.Up ,
-                                                               ModifierKeys.Control | ModifierKeys.Alt | ModifierKeys.Shift ) ;
+    private static readonly KeyGesture StandingGesture = new(Key.Up ,
+                                                             ModifierKeys.Control | ModifierKeys.Alt |
+                                                             ModifierKeys.Shift) ;
 
-    private static readonly KeyGesture SittingGesture = new ( Key.Down ,
-                                                              ModifierKeys.Control | ModifierKeys.Alt | ModifierKeys.Shift ) ;
+    private static readonly KeyGesture SittingGesture = new(Key.Down ,
+                                                            ModifierKeys.Control | ModifierKeys.Alt |
+                                                            ModifierKeys.Shift) ;
 
-    private static readonly KeyGesture Custom1Gesture = new ( Key.Left ,
-                                                              ModifierKeys.Control | ModifierKeys.Alt | ModifierKeys.Shift ) ;
+    private static readonly KeyGesture Custom1Gesture = new(Key.Left ,
+                                                            ModifierKeys.Control | ModifierKeys.Alt |
+                                                            ModifierKeys.Shift) ;
 
-    private static readonly KeyGesture Custom2Gesture = new ( Key.Right ,
-                                                              ModifierKeys.Control | ModifierKeys.Alt | ModifierKeys.Shift ) ;
+    private static readonly KeyGesture Custom2Gesture = new(Key.Right ,
+                                                            ModifierKeys.Control | ModifierKeys.Alt |
+                                                            ModifierKeys.Shift) ;
 
     private readonly IErrorManager             _errorManager ;
     private readonly ITaskbarIconProvider      _iconProvider ;
@@ -46,7 +50,7 @@ public sealed class UiDeskManager : IUiDeskManager
     private readonly Func < IDeskProvider > ?  _providerFactory ;
     private readonly IScheduler                _scheduler ;
     private readonly Subject < StatusBarInfo > _statusBarInfoSubject ;
-    private readonly object                    _statusLock = new ( ) ;
+    private readonly object                    _statusLock = new( ) ;
 
     private IDesk ?         _desk ;
     private IDeskProvider ? _deskProvider ;
@@ -55,8 +59,7 @@ public sealed class UiDeskManager : IUiDeskManager
     private IDisposable ?   _heightChanged ;
     private NotifyIcon ?    _notifyIcon ;
 
-    [ UsedImplicitly ]
-    private IDisposable ? _onErrorChanged ;
+    [ UsedImplicitly ] private IDisposable ? _onErrorChanged ;
 
     private CancellationToken ?       _token ;
     private CancellationTokenSource ? _tokenSource ;
@@ -210,10 +213,7 @@ public sealed class UiDeskManager : IUiDeskManager
 
     public Task DisconnectAsync ( )
     {
-        if ( IsDeskConnected ( ) )
-        {
-            DoDisconnectAsync ( ) ;
-        }
+        if ( IsDeskConnected ( ) ) DoDisconnectAsync ( ) ;
 
         return Task.CompletedTask ;
     }
@@ -392,7 +392,7 @@ public sealed class UiDeskManager : IUiDeskManager
 
     private CancellationToken GetTokenOrThrow ( )
     {
-        return _token ?? throw new InvalidOperationException( "Token is null" ) ;
+        return _token ?? throw new InvalidOperationException ( "Token is null" ) ;
     }
 
     private async Task MoveToConfiguredHeightAsync ( string                    methodName ,
@@ -439,7 +439,8 @@ public sealed class UiDeskManager : IUiDeskManager
     private static uint MmToCm ( uint height )
     {
         // Use double division and specify midpoint rounding to avoid ambiguous overloads and banker's rounding
-        return ( uint ) Math.Round ( height / ( double ) DeskHeightFactor , MidpointRounding.AwayFromZero ) ;
+        return ( uint )Math.Round ( height / ( double )DeskHeightFactor ,
+                                    MidpointRounding.AwayFromZero ) ;
     }
 
     private void DoDisconnectAsync ( )
@@ -572,10 +573,7 @@ public sealed class UiDeskManager : IUiDeskManager
                         message ,
                         severity ) ;
 
-        if ( height == 0 )
-        {
-            height = _manager.CurrentSettings.HeightSettings.LastKnownDeskHeight ;
-        }
+        if ( height == 0 ) height = _manager.CurrentSettings.HeightSettings.LastKnownDeskHeight ;
 
         var info = new StatusBarInfo ( title ,
                                        height ,
@@ -651,7 +649,7 @@ public sealed class UiDeskManager : IUiDeskManager
     private void CheckIfInitialized ( )
     {
         if ( ! IsInitialize )
-            throw new InvalidOperationException( "Initialize needs to be called first!" ) ;
+            throw new InvalidOperationException ( "Initialize needs to be called first!" ) ;
     }
 
     private void ConnectFailed ( )

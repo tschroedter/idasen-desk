@@ -31,6 +31,15 @@ public class StatusViewModelTests
         _timer     = Substitute.For < ITimer > ( ) ;
     }
 
+    public void Dispose ( )
+    {
+        _manager.Dispose ( ) ;
+        _statusBarInfoSubject.Dispose ( ) ;
+        _timer.Dispose ( ) ;
+
+        GC.SuppressFinalize ( this ) ;
+    }
+
     [ Fact ]
     public void Constructor_ShouldInitializeProperties ( )
     {
@@ -111,14 +120,5 @@ public class StatusViewModelTests
     private ITimer TimerFactory ( TimerCallback arg1 , object ? arg2 , TimeSpan arg3 , TimeSpan arg4 )
     {
         return _timer ;
-    }
-
-    public void Dispose ( )
-    {
-        _manager.Dispose ( ) ;
-        _statusBarInfoSubject.Dispose ( ) ;
-        _timer.Dispose ( ) ;
-
-        GC.SuppressFinalize ( this );
     }
 }

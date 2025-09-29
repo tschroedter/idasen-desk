@@ -2,10 +2,11 @@
 
 namespace Idasen.SystemTray.Win11.Utils ;
 
-public record StatusBarInfo ( string          Title ,
-                              uint            Height ,
-                              string          Message ,
-                              InfoBarSeverity Severity )
+public record StatusBarInfo (
+    string          Title ,
+    uint            Height ,
+    string          Message ,
+    InfoBarSeverity Severity )
 {
     public override string ToString ( )
     {

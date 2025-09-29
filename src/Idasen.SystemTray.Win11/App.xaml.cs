@@ -47,15 +47,15 @@ public partial class App
                                                   .ConfigureAppConfiguration ( GetBasePath )
                                                   .UseServiceProviderFactory ( new AutofacServiceProviderFactory ( ) )
                                                   .ConfigureContainer < ContainerBuilder > ( builder =>
-                                                                                             {
-                                                                                                 // Register Serilog logger instance for DI
-                                                                                                 builder.RegisterLogger ( AppLogger ) ;
-                                                                                                 builder.RegisterModule < BluetoothLEAop > ( ) ;
-                                                                                                 builder
-                                                                                                    .RegisterModule < BluetoothLECoreModule > ( ) ;
-                                                                                                 builder
-                                                                                                    .RegisterModule < BluetoothLELinakModule > ( ) ;
-                                                                                             } )
+                                                   {
+                                                       // Register Serilog logger instance for DI
+                                                       builder.RegisterLogger ( AppLogger ) ;
+                                                       builder.RegisterModule < BluetoothLEAop > ( ) ;
+                                                       builder
+                                                          .RegisterModule < BluetoothLECoreModule > ( ) ;
+                                                       builder
+                                                          .RegisterModule < BluetoothLELinakModule > ( ) ;
+                                                   } )
                                                   .ConfigureServices ( ( _ ,
                                                                          services ) =>
                                                                        {
@@ -87,11 +87,8 @@ public partial class App
                                                                            services.AddSingleton < IObserveSettingsChanges > ( GetSettingsChanged ) ;
                                                                            services.AddSingleton < INotifySettingsChanges > ( GetSettingsChanged ) ;
                                                                            services.AddSingleton < ISettingsManager , SettingsManager > ( ) ;
-                                                                           services
-                                                                              .AddSingleton < ILoggingSettingsManager ,
-                                                                                   LoggingSettingsManager > ( ) ;
-                                                                           services
-                                                                              .AddSingleton < ICommonApplicationData , CommonApplicationData > ( ) ;
+                                                                           services.AddSingleton < ILoggingSettingsManager , LoggingSettingsManager > ( ) ;
+                                                                           services.AddSingleton < ICommonApplicationData , CommonApplicationData > ( ) ;
                                                                            services.AddSingleton < ISettingsStorage , SettingsStorage > ( ) ;
                                                                            services.AddSingleton < ITaskbarIconProvider , TaskbarIconProvider > ( ) ;
                                                                            services.AddSingleton < IUiDeskManager , UiDeskManager > ( ) ;
@@ -99,35 +96,17 @@ public partial class App
                                                                            services.AddSingleton ( _ => CreateScheduler ( ) ) ;
                                                                            services.AddSingleton ( CreateTaskbarIconProvider ) ;
                                                                            services.AddTransient < IDeviceNameConverter , DeviceNameConverter > ( ) ;
-                                                                           services
-                                                                              .AddTransient < IDoubleToUIntConverter , DoubleToUIntConverter > ( ) ;
-                                                                           services
-                                                                              .AddTransient < IStringToUIntConverter , StringToUIntConverter > ( ) ;
-                                                                           services
-                                                                              .AddTransient < IDeviceAddressToULongConverter ,
-                                                                                   DeviceAddressToULongConverter > ( ) ;
-                                                                           services.AddSingleton ( provider =>
-                                                                                                      new Func < IDeskProvider > ( provider
-                                                                                                         .GetRequiredService <
-                                                                                                              IDeskProvider > ) ) ;
+                                                                           services.AddTransient < IDoubleToUIntConverter , DoubleToUIntConverter > ( ) ;
+                                                                           services.AddTransient < IStringToUIntConverter , StringToUIntConverter > ( ) ;
+                                                                           services.AddTransient < IDeviceAddressToULongConverter , DeviceAddressToULongConverter > ( ) ;
+                                                                           services.AddSingleton ( provider => new Func < IDeskProvider > ( provider.GetRequiredService < IDeskProvider > ) ) ;
                                                                            services.AddSingleton < IFileSystem , FileSystem > ( ) ;
                                                                            services.AddTransient < IThemeSwitcher , ThemeSwitcher > ( ) ;
-                                                                           services
-                                                                              .AddTransient < ISettingsSynchronizer , SettingsSynchronizer > ( ) ;
-                                                                           services
-                                                                              .AddSingleton < IApplicationThemeManager ,
-                                                                                   MyApplicationThemeManager > ( ) ;
-                                                                           services
-                                                                              .AddSingleton < Func < TimerCallback , object ? , TimeSpan , TimeSpan ,
-                                                                                       ITimer > >
-                                                                                   ( _ =>
-                                                                                     ( callback ,
-                                                                                       state ,
-                                                                                       dueTime ,
-                                                                                       period ) => new Timer ( callback ,
-                                                                                         state ,
-                                                                                         dueTime ,
-                                                                                         period ) ) ;
+                                                                           services.AddTransient < ISettingsSynchronizer , SettingsSynchronizer > ( ) ;
+                                                                           services.AddSingleton < IApplicationThemeManager , MyApplicationThemeManager > ( ) ;
+                                                                           services.AddSingleton < Func < TimerCallback , object ? , TimeSpan , TimeSpan , ITimer > >
+                                                                                   ( _ => ( callback , state , dueTime , period ) 
+                                                                                       => new Timer ( callback , state , dueTime , period ) ) ;
                                                                        } ).Build ( ) ;
 
     private static Mutex ? _singleInstanceMutex ;
@@ -140,7 +119,7 @@ public partial class App
     }
 
     private static Window CurrentWindow =>
-        Current.MainWindow ?? throw new InvalidOperationException( "Can't find the main window!" ) ;
+        Current.MainWindow ?? throw new InvalidOperationException ( "Can't find the main window!" ) ;
 
     private static SettingsChanges GetSettingsChanged ( IServiceProvider provider )
     {
@@ -197,13 +176,13 @@ public partial class App
             _logger.Information ( "##### Startup..." ) ;
 
             var environmentName =
-                Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") ??
-                Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ??
-                "Production";
+                Environment.GetEnvironmentVariable ( "DOTNET_ENVIRONMENT" ) ??
+                Environment.GetEnvironmentVariable ( "ASPNETCORE_ENVIRONMENT" ) ??
+                "Production" ;
 
-            _logger.Information ("BaseDirectory={BaseDirectory}, EnvironmentName={EnvironmentName}",
-                                 AppContext.BaseDirectory,
-                                 environmentName);
+            _logger.Information ( "BaseDirectory={BaseDirectory}, EnvironmentName={EnvironmentName}" ,
+                                  AppContext.BaseDirectory ,
+                                  environmentName ) ;
 
 
             var notifyIcon = FindNotifyIcon ( ) ;
@@ -290,14 +269,12 @@ public partial class App
 
     private static NotifyIcon FindNotifyIcon ( )
     {
-        if ( ! CurrentWindow.CheckAccess ( ) )
-        {
-            return CurrentWindow.Dispatcher.Invoke ( FindNotifyIcon ) ;
-        }
+        if ( ! CurrentWindow.CheckAccess ( ) ) return CurrentWindow.Dispatcher.Invoke ( FindNotifyIcon ) ;
 
         var notifyIcons = FindVisualChildren < NotifyIcon > ( CurrentWindow ) ;
 
-        return notifyIcons.FirstOrDefault ( ) ?? throw new InvalidOperationException( "Can't find the main notify icon!" ) ;
+        return notifyIcons.FirstOrDefault ( ) ??
+               throw new InvalidOperationException ( "Can't find the main notify icon!" ) ;
     }
 
     private static void GetBasePath ( IConfigurationBuilder c )
@@ -316,15 +293,9 @@ public partial class App
             var child = VisualTreeHelper.GetChild ( parent ,
                                                     i ) ;
 
-            if ( child is T childType )
-            {
-                yield return childType ;
-            }
+            if ( child is T childType ) yield return childType ;
 
-            foreach ( var other in FindVisualChildren < T > ( child ) )
-            {
-                yield return other ;
-            }
+            foreach ( var other in FindVisualChildren < T > ( child ) ) yield return other ;
         }
     }
 }

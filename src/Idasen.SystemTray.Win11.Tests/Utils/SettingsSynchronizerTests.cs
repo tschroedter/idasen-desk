@@ -10,18 +10,20 @@ namespace Idasen.SystemTray.Win11.Tests.Utils ;
 
 public class SettingsSynchronizerTests
 {
-    private readonly IDeviceAddressToULongConverter _addressConverter   = Substitute.For < IDeviceAddressToULongConverter > ( ) ;
-    private readonly AppearanceSettings             _appearanceSettings = new ( ) ;
-    private readonly DeviceSettings                 _deviceSettings     = new ( ) ;
-    private readonly HeightSettings                 _heightSettings     = new ( ) ;
-    private readonly ILogger                        _logger             = Substitute.For < ILogger > ( ) ;
-    private readonly ISettingsViewModel             _model              = Substitute.For < ISettingsViewModel > ( ) ;
-    private readonly IDeviceNameConverter           _nameConverter      = Substitute.For < IDeviceNameConverter > ( ) ;
-    private readonly ISettings                      _settings           = Substitute.For < ISettings > ( ) ;
-    private readonly INotifySettingsChanges         _settingsChanges    = Substitute.For < INotifySettingsChanges > ( ) ;
-    private readonly ILoggingSettingsManager        _settingsManager    = Substitute.For < ILoggingSettingsManager > ( ) ;
-    private readonly IThemeSwitcher                 _themeSwitcher      = Substitute.For < IThemeSwitcher > ( ) ;
-    private readonly IDoubleToUIntConverter         _toUIntConverter    = Substitute.For < IDoubleToUIntConverter > ( ) ;
+    private readonly IDeviceAddressToULongConverter _addressConverter =
+        Substitute.For < IDeviceAddressToULongConverter > ( ) ;
+
+    private readonly AppearanceSettings      _appearanceSettings = new( ) ;
+    private readonly DeviceSettings          _deviceSettings     = new( ) ;
+    private readonly HeightSettings          _heightSettings     = new( ) ;
+    private readonly ILogger                 _logger             = Substitute.For < ILogger > ( ) ;
+    private readonly ISettingsViewModel      _model              = Substitute.For < ISettingsViewModel > ( ) ;
+    private readonly IDeviceNameConverter    _nameConverter      = Substitute.For < IDeviceNameConverter > ( ) ;
+    private readonly ISettings               _settings           = Substitute.For < ISettings > ( ) ;
+    private readonly INotifySettingsChanges  _settingsChanges    = Substitute.For < INotifySettingsChanges > ( ) ;
+    private readonly ILoggingSettingsManager _settingsManager    = Substitute.For < ILoggingSettingsManager > ( ) ;
+    private readonly IThemeSwitcher          _themeSwitcher      = Substitute.For < IThemeSwitcher > ( ) ;
+    private readonly IDoubleToUIntConverter  _toUIntConverter    = Substitute.For < IDoubleToUIntConverter > ( ) ;
 
     private SettingsSynchronizer CreateSut ( )
     {

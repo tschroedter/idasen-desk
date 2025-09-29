@@ -30,14 +30,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <None Remove="Resources\cup-xl.ico" />
-      <None Remove="Resources\Donate-Button.png" />
-      <None Remove="Resources\small-green-light-bulb.png" />
+        <None Remove="Resources\cup-xl.ico" />
+        <None Remove="Resources\Donate-Button.png" />
+        <None Remove="Resources\small-green-light-bulb.png" />
     </ItemGroup>
 
     <ItemGroup>
-      <Resource Include="Resources\Donate-Button.png" />
-      <Resource Include="Resources\cup-xl.ico" />
+        <Resource Include="Resources\Donate-Button.png" />
+        <Resource Include="Resources\cup-xl.ico" />
     </ItemGroup>
 
     <ItemGroup>
@@ -79,10 +79,10 @@
 
     <!-- Single concise include; prevent bundling -->
     <ItemGroup>
-      <Content Include="appsettings*.json">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        <CopyToPublishDirectory>Always</CopyToPublishDirectory>
-        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      </Content>
+        <Content Include="appsettings*.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+            <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+        </Content>
     </ItemGroup>
 </Project>

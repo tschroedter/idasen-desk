@@ -26,6 +26,13 @@ public class SettingsManagerTests
                                                  _fileSystem ) ;
     }
 
+    public void Dispose ( )
+    {
+        _settingsManager.Dispose ( ) ;
+
+        GC.SuppressFinalize ( this ) ;
+    }
+
     [ Fact ]
     public async Task SaveAsync_ShouldSaveSettings ( )
     {
@@ -37,7 +44,9 @@ public class SettingsManagerTests
 
         // Assert
         await _settingsStorage.Received ( 1 ).SaveSettingsAsync ( "TestSettingsFilePath" ,
-                                                                  Arg.Is < Settings > ( s => s.DeviceSettings.DeviceName == "TestDevice" ) ,
+                                                                  Arg.Is < Settings > ( s =>
+                                                                      s.DeviceSettings.DeviceName ==
+                                                                      "TestDevice" ) ,
                                                                   CancellationToken.None ) ;
     }
 
@@ -103,7 +112,8 @@ public class SettingsManagerTests
 
         await _settingsStorage.Received ( 1 )
                               .SaveSettingsAsync ( "TestSettingsFilePath" ,
-                                                   Arg.Is < Settings > ( s => s.HeightSettings.LastKnownDeskHeight == heightInCm ) ,
+                                                   Arg.Is < Settings > ( s => s.HeightSettings.LastKnownDeskHeight ==
+                                                                              heightInCm ) ,
                                                    CancellationToken.None ) ;
     }
 
@@ -122,17 +132,11 @@ public class SettingsManagerTests
         // Assert
         await _settingsStorage.Received ( 1 )
                               .SaveSettingsAsync ( "TestSettingsFilePath" ,
-                                                   Arg.Is < Settings > ( s => s.DeviceSettings.DeviceName == Constants.DefaultDeviceName &&
+                                                   Arg.Is < Settings > ( s => s.DeviceSettings.DeviceName ==
+                                                                              Constants.DefaultDeviceName &&
                                                                               s.HeightSettings.StandingHeightInCm ==
                                                                               Constants.DefaultHeightStandingInCm ) ,
                                                    CancellationToken.None ) ;
         notified.Should ( ).BeTrue ( ) ;
-    }
-
-    public void Dispose ( )
-    {
-        _settingsManager.Dispose ( ) ;
-
-        GC.SuppressFinalize ( this );
     }
 }

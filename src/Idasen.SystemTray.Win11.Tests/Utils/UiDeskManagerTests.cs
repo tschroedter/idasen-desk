@@ -56,7 +56,7 @@ public class UiDeskManagerTests
         var sut = CreateSut ( out var desk ,
                               out var settingsManager ,
                               out _ ) ;
-        var settings = ( Settings ) settingsManager.CurrentSettings ;
+        var settings = ( Settings )settingsManager.CurrentSettings ;
         settings.HeightSettings.StandingHeightInCm = 120 ;
         settingsManager.LoadAsync ( Arg.Any < CancellationToken > ( ) ).Returns ( Task.CompletedTask ) ;
 
@@ -72,7 +72,7 @@ public class UiDeskManagerTests
         var sut = CreateSut ( out var desk ,
                               out var settingsManager ,
                               out _ ) ;
-        var settings = ( Settings ) settingsManager.CurrentSettings ;
+        var settings = ( Settings )settingsManager.CurrentSettings ;
         settings.HeightSettings.SeatingHeightInCm = 70 ;
         settingsManager.LoadAsync ( Arg.Any < CancellationToken > ( ) ).Returns ( Task.CompletedTask ) ;
 
@@ -124,7 +124,7 @@ public class UiDeskManagerTests
 
         await sut.MoveLockAsync ( ) ;
 
-        await desk.Received ( 1 ).MoveLockAsync( ) ;
+        await desk.Received ( 1 ).MoveLockAsync ( ) ;
     }
 
     [ Fact ]
@@ -136,7 +136,7 @@ public class UiDeskManagerTests
 
         await sut.MoveUnlockAsync ( ) ;
 
-        await desk.Received ( 1 ).MoveUnlockAsync( ) ;
+        await desk.Received ( 1 ).MoveUnlockAsync ( ) ;
     }
 
     [ Fact ]
@@ -173,7 +173,7 @@ public class UiDeskManagerTests
         var sut = CreateSut ( out var desk ,
                               out var settingsManager ,
                               out _ ) ;
-        var settings = ( Settings ) settingsManager.CurrentSettings ;
+        var settings = ( Settings )settingsManager.CurrentSettings ;
         settings.HeightSettings.Custom1HeightInCm = 111 ;
         settingsManager.LoadAsync ( Arg.Any < CancellationToken > ( ) ).Returns ( Task.CompletedTask ) ;
 
@@ -189,7 +189,7 @@ public class UiDeskManagerTests
         var sut = CreateSut ( out var desk ,
                               out var settingsManager ,
                               out _ ) ;
-        var settings = ( Settings ) settingsManager.CurrentSettings ;
+        var settings = ( Settings )settingsManager.CurrentSettings ;
         settings.HeightSettings.Custom2HeightInCm = 66 ;
         settingsManager.LoadAsync ( Arg.Any < CancellationToken > ( ) ).Returns ( Task.CompletedTask ) ;
 

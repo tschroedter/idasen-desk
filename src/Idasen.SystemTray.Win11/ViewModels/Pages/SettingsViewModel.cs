@@ -16,82 +16,63 @@ using UiMessageBoxResult = Wpf.Ui.Controls.MessageBoxResult ;
 namespace Idasen.SystemTray.Win11.ViewModels.Pages ;
 
 [ ExcludeFromCodeCoverage ]
-public partial class SettingsViewModel ( ILogger                                                          logger ,
-                                         ILoggingSettingsManager                                          settingsManager ,
-                                         IScheduler                                                       scheduler ,
-                                         ISettingsSynchronizer                                            synchronizer ,
-                                         IUiDeskManager                                                   uiDeskManager ,
-                                         Func < TimerCallback , object ? , TimeSpan , TimeSpan , ITimer > timerFactory )
+public partial class SettingsViewModel (
+    ILogger                                                          logger ,
+    ILoggingSettingsManager                                          settingsManager ,
+    IScheduler                                                       scheduler ,
+    ISettingsSynchronizer                                            synchronizer ,
+    IUiDeskManager                                                   uiDeskManager ,
+    Func < TimerCallback , object ? , TimeSpan , TimeSpan , ITimer > timerFactory )
     : StatusBarInfoViewModelBase ( uiDeskManager ,
                                    scheduler ,
                                    timerFactory ) , INavigationAware , ISettingsViewModel
 {
-    [ ObservableProperty ]
-    private string _appVersion = string.Empty ;
+    [ ObservableProperty ] private string _appVersion = string.Empty ;
 
     private IDisposable ? _autoSaveSubscription ;
 
-    [ ObservableProperty ]
-    private ApplicationTheme _currentTheme = ApplicationTheme.Unknown ;
+    [ ObservableProperty ] private ApplicationTheme _currentTheme = ApplicationTheme.Unknown ;
 
-    [ ObservableProperty ]
-    private uint _custom1 = 100 ;
+    [ ObservableProperty ] private uint _custom1 = 100 ;
 
-    [ ObservableProperty ]
-    private bool _custom1IsVisibleInContextMenu = true ;
+    [ ObservableProperty ] private bool _custom1IsVisibleInContextMenu = true ;
 
-    [ ObservableProperty ]
-    private uint _custom2 = 90 ;
+    [ ObservableProperty ] private uint _custom2 = 90 ;
 
-    [ ObservableProperty ]
-    private bool _custom2IsVisibleInContextMenu = true ;
+    [ ObservableProperty ] private bool _custom2IsVisibleInContextMenu = true ;
 
-    [ ObservableProperty ]
-    private string _deskAddress = string.Empty ;
+    [ ObservableProperty ] private string _deskAddress = string.Empty ;
 
-    [ ObservableProperty ]
-    private string _deskName = string.Empty ;
+    [ ObservableProperty ] private string _deskName = string.Empty ;
 
-    [ ObservableProperty ]
-    private uint _lastKnownDeskHeight = Constants.DefaultDeskMinHeightInCm ;
+    private bool _isInitialized ;
+    private bool _isLoadingSettings ;
 
-    [ ObservableProperty ]
-    private string _logFolderPath = string.Empty ;
+    [ ObservableProperty ] private uint _lastKnownDeskHeight = Constants.DefaultDeskMinHeightInCm ;
 
-    [ ObservableProperty ]
-    private uint _maxHeight = 90 ;
+    [ ObservableProperty ] private string _logFolderPath = string.Empty ;
 
-    [ ObservableProperty ]
-    private uint _minHeight = 90 ;
+    [ ObservableProperty ] private uint _maxHeight = 90 ;
 
-    [ ObservableProperty ]
-    private bool _notifications = true ;
+    [ ObservableProperty ] private uint _minHeight = 90 ;
 
-    [ ObservableProperty ]
-    private bool _parentalLock ;
+    [ ObservableProperty ] private bool _notifications = true ;
 
-    [ ObservableProperty ]
-    private uint _seating = 90 ;
+    [ ObservableProperty ] private bool _parentalLock ;
 
-    [ ObservableProperty ]
-    private bool _seatingIsVisibleInContextMenu = true ;
+    [ ObservableProperty ] private uint _seating = 90 ;
 
-    [ ObservableProperty ]
-    private string _settingsFileFullPath = string.Empty ;
+    [ ObservableProperty ] private bool _seatingIsVisibleInContextMenu = true ;
+
+    [ ObservableProperty ] private string _settingsFileFullPath = string.Empty ;
 
     private IDisposable ? _settingsSaved ;
 
-    [ ObservableProperty ]
-    private uint _standing = 100 ;
+    [ ObservableProperty ] private uint _standing = 100 ;
 
-    [ ObservableProperty ]
-    private bool _standingIsVisibleInContextMenu = true ;
+    [ ObservableProperty ] private bool _standingIsVisibleInContextMenu = true ;
 
-    [ ObservableProperty ]
-    private bool _stopIsVisibleInContextMenu = true ;
-
-    private bool _isInitialized;
-    private bool _isLoadingSettings;
+    [ ObservableProperty ] private bool _stopIsVisibleInContextMenu = true ;
 
     public async Task OnNavigatedToAsync ( )
     {
@@ -123,7 +104,7 @@ public partial class SettingsViewModel ( ILogger                                
 
         base.Dispose ( ) ;
 
-        GC.SuppressFinalize ( this );
+        GC.SuppressFinalize ( this ) ;
     }
 
     public async Task InitializeAsync ( CancellationToken token )
@@ -155,13 +136,14 @@ public partial class SettingsViewModel ( ILogger                                
         // Observe property changes from INotifyPropertyChanged, debounce and persist settings
         _autoSaveSubscription = Observable
                                .FromEventPattern < PropertyChangedEventHandler , PropertyChangedEventArgs > (
-                                     h => ( ( INotifyPropertyChanged ) this ).PropertyChanged += h ,
-                                     h => ( ( INotifyPropertyChanged ) this ).PropertyChanged -= h )
+                                 h => ( ( INotifyPropertyChanged )this ).PropertyChanged += h ,
+                                 h => ( ( INotifyPropertyChanged )this ).PropertyChanged -= h )
                                .Where ( _ => ! _isLoadingSettings )
                                .Throttle ( TimeSpan.FromMilliseconds ( 300 ) ,
                                            Scheduler )
-                               .Select ( _ => Observable.FromAsync ( cancellationToken => synchronizer.StoreSettingsAsync ( this ,
-                                                                              cancellationToken ) ) )
+                               .Select ( _ => Observable.FromAsync ( cancellationToken =>
+                                                                         synchronizer.StoreSettingsAsync ( this ,
+                                                                             cancellationToken ) ) )
                                .Switch ( )
                                .Subscribe ( _ => { } ,
                                             ex => logger.Error ( ex ,
