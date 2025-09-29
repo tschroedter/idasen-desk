@@ -31,14 +31,14 @@
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="FluentAssertions" Version="8.7.0" />
-        <PackageReference Include="Idasen.Desk.Core" Version="0.0.119" />
+        <PackageReference Include="Idasen.Desk.Core" Version="0.1.41" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
         <PackageReference Include="Microsoft.Reactive.Testing" Version="6.0.2" />
         <PackageReference Include="NSubstitute" Version="5.3.0" />
         <PackageReference Include="System.IO.Abstractions" Version="22.0.16" />
         <PackageReference Include="System.IO.Abstractions.TestingHelpers" Version="22.0.16" />
         <PackageReference Include="xunit" Version="2.9.3" />
-        <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4">
+        <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
