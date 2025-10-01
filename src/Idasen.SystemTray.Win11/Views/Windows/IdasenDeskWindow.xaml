@@ -8,8 +8,8 @@
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     xmlns:tray="http://schemas.lepo.co/wpfui/2022/xaml/tray"
     Title="{Binding ViewModel.ApplicationTitle, Mode=OneWay}"
-    Width="750"
-    Height="640"
+    Width="780"
+    Height="780"
     d:DataContext="{d:DesignInstance local:IdasenDeskWindow,
                                      IsDesignTimeCreatable=True}"
     d:DesignHeight="750"
@@ -24,7 +24,7 @@
     mc:Ignorable="d"
     ShowInTaskbar="True"
     WindowStyle="None"
-    ResizeMode="NoResize"
+    ResizeMode="CanResizeWithGrip"
     SizeToContent="WidthAndHeight">
     <ui:FluentWindow.InputBindings>
         <KeyBinding
@@ -34,6 +34,13 @@
     </ui:FluentWindow.InputBindings>
 
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Main content in first row -->
+        <Grid Grid.Row="0">
         <ui:TitleBar
             x:Name="TitleBar"
             Title="{Binding ViewModel.ApplicationTitle}"
@@ -73,7 +80,7 @@
             </ui:NavigationView.ContentOverlay>
         </ui:NavigationView>
 
-        <ContentPresenter x:Name="RootContentDialog" Grid.Row="0" />
+        <ContentPresenter x:Name="RootContentDialog" Grid.Row="0" MinWidth="600"/>
 
         <tray:NotifyIcon
             Name="IdasenNotifyIcon"
@@ -87,5 +94,17 @@
             </tray:NotifyIcon.Menu>
             -->
         </tray:NotifyIcon>
+    </Grid>
+
+        <!-- Global InfoBar in bottom row -->
+        <ui:InfoBar
+            Grid.Row="1"
+            Height="56"
+            Margin="5,12,5,12"
+            Title="{Binding ViewModel.StatusBarTitle}"
+            Message="{Binding ViewModel.StatusBarMessage}"
+            Severity="{Binding ViewModel.StatusBarSeverity}"
+            IsOpen="True"
+            IsClosable="False" />
     </Grid>
 </ui:FluentWindow>

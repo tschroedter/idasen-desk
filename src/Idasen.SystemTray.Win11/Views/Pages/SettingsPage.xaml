@@ -19,22 +19,10 @@
         <helpers:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
     </Page.Resources>
 
-    <Grid Width="490">
-        <Grid.RowDefinitions>
-            <!-- Fixed content height (same as your old StackPanel Height) -->
-            <RowDefinition Height="450" />
-            <!-- Fixed InfoBar height via control Height below -->
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-
-        <!-- Scrollable content within fixed-height row -->
-        <ScrollViewer Grid.Row="0"
-                      VerticalScrollBarVisibility="Auto"
-                      HorizontalScrollBarVisibility="Disabled"
-                      CanContentScroll="False"
-                      PanningMode="VerticalOnly"
-                      Padding="0,0,24,0">
-            <StackPanel>
+    <Grid>
+        <!-- ScrollViewer to make content scrollable -->
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <!-- Advanced -->
                 <ui:CardExpander CornerRadius="0,0,8,8" Header="Advanced">
                     <StackPanel>
@@ -334,15 +322,5 @@
                 </ui:CardExpander>
             </StackPanel>
         </ScrollViewer>
-
-        <!-- Fixed bottom InfoBar -->
-        <ui:InfoBar Grid.Row="1"
-                    Height="56"
-                    Margin="0,12,0,12"
-                    Title="{Binding ViewModel.Title}"
-                    Message="{Binding ViewModel.Message}"
-                    Severity="{Binding ViewModel.Severity}"
-                    IsOpen="True"
-                    IsClosable="False" />
     </Grid>
 </Page>

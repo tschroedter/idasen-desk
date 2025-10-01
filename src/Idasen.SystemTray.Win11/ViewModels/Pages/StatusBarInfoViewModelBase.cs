@@ -7,7 +7,7 @@ using Wpf.Ui.Controls ;
 
 namespace Idasen.SystemTray.Win11.ViewModels.Pages ;
 
-public abstract partial class StatusBarInfoViewModelBase : ObservableObject , IDisposable
+public partial class StatusBarInfoViewModelBase : ObservableObject , IDisposable
 {
     private readonly IDisposable _statusBarInfoChanged ;
     private readonly ITimer      _timer ;
@@ -22,7 +22,7 @@ public abstract partial class StatusBarInfoViewModelBase : ObservableObject , ID
 
     [ ObservableProperty ] private string _title = "Desk Status" ;
 
-    protected StatusBarInfoViewModelBase (
+    public StatusBarInfoViewModelBase (
         IUiDeskManager                                                   uiDeskManager ,
         IScheduler                                                       scheduler ,
         Func < TimerCallback , object ? , TimeSpan , TimeSpan , ITimer > timerFactory )
