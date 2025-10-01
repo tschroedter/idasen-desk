@@ -24,7 +24,7 @@
     mc:Ignorable="d"
     ShowInTaskbar="True"
     WindowStyle="None"
-    ResizeMode="NoResize"
+    ResizeMode="CanResizeWithGrip"
     SizeToContent="WidthAndHeight">
     <ui:FluentWindow.InputBindings>
         <KeyBinding
@@ -34,6 +34,13 @@
     </ui:FluentWindow.InputBindings>
 
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Main content in first row -->
+        <Grid Grid.Row="0">
         <ui:TitleBar
             x:Name="TitleBar"
             Title="{Binding ViewModel.ApplicationTitle}"
@@ -87,5 +94,17 @@
             </tray:NotifyIcon.Menu>
             -->
         </tray:NotifyIcon>
+    </Grid>
+
+        <!-- Global InfoBar in bottom row -->
+        <ui:InfoBar
+            Grid.Row="1"
+            Height="56"
+            Margin="5,12,5,12"
+            Title="{Binding ViewModel.StatusBarTitle}"
+            Message="{Binding ViewModel.StatusBarMessage}"
+            Severity="{Binding ViewModel.StatusBarSeverity}"
+            IsOpen="True"
+            IsClosable="False" />
     </Grid>
 </ui:FluentWindow>

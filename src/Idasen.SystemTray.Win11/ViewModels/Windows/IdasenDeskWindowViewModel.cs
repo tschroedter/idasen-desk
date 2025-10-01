@@ -1,12 +1,13 @@
-﻿using System.Collections.ObjectModel ;
+﻿using Idasen.SystemTray.Win11.Interfaces ;
+using Idasen.SystemTray.Win11.Utils ;
+using Idasen.SystemTray.Win11.ViewModels.Pages;
+using Idasen.SystemTray.Win11.Views.Pages ;
+using System.Collections.ObjectModel ;
 using System.Diagnostics.CodeAnalysis ;
 using System.Reactive.Concurrency ;
 using System.Reactive.Linq ;
 using System.Windows.Controls ;
 using System.Windows.Input ;
-using Idasen.SystemTray.Win11.Interfaces ;
-using Idasen.SystemTray.Win11.Utils ;
-using Idasen.SystemTray.Win11.Views.Pages ;
 using Wpf.Ui.Controls ;
 using ILogger = Serilog.ILogger ;
 using MenuItem = Wpf.Ui.Controls.MenuItem ;
@@ -66,11 +67,18 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
     [ ObservableProperty ] private ObservableCollection < MenuItem > _trayMenuItems = [] ;
 
-    public IdasenDeskWindowViewModel ( ILogger                 logger ,
-                                       IUiDeskManager          uiDeskManager ,
-                                       IObserveSettingsChanges settingsChanges ,
-                                       IScheduler              scheduler ,
-                                       ISettingsManager        settingsManager )
+    [ObservableProperty] private string _statusBarTitle    = string.Empty;
+    [ObservableProperty] private string _statusBarMessage  = string.Empty;
+    [ObservableProperty] private InfoBarSeverity _statusBarSeverity = InfoBarSeverity.Informational;
+
+    private readonly             StatusBarInfoViewModelBase _statusBarInfoViewModel ;
+
+    public IdasenDeskWindowViewModel ( ILogger                                                  logger ,
+                                       IUiDeskManager                                           uiDeskManager ,
+                                       IObserveSettingsChanges                                  settingsChanges ,
+                                       IScheduler                                               scheduler ,
+                                       ISettingsManager                                         settingsManager,
+                                       Func<TimerCallback, object?, TimeSpan, TimeSpan, ITimer> timerFactory)
     {
         _logger          = logger ;
         _uiDeskManager   = uiDeskManager ;
@@ -279,6 +287,30 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
             new CustomSeparatorMenuItem ( ) ,
             menuItemExit
         ] ;
+
+        _statusBarInfoViewModel = new StatusBarInfoViewModelBase(uiDeskManager,
+                                                                 scheduler,
+                                                                 timerFactory);
+
+        _statusBarInfoViewModel.PropertyChanged += (_, e) =>
+        {
+            if ( e.PropertyName ==
+                 nameof ( StatusBarInfoViewModelBase.Title ) )
+            {
+                _statusBarTitle = _statusBarInfoViewModel.Title ;
+                OnPropertyChanged(nameof(StatusBarTitle));
+            }
+            else if ( e.PropertyName == nameof ( StatusBarInfoViewModelBase.Message ) )
+            {
+                _statusBarMessage = _statusBarInfoViewModel.Message ;
+                OnPropertyChanged(nameof(StatusBarMessage));
+            }
+            else if ( e.PropertyName == nameof ( StatusBarInfoViewModelBase.Severity ) )
+            {
+                _statusBarSeverity = _statusBarInfoViewModel.Severity ;
+                OnPropertyChanged(nameof(StatusBarSeverity));
+            }
+        };
     }
 
     /// <summary>
@@ -332,6 +364,8 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         await CastAndDispose ( _uiDeskManager ) ;
         await CastAndDispose ( _advancedSubscription ) ;
         await CastAndDispose ( _lockSubscription ) ;
+
+        _statusBarInfoViewModel.Dispose ( ) ;
 
         GC.SuppressFinalize ( this ) ;
     }
