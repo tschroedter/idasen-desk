@@ -159,7 +159,7 @@ jobs:
             git config user.email "github-actions@github.com"
             git tag -a $tag -m "Release $tag"
             git push origin $tag
-
+          }
       - name: Create GitHub Release (draft)
         if: github.event_name != 'pull_request'
         uses: softprops/action-gh-release@v2
