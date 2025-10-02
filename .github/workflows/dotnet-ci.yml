@@ -73,7 +73,7 @@ jobs:
           }
 
           if (-not $pg.Version) { $node = $projXml.CreateElement('Version'); [void]$pg.AppendChild($node) }
-            if (-not $pg.AssemblyVersion) { $node = $projXml.CreateElement('AssemblyVersion'); [void]$pg.AppendChild($node) }
+          if (-not $pg.AssemblyVersion) { $node = $projXml.CreateElement('AssemblyVersion'); [void]$pg.AppendChild($node) }
           if (-not $pg.FileVersion) { $node = $projXml.CreateElement('FileVersion'); [void]$pg.AppendChild($node) }
 
           $pg.Version = $newVersion
@@ -119,21 +119,19 @@ jobs:
           $exe = Join-Path $publishDir "Idasen.SystemTray.exe"
           if (-not (Test-Path $exe)) { throw "Executable not found: $exe" }
 
-          $publishDirRel = (Join-Path "src" $publishDir) -replace '\\','/'
-          $exeRel = (Join-Path "src" $exe) -replace '\\','/'
-
           "version=$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
-          "exe_path=$exeRel" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
-          "publish_dir=$publishDirRel" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          "exe_path=$exe" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          "publish_dir=$publishDir" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
 
-      - name: Upload artifact (exe + appsettings)
-        uses: actions/upload-artifact@v4
-        with:
-            name: Idasen-SystemTray-${{ steps.determine_version.outputs.version }}-win-x64
-            if-no-files-found: error
-            path: |
-              ${{ steps.determine_version.outputs.exe_path }}
-              ${{ steps.determine_version.outputs.publish_dir }}/appsettings*.json
+      - id: rename_exe
+        name: Rename executable to versioned filename
+        run: |
+          $version = "${{ steps.determine_version.outputs.version }}"
+          $publishDir = "${{ steps.determine_version.outputs.publish_dir }}"
+          $oldPath = Join-Path $publishDir "Idasen.SystemTray.exe"
+          $newName = "Idasen-SystemTray-$version-win-x64.exe"
+          Rename-Item -Path $oldPath -NewName $newName
+          echo "renamed_exe_path=$publishDir/$newName" >> $env:GITHUB_OUTPUT
 
       - name: Create and push git tag V<version>
         if: github.event_name != 'pull_request' && !startsWith(github.ref, 'refs/tags/')
@@ -151,16 +149,6 @@ jobs:
             git push origin $tag
           }
 
-      - name: Rename executable to versioned filename
-        run: |
-            $version = "${{ steps.determine_version.outputs.version }}"
-            $publishDir = "${{ steps.determine_version.outputs.publish_dir }}"
-            $oldPath = Join-Path $publishDir "Idasen.SystemTray.exe"
-            $newPath = Join-Path $publishDir "Idasen-SystemTray-$version-win-x64.exe"
-            Rename-Item -Path $oldPath -NewName (Split-Path $newPath -Leaf)
-            echo "renamed_exe_path=src/$newPath" >> $env:GITHUB_OUTPUT
-        id: rename_exe
-
       - name: Create GitHub Release (draft)
         if: github.event_name != 'pull_request'
         uses: softprops/action-gh-release@v2
@@ -171,4 +159,3 @@ jobs:
           prerelease: false
           files: |
             ${{ steps.rename_exe.outputs.renamed_exe_path }}
-
