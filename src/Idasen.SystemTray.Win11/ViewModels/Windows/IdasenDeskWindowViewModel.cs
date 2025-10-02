@@ -292,6 +292,10 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
                                                                  scheduler,
                                                                  timerFactory);
 
+        _statusBarTitle    = _statusBarInfoViewModel.Title;
+        _statusBarMessage  = _statusBarInfoViewModel.Message;
+        _statusBarSeverity = _statusBarInfoViewModel.Severity;
+
         _statusBarInfoViewModel.PropertyChanged += (_, e) =>
         {
             if ( e.PropertyName ==

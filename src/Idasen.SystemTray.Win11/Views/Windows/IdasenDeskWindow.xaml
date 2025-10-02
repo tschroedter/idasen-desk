@@ -8,8 +8,8 @@
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     xmlns:tray="http://schemas.lepo.co/wpfui/2022/xaml/tray"
     Title="{Binding ViewModel.ApplicationTitle, Mode=OneWay}"
-    Width="750"
-    Height="640"
+    Width="780"
+    Height="780"
     d:DataContext="{d:DesignInstance local:IdasenDeskWindow,
                                      IsDesignTimeCreatable=True}"
     d:DesignHeight="750"
@@ -80,7 +80,7 @@
             </ui:NavigationView.ContentOverlay>
         </ui:NavigationView>
 
-        <ContentPresenter x:Name="RootContentDialog" Grid.Row="0" />
+        <ContentPresenter x:Name="RootContentDialog" Grid.Row="0" MinWidth="600"/>
 
         <tray:NotifyIcon
             Name="IdasenNotifyIcon"
