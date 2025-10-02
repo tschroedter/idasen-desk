@@ -151,6 +151,16 @@ jobs:
             git push origin $tag
           }
 
+      - name: Rename executable to versioned filename
+        run: |
+            $version = "${{ steps.determine_version.outputs.version }}"
+            $publishDir = "${{ steps.determine_version.outputs.publish_dir }}"
+            $oldPath = Join-Path $publishDir "Idasen.SystemTray.exe"
+            $newPath = Join-Path $publishDir "Idasen-SystemTray-$version-win-x64.exe"
+            Rename-Item -Path $oldPath -NewName (Split-Path $newPath -Leaf)
+            echo "renamed_exe_path=src/$newPath" >> $env:GITHUB_OUTPUT
+        id: rename_exe
+
       - name: Create GitHub Release (draft)
         if: github.event_name != 'pull_request'
         uses: softprops/action-gh-release@v2
@@ -160,4 +170,5 @@ jobs:
           draft: true
           prerelease: false
           files: |
-            ${{ steps.determine_version.outputs.exe_path }}
+            ${{ steps.rename_exe.outputs.renamed_exe_path }}
+
