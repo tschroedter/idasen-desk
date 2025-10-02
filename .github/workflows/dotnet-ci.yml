@@ -129,7 +129,7 @@ jobs:
       - name: Upload artifact (exe + appsettings)
         uses: actions/upload-artifact@v4
         with:
-            name: Idasen.SystemTray-${{ steps.determine_version.outputs.version }}-win-x64
+            name: Idasen-SystemTray-${{ steps.determine_version.outputs.version }}-win-x64.exe
             if-no-files-found: error
             path: |
               ${{ steps.determine_version.outputs.exe_path }}
