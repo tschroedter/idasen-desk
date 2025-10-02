@@ -132,7 +132,7 @@ jobs:
           $version = "${{ steps.determine_version.outputs.version }}"
           $publishDir = "${{ steps.determine_version.outputs.publish_dir }}"
           $oldPath = Join-Path $publishDir "Idasen.SystemTray.exe"
-          $newName = "Idasen-SystemTray-$version-win-x64.exe"
+          $newName = "Idasen-SystemTray-$version-win-x64.zip"
           $newPath = Join-Path $publishDir $newName
           Rename-Item -Path $oldPath -NewName $newName
           echo "renamed_exe_path=$newPath" >> $env:GITHUB_OUTPUT
@@ -160,6 +160,7 @@ jobs:
             git tag -a $tag -m "Release $tag"
             git push origin $tag
           }
+
       - name: Create GitHub Release (draft)
         if: github.event_name != 'pull_request'
         uses: softprops/action-gh-release@v2
