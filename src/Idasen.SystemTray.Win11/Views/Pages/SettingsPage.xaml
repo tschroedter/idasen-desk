@@ -7,6 +7,7 @@
     xmlns:local="clr-namespace:Idasen.SystemTray.Win11.Views.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:controls="clr-namespace:Idasen.SystemTray.Win11.Views.Controls"
     Title="SettingsPage"
     d:DataContext="{d:DesignInstance local:SettingsPage, IsDesignTimeCreatable=False}"
     d:DesignHeight="640"
@@ -41,6 +42,12 @@
                                 <RowDefinition Height="5" />
                                 <RowDefinition />
                                 <RowDefinition Height="15" />
+                                <RowDefinition />
+                                <RowDefinition Height="5" />
+                                <RowDefinition />
+                                <RowDefinition Height="5" />
+                                <RowDefinition />
+                                <RowDefinition Height="5" />
                                 <RowDefinition />
                                 <RowDefinition Height="5" />
                                 <RowDefinition />
@@ -163,76 +170,52 @@
                                 <RowDefinition />
                             </Grid.RowDefinitions>
                             <!-- Row 0 -->
-                            <ui:SymbolIcon Grid.Row="0" Grid.Column="0"
-                                           Symbol="{x:Static ui:SymbolRegular.ArrowCircleUp24}"
-                                           HorizontalAlignment="Center" VerticalAlignment="Center" />
-                            <Label Grid.Row="0" Grid.Column="1" Content="Stand" VerticalAlignment="Center"
-                                   Padding="5,0,5,0" />
-                            <Slider Grid.Row="0" Grid.Column="2" Name="Standing" Minimum="65" Maximum="127"
-                                    Value="{Binding ViewModel.Standing}" TickPlacement="TopLeft" />
-                            <TextBlock Grid.Row="0" Grid.Column="3" VerticalAlignment="Center"
-                                       HorizontalAlignment="Right"
-                                       Text="{Binding ElementName=Standing, Path=Value, StringFormat='0', UpdateSourceTrigger=LostFocus}"
-                                       Padding="5,0,5,0" />
-                            <Label Grid.Row="0" Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Right"
-                                   Content="cm" />
-                            <CheckBox Grid.Row="0" Grid.Column="5" VerticalAlignment="Center" MinWidth="75"
-                                      Content="Tray" ToolTip="Show in tray context menu"
-                                      IsChecked="{Binding ViewModel.StandingIsVisibleInContextMenu, Mode=TwoWay}" />
+                            <controls:DeskPositionControl
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Grid.ColumnSpan="6"
+                                Symbol="{x:Static ui:SymbolRegular.ArrowCircleUp24}"
+                                PositionName="Stand"
+                                PositionValue="{Binding ViewModel.Standing, Mode=TwoWay}"
+                                IsVisibleInContextMenu="{Binding ViewModel.StandingIsVisibleInContextMenu, Mode=TwoWay}"
+                                Minimum="65"
+                                Maximum="127" />
                             <!-- Row 1 - Blank -->
                             <!-- Row 2 -->
-                            <ui:SymbolIcon Grid.Row="2" Grid.Column="0"
-                                           Symbol="{x:Static ui:SymbolRegular.ArrowCircleDown24}"
-                                           HorizontalAlignment="Center" VerticalAlignment="Center" />
-                            <Label Grid.Row="2" Grid.Column="1" Content="Sit" VerticalAlignment="Center"
-                                   Padding="5,0,5,0" />
-                            <Slider Grid.Row="2" Grid.Column="2" Name="Seating" Minimum="65" Maximum="127"
-                                    Value="{Binding ViewModel.Seating}" TickPlacement="TopLeft" />
-                            <TextBlock Grid.Row="2" Grid.Column="3" VerticalAlignment="Center"
-                                       HorizontalAlignment="Right"
-                                       Text="{Binding ElementName=Seating, Path=Value, StringFormat='0',UpdateSourceTrigger=LostFocus}"
-                                       Padding="5,0,5,0" />
-                            <Label Grid.Row="2" Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Right"
-                                   Content="cm" />
-                            <CheckBox Grid.Row="2" Grid.Column="5" VerticalAlignment="Center" MinWidth="75"
-                                      Content="Tray" ToolTip="Show in tray context menu"
-                                      IsChecked="{Binding ViewModel.SeatingIsVisibleInContextMenu, Mode=TwoWay}" />
+                            <controls:DeskPositionControl
+                                Grid.Row="2"
+                                Grid.Column="0"
+                                Grid.ColumnSpan="6"
+                                Symbol="{x:Static ui:SymbolRegular.ArrowCircleDown24}"
+                                PositionName="Sit"
+                                PositionValue="{Binding ViewModel.Seating, Mode=TwoWay}"
+                                IsVisibleInContextMenu="{Binding ViewModel.SeatingIsVisibleInContextMenu, Mode=TwoWay}"
+                                Minimum="65"
+                                Maximum="127" />
                             <!-- Row 3 - Blank -->
                             <!-- Row 4 -->
-                            <ui:SymbolIcon Grid.Row="4" Grid.Column="0"
-                                           Symbol="{x:Static ui:SymbolRegular.ArrowCircleLeft24}"
-                                           HorizontalAlignment="Center" VerticalAlignment="Center" />
-                            <Label Grid.Row="4" Grid.Column="1" Content="Custom1" VerticalAlignment="Center"
-                                   Padding="5,0,5,0" />
-                            <Slider Grid.Row="4" Grid.Column="2" Name="Custom1" Minimum="65" Maximum="127"
-                                    Value="{Binding ViewModel.Custom1}" TickPlacement="TopLeft" />
-                            <TextBlock Grid.Row="4" Grid.Column="3" VerticalAlignment="Center"
-                                       HorizontalAlignment="Right"
-                                       Text="{Binding ElementName=Custom1, Path=Value, StringFormat='0',UpdateSourceTrigger=LostFocus}"
-                                       Padding="5,0,5,0" />
-                            <Label Grid.Row="4" Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Right"
-                                   Content="cm" />
-                            <CheckBox Grid.Row="4" Grid.Column="5" VerticalAlignment="Center" MinWidth="75"
-                                      Content="Tray" ToolTip="Show in tray context menu"
-                                      IsChecked="{Binding ViewModel.Custom1IsVisibleInContextMenu, Mode=TwoWay}" />
+                            <controls:DeskPositionControl
+                                Grid.Row="4"
+                                Grid.Column="0"
+                                Grid.ColumnSpan="6"
+                                Symbol="{x:Static ui:SymbolRegular.ArrowCircleLeft24}"
+                                PositionName="Custom1"
+                                PositionValue="{Binding ViewModel.Custom1, Mode=TwoWay}"
+                                IsVisibleInContextMenu="{Binding ViewModel.Custom1IsVisibleInContextMenu, Mode=TwoWay}"
+                                Minimum="65"
+                                Maximum="127" />
                             <!-- Row 5 - Blank -->
                             <!-- Row 6 -->
-                            <ui:SymbolIcon Grid.Row="6" Grid.Column="0"
-                                           Symbol="{x:Static ui:SymbolRegular.ArrowCircleRight24}"
-                                           HorizontalAlignment="Center" VerticalAlignment="Center" />
-                            <Label Grid.Row="6" Grid.Column="1" Content="Custom 2" VerticalAlignment="Center"
-                                   Padding="5,0,5,0" />
-                            <Slider Grid.Row="6" Grid.Column="2" Name="Custom2" Minimum="65" Maximum="127"
-                                    Value="{Binding ViewModel.Custom2}" TickPlacement="TopLeft" />
-                            <TextBlock Grid.Row="6" Grid.Column="3" VerticalAlignment="Center"
-                                       HorizontalAlignment="Right"
-                                       Text="{Binding ElementName=Custom2, Path=Value, StringFormat='0',UpdateSourceTrigger=LostFocus}"
-                                       Padding="5,0,5,0" />
-                            <Label Grid.Row="6" Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Right"
-                                   Content="cm" />
-                            <CheckBox Grid.Row="6" Grid.Column="5" VerticalAlignment="Center" MinWidth="75"
-                                      Content="Tray" ToolTip="Show in tray context menu"
-                                      IsChecked="{Binding ViewModel.Custom2IsVisibleInContextMenu, Mode=TwoWay}" />
+                            <controls:DeskPositionControl
+                                Grid.Row="6"
+                                Grid.Column="0"
+                                Grid.ColumnSpan="6"
+                                Symbol="{x:Static ui:SymbolRegular.ArrowCircleRight24}"
+                                PositionName="Custom 2"
+                                PositionValue="{Binding ViewModel.Custom2, Mode=TwoWay}"
+                                IsVisibleInContextMenu="{Binding ViewModel.Custom2IsVisibleInContextMenu, Mode=TwoWay}"
+                                Minimum="65"
+                                Maximum="127" />
                         </Grid>
                         <TextBlock Margin="0,12,0,0" Text="Tray Menu" />
                         <Grid Margin="0,12,0,0">
