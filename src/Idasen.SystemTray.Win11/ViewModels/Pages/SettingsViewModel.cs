@@ -17,15 +17,11 @@ namespace Idasen.SystemTray.Win11.ViewModels.Pages ;
 
 [ ExcludeFromCodeCoverage ]
 public partial class SettingsViewModel (
-    ILogger                                                          logger ,
-    ILoggingSettingsManager                                          settingsManager ,
-    IScheduler                                                       scheduler ,
-    ISettingsSynchronizer                                            synchronizer ,
-    IUiDeskManager                                                   uiDeskManager ,
-    Func < TimerCallback , object ? , TimeSpan , TimeSpan , ITimer > timerFactory )
-    : StatusBarInfoViewModelBase ( uiDeskManager ,
-                                   scheduler ,
-                                   timerFactory ) , INavigationAware , ISettingsViewModel
+    ILogger                 logger ,
+    ILoggingSettingsManager settingsManager ,
+    IScheduler              scheduler ,
+    ISettingsSynchronizer   synchronizer )
+    : ObservableObject, INavigationAware , ISettingsViewModel
 {
     [ ObservableProperty ] private string _appVersion = string.Empty ;
 
@@ -88,7 +84,7 @@ public partial class SettingsViewModel (
                                                 CancellationToken.None ).ConfigureAwait ( false ) ;
     }
 
-    public override void Dispose ( )
+    public void Dispose ( )
     {
         if ( _settingsSaved is not null )
         {
@@ -101,8 +97,6 @@ public partial class SettingsViewModel (
             _autoSaveSubscription.Dispose ( ) ;
             _autoSaveSubscription = null ;
         }
-
-        base.Dispose ( ) ;
 
         GC.SuppressFinalize ( this ) ;
     }
@@ -118,15 +112,12 @@ public partial class SettingsViewModel (
         LogFolderPath        = LoggingFile.Path ; // Todo: Maybe this could be ILoggingFile?
 
         _settingsSaved = settingsManager.SettingsSaved
-                                        .ObserveOn ( Scheduler )
+                                        .ObserveOn ( scheduler )
                                         .Subscribe ( OnSettingsSaved ) ;
 
         // Start auto-save after load
         SetupAutoSave ( ) ;
         _isLoadingSettings = false ;
-
-        // Initialize InfoBar from last known status now that the VM is initialized
-        InitializeFromLastStatusBarInfo ( ) ;
     }
 
     private void SetupAutoSave ( )
@@ -135,19 +126,12 @@ public partial class SettingsViewModel (
 
         // Observe property changes from INotifyPropertyChanged, debounce and persist settings
         _autoSaveSubscription = Observable
-                               .FromEventPattern < PropertyChangedEventHandler , PropertyChangedEventArgs > (
-                                 h => ( ( INotifyPropertyChanged )this ).PropertyChanged += h ,
-                                 h => ( ( INotifyPropertyChanged )this ).PropertyChanged -= h )
+                               .FromEventPattern < PropertyChangedEventHandler , PropertyChangedEventArgs > ( h => ( ( INotifyPropertyChanged )this ).PropertyChanged += h , h => ( ( INotifyPropertyChanged )this ).PropertyChanged -= h )
                                .Where ( _ => ! _isLoadingSettings )
-                               .Throttle ( TimeSpan.FromMilliseconds ( 300 ) ,
-                                           Scheduler )
-                               .Select ( _ => Observable.FromAsync ( cancellationToken =>
-                                                                         synchronizer.StoreSettingsAsync ( this ,
-                                                                             cancellationToken ) ) )
+                               .Throttle ( TimeSpan.FromMilliseconds ( 300 ) , scheduler )
+                               .Select ( _ => Observable.FromAsync ( cancellationToken => synchronizer.StoreSettingsAsync ( this , cancellationToken ) ) )
                                .Switch ( )
-                               .Subscribe ( _ => { } ,
-                                            ex => logger.Error ( ex ,
-                                                                 "Failed to auto-save settings" ) ) ;
+                               .Subscribe ( _ => { } , ex => logger.Error ( ex , "Failed to auto-save settings" ) ) ;
     }
 
     private void OnSettingsSaved ( ISettings settings )
