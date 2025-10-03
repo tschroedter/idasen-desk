@@ -22,7 +22,7 @@
       - Using assembly-qualified pack URI below.
     -->
 
-    <StackPanel Width="490">
+    <StackPanel>
         <ui:CardExpander
             DockPanel.Dock="Top"
             CornerRadius="0,0,8,8"
