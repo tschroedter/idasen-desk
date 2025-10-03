@@ -1,5 +1,7 @@
 # !!!This document will be updated soon!!!
 
+[![.NET CI](https://github.com/tschroedter/idasen-desk/actions/workflows/dotnet-ci.yml/badge.svg)](https://github.com/tschroedter/idasen-desk/actions/workflows/dotnet-ci.yml)
+
 # Latest Changes
 - Updated .NET 4.8 to .NET 8.0
 - Updated used NuGet Packages to latest
