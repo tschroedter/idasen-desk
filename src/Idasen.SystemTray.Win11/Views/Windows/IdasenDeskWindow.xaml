@@ -24,8 +24,8 @@
     mc:Ignorable="d"
     ShowInTaskbar="True"
     WindowStyle="None"
-    ResizeMode="CanResizeWithGrip"
-    SizeToContent="WidthAndHeight">
+    ResizeMode="CanResizeWithGrip">
+
     <ui:FluentWindow.InputBindings>
         <KeyBinding
             Key="F"
@@ -67,9 +67,9 @@
             OpenPaneLength="110"
             PaneDisplayMode="Left"
             TitleBar="{Binding ElementName=TitleBar, Mode=OneWay}"
-            ScrollViewer.VerticalScrollBarVisibility="Disabled"
-            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-            ScrollViewer.CanContentScroll="False">
+            ScrollViewer.VerticalScrollBarVisibility="Auto"
+            ScrollViewer.HorizontalScrollBarVisibility="Auto"
+            ScrollViewer.CanContentScroll="True">
             <ui:NavigationView.Header>
                 <ui:BreadcrumbBar x:Name="BreadcrumbBar" Margin="42,32,42,20" />
             </ui:NavigationView.Header>
