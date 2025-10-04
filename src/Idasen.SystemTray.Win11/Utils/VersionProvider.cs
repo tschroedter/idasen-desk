@@ -6,8 +6,13 @@ namespace Idasen.SystemTray.Win11.Utils ;
 
 public class VersionProvider ( ILogger logger ) : IVersionProvider
 {
+    private string ? _cachedVersion ;
+
     public string GetVersion ( )
     {
+        if ( _cachedVersion != null )
+            return _cachedVersion ;
+
         var versionAsText = "V-.-.-" ;
 
         try
@@ -31,6 +36,8 @@ public class VersionProvider ( ILogger logger ) : IVersionProvider
             logger.Error ( e ,
                            "Failed to get version" ) ;
         }
+
+        _cachedVersion = versionAsText ;
 
         return versionAsText ;
     }
