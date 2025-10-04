@@ -1,4 +1,4 @@
-name: .NET CI
+name: Build and Test (Draft Release)
 
 on:
   workflow_dispatch:
@@ -84,18 +84,13 @@ jobs:
           Write-Host "Set Version=$($pg.Version), AssemblyVersion=$($pg.AssemblyVersion), FileVersion=$($pg.FileVersion)"
 
       - name: Restore
-        run: |
-          dotnet restore Idasen.SystemTray.Win11/Idasen.SystemTray.Win11.csproj
-          dotnet restore Idasen.SystemTray.Win11.Tests/Idasen.SystemTray.Win11.Tests.csproj
+        run: dotnet restore Idasen-Desk.sln
 
       - name: Build (${{ env.BUILD_CONFIGURATION }})
-        run: |
-          dotnet build Idasen.SystemTray.Win11/Idasen.SystemTray.Win11.csproj --configuration $env:BUILD_CONFIGURATION --no-restore
-          dotnet build Idasen.SystemTray.Win11.Tests/Idasen.SystemTray.Win11.Tests.csproj --configuration $env:BUILD_CONFIGURATION --no-restore
+        run: dotnet build Idasen-Desk.sln --configuration $env:BUILD_CONFIGURATION --no-restore
 
       - name: Test (${{ env.BUILD_CONFIGURATION }})
-        run: |
-          dotnet test Idasen.SystemTray.Win11.Tests/Idasen.SystemTray.Win11.Tests.csproj --configuration $env:BUILD_CONFIGURATION --no-build --verbosity normal
+        run: dotnet test Idasen-Desk.sln --configuration $env:BUILD_CONFIGURATION --no-build --verbosity normal
 
       - name: Publish win-x64 (self-contained single file)
         run: >-
