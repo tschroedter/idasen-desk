@@ -50,7 +50,6 @@ public sealed class UiDeskManager : IUiDeskManager
     private readonly Func < IDeskProvider > ?  _providerFactory ;
     private readonly IScheduler                _scheduler ;
     private readonly Subject < StatusBarInfo > _statusBarInfoSubject ;
-    private readonly object                    _statusLock = new( ) ;
 
     private IDesk ?         _desk ;
     private IDeskProvider ? _deskProvider ;
@@ -96,12 +95,6 @@ public sealed class UiDeskManager : IUiDeskManager
         _providerFactory      = deskProviderFactory ;
         _errorManager         = errorManager ;
         _statusBarInfoSubject = new Subject < StatusBarInfo > ( ) ;
-
-        LastStatusBarInfo = new StatusBarInfo (
-                                               "" ,
-                                               _manager.CurrentSettings.HeightSettings.LastKnownDeskHeight ,
-                                               "Unknown" ,
-                                               InfoBarSeverity.Informational ) ;
     }
 
     public IObservable < StatusBarInfo > StatusBarInfoChanged => _statusBarInfoSubject ;
@@ -240,8 +233,6 @@ public sealed class UiDeskManager : IUiDeskManager
 
         return Task.CompletedTask ;
     }
-
-    public StatusBarInfo LastStatusBarInfo { get ; private set ; }
 
     public Task ExitAsync ( )
     {
@@ -579,12 +570,6 @@ public sealed class UiDeskManager : IUiDeskManager
                                        height ,
                                        message ,
                                        severity ) ;
-
-        // Update the last known info under lock
-        lock ( _statusLock )
-        {
-            LastStatusBarInfo = info ;
-        }
 
         // Publish to observers outside the lock to avoid "used inside a lock" warnings and potential deadlocks
         _statusBarInfoSubject.OnNext ( info ) ;

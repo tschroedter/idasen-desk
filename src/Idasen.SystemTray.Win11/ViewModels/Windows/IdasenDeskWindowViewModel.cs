@@ -67,9 +67,9 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
     [ ObservableProperty ] private ObservableCollection < MenuItem > _trayMenuItems = [] ;
 
-    [ObservableProperty] private string _statusBarTitle    = string.Empty;
-    [ObservableProperty] private string _statusBarMessage  = string.Empty;
-    [ObservableProperty] private InfoBarSeverity _statusBarSeverity = InfoBarSeverity.Informational;
+    [ObservableProperty] private string          _statusBarTitle ;
+    [ObservableProperty] private string          _statusBarMessage ;
+    [ObservableProperty] private InfoBarSeverity _statusBarSeverity ;
 
     private readonly             StatusBarInfoViewModelBase _statusBarInfoViewModel ;
 

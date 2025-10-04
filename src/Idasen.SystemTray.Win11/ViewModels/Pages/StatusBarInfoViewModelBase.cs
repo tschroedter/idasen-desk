@@ -53,14 +53,6 @@ public partial class StatusBarInfoViewModelBase : ObservableObject , IDisposable
         GC.SuppressFinalize ( this ) ;
     }
 
-    protected void InitializeFromLastStatusBarInfo ( )
-    {
-        var last = _uiDeskManager.LastStatusBarInfo ;
-        Message  = last.Message ;
-        Height   = last.Height ;
-        Severity = last.Severity ;
-    }
-
     private void OnStatusBarInfoChangedInternal ( StatusBarInfo info )
     {
         // Update properties

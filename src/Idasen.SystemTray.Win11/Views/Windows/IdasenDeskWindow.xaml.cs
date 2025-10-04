@@ -6,7 +6,6 @@ using Wpf.Ui ;
 using Wpf.Ui.Abstractions ;
 using Wpf.Ui.Appearance ;
 using Wpf.Ui.Controls ;
-using System.Windows;
 
 namespace Idasen.SystemTray.Win11.Views.Windows ;
 
@@ -105,15 +104,5 @@ public partial class IdasenDeskWindow : INavigationWindow
         e.Cancel      = true ;
         ShowInTaskbar = false ;
         Hide ( ) ;
-    }
-
-    private void OnIdasenDeskWindowLoaded(object sender, RoutedEventArgs e)
-    {
-        // Programmatically set the dimensions of the NavigationView
-        RootNavigation.Width = ActualWidth;
-        RootNavigation.Height = ActualHeight - 56; // Subtract InfoBar height
-
-        // Force a layout update
-        RootNavigation.UpdateLayout();
     }
 }
