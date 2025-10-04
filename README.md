@@ -1,6 +1,6 @@
 # !!!This document will be updated soon!!!
 
-[![.NET CI](https://github.com/tschroedter/idasen-desk/actions/workflows/dotnet-ci.yml/badge.svg)](https://github.com/tschroedter/idasen-desk/actions/workflows/dotnet-ci.yml)
+[![Build and Test (Draft Release)](https://github.com/tschroedter/idasen-desk/actions/workflows/dotnet-ci.yml/badge.svg)](https://github.com/tschroedter/idasen-desk/actions/workflows/dotnet-ci.yml)
 [![CodeQL](https://github.com/tschroedter/idasen-desk/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/tschroedter/idasen-desk/actions/workflows/github-code-scanning/codeql)
 
 # Latest Changes
