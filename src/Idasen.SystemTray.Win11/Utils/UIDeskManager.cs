@@ -333,16 +333,22 @@ public sealed class UiDeskManager : IUiDeskManager
         {
             CheckIfInitialized ( ) ;
 
+            // Ensure a new CancellationTokenSource is created if the previous one is canceled or disposed
+            if ( _tokenSource == null ||
+                 _tokenSource.IsCancellationRequested )
+            {
+                _tokenSource = new CancellationTokenSource ( TimeSpan.FromSeconds ( 60 ) ) ;
+                _token       = _tokenSource.Token ;
+            }
+
             _logger.Debug ( "Trying to load settings..." ) ;
 
             await _manager.LoadAsync ( CancellationToken.None ).ConfigureAwait ( false ) ;
 
             _logger.Debug ( "Trying to auto connect to Idasen Desk..." ) ;
 
-            var token = GetTokenOrThrow ( ) ;
-
-            await Task.Delay ( TimeSpan.FromSeconds ( 3 ) ,
-                               token ).ConfigureAwait ( false ) ;
+            await Task.Delay ( 3000 ,
+                               _token ?? CancellationToken.None ).ConfigureAwait ( false ) ;
 
             _notifications.Show ( "Auto Connect" ,
                                   "Trying to auto connect to Idasen Desk..." ,
