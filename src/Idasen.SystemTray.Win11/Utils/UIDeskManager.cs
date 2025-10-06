@@ -3,6 +3,7 @@ using System.Reactive.Concurrency ;
 using System.Reactive.Linq ;
 using System.Reactive.Subjects ;
 using System.Windows.Input ;
+using Idasen.Aop ;
 using Idasen.BluetoothLE.Core ;
 using Idasen.BluetoothLE.Linak ;
 using Idasen.BluetoothLE.Linak.Interfaces ;
@@ -668,8 +669,8 @@ public sealed class UiDeskManager : IUiDeskManager
     {
         _logger.Information ( "[{DeviceName}] Connected with address {BluetoothAddress} (MacAddress {MacAddress})" ,
                               desk.DeviceName ,
-                              desk.BluetoothAddress ,
-                              desk.BluetoothAddress.ToMacAddress ( ) ) ;
+                              desk.BluetoothAddress.MaskAddress (  ) ,
+                              desk.BluetoothAddress.ToMacAddress ( ).MaskMacAddress (  ) ) ;
 
         _desk = desk ;
 
