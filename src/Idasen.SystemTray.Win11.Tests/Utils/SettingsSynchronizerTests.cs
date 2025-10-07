@@ -1,4 +1,5 @@
 ﻿using FluentAssertions ;
+using Idasen.BluetoothLE.Linak.Control ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.TraySettings ;
 using Idasen.SystemTray.Win11.Utils ;
@@ -193,5 +194,47 @@ public class SettingsSynchronizerTests
 
         // Assert
         _themeSwitcher.Received ( 1 ).ChangeTheme ( "HighContrast" ) ;
+    }
+
+    [Fact]
+    public async Task LoadSettingsAsync_ShouldSetMaxSpeedToStopMovement_WhenValueIsGreaterThanZero()
+    {
+        // Arrange
+        var sut = CreateSut();
+        _deviceSettings.MaxSpeedToStopMovement = 150;
+
+        // Act
+        await sut.LoadSettingsAsync(_model, CancellationToken.None);
+
+        // Assert
+        _model.MaxSpeedToStopMovement.Should().Be(150);
+    }
+
+    [Fact]
+    public async Task LoadSettingsAsync_ShouldSetMaxSpeedToStopMovement_ToDefault_WhenValueIsZero()
+    {
+        // Arrange
+        var sut = CreateSut();
+        _deviceSettings.MaxSpeedToStopMovement = 0;
+
+        // Act
+        await sut.LoadSettingsAsync(_model, CancellationToken.None);
+
+        // Assert
+        _model.MaxSpeedToStopMovement.Should().Be(StoppingHeightCalculatorSettings.MaxSpeedToStopMovement);
+    }
+
+    [Fact]
+    public async Task StoreSettingsAsync_ShouldUpdateMaxSpeedToStopMovement()
+    {
+        // Arrange
+        var sut = CreateSut();
+        _model.MaxSpeedToStopMovement = 200;
+
+        // Act
+        await sut.StoreSettingsAsync(_model, CancellationToken.None);
+
+        // Assert
+        _settings.DeviceSettings.MaxSpeedToStopMovement.Should().Be(200);
     }
 }
