@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis ;
 using System.Reactive.Concurrency ;
 using System.Reactive.Linq ;
 using System.Reflection ;
+using Idasen.BluetoothLE.Linak.Control ;
 using Idasen.Launcher ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.Utils ;
@@ -69,6 +70,8 @@ public partial class SettingsViewModel (
     [ ObservableProperty ] private bool _standingIsVisibleInContextMenu = true ;
 
     [ ObservableProperty ] private bool _stopIsVisibleInContextMenu = true ;
+
+    [ ObservableProperty ] private uint _maxSpeedToStopMovement = StoppingHeightCalculatorSettings.MaxSpeedToStopMovement;
 
     public async Task OnNavigatedToAsync ( )
     {

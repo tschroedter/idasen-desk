@@ -58,6 +58,10 @@
                                 <RowDefinition Height="5" />
                                 <RowDefinition />
                                 <RowDefinition Height="5" />
+                                <RowDefinition />
+                                <RowDefinition Height="5" />
+                                <RowDefinition />
+                                <RowDefinition Height="5" />
                             </Grid.RowDefinitions>
                             <!-- Row 0 -->
                             <Label Grid.Row="0" Grid.Column="0" Content="Log Folder"
@@ -113,13 +117,31 @@
                                       IsChecked="{Binding ViewModel.Notifications}" />
                             <!-- Row 13 Blank -->
                             <!-- Row 14 -->
+                            <Separator Grid.Row="14" Grid.Column="0" Grid.ColumnSpan="2" />
                             <!-- Row 15 Blank -->
-                            <Separator Grid.Row="15" Grid.Column="0" Grid.ColumnSpan="2" />
                             <!-- Row 16 -->
-                            <Label Grid.Row="16" Grid.Column="0" Content="Settings"
+                            <controls:DeskPositionControl
+                                Grid.Row="16"
+                                Grid.Column="0"
+                                Grid.ColumnSpan="2"
+                                Symbol="{x:Static ui:SymbolRegular.ArrowBidirectionalUpDown16}"
+                                PositionName="Units Till Stop"
+                                PositionValue="{Binding ViewModel.MaxSpeedToStopMovement, Mode=TwoWay}"
+                                Minimum="0"
+                                Maximum="100"
+                                ToolTip="The estimated units required to stop from max. movement speed."
+                                IsSymbolVisible="Collapsed"
+                                Units="units"
+                                IsShowInTrayVisible="Collapsed"/>
+                            <!-- Row 17 Blank -->
+                            <!-- Row 18 -->
+                            <Separator Grid.Row="18" Grid.Column="0" Grid.ColumnSpan="2" />
+                            <!-- Row 19 Blank -->
+                            <!-- Row 20 -->
+                            <Label Grid.Row="20" Grid.Column="0" Content="Settings"
                                    ToolTip="Show or hide all notifications."
                                    Padding="5,7,5,0" />
-                            <ui:Button Grid.Row="16"
+                            <ui:Button Grid.Row="20"
                                        Grid.Column="1"
                                        HorizontalAlignment="Right"
                                        Content="Reset All"
