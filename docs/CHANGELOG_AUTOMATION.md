@@ -71,6 +71,20 @@ The changelog generation is configured in `.github/release-drafter.yml`. You can
 - Version resolution strategy
 - Change entry format
 
+### Setting Up Labels
+
+To set up the required labels in your repository, you can use the provided script:
+
+```bash
+# Make sure GitHub CLI is installed and authenticated
+gh auth login
+
+# Run the label creation script
+./scripts/create-labels.sh
+```
+
+Alternatively, you can manually create the labels from the GitHub repository settings page.
+
 ## Best Practices
 
 1. **Write clear PR titles** - They become the changelog entries
