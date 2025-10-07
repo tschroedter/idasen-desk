@@ -74,7 +74,7 @@ jobs:
             Write-Host "Skipping build as SonarCloud analysis was skipped"
             exit 0
           }
-          dotnet build Idasen-Desk.sln --configuration Release --no-restore
+          dotnet build ./Idasen.SystemTray.Win11/Idasen.SystemTray.Win11.csproj --configuration Release --no-restore
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
