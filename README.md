@@ -2,8 +2,13 @@
 
 [![Build and Test (Draft Release)](https://github.com/tschroedter/idasen-desk/actions/workflows/dotnet-ci.yml/badge.svg)](https://github.com/tschroedter/idasen-desk/actions/workflows/dotnet-ci.yml)
 [![CodeQL](https://github.com/tschroedter/idasen-desk/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/tschroedter/idasen-desk/actions/workflows/github-code-scanning/codeql)
+[![Release Drafter](https://github.com/tschroedter/idasen-desk/actions/workflows/release-drafter.yml/badge.svg)](https://github.com/tschroedter/idasen-desk/actions/workflows/release-drafter.yml)
 
 # Latest Changes
+
+**Note:** Changes are now automatically tracked in [CHANGELOG.md](CHANGELOG.md) and [GitHub Releases](https://github.com/tschroedter/idasen-desk/releases). See [Changelog Automation Guide](docs/CHANGELOG_AUTOMATION.md) for details.
+
+## Recent Changes (from version 0.1.78)
 - Updated .NET 4.8 to .NET 8.0
 - Updated used NuGet Packages to latest
 - Updated UI to look more like native Windows application
