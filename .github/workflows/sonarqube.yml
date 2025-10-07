@@ -57,7 +57,7 @@ jobs:
         run: dotnet restore Idasen-Desk.sln
 
       - name: Begin SonarCloud Analysis
-        working-directory: src
+        working-directory: ../
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
