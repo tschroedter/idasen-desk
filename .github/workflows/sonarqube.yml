@@ -66,7 +66,7 @@ jobs:
             Write-Warning "Please configure SONAR_TOKEN and SONAR_ORGANIZATION secrets in repository settings."
             exit 0
           }
-          dotnet sonarscanner begin /k:"idasen-desk" /o:"${env:SONAR_ORGANIZATION}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.token="${env:SONAR_TOKEN}" /s:Idasen.SystemTray.Win11/Idasen.SystemTray.Win11.csproj
+          dotnet sonarscanner begin /k:"idasen-desk" /o:"${env:SONAR_ORGANIZATION}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.token="${env:SONAR_TOKEN}" /s:Idasen-Desk.sln
 
       - name: Build
         run: |
@@ -74,7 +74,7 @@ jobs:
             Write-Host "Skipping build as SonarCloud analysis was skipped"
             exit 0
           }
-          dotnet build Idasen.SystemTray.Win11/Idasen.SystemTray.Win11.csproj --configuration Release --no-restore
+          dotnet build Idasen-Desk.sln --configuration Release --no-restore
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
