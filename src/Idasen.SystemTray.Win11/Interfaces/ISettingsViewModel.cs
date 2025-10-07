@@ -21,4 +21,5 @@ public interface ISettingsViewModel : IDisposable
     bool             Custom1IsVisibleInContextMenu  { get ; set ; }
     bool             Custom2IsVisibleInContextMenu  { get ; set ; }
     bool             StopIsVisibleInContextMenu     { get ; set ; }
+    uint             MaxSpeedToStopMovement         { get ; set ; }
 }

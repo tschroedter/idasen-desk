@@ -1,3 +1,4 @@
+using Idasen.BluetoothLE.Linak.Control ;
 using Idasen.SystemTray.Win11.Utils ;
 
 namespace Idasen.SystemTray.Win11.TraySettings ;
@@ -34,4 +35,10 @@ public class DeviceSettings
     ///     Indicates whether the stop option is visible in the context menu.
     /// </summary>
     public bool StopIsVisibleInContextMenu { get ; set ; } = true ;
+
+    /// <summary>
+    ///      The estimated units required to stop from max. movement speed.
+    /// </summary>
+    public uint MaxSpeedToStopMovement { get ; set ; } = StoppingHeightCalculatorSettings.MaxSpeedToStopMovement ;
+
 }
