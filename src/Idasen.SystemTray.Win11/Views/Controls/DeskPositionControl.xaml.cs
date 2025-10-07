@@ -1,4 +1,6 @@
 using Wpf.Ui.Controls ;
+using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace Idasen.SystemTray.Win11.Views.Controls ;
 
@@ -153,5 +155,26 @@ public partial class DeskPositionControl
     {
         if ( PositionValue > Minimum )
             PositionValue -- ;
+    }
+
+    private void OnSliderPreviewKeyDown(object sender, KeyEventArgs e)
+    {
+        if (sender is Slider slider)
+        {
+            switch (e.Key)
+            {
+                case Key.Up:
+                    if (slider.Value < slider.Maximum)
+                        slider.Value++;
+                    break;
+                case Key.Down:
+                    if (slider.Value > slider.Minimum)
+                        slider.Value--;
+                    break;
+            }
+
+            // Update the PositionValue property to reflect the slider's value
+            PositionValue = slider.Value;
+        }
     }
 }

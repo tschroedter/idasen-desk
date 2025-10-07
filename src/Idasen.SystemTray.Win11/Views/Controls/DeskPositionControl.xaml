@@ -26,7 +26,9 @@
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
                 VerticalAlignment="Center"
-                VerticalContentAlignment="Center"/>
+                VerticalContentAlignment="Center"
+                PreviewKeyDown="OnSliderPreviewKeyDown"
+                Focusable="True"/>
         <StackPanel Grid.Column="3"
                     Margin="5,0,5,0"
                     VerticalAlignment="Center"
