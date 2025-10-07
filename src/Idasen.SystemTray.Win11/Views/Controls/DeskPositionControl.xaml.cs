@@ -10,11 +10,23 @@ public partial class DeskPositionControl
                                       typeof ( DeskPositionControl ) ,
                                       new PropertyMetadata ( SymbolRegular.ArrowCircleUp24 ) ) ;
 
+    public static readonly DependencyProperty IsSymbolVisibleProperty =
+        DependencyProperty.Register(nameof(IsSymbolVisible),
+                                    typeof(Visibility),
+                                    typeof(DeskPositionControl),
+                                    new PropertyMetadata(Visibility.Visible));
+
     public static readonly DependencyProperty PositionNameProperty =
         DependencyProperty.Register ( nameof ( PositionName ) ,
                                       typeof ( string ) ,
                                       typeof ( DeskPositionControl ) ,
                                       new PropertyMetadata ( "Stand" ) ) ;
+
+    public static readonly DependencyProperty IsPositionNameVisibleProperty =
+        DependencyProperty.Register(nameof(IsPositionNameVisible),
+                                    typeof(Visibility),
+                                    typeof(DeskPositionControl),
+                                    new PropertyMetadata(Visibility.Visible));
 
     public static readonly DependencyProperty PositionValueProperty =
         DependencyProperty.Register ( nameof ( PositionValue ) ,
@@ -44,6 +56,18 @@ public partial class DeskPositionControl
                                       typeof ( DeskPositionControl ) ,
                                       new PropertyMetadata ( 127.0 ) ) ;
 
+    public static readonly DependencyProperty UnitsProperty =
+        DependencyProperty.Register ( nameof ( Units ) ,
+                                      typeof ( string ) ,
+                                      typeof ( DeskPositionControl ) ,
+                                      new PropertyMetadata ( "cm") ) ;
+
+    public static readonly DependencyProperty IsShowInTrayVisibleProperty =
+        DependencyProperty.Register( nameof(IsShowInTrayVisible),
+                                     typeof(Visibility),
+                                     typeof(DeskPositionControl),
+                                     new PropertyMetadata(Visibility.Visible));
+
     public DeskPositionControl ( )
     {
         InitializeComponent ( ) ;
@@ -56,11 +80,25 @@ public partial class DeskPositionControl
                           value ) ;
     }
 
+    public Visibility IsSymbolVisible
+    {
+        get => ( Visibility )GetValue ( IsSymbolVisibleProperty ) ;
+        set => SetValue ( IsSymbolVisibleProperty ,
+                          value ) ;
+    }
+
     public string PositionName
     {
         get => ( string )GetValue ( PositionNameProperty ) ;
         set => SetValue ( PositionNameProperty ,
                           value ) ;
+    }
+
+    public Visibility IsPositionNameVisible
+    {
+        get => (Visibility)GetValue(IsPositionNameVisibleProperty);
+        set => SetValue(IsPositionNameVisibleProperty,
+                        value);
     }
 
     public double PositionValue
@@ -88,6 +126,20 @@ public partial class DeskPositionControl
     {
         get => ( double )GetValue ( MaximumProperty ) ;
         set => SetValue ( MaximumProperty ,
+                          value ) ;
+    }
+
+    public string Units
+    {
+        get => (string)GetValue(UnitsProperty);
+        set => SetValue(UnitsProperty,
+                        value);
+    }
+
+    public Visibility IsShowInTrayVisible
+    {
+        get => ( Visibility )GetValue ( IsShowInTrayVisibleProperty ) ;
+        set => SetValue ( IsShowInTrayVisibleProperty ,
                           value ) ;
     }
 
