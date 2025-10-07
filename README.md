@@ -3,6 +3,7 @@
 
 [![Build and Test (Draft Release)](https://github.com/tschroedter/idasen-desk/actions/workflows/dotnet-ci.yml/badge.svg)](https://github.com/tschroedter/idasen-desk/actions/workflows/dotnet-ci.yml)
 [![CodeQL](https://github.com/tschroedter/idasen-desk/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/tschroedter/idasen-desk/actions/workflows/github-code-scanning/codeql)
+[![SonarCloud Analysis](https://github.com/tschroedter/idasen-desk/actions/workflows/sonarqube.yml/badge.svg)](https://github.com/tschroedter/idasen-desk/actions/workflows/sonarqube.yml)
 [![Release Drafter](https://github.com/tschroedter/idasen-desk/actions/workflows/release-drafter.yml/badge.svg)](https://github.com/tschroedter/idasen-desk/actions/workflows/release-drafter.yml)
 
 # Latest Changes

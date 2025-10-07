@@ -13,6 +13,9 @@ This directory contains comprehensive documentation for the automated changelog 
 ### For Understanding the System
 - **[WORKFLOW_DIAGRAM.md](WORKFLOW_DIAGRAM.md)** - Visual representation of the entire workflow from PR creation to changelog update
 
+### For Code Quality
+- **[SONARQUBE_SETUP.md](SONARQUBE_SETUP.md)** - Setup guide for SonarCloud static code analysis
+
 ## Quick Start
 
 ### As a Contributor
@@ -38,11 +41,14 @@ This directory contains comprehensive documentation for the automated changelog 
 │   ├── pull_request_template.md         # PR template with label guidance
 │   └── workflows/
 │       ├── release-drafter.yml          # Workflow to generate releases
-│       └── update-changelog.yml         # Workflow to update changelog
+│       ├── update-changelog.yml         # Workflow to update changelog
+│       ├── dotnet-ci.yml                # Build, test, and release workflow
+│       └── sonarqube.yml                # SonarCloud static code analysis
 ├── docs/
 │   ├── CHANGELOG_AUTOMATION.md          # Usage guide
 │   ├── IMPLEMENTATION_SUMMARY.md        # Implementation details
 │   ├── WORKFLOW_DIAGRAM.md              # Visual workflow
+│   ├── SONARQUBE_SETUP.md               # SonarCloud setup guide
 │   └── README.md                        # This file
 └── scripts/
     └── create-labels.sh                 # Label creation helper
@@ -62,6 +68,7 @@ Having issues? Check these resources:
 ✅ PR label-based categorization  
 ✅ Version bump automation
 ✅ CHANGELOG.md auto-updates
+✅ SonarCloud static code analysis
 ✅ Comprehensive documentation
 ✅ Easy setup with helper scripts
 
