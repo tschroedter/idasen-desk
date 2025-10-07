@@ -1,4 +1,5 @@
-﻿using Idasen.SystemTray.Win11.Interfaces ;
+﻿using Idasen.BluetoothLE.Linak.Control ;
+using Idasen.SystemTray.Win11.Interfaces ;
 using Serilog ;
 using Wpf.Ui.Appearance ;
 
@@ -40,11 +41,14 @@ public class SettingsSynchronizer (
             model.Custom2IsVisibleInContextMenu  = current.HeightSettings.Custom2IsVisibleInContextMenu ;
             model.StopIsVisibleInContextMenu     = current.DeviceSettings.StopIsVisibleInContextMenu ;
 
-            model.LastKnownDeskHeight = current.HeightSettings.LastKnownDeskHeight ;
-            model.DeskName            = nameConverter.EmptyIfDefault ( current.DeviceSettings.DeviceName ) ;
-            model.DeskAddress         = addressConverter.EmptyIfDefault ( current.DeviceSettings.DeviceAddress ) ;
-            model.ParentalLock        = current.DeviceSettings.DeviceLocked ;
-            model.Notifications       = current.DeviceSettings.NotificationsEnabled ;
+            model.LastKnownDeskHeight    = current.HeightSettings.LastKnownDeskHeight ;
+            model.DeskName               = nameConverter.EmptyIfDefault ( current.DeviceSettings.DeviceName ) ;
+            model.DeskAddress            = addressConverter.EmptyIfDefault ( current.DeviceSettings.DeviceAddress ) ;
+            model.ParentalLock           = current.DeviceSettings.DeviceLocked ;
+            model.Notifications          = current.DeviceSettings.NotificationsEnabled ;
+            model.MaxSpeedToStopMovement = current.DeviceSettings.MaxSpeedToStopMovement > 0
+                                               ? current.DeviceSettings.MaxSpeedToStopMovement
+                                               : StoppingHeightCalculatorSettings.MaxSpeedToStopMovement ;
 
             var themeName = current.AppearanceSettings.ThemeName ;
             model.CurrentTheme = ParseThemeName ( themeName ) ;
@@ -53,6 +57,8 @@ public class SettingsSynchronizer (
                                    themeName ,
                                    StringComparison.Ordinal ) )
                 themeSwitcher.ChangeTheme ( current.AppearanceSettings.ThemeName ) ;
+
+            StoppingHeightCalculatorSettings.MaxSpeedToStopMovement = model.MaxSpeedToStopMovement;
         }
         catch ( Exception ex )
         {
@@ -131,12 +137,15 @@ public class SettingsSynchronizer (
         settings.HeightSettings.Custom2IsVisibleInContextMenu  = model.Custom2IsVisibleInContextMenu ;
         settings.DeviceSettings.StopIsVisibleInContextMenu     = model.StopIsVisibleInContextMenu ;
 
-        settings.DeviceSettings.DeviceName           = newDeviceName ;
-        settings.DeviceSettings.DeviceAddress        = newDeviceAddress ;
-        settings.DeviceSettings.DeviceLocked         = newDeviceLocked ;
-        settings.DeviceSettings.NotificationsEnabled = newNotificationsEnabled ;
+        settings.DeviceSettings.DeviceName             = newDeviceName ;
+        settings.DeviceSettings.DeviceAddress          = newDeviceAddress ;
+        settings.DeviceSettings.DeviceLocked           = newDeviceLocked ;
+        settings.DeviceSettings.NotificationsEnabled   = newNotificationsEnabled ;
+        settings.DeviceSettings.MaxSpeedToStopMovement = model.MaxSpeedToStopMovement ;
 
         settings.AppearanceSettings.ThemeName = themeSwitcher.CurrentThemeName ;
+
+        StoppingHeightCalculatorSettings.MaxSpeedToStopMovement = model.MaxSpeedToStopMovement ;
     }
 
     private async Task DoStoreSettingsAsync ( bool              advancedChanged ,
@@ -207,8 +216,9 @@ public class SettingsSynchronizer (
             current.DeviceSettings.StopIsVisibleInContextMenu     != model.StopIsVisibleInContextMenu ;
 
         var deviceChanged =
-            current.DeviceSettings.NotificationsEnabled != model.Notifications ||
-            current.DeviceSettings.DeviceLocked         != model.ParentalLock ;
+            current.DeviceSettings.NotificationsEnabled   != model.Notifications ||
+            current.DeviceSettings.DeviceLocked           != model.ParentalLock  ||
+            current.DeviceSettings.MaxSpeedToStopMovement != model.MaxSpeedToStopMovement ;
 
         var themeChanged =
             ! string.Equals ( current.AppearanceSettings.ThemeName ,
