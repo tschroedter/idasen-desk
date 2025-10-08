@@ -12,8 +12,6 @@ namespace Idasen.SystemTray.Win11.Services ;
 [ ExcludeFromCodeCoverage ] // "Depends on WPF WindowCollection class"
 public class ApplicationHostService ( IServiceProvider serviceProvider ) : IHostedService
 {
-    private INavigationWindow ? _navigationWindow ;
-
     private static Window CurrentWindow =>
         Application.Current.MainWindow ?? throw new InvalidOperationException ( "Can't find the main window!" ) ;
 
@@ -42,12 +40,16 @@ public class ApplicationHostService ( IServiceProvider serviceProvider ) : IHost
     {
         if ( ! Application.Current.Windows.OfType < IdasenDeskWindow > ( ).Any ( ) )
         {
-            _navigationWindow = (
-                                    serviceProvider.GetService ( typeof ( INavigationWindow ) ) as INavigationWindow
-                                )! ;
-            _navigationWindow!.ShowWindow ( ) ;
+            var navigationWindow = (
+                                        serviceProvider.GetService ( typeof ( INavigationWindow ) ) as INavigationWindow
+                                    ) ;
 
-            _navigationWindow.Navigate ( typeof ( SettingsPage ) ) ;
+            if (navigationWindow is null )
+                throw new InvalidOperationException ( "Can't create the main window!" );
+
+            navigationWindow.ShowWindow ( ) ;
+
+            navigationWindow.Navigate ( typeof ( SettingsPage ) ) ;
 
             CurrentWindow.Visibility = Visibility.Hidden ;
         }
