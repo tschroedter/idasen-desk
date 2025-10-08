@@ -161,36 +161,14 @@ public partial class App
         {
             if ( ! EnsureSingleInstance ( ) )
             {
-                _logger.Information ( "##### Application already running!" ) ;
-                Current.Shutdown ( ) ;
+                HandleApplicationAlreadyRunning ( ) ;
+
                 return ;
             }
 
-            await Host.StartAsync ( ) ;
-
-            UnhandledExceptionsHandler.RegisterGlobalExceptionHandling ( ) ;
-
-            _logger.Information ( "##### Startup..." ) ;
-
-            var environmentName =
-                Environment.GetEnvironmentVariable ( "DOTNET_ENVIRONMENT" ) ??
-                Environment.GetEnvironmentVariable ( "ASPNETCORE_ENVIRONMENT" ) ??
-                "Production" ;
-
-            _logger.Information ( "BaseDirectory={BaseDirectory}, EnvironmentName={EnvironmentName}" ,
-                                  AppContext.BaseDirectory ,
-                                  environmentName ) ;
-
-
-            var notifyIcon = FindNotifyIcon ( ) ;
-
-            var main = GetService < IdasenDeskWindowViewModel > ( ) ;
-
-            main!.Initialize ( notifyIcon ) ;
-
-            var settings = GetService < SettingsViewModel > ( ) ;
-
-            await settings!.InitializeAsync ( CancellationToken.None ) ;
+            await HandleStartingApplication ( ) ;
+            
+            await HandleInitializingApplication ( ) ;
 
             var versionProvider = GetVersionProvider ( ) ;
 
@@ -202,6 +180,43 @@ public partial class App
             _logger.Error ( ex ,
                             "Failed to start application" ) ;
         }
+    }
+
+    private static async Task HandleInitializingApplication ( )
+    {
+        var notifyIcon = FindNotifyIcon ( ) ;
+
+        var main = GetService < IdasenDeskWindowViewModel > ( ) ;
+
+        main!.Initialize ( notifyIcon ) ;
+
+        var settings = GetService < SettingsViewModel > ( ) ;
+
+        await settings!.InitializeAsync ( CancellationToken.None ) ;
+    }
+
+    private async Task HandleStartingApplication ( )
+    {
+        await Host.StartAsync ( ) ;
+
+        UnhandledExceptionsHandler.RegisterGlobalExceptionHandling ( ) ;
+
+        _logger.Information ( "##### Startup..." ) ;
+
+        var environmentName =
+            Environment.GetEnvironmentVariable ( "DOTNET_ENVIRONMENT" ) ??
+            Environment.GetEnvironmentVariable ( "ASPNETCORE_ENVIRONMENT" ) ??
+            "Production" ;
+
+        _logger.Information ( "BaseDirectory={BaseDirectory}, EnvironmentName={EnvironmentName}" ,
+                              AppContext.BaseDirectory ,
+                              environmentName ) ;
+    }
+
+    private void HandleApplicationAlreadyRunning ( )
+    {
+        _logger.Information ( "##### Application already running!" ) ;
+        Current.Shutdown ( ) ;
     }
 
     private bool EnsureSingleInstance ( )
