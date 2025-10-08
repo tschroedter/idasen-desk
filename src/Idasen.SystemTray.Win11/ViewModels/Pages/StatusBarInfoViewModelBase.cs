@@ -47,10 +47,17 @@ public partial class StatusBarInfoViewModelBase : ObservableObject , IDisposable
 
     public virtual void Dispose ( )
     {
-        _timer.Dispose ( ) ;
-        _statusBarInfoChanged.Dispose ( ) ;
-
+        Dispose ( true ) ;
         GC.SuppressFinalize ( this ) ;
+    }
+
+    protected virtual void Dispose ( bool disposing )
+    {
+        if ( disposing )
+        {
+            _timer.Dispose ( ) ;
+            _statusBarInfoChanged.Dispose ( ) ;
+        }
     }
 
     private void OnStatusBarInfoChangedInternal ( StatusBarInfo info )
