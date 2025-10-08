@@ -145,6 +145,7 @@ public sealed class UiDeskManager : IUiDeskManager
             }
             catch
             {
+                // ignore cleanup errors
             }
 
             try
@@ -153,6 +154,7 @@ public sealed class UiDeskManager : IUiDeskManager
             }
             catch
             {
+                // ignore cleanup errors
             }
 
             try
@@ -161,6 +163,7 @@ public sealed class UiDeskManager : IUiDeskManager
             }
             catch
             {
+                // ignore cleanup errors
             }
 
             try
@@ -180,6 +183,7 @@ public sealed class UiDeskManager : IUiDeskManager
             }
             catch
             {
+                // ignore desk disposal errors
             }
 
             // Dispose token source
@@ -189,6 +193,7 @@ public sealed class UiDeskManager : IUiDeskManager
             }
             catch
             {
+                // ignore cleanup errors
             }
 
             _onErrorChanged = null ;
