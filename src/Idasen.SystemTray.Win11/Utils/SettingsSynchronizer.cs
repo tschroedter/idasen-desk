@@ -63,7 +63,8 @@ public class SettingsSynchronizer (
         {
             logger.Error ( ex ,
                            "Failed to load settings" ) ;
-            throw ;
+
+            throw new InvalidOperationException ( "Failed to load settings" ) ;
         }
     }
 
@@ -79,6 +80,7 @@ public class SettingsSynchronizer (
         if ( ! anyChanged )
         {
             logger.Debug ( "No settings changes detected. Skipping save and notifications." ) ;
+
             return ;
         }
 
