@@ -112,7 +112,7 @@ public partial class SettingsViewModel (
                                                token ) ;
 
         SettingsFileFullPath = settingsManager.SettingsFileName ;
-        LogFolderPath        = LoggingFile.Path ; // Todo: Maybe this could be ILoggingFile?
+        LogFolderPath        = LoggingFile.Path ;
 
         _settingsSaved = settingsManager.SettingsSaved
                                         .ObserveOn ( scheduler )
