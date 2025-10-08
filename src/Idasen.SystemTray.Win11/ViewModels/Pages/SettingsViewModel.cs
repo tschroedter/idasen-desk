@@ -22,7 +22,7 @@ public partial class SettingsViewModel (
     ILoggingSettingsManager settingsManager ,
     IScheduler              scheduler ,
     ISettingsSynchronizer   synchronizer )
-    : ObservableObject, INavigationAware , ISettingsViewModel
+    : ObservableObject , INavigationAware , ISettingsViewModel
 {
     [ ObservableProperty ] private string _appVersion = string.Empty ;
 
@@ -42,6 +42,8 @@ public partial class SettingsViewModel (
 
     [ ObservableProperty ] private string _deskName = string.Empty ;
 
+    private bool _disposed ;
+
     private bool _isInitialized ;
     private bool _isLoadingSettings ;
 
@@ -50,6 +52,9 @@ public partial class SettingsViewModel (
     [ ObservableProperty ] private string _logFolderPath = string.Empty ;
 
     [ ObservableProperty ] private uint _maxHeight = 90 ;
+
+    [ ObservableProperty ]
+    private uint _maxSpeedToStopMovement = StoppingHeightCalculatorSettings.MaxSpeedToStopMovement ;
 
     [ ObservableProperty ] private uint _minHeight = 90 ;
 
@@ -71,8 +76,6 @@ public partial class SettingsViewModel (
 
     [ ObservableProperty ] private bool _stopIsVisibleInContextMenu = true ;
 
-    [ ObservableProperty ] private uint _maxSpeedToStopMovement = StoppingHeightCalculatorSettings.MaxSpeedToStopMovement;
-
     public async Task OnNavigatedToAsync ( )
     {
         if ( _isInitialized )
@@ -89,19 +92,31 @@ public partial class SettingsViewModel (
 
     public void Dispose ( )
     {
-        if ( _settingsSaved is not null )
-        {
-            _settingsSaved.Dispose ( ) ;
-            _settingsSaved = null ;
-        }
-
-        if ( _autoSaveSubscription is not null )
-        {
-            _autoSaveSubscription.Dispose ( ) ;
-            _autoSaveSubscription = null ;
-        }
-
+        Dispose ( true ) ;
         GC.SuppressFinalize ( this ) ;
+    }
+
+    protected virtual void Dispose ( bool disposing )
+    {
+        if ( _disposed )
+            return ;
+
+        if ( disposing )
+        {
+            if ( _settingsSaved is not null )
+            {
+                _settingsSaved.Dispose ( ) ;
+                _settingsSaved = null ;
+            }
+
+            if ( _autoSaveSubscription is not null )
+            {
+                _autoSaveSubscription.Dispose ( ) ;
+                _autoSaveSubscription = null ;
+            }
+        }
+
+        _disposed = true ;
     }
 
     public async Task InitializeAsync ( CancellationToken token )
@@ -129,12 +144,21 @@ public partial class SettingsViewModel (
 
         // Observe property changes from INotifyPropertyChanged, debounce and persist settings
         _autoSaveSubscription = Observable
-                               .FromEventPattern < PropertyChangedEventHandler , PropertyChangedEventArgs > ( h => ( ( INotifyPropertyChanged )this ).PropertyChanged += h , h => ( ( INotifyPropertyChanged )this ).PropertyChanged -= h )
+                               .FromEventPattern < PropertyChangedEventHandler ,
+                                    PropertyChangedEventArgs > ( h => ( ( INotifyPropertyChanged )this )
+                                                                     .PropertyChanged += h ,
+                                                                 h => ( ( INotifyPropertyChanged )this )
+                                                                     .PropertyChanged -= h )
                                .Where ( _ => ! _isLoadingSettings )
-                               .Throttle ( TimeSpan.FromMilliseconds ( 300 ) , scheduler )
-                               .Select ( _ => Observable.FromAsync ( cancellationToken => synchronizer.StoreSettingsAsync ( this , cancellationToken ) ) )
+                               .Throttle ( TimeSpan.FromMilliseconds ( 300 ) ,
+                                           scheduler )
+                               .Select ( _ => Observable.FromAsync ( cancellationToken =>
+                                                                         synchronizer.StoreSettingsAsync ( this ,
+                                                                                                           cancellationToken ) ) )
                                .Switch ( )
-                               .Subscribe ( _ => { } , ex => logger.Error ( ex , "Failed to auto-save settings" ) ) ;
+                               .Subscribe ( _ => { } ,
+                                            ex => logger.Error ( ex ,
+                                                                 "Failed to auto-save settings" ) ) ;
     }
 
     private void OnSettingsSaved ( ISettings settings )
