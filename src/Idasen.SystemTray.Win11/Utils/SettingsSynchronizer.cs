@@ -70,8 +70,7 @@ public class SettingsSynchronizer (
     public async Task StoreSettingsAsync ( ISettingsViewModel model ,
                                            CancellationToken  token )
     {
-        ArgumentNullException.ThrowIfNull ( model ,
-                                            nameof ( model ) ) ;
+        ArgumentNullException.ThrowIfNull ( model ) ;
 
         var lockChanged     = HasParentalLockChanged ( model ) ;
         var advancedChanged = HaveAdvancedSettingsChanged ( model ) ;
