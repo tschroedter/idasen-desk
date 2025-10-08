@@ -91,7 +91,8 @@ public class SettingsManager (
         {
             logger.Error ( ex ,
                            "Failed to reset settings" ) ;
-            throw ;
+
+            throw new InvalidOperationException ( "Failed to reset settings" ) ;
         }
     }
 
