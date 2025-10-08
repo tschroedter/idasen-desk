@@ -20,6 +20,8 @@ namespace Idasen.SystemTray.Win11.ViewModels.Windows ;
 [ ExcludeFromCodeCoverage ]
 public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDisposable
 {
+    private const string DisconnectLiteral = "Disconnect";
+
     private readonly NavigationViewItem ? _closeWindowViewItem ;
     private readonly NavigationViewItem ? _connectViewItem ;
     private readonly NavigationViewItem ? _custom1ViewItem ;
@@ -140,7 +142,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
         _disconnectViewItem = new NavigationViewItem
         {
-            Content        = "Disconnect" ,
+            Content        = DisconnectLiteral ,
             Icon           = new SymbolIcon { Symbol = SymbolRegular.PlugDisconnected24 } ,
             TargetPageType = typeof ( StatusPage ) ,
             ToolTip        = "Double-Click to disconnect desk."
@@ -229,7 +231,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         } ;
         _menuItemDisconnect = new MenuItem
         {
-            Header = "Disconnect" , Command = disconnectCommand ,
+            Header = DisconnectLiteral , Command = disconnectCommand ,
             Icon   = new SymbolIcon { Symbol = SymbolRegular.PlugDisconnected24 }
         } ;
         _menuItemShow = new MenuItem
