@@ -31,13 +31,6 @@ public class Notifications : INotifications
         _showSubscribe = _showSubject.Subscribe ( OnShow ) ;
     }
 
-    public void Show ( string title , string text , InfoBarSeverity serverity )
-    {
-        Show ( new NotificationParameters ( title ,
-                                            text ,
-                                            serverity ) ) ;
-    }
-
     public INotifications Initialize ( NotifyIcon        notifyIcon ,
                                        CancellationToken token )
     {
@@ -89,6 +82,13 @@ public class Notifications : INotifications
 
             _disposedValue = true ;
         }
+    }
+
+    public void Show(string title, string text, InfoBarSeverity serverity)
+    {
+        Show(new NotificationParameters(title,
+                                        text,
+                                        serverity));
     }
 
     public void Show ( NotificationParameters parameters )
