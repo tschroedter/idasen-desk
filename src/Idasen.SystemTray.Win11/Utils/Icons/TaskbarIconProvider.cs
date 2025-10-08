@@ -42,24 +42,7 @@ public class TaskbarIconProvider : ITaskbarIconProvider
 
     public void Dispose ( )
     {
-        lock ( _syncRoot )
-        {
-            if ( _isDisposed )
-                return ;
-
-            _isDisposed = true ;
-
-            _disposable?.Dispose ( ) ;
-            _disposable = null ;
-
-            NotifyIcon?.Dispose ( ) ;
-            NotifyIcon = null ;
-
-            _isInitialized = false ;
-
-            _logger?.Information ( "TaskbarIconProvider disposed." ) ;
-        }
-
+        Dispose ( true ) ;
         GC.SuppressFinalize ( this ) ;
     }
 
@@ -105,6 +88,33 @@ public class TaskbarIconProvider : ITaskbarIconProvider
 
             _isInitialized = true ;
         }
+    }
+
+    protected virtual void Dispose ( bool disposing )
+    {
+        if ( _isDisposed )
+            return ;
+
+        if ( disposing )
+            lock ( _syncRoot )
+            {
+                _disposable?.Dispose ( ) ;
+                _disposable = null ;
+
+                NotifyIcon?.Dispose ( ) ;
+                NotifyIcon = null ;
+
+                _isInitialized = false ;
+
+                _logger?.Information ( "TaskbarIconProvider disposed." ) ;
+            }
+
+        _isDisposed = true ;
+    }
+
+    ~TaskbarIconProvider ( )
+    {
+        Dispose ( false ) ;
     }
 
     private void OnHeightAndSpeedChanged ( HeightSpeedDetails details )
