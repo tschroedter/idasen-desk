@@ -38,9 +38,6 @@ namespace Idasen.SystemTray.Win11 ;
 [ ExcludeFromCodeCoverage ]
 public partial class App
 {
-    // Configure a single Serilog logger instance for the entire app
-    private static readonly ILogger AppLogger = LoggerProvider.CreateLogger ( AppContext.BaseDirectory ) ;
-
     // Generic Host with explicit configuration pipeline ensuring single-file friendly base path
     private static readonly IHost Host = Microsoft.Extensions.Hosting.Host
                                                   .CreateDefaultBuilder ( )
@@ -49,7 +46,7 @@ public partial class App
                                                   .ConfigureContainer < ContainerBuilder > ( builder =>
                                                    {
                                                        // Register Serilog logger instance for DI
-                                                       builder.RegisterLogger ( AppLogger ) ;
+                                                       builder.RegisterLogger ( LoggerProvider.CreateLogger ( AppContext.BaseDirectory ) ) ;
                                                        builder.RegisterModule < BluetoothLEAop > ( ) ;
                                                        builder
                                                           .RegisterModule < BluetoothLECoreModule > ( ) ;
@@ -109,13 +106,13 @@ public partial class App
                                                                                        => new Timer ( callback , state , dueTime , period ) ) ;
                                                                        } ).Build ( ) ;
 
-    private static Mutex ? _singleInstanceMutex ;
+    private static   Mutex ? _singleInstanceMutex ;
 
-    private readonly ILogger _logger = AppLogger ;
+    private readonly ILogger _logger = LoggerProvider.CreateLogger ( AppContext.BaseDirectory ) ;
 
     static App ( )
     {
-        Log.Logger = AppLogger ;
+        Log.Logger = GetLogger (  ) ;
     }
 
     private static Window CurrentWindow =>
@@ -231,6 +228,11 @@ public partial class App
     private static IVersionProvider GetVersionProvider ( )
     {
         return GetService < IVersionProvider > ( ) ?? throw new ArgumentNullException ( nameof ( IVersionProvider ) ) ;
+    }
+
+    private static ILogger GetLogger ( )
+    {
+        return GetService < ILogger > ( ) ?? throw new ArgumentNullException ( nameof ( ILogger ) ) ;
     }
 
     /// <summary>
