@@ -28,7 +28,7 @@ public class LoggingSettingsManager (
                            "Failed to save settings in file {SettingsFileName}" ,
                            SettingsFileName ) ;
 
-            throw ;
+            throw new InvalidOperationException ( $"Failed to save settings in file {SettingsFileName}" ) ;
         }
     }
 
