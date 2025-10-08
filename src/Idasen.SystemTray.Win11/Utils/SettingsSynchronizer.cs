@@ -166,7 +166,8 @@ public class SettingsSynchronizer (
         {
             logger.Error ( e ,
                            "Failed to store settings" ) ;
-            throw ;
+
+            throw new InvalidOperationException ( "Failed to store settings" ) ;
         }
     }
 
