@@ -49,7 +49,7 @@ public class LoggingSettingsManager (
             logger.Error ( e ,
                            "Failed to load settings" ) ;
 
-            throw ;
+            throw new InvalidOperationException ( $"Failed to load settings from file {SettingsFileName}" ) ;
         }
     }
 
