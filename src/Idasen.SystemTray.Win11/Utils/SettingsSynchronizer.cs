@@ -17,8 +17,7 @@ public class SettingsSynchronizer (
     public async Task LoadSettingsAsync ( ISettingsViewModel model ,
                                           CancellationToken  token )
     {
-        ArgumentNullException.ThrowIfNull ( model ,
-                                            nameof ( model ) ) ;
+        ArgumentNullException.ThrowIfNull ( model ) ;
 
         try
         {
