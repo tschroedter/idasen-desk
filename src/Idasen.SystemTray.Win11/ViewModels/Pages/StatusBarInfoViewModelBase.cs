@@ -22,6 +22,8 @@ public partial class StatusBarInfoViewModelBase : ObservableObject , IDisposable
 
     [ ObservableProperty ] private string _title = "Desk Status" ;
 
+    private bool _disposed ;
+
     public StatusBarInfoViewModelBase (
         IUiDeskManager                                                   uiDeskManager ,
         IScheduler                                                       scheduler ,
@@ -45,18 +47,26 @@ public partial class StatusBarInfoViewModelBase : ObservableObject , IDisposable
 
     protected IScheduler Scheduler { get ; }
 
-    public virtual void Dispose ( )
+    public virtual void Dispose()
     {
-        Dispose ( true ) ;
-        GC.SuppressFinalize ( this ) ;
+        Dispose(true);
+        GC.SuppressFinalize(this);
     }
 
-    protected virtual void Dispose ( bool disposing )
+    protected virtual void Dispose(bool disposing)
     {
-        if ( disposing )
+        if (!_disposed)
         {
-            _timer.Dispose ( ) ;
-            _statusBarInfoChanged.Dispose ( ) ;
+            if (disposing)
+            {
+                // Dispose managed resources
+                _timer.Dispose();
+                _statusBarInfoChanged.Dispose();
+            }
+
+            // Dispose unmanaged resources if any
+
+            _disposed = true;
         }
     }
 
@@ -98,5 +108,10 @@ public partial class StatusBarInfoViewModelBase : ObservableObject , IDisposable
                       : $"Current desk height {Height} cm" ;
 
         Severity = InfoBarSeverity.Informational ;
+    }
+
+    ~StatusBarInfoViewModelBase()
+    {
+        Dispose(false);
     }
 }
