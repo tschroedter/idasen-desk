@@ -70,6 +70,11 @@ public partial class StatusBarInfoViewModelBase : ObservableObject , IDisposable
         GC.SuppressFinalize(this);
     }
 
+    ~StatusBarInfoViewModelBase ( )
+    {
+        Dispose(false);
+    }
+
     private void OnStatusBarInfoChangedInternal ( StatusBarInfo info )
     {
         // Update properties
