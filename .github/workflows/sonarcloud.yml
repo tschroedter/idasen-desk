@@ -71,5 +71,5 @@ jobs:
         run: |
           .\.sonar\scanner\dotnet-sonarscanner begin /k:"tschroedter_idasen-desk" /o:"$Env:SONAR_ORGANIZATION" /d:sonar.token="$Env:SONAR_TOKEN" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml"
           dotnet build Idasen-Desk.sln --configuration Release --no-restore
-          dotnet test Idasen-Desk.sln --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory ./TestResults/ -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.ExcludeByAttribute="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute"
+          dotnet test Idasen-Desk.sln --configuration Release --no-build --verbosity detailed --collect:"XPlat Code Coverage" --results-directory ./TestResults/ -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.ExcludeByAttribute="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute"
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="$Env:SONAR_TOKEN"
