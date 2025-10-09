@@ -70,6 +70,9 @@ jobs:
           .\.sonar\scanner\dotnet-sonarscanner begin /k:"tschroedter_idasen-desk" /o:"$Env:SONAR_ORGANIZATION" /d:sonar.token="$Env:SONAR_TOKEN" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml"
           dotnet build Idasen-Desk.sln --configuration Release --no-restore
           dotnet tool install --global dotnet-coverage
+          echo "Creating TestResults directory..."
+          mkdir ./TestResults
+          echo "Running dotnet-coverage to collect coverage data..."
           dotnet-coverage collect --output ./TestResults/coverage.opencover.xml --format opencover -- \
             dotnet test Idasen-Desk.sln --configuration Release --no-build --verbosity detailed
           echo "Listing contents of TestResults directory:"
