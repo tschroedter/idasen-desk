@@ -47,12 +47,6 @@ public partial class StatusBarInfoViewModelBase : ObservableObject , IDisposable
 
     protected IScheduler Scheduler { get ; }
 
-    public virtual void Dispose()
-    {
-        Dispose(disposing: true);
-        GC.SuppressFinalize(this);
-    }
-
     protected virtual void Dispose(bool disposing)
     {
         if (_disposed)
@@ -68,6 +62,12 @@ public partial class StatusBarInfoViewModelBase : ObservableObject , IDisposable
         // Dispose unmanaged resources if any
 
         _disposed = true;
+    }
+
+    public void Dispose()
+    {
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
     }
 
     private void OnStatusBarInfoChangedInternal ( StatusBarInfo info )
