@@ -225,11 +225,7 @@ public partial class App
 
         try
         {
-            _singleInstanceMutex = new Mutex ( true ,
-                                               mutexName ,
-                                               out var createdNew ) ;
-
-            return createdNew ;
+            return CreatedNewMutex ( mutexName ) ;
         }
         catch ( Exception ex )
         {
@@ -238,6 +234,15 @@ public partial class App
                             mutexName ) ;
             return true ;
         }
+    }
+
+    private static bool CreatedNewMutex ( string mutexName )
+    {
+        _singleInstanceMutex = new Mutex ( true ,
+                                           mutexName ,
+                                           out var createdNew ) ;
+
+        return createdNew ;
     }
 
     private static IVersionProvider GetVersionProvider ( )
@@ -271,16 +276,7 @@ public partial class App
         }
         finally
         {
-            try
-            {
-                _singleInstanceMutex?.ReleaseMutex ( ) ;
-                _singleInstanceMutex?.Dispose ( ) ;
-                _singleInstanceMutex = null ;
-            }
-            catch
-            {
-                // ignore mutex release errors
-            }
+            ReleaseSingleInstanceMutex();
         }
     }
 
@@ -313,6 +309,20 @@ public partial class App
             if ( child is T childType ) yield return childType ;
 
             foreach ( var other in FindVisualChildren < T > ( child ) ) yield return other ;
+        }
+    }
+
+    private static void ReleaseSingleInstanceMutex ( )
+    {
+        try
+        {
+            _singleInstanceMutex?.ReleaseMutex ( ) ;
+            _singleInstanceMutex?.Dispose ( ) ;
+            _singleInstanceMutex = null ;
+        }
+        catch
+        {
+            // ignore mutex release errors
         }
     }
 }
