@@ -362,9 +362,10 @@ public sealed class UiDeskManager : IUiDeskManager
 
             await Connect ( ).ConfigureAwait ( false ) ;
         }
-        catch ( TaskCanceledException )
+        catch ( TaskCanceledException e )
         {
-            _logger.Information ( "Auto connect was canceled" ) ;
+            _logger.Warning ( e,
+                              "Auto connect was canceled" ) ;
         }
         catch ( Exception e )
         {
