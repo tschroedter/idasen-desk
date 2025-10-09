@@ -248,13 +248,13 @@ public partial class App
     private static IVersionProvider GetVersionProvider ( )
     {
         return GetService < IVersionProvider > ( ) ??
-               throw new ArgumentNullException ( $"Failed to resolve: {nameof ( IVersionProvider )}" ) ;
+               throw new InvalidOperationException( $"Failed to resolve: {nameof ( IVersionProvider )}" ) ;
     }
 
     private static ILogger GetLogger ( )
     {
         return GetService < ILogger > ( ) ??
-               throw new ArgumentNullException ( $"Failed to resolve: {nameof ( ILogger )}" ) ;
+               throw new InvalidOperationException( $"Failed to resolve: {nameof ( ILogger )}" ) ;
     }
 
     /// <summary>

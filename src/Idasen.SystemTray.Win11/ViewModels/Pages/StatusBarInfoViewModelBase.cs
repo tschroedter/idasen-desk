@@ -49,25 +49,25 @@ public partial class StatusBarInfoViewModelBase : ObservableObject , IDisposable
 
     public virtual void Dispose()
     {
-        Dispose(true);
+        Dispose(disposing: true);
         GC.SuppressFinalize(this);
     }
 
     protected virtual void Dispose(bool disposing)
     {
-        if (!_disposed)
+        if (_disposed)
+            return;
+
+        if (disposing)
         {
-            if (disposing)
-            {
-                // Dispose managed resources
-                _timer.Dispose();
-                _statusBarInfoChanged.Dispose();
-            }
-
-            // Dispose unmanaged resources if any
-
-            _disposed = true;
+            // Dispose managed resources
+            _timer?.Dispose();
+            _statusBarInfoChanged?.Dispose();
         }
+
+        // Dispose unmanaged resources if any
+
+        _disposed = true;
     }
 
     private void OnStatusBarInfoChangedInternal ( StatusBarInfo info )
@@ -110,8 +110,9 @@ public partial class StatusBarInfoViewModelBase : ObservableObject , IDisposable
         Severity = InfoBarSeverity.Informational ;
     }
 
+    // Finalizer to ensure unmanaged resources are released
     ~StatusBarInfoViewModelBase()
     {
-        Dispose(false);
+        Dispose(disposing: false);
     }
 }
