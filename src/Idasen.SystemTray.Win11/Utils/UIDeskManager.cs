@@ -692,7 +692,7 @@ public sealed class UiDeskManager : IUiDeskManager
                                    _desk ,
                                    _notifyIcon ) ;
 
-        var message = $"Connected successfully to '{_desk?.DeviceName}'." ;
+        var message = $"Connected successfully to '{_desk.DeviceName}'." ;
 
         OnStatusChanged ( 0 ,
                           "Connected" ,
