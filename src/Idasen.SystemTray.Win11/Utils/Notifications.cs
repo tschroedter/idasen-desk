@@ -46,9 +46,10 @@ public class Notifications : INotifications
                                       "Running..." ,
                                       InfoBarSeverity.Informational ) ;
                            }
-                           catch ( OperationCanceledException )
+                           catch ( OperationCanceledException ex )
                            {
-                               _logger.Information ( "Notifications initialization canceled" ) ;
+                               _logger.Warning ( ex,
+                                                 "Notifications initialization canceled" ) ;
                            }
                            catch ( Exception ex )
                            {
