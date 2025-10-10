@@ -74,3 +74,8 @@ jobs:
           Get-ChildItem -Path ./TestResults/ -Recurse | Format-List
           echo "End of TestResults directory contents."
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="$Env:SONAR_TOKEN"
+
+      - name: Output Coverage File
+        run: |
+          echo "Contents of coverage.opencover.xml:"
+          Get-Content -Path ./TestResults/892761e6-09c0-4e75-b493-7d8899792bd5/coverage.opencover.xml
