@@ -24,7 +24,8 @@
     mc:Ignorable="d"
     ShowInTaskbar="True"
     WindowStyle="None"
-    ResizeMode="CanResizeWithGrip">
+    ResizeMode="CanResizeWithGrip"
+    MouseWheel="OnMouseWheel"> <!-- Updated to handle MouseWheel directly -->
 
     <ui:FluentWindow.InputBindings>
         <KeyBinding

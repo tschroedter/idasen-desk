@@ -6,6 +6,9 @@ using Wpf.Ui ;
 using Wpf.Ui.Abstractions ;
 using Wpf.Ui.Appearance ;
 using Wpf.Ui.Controls ;
+using System.Windows.Controls; // Added for ScrollViewer
+using System.Windows.Input; // Added for MouseWheelEventArgs
+using System.Windows.Media; // Added for VisualTreeHelper
 
 namespace Idasen.SystemTray.Win11.Views.Windows ;
 
@@ -104,5 +107,36 @@ public partial class IdasenDeskWindow : INavigationWindow
         e.Cancel      = true ;
         ShowInTaskbar = false ;
         Hide ( ) ;
+    }
+
+    private void OnMouseWheel(object sender, MouseWheelEventArgs e)
+    {
+        // Find the ScrollViewer within the NavigationView
+        var scrollViewer = FindVisualChild<ScrollViewer>(RootNavigation);
+        if (scrollViewer != null)
+        {
+            // Scroll vertically based on the mouse wheel delta
+            scrollViewer.ScrollToVerticalOffset(scrollViewer.VerticalOffset - e.Delta / 120.0);
+        }
+    }
+
+    private static T? FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
+    {
+        for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+        {
+            var child = VisualTreeHelper.GetChild(parent, i);
+            if (child is T typedChild)
+            {
+                return typedChild;
+            }
+
+            var descendant = FindVisualChild<T>(child);
+            if (descendant != null)
+            {
+                return descendant;
+            }
+        }
+
+        return null;
     }
 }
