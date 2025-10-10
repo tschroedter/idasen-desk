@@ -4,6 +4,7 @@ using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.TraySettings ;
 using Idasen.SystemTray.Win11.Utils ;
 using NSubstitute ;
+using NSubstitute.ExceptionExtensions ;
 using Serilog ;
 
 namespace Idasen.SystemTray.Win11.Tests.TraySettings ;
@@ -45,8 +46,9 @@ public class SettingsManagerTests
         // Assert
         await _settingsStorage.Received ( 1 ).SaveSettingsAsync ( "TestSettingsFilePath" ,
                                                                   Arg.Is < Settings > ( s =>
-                                                                      s.DeviceSettings.DeviceName ==
-                                                                      "TestDevice" ) ,
+                                                                                            s.DeviceSettings
+                                                                                             .DeviceName ==
+                                                                                            "TestDevice" ) ,
                                                                   CancellationToken.None ) ;
     }
 
@@ -138,5 +140,26 @@ public class SettingsManagerTests
                                                                               Constants.DefaultHeightStandingInCm ) ,
                                                    CancellationToken.None ) ;
         notified.Should ( ).BeTrue ( ) ;
+    }
+
+    [ Fact ]
+    public async Task ResetSettingsAsync_ShouldLogErrorAndThrowInvalidOperationException_WhenSaveFails ( )
+    {
+        // Arrange
+        var testException = new ArgumentException ( "Save failed" ) ;
+        _settingsStorage
+           .SaveSettingsAsync ( Arg.Any < string > ( ) ,
+                                Arg.Any < Settings > ( ) ,
+                                Arg.Any < CancellationToken > ( ) )
+           .Throws ( testException ) ;
+
+        // Act
+        var act = async ( ) => await _settingsManager.ResetSettingsAsync ( CancellationToken.None ) ;
+
+        // Assert
+        await act.Should ( ).ThrowAsync < InvalidOperationException > ( )
+                 .WithMessage ( "Failed to reset settings" ) ;
+        _logger.Received ( 1 ).Error ( testException ,
+                                       "Failed to reset settings" ) ;
     }
 }

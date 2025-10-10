@@ -23,7 +23,7 @@ public class ErrorHandlerTests
 
         // Assert
         _logger.Received ( 1 )
-               .Information ( Arg.Any < string > ( ) ) ;
+               .Warning ( "Bluetooth seems to be disabled or unavailable. Please enable Bluetooth in Windows settings and try again." ) ;
     }
 
     [ Fact ]
@@ -39,8 +39,8 @@ public class ErrorHandlerTests
 
         // Assert
         _logger.Received ( 1 )
-               .Error ( exception ,
-                        exception.Message ) ;
+               .Error(exception,
+                      "Test");
     }
 
     private static ErrorHandler CreateSut ( )

@@ -7,6 +7,7 @@ using Wpf.Ui.Controls ;
 
 namespace Idasen.SystemTray.Win11.ViewModels.Pages ;
 
+[ ExcludeFromCodeCoverage ]
 public partial class StatusBarInfoViewModelBase : ObservableObject , IDisposable
 {
     private readonly IDisposable _statusBarInfoChanged ;

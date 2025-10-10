@@ -14,7 +14,7 @@ public class BluetoothDisabledExceptionHandler : IExceptionHandler
     public void Handle ( Exception exception , ILogger logger )
     {
         // Log a friendly information message for the end user
-        logger.Information ( "Bluetooth seems to be disabled or unavailable. Please enable Bluetooth in Windows settings and try again." ) ;
+        logger.Warning ( "Bluetooth seems to be disabled or unavailable. Please enable Bluetooth in Windows settings and try again." ) ;
 
         // Keep the specific status logging for diagnostics
         exception.LogBluetoothStatusException ( logger ,
