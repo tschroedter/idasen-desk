@@ -177,4 +177,29 @@ public partial class DeskPositionControl
             PositionValue = slider.Value;
         }
     }
+
+    private void OnSliderPreviewMouseWheel(object sender, MouseWheelEventArgs e)
+    {
+        if (sender is Slider slider)
+        {
+            if (e.Delta > 0)
+            {
+                // Scrolling up - increase value
+                if (slider.Value < slider.Maximum)
+                    slider.Value++;
+            }
+            else if (e.Delta < 0)
+            {
+                // Scrolling down - decrease value
+                if (slider.Value > slider.Minimum)
+                    slider.Value--;
+            }
+
+            // Update the PositionValue property to reflect the slider's value
+            PositionValue = slider.Value;
+
+            // Mark event as handled to prevent it from bubbling up to parent ScrollViewer
+            e.Handled = true;
+        }
+    }
 }
