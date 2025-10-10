@@ -1,24 +1,26 @@
-# !!!This document will be updated soon!!!
-(Test Label Docs)
-
 [![Build and Test (Draft Release)](https://github.com/tschroedter/idasen-desk/actions/workflows/dotnet-ci.yml/badge.svg)](https://github.com/tschroedter/idasen-desk/actions/workflows/dotnet-ci.yml)
 [![CodeQL](https://github.com/tschroedter/idasen-desk/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/tschroedter/idasen-desk/actions/workflows/github-code-scanning/codeql)
 [![Release Drafter](https://github.com/tschroedter/idasen-desk/actions/workflows/release-drafter.yml/badge.svg)](https://github.com/tschroedter/idasen-desk/actions/workflows/release-drafter.yml)
 [![SonarCloud Analysis](https://github.com/tschroedter/idasen-desk/actions/workflows/sonarcloud.yml/badge.svg)](https://github.com/tschroedter/idasen-desk/actions/workflows/sonarcloud.yml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=tschroedter_idasen-desk&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=tschroedter_idasen-desk)
 
-# Latest Changes
-
-**Note:** Changes are now automatically tracked in [CHANGELOG.md](CHANGELOG.md) and [GitHub Releases](https://github.com/tschroedter/idasen-desk/releases). See [Changelog Automation Guide](docs/CHANGELOG_AUTOMATION.md) for details.
-
-## Recent Changes (from version 0.1.78)
-- Updated .NET 4.8 to .NET 8.0
+# Latest Changes V0.1.77
+- Added 2 new desk positions: Custom 1 and Custom 2
+- Desk positions can be 'finetuned' by using the up and down icons or arrow keys while the confirmation dialog is shown
+- Enhanced UI for the system tray application
+- Made desk position visibility in the context menu configurable
+- Stop command visibility in the context menu is configurable
+- Only 'Connect' or 'Disconnect' is shown in the context menu depending on the current connection state
+- Clicking the system tray icon will show/hide the settings window
+- Closing the settings window will hide it
+- Removed icons to minimize or maximize the settings window
+- Allowed resizing the settings window
+- Improved BluetoothLE connection handling
 - Updated used NuGet Packages to latest
-- Updated UI to look more like native Windows application
-- Updated notification to use Windows build in notifcations
-- Added support for themes
-- Remember last desk height
+- Masked sensitive data in the log files
 - Fixed vulnerabilities in external NuGet packages by updating to latest version
+- Added SonarCloud code quality analysis (cyber security)
+- Fixed SonarCloud code smells and bugs
 
 # Ikea Idasen Desk
 This repository is about controlling [Ikea's Idasen Desk](https://www.ikea.com/au/en/p/idasen-desk-sit-stand-black-dark-grey-s29280991/) using Windows 10/11 and BluetoothLE. Ikea only provides an Android and IOs app to control the desk. I thought it would be far more convenient to control the desk using a Windows 10/11. The [installation instructions](#Installation) can be found at the end of this document.
@@ -40,6 +42,8 @@ At the moment the updated UI for the Windows 10/11 system tray application is a 
 - Disconnect
 - Standing
 - Seating
+- Custom 1
+- Custom 2
 - Stop
 - Exit
 
@@ -58,6 +62,8 @@ The desk can be controlled by using the system tray context menu or the menu opt
 - Disconnect
 - Standing
 - Seating
+- Custom 1
+- Custom 2
 - Stop _(Stop the moving desk)_
 - Hide Settings _(Hide/Close the window)_
 - Exit _(Exit the application)_
@@ -89,6 +95,12 @@ If you know your devices ulong Bluetooth adress you can put it here. By default 
 ### Parental Lock
 This feature allows to lock/unlock the physical desk controller. If this feature is enabled any pushing of the physical controller up or down will be immediately stop.
 
+### Units Till Stop (coming soon)
+The estimated units required to stop from max. movement speed to standstill. If you notice that the desk is not stopping at the right height you can try to increase or decrease this value.
+
+### Settings
+'Reset Settings' will reset all settings to their default values.
+
 ## Appearance
 ![settings](https://github.com/tschroedter/idasen-desk/blob/main-face-lift/docs/images/V0.0.222/Settins_Appearance.png)
 
@@ -109,6 +121,8 @@ This allows to switch between the different themes.
 At the moment the application supports the following hot keys:
 - Standing: _Ctrl + Shift + Alt + Cursor Up_
 - Seating: _Ctrl + Shift + Alt + Cursor Down_
+- Custom 1: _Ctrl + Shift + Alt + Cursor Left_
+- Custom 2: _Ctrl + Shift + Alt + Cursor Right_
 
 ---
 # Installation
