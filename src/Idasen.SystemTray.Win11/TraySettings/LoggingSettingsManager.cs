@@ -28,7 +28,7 @@ public class LoggingSettingsManager (
                            "Failed to save settings in file {SettingsFileName}" ,
                            SettingsFileName ) ;
 
-            throw ;
+            throw new InvalidOperationException ( $"Failed to save settings in file {SettingsFileName}" ) ;
         }
     }
 
@@ -49,7 +49,7 @@ public class LoggingSettingsManager (
             logger.Error ( e ,
                            "Failed to load settings" ) ;
 
-            throw ;
+            throw new InvalidOperationException ( $"Failed to load settings from file {SettingsFileName}" ) ;
         }
     }
 

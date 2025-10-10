@@ -16,7 +16,7 @@ public class Notifications : INotifications
     private readonly IDisposable                        _showSubscribe ;
     private readonly IToastService                      _toast ;
     private readonly IVersionProvider                   _version ;
-    private volatile bool                               _disposed ;
+    private          bool                               _disposedValue ;
 
     public Notifications ( ILogger          logger ,
                            ISettingsManager manager ,
@@ -29,13 +29,6 @@ public class Notifications : INotifications
         _toast         = toast ;
         _showSubject   = new Subject < NotificationParameters > ( ) ;
         _showSubscribe = _showSubject.Subscribe ( OnShow ) ;
-    }
-
-    public void Show ( string title , string text , InfoBarSeverity serverity )
-    {
-        Show ( new NotificationParameters ( title ,
-                                            text ,
-                                            serverity ) ) ;
     }
 
     public INotifications Initialize ( NotifyIcon        notifyIcon ,
@@ -53,9 +46,10 @@ public class Notifications : INotifications
                                       "Running..." ,
                                       InfoBarSeverity.Informational ) ;
                            }
-                           catch ( OperationCanceledException )
+                           catch ( OperationCanceledException ex )
                            {
-                               _logger.Information ( "Notifications initialization canceled" ) ;
+                               _logger.Warning ( ex,
+                                                 "Notifications initialization canceled" ) ;
                            }
                            catch ( Exception ex )
                            {
@@ -70,16 +64,37 @@ public class Notifications : INotifications
 
     public void Dispose ( )
     {
-        _disposed = true ;
-        _showSubscribe.Dispose ( ) ;
-        _showSubject.Dispose ( ) ;
-
+        Dispose ( true ) ;
         GC.SuppressFinalize ( this ) ;
+    }
+
+    protected virtual void Dispose ( bool disposing )
+    {
+        if ( ! _disposedValue )
+        {
+            if ( disposing )
+            {
+                // Dispose managed state (managed objects)
+                _showSubscribe.Dispose ( ) ;
+                _showSubject.Dispose ( ) ;
+            }
+
+            // Free unmanaged resources (if any) and set large fields to null
+
+            _disposedValue = true ;
+        }
+    }
+
+    public void Show(string title, string text, InfoBarSeverity serverity)
+    {
+        Show(new NotificationParameters(title,
+                                        text,
+                                        serverity));
     }
 
     public void Show ( NotificationParameters parameters )
     {
-        if ( _disposed )
+        if ( _disposedValue )
             return ;
 
         _showSubject.OnNext ( parameters ) ;
@@ -87,7 +102,7 @@ public class Notifications : INotifications
 
     private void OnShow ( NotificationParameters parameters )
     {
-        if ( _disposed )
+        if ( _disposedValue )
             return ;
 
         if ( ! _manager.CurrentSettings.DeviceSettings.NotificationsEnabled )

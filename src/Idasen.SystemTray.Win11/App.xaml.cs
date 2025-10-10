@@ -38,9 +38,6 @@ namespace Idasen.SystemTray.Win11 ;
 [ ExcludeFromCodeCoverage ]
 public partial class App
 {
-    // Configure a single Serilog logger instance for the entire app
-    private static readonly ILogger AppLogger = LoggerProvider.CreateLogger ( AppContext.BaseDirectory ) ;
-
     // Generic Host with explicit configuration pipeline ensuring single-file friendly base path
     private static readonly IHost Host = Microsoft.Extensions.Hosting.Host
                                                   .CreateDefaultBuilder ( )
@@ -49,7 +46,7 @@ public partial class App
                                                   .ConfigureContainer < ContainerBuilder > ( builder =>
                                                    {
                                                        // Register Serilog logger instance for DI
-                                                       builder.RegisterLogger ( AppLogger ) ;
+                                                       builder.RegisterLogger ( LoggerProvider.CreateLogger ( AppContext.BaseDirectory ) ) ;
                                                        builder.RegisterModule < BluetoothLEAop > ( ) ;
                                                        builder
                                                           .RegisterModule < BluetoothLECoreModule > ( ) ;
@@ -109,13 +106,13 @@ public partial class App
                                                                                        => new Timer ( callback , state , dueTime , period ) ) ;
                                                                        } ).Build ( ) ;
 
-    private static Mutex ? _singleInstanceMutex ;
+    private static   Mutex ? _singleInstanceMutex ;
 
-    private readonly ILogger _logger = AppLogger ;
+    private readonly ILogger _logger = LoggerProvider.CreateLogger ( AppContext.BaseDirectory ) ;
 
     static App ( )
     {
-        Log.Logger = AppLogger ;
+        Log.Logger = GetLogger (  ) ;
     }
 
     private static Window CurrentWindow =>
@@ -164,36 +161,14 @@ public partial class App
         {
             if ( ! EnsureSingleInstance ( ) )
             {
-                _logger.Information ( "##### Application already running!" ) ;
-                Current.Shutdown ( ) ;
+                HandleApplicationAlreadyRunning ( ) ;
+
                 return ;
             }
 
-            await Host.StartAsync ( ) ;
-
-            UnhandledExceptionsHandler.RegisterGlobalExceptionHandling ( ) ;
-
-            _logger.Information ( "##### Startup..." ) ;
-
-            var environmentName =
-                Environment.GetEnvironmentVariable ( "DOTNET_ENVIRONMENT" ) ??
-                Environment.GetEnvironmentVariable ( "ASPNETCORE_ENVIRONMENT" ) ??
-                "Production" ;
-
-            _logger.Information ( "BaseDirectory={BaseDirectory}, EnvironmentName={EnvironmentName}" ,
-                                  AppContext.BaseDirectory ,
-                                  environmentName ) ;
-
-
-            var notifyIcon = FindNotifyIcon ( ) ;
-
-            var main = GetService < IdasenDeskWindowViewModel > ( ) ;
-
-            main!.Initialize ( notifyIcon ) ;
-
-            var settings = GetService < SettingsViewModel > ( ) ;
-
-            await settings!.InitializeAsync ( CancellationToken.None ) ;
+            await HandleStartingApplication ( ) ;
+            
+            await HandleInitializingApplication ( ) ;
 
             var versionProvider = GetVersionProvider ( ) ;
 
@@ -207,17 +182,50 @@ public partial class App
         }
     }
 
+    private static async Task HandleInitializingApplication ( )
+    {
+        var notifyIcon = FindNotifyIcon ( ) ;
+
+        var main = GetService < IdasenDeskWindowViewModel > ( ) ;
+
+        main!.Initialize ( notifyIcon ) ;
+
+        var settings = GetService < SettingsViewModel > ( ) ;
+
+        await settings!.InitializeAsync ( CancellationToken.None ) ;
+    }
+
+    private async Task HandleStartingApplication ( )
+    {
+        await Host.StartAsync ( ) ;
+
+        UnhandledExceptionsHandler.RegisterGlobalExceptionHandling ( ) ;
+
+        _logger.Information ( "##### Startup..." ) ;
+
+        var environmentName =
+            Environment.GetEnvironmentVariable ( "DOTNET_ENVIRONMENT" ) ??
+            Environment.GetEnvironmentVariable ( "ASPNETCORE_ENVIRONMENT" ) ??
+            "Production" ;
+
+        _logger.Information ( "BaseDirectory={BaseDirectory}, EnvironmentName={EnvironmentName}" ,
+                              AppContext.BaseDirectory ,
+                              environmentName ) ;
+    }
+
+    private void HandleApplicationAlreadyRunning ( )
+    {
+        _logger.Information ( "##### Application already running!" ) ;
+        Current.Shutdown ( ) ;
+    }
+
     private bool EnsureSingleInstance ( )
     {
         var mutexName = $"Global\\{Constants.ApplicationName}_SingleInstance" ;
 
         try
         {
-            _singleInstanceMutex = new Mutex ( true ,
-                                               mutexName ,
-                                               out var createdNew ) ;
-
-            return createdNew ;
+            return CreatedNewMutex ( mutexName ) ;
         }
         catch ( Exception ex )
         {
@@ -228,9 +236,25 @@ public partial class App
         }
     }
 
+    private static bool CreatedNewMutex ( string mutexName )
+    {
+        _singleInstanceMutex = new Mutex ( true ,
+                                           mutexName ,
+                                           out var createdNew ) ;
+
+        return createdNew ;
+    }
+
     private static IVersionProvider GetVersionProvider ( )
     {
-        return GetService < IVersionProvider > ( ) ?? throw new ArgumentNullException ( nameof ( IVersionProvider ) ) ;
+        return GetService < IVersionProvider > ( ) ??
+               throw new InvalidOperationException( $"Failed to resolve: {nameof ( IVersionProvider )}" ) ;
+    }
+
+    private static ILogger GetLogger ( )
+    {
+        return GetService < ILogger > ( ) ??
+               throw new InvalidOperationException( $"Failed to resolve: {nameof ( ILogger )}" ) ;
     }
 
     /// <summary>
@@ -254,16 +278,7 @@ public partial class App
         }
         finally
         {
-            try
-            {
-                _singleInstanceMutex?.ReleaseMutex ( ) ;
-                _singleInstanceMutex?.Dispose ( ) ;
-                _singleInstanceMutex = null ;
-            }
-            catch
-            {
-                // ignore mutex release errors
-            }
+            ReleaseSingleInstanceMutex();
         }
     }
 
@@ -296,6 +311,20 @@ public partial class App
             if ( child is T childType ) yield return childType ;
 
             foreach ( var other in FindVisualChildren < T > ( child ) ) yield return other ;
+        }
+    }
+
+    private static void ReleaseSingleInstanceMutex ( )
+    {
+        try
+        {
+            _singleInstanceMutex?.ReleaseMutex ( ) ;
+            _singleInstanceMutex?.Dispose ( ) ;
+            _singleInstanceMutex = null ;
+        }
+        catch
+        {
+            // ignore mutex release errors
         }
     }
 }

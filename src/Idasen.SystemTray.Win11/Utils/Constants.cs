@@ -1,6 +1,6 @@
 ﻿namespace Idasen.SystemTray.Win11.Utils ;
 
-public class Constants
+public static class Constants
 {
     public const string ApplicationName  = "Idasen.SystemTray" ;
     public const string SettingsFileName = "Settings.json" ;

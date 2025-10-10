@@ -61,7 +61,7 @@ public sealed class UiDeskManager : IUiDeskManager
 
     [ UsedImplicitly ] private IDisposable ? _onErrorChanged ;
 
-    private CancellationToken ?       _token ;
+    private CancellationToken         _token ;
     private CancellationTokenSource ? _tokenSource ;
 
     public UiDeskManager (
@@ -145,6 +145,7 @@ public sealed class UiDeskManager : IUiDeskManager
             }
             catch
             {
+                // ignore cleanup errors
             }
 
             try
@@ -153,6 +154,7 @@ public sealed class UiDeskManager : IUiDeskManager
             }
             catch
             {
+                // ignore cleanup errors
             }
 
             try
@@ -161,6 +163,7 @@ public sealed class UiDeskManager : IUiDeskManager
             }
             catch
             {
+                // ignore cleanup errors
             }
 
             try
@@ -180,6 +183,7 @@ public sealed class UiDeskManager : IUiDeskManager
             }
             catch
             {
+                // ignore desk disposal errors
             }
 
             // Dispose token source
@@ -189,6 +193,7 @@ public sealed class UiDeskManager : IUiDeskManager
             }
             catch
             {
+                // ignore cleanup errors
             }
 
             _onErrorChanged = null ;
@@ -197,7 +202,7 @@ public sealed class UiDeskManager : IUiDeskManager
             _deskProvider   = null ;
             _desk           = null ;
             _tokenSource    = null ;
-            _token          = null ;
+            _token          = CancellationToken.None ;
             _notifyIcon     = null ;
             // ReSharper restore EmptyGeneralCatchClause
         }
@@ -283,7 +288,7 @@ public sealed class UiDeskManager : IUiDeskManager
 
         // Pass a cancellable token to allow clean shutdown
         _notifications.Initialize ( notifyIcon ,
-                                    _token ?? CancellationToken.None ) ;
+                                    _token ) ;
 
         _ = AutoConnectAsync ( ) ;
 
@@ -349,7 +354,7 @@ public sealed class UiDeskManager : IUiDeskManager
             _logger.Debug ( "Trying to auto connect to Idasen Desk..." ) ;
 
             await Task.Delay ( 3000 ,
-                               _token ?? CancellationToken.None ).ConfigureAwait ( false ) ;
+                               _token ).ConfigureAwait ( false ) ;
 
             _notifications.Show ( "Auto Connect" ,
                                   "Trying to auto connect to Idasen Desk..." ,
@@ -357,9 +362,10 @@ public sealed class UiDeskManager : IUiDeskManager
 
             await Connect ( ).ConfigureAwait ( false ) ;
         }
-        catch ( TaskCanceledException )
+        catch ( TaskCanceledException e )
         {
-            _logger.Information ( "Auto connect was canceled" ) ;
+            _logger.Warning ( e,
+                              "Auto connect was canceled" ) ;
         }
         catch ( Exception e )
         {
@@ -390,7 +396,7 @@ public sealed class UiDeskManager : IUiDeskManager
 
     private CancellationToken GetTokenOrThrow ( )
     {
-        return _token ?? throw new InvalidOperationException ( "Token is null" ) ;
+        return _token ;
     }
 
     private async Task MoveToConfiguredHeightAsync ( string                    methodName ,
@@ -687,7 +693,7 @@ public sealed class UiDeskManager : IUiDeskManager
                                    _desk ,
                                    _notifyIcon ) ;
 
-        var message = $"Connected successfully to '{_desk?.DeviceName}'." ;
+        var message = $"Connected successfully to '{_desk.DeviceName}'." ;
 
         OnStatusChanged ( 0 ,
                           "Connected" ,

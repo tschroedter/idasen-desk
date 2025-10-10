@@ -17,8 +17,7 @@ public class SettingsSynchronizer (
     public async Task LoadSettingsAsync ( ISettingsViewModel model ,
                                           CancellationToken  token )
     {
-        ArgumentNullException.ThrowIfNull ( model ,
-                                            nameof ( model ) ) ;
+        ArgumentNullException.ThrowIfNull ( model ) ;
 
         try
         {
@@ -64,15 +63,15 @@ public class SettingsSynchronizer (
         {
             logger.Error ( ex ,
                            "Failed to load settings" ) ;
-            throw ;
+
+            throw new InvalidOperationException ( "Failed to load settings" ) ;
         }
     }
 
     public async Task StoreSettingsAsync ( ISettingsViewModel model ,
                                            CancellationToken  token )
     {
-        ArgumentNullException.ThrowIfNull ( model ,
-                                            nameof ( model ) ) ;
+        ArgumentNullException.ThrowIfNull ( model ) ;
 
         var lockChanged     = HasParentalLockChanged ( model ) ;
         var advancedChanged = HaveAdvancedSettingsChanged ( model ) ;
@@ -81,6 +80,7 @@ public class SettingsSynchronizer (
         if ( ! anyChanged )
         {
             logger.Debug ( "No settings changes detected. Skipping save and notifications." ) ;
+
             return ;
         }
 
@@ -167,7 +167,8 @@ public class SettingsSynchronizer (
         {
             logger.Error ( e ,
                            "Failed to store settings" ) ;
-            throw ;
+
+            throw new InvalidOperationException ( "Failed to store settings" ) ;
         }
     }
 

@@ -4,6 +4,7 @@ using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.TraySettings ;
 using Idasen.SystemTray.Win11.Utils ;
 using NSubstitute ;
+using NSubstitute.ExceptionExtensions ;
 using Serilog ;
 using Wpf.Ui.Appearance ;
 
@@ -196,45 +197,95 @@ public class SettingsSynchronizerTests
         _themeSwitcher.Received ( 1 ).ChangeTheme ( "HighContrast" ) ;
     }
 
-    [Fact]
-    public async Task LoadSettingsAsync_ShouldSetMaxSpeedToStopMovement_WhenValueIsGreaterThanZero()
+    [ Fact ]
+    public async Task LoadSettingsAsync_ShouldSetMaxSpeedToStopMovement_WhenValueIsGreaterThanZero ( )
     {
         // Arrange
-        var sut = CreateSut();
-        _deviceSettings.MaxSpeedToStopMovement = 150;
+        var sut = CreateSut ( ) ;
+        _deviceSettings.MaxSpeedToStopMovement = 150 ;
 
         // Act
-        await sut.LoadSettingsAsync(_model, CancellationToken.None);
+        await sut.LoadSettingsAsync ( _model ,
+                                      CancellationToken.None ) ;
 
         // Assert
-        _model.MaxSpeedToStopMovement.Should().Be(150);
+        _model.MaxSpeedToStopMovement.Should ( ).Be ( 150 ) ;
     }
 
-    [Fact]
-    public async Task LoadSettingsAsync_ShouldSetMaxSpeedToStopMovement_ToDefault_WhenValueIsZero()
+    [ Fact ]
+    public async Task LoadSettingsAsync_ShouldSetMaxSpeedToStopMovement_ToDefault_WhenValueIsZero ( )
     {
         // Arrange
-        var sut = CreateSut();
-        _deviceSettings.MaxSpeedToStopMovement = 0;
+        var sut = CreateSut ( ) ;
+        _deviceSettings.MaxSpeedToStopMovement = 0 ;
 
         // Act
-        await sut.LoadSettingsAsync(_model, CancellationToken.None);
+        await sut.LoadSettingsAsync ( _model ,
+                                      CancellationToken.None ) ;
 
         // Assert
-        _model.MaxSpeedToStopMovement.Should().Be(StoppingHeightCalculatorSettings.MaxSpeedToStopMovement);
+        _model.MaxSpeedToStopMovement.Should ( ).Be ( StoppingHeightCalculatorSettings.MaxSpeedToStopMovement ) ;
     }
 
-    [Fact]
-    public async Task StoreSettingsAsync_ShouldUpdateMaxSpeedToStopMovement()
+    [ Fact ]
+    public async Task StoreSettingsAsync_ShouldUpdateMaxSpeedToStopMovement ( )
     {
         // Arrange
-        var sut = CreateSut();
-        _model.MaxSpeedToStopMovement = 200;
+        var sut = CreateSut ( ) ;
+        _model.MaxSpeedToStopMovement = 200 ;
 
         // Act
-        await sut.StoreSettingsAsync(_model, CancellationToken.None);
+        await sut.StoreSettingsAsync ( _model ,
+                                       CancellationToken.None ) ;
 
         // Assert
-        _settings.DeviceSettings.MaxSpeedToStopMovement.Should().Be(200);
+        _settings.DeviceSettings.MaxSpeedToStopMovement.Should ( ).Be ( 200 ) ;
+    }
+
+    [ Fact ]
+    public async Task LoadSettingsAsync_ShouldLogErrorAndThrowInvalidOperationException_WhenLoadFails ( )
+    {
+        // Arrange
+        var sut           = CreateSut ( ) ;
+        var testException = new ArgumentException ( "load failed" ) ;
+        _settingsManager.LoadAsync ( Arg.Any < CancellationToken > ( ) ).Throws ( testException ) ;
+
+        // Act
+        var act = async ( ) => await sut.LoadSettingsAsync ( _model ,
+                                                             CancellationToken.None ) ;
+
+        // Assert
+        await act.Should ( ).ThrowAsync < InvalidOperationException > ( )
+                 .WithMessage ( "Failed to load settings" ) ;
+        _logger.Received ( 1 ).Error ( testException ,
+                                       "Failed to load settings" ) ;
+    }
+
+    [ Fact ]
+    public async Task StoreSettingsAsync_ShouldLogErrorAndThrowInvalidOperationException_WhenSaveFails ( )
+    {
+        // Arrange
+        var sut = CreateSut ( ) ;
+        _settingsManager.SaveAsync ( Arg.Any < CancellationToken > ( ) )
+                        .Throws ( new ArgumentException ( "save failed" ) ) ;
+        _model.ParentalLock  = true ;
+        _model.DeskName      = "NewDesk" ;
+        _model.DeskAddress   = "54321" ;
+        _model.Notifications = true ;
+        _nameConverter.DefaultIfEmpty ( "NewDesk" ).Returns ( "NewDesk" ) ;
+        _addressConverter.DefaultIfEmpty ( "54321" ).Returns ( 54321UL ) ;
+        _settings.DeviceSettings.DeviceLocked  = false ;
+        _settings.DeviceSettings.DeviceName    = "OldDesk" ;
+        _settings.DeviceSettings.DeviceAddress = 12345UL ;
+
+        // Act
+        var act = async ( ) => await sut.StoreSettingsAsync ( _model ,
+                                                              CancellationToken.None ) ;
+
+        // Assert
+        await act.Should ( ).ThrowAsync < InvalidOperationException > ( )
+                 .WithMessage ( "Failed to store settings" ) ;
+        _logger.Received ( 1 ).Error ( Arg.Any < Exception > ( ) ,
+                                       "Failed to store settings" ) ;
     }
 }

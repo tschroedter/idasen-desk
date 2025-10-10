@@ -14,13 +14,8 @@ public class ErrorHandler
     // should be last as it handles any exception
     public void Handle ( Exception exception , ILogger logger )
     {
-        foreach ( var handler in _handlers )
-            if ( handler.CanHandle ( exception ) )
-            {
-                handler.Handle ( exception ,
-                                 logger ) ;
+        var handler = _handlers.FirstOrDefault( handler => handler.CanHandle ( exception ) ) ;
 
-                return ;
-            }
+        handler?.Handle ( exception , logger ) ;
     }
 }

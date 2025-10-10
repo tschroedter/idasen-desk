@@ -53,13 +53,11 @@ jobs:
           key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
           restore-keys: |
             ${{ runner.os }}-nuget-
-
       - name: Install SonarCloud scanner
         if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
         run: |
           New-Item -Path .\.sonar\scanner -ItemType Directory -Force
           dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
-
       - name: Restore dependencies
         run: dotnet restore Idasen-Desk.sln
 
@@ -69,8 +67,12 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
         run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"tschroedter_idasen-desk" /o:"$Env:SONAR_ORGANIZATION" /d:sonar.token="$Env:SONAR_TOKEN" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml"
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"tschroedter_idasen-desk" /o:"$Env:SONAR_ORGANIZATION" /d:sonar.token="$Env:SONAR_TOKEN" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="./TestResults/**/*.opencover.xml"
           dotnet build Idasen-Desk.sln --configuration Release --no-restore
-          dotnet test Idasen-Desk.sln --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory ./TestResults/ -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+          dotnet test Idasen-Desk.sln --configuration Release --no-build --verbosity detailed --collect:"XPlat Code Coverage;Format=opencover" --results-directory ./TestResults/ /p:Exclude="[*.Tests]*" /p:ExcludeByAttribute=Obsolete /p:ExcludeByAttribute=ObsoleteAttribute /p:ExcludeByAttribute=GeneratedCodeAttribute /p:ExcludeByAttribute=CompilerGeneratedAttribute /p:ExcludeByAttribute=ExcludeFromCodeCoverage /p:ExcludeByAttribute=ExcludeFromCodeCoverageAttribute
+          echo "Listing contents of TestResults directory:"
+          Get-ChildItem -Path ./TestResults/ -Recurse | Format-List
+          echo "End of TestResults directory contents."
+          echo "Contents of coverage.opencover.xml:"
+          Get-Content -Path ./TestResults/**/*.opencover.xml
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="$Env:SONAR_TOKEN"
-

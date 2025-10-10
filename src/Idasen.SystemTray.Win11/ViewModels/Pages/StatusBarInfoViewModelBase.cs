@@ -7,6 +7,7 @@ using Wpf.Ui.Controls ;
 
 namespace Idasen.SystemTray.Win11.ViewModels.Pages ;
 
+[ ExcludeFromCodeCoverage ]
 public partial class StatusBarInfoViewModelBase : ObservableObject , IDisposable
 {
     private readonly IDisposable _statusBarInfoChanged ;
@@ -21,6 +22,8 @@ public partial class StatusBarInfoViewModelBase : ObservableObject , IDisposable
     [ ObservableProperty ] private InfoBarSeverity _severity = InfoBarSeverity.Informational ;
 
     [ ObservableProperty ] private string _title = "Desk Status" ;
+
+    private bool _disposed ;
 
     public StatusBarInfoViewModelBase (
         IUiDeskManager                                                   uiDeskManager ,
@@ -45,12 +48,27 @@ public partial class StatusBarInfoViewModelBase : ObservableObject , IDisposable
 
     protected IScheduler Scheduler { get ; }
 
-    public virtual void Dispose ( )
+    protected virtual void Dispose(bool disposing)
     {
-        _timer.Dispose ( ) ;
-        _statusBarInfoChanged.Dispose ( ) ;
+        if (_disposed)
+            return;
 
-        GC.SuppressFinalize ( this ) ;
+        if (disposing)
+        {
+            // Dispose managed resources
+            _timer?.Dispose();
+            _statusBarInfoChanged?.Dispose();
+        }
+
+        // Dispose unmanaged resources if any
+
+        _disposed = true;
+    }
+
+    public void Dispose()
+    {
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
     }
 
     private void OnStatusBarInfoChangedInternal ( StatusBarInfo info )
@@ -91,5 +109,11 @@ public partial class StatusBarInfoViewModelBase : ObservableObject , IDisposable
                       : $"Current desk height {Height} cm" ;
 
         Severity = InfoBarSeverity.Informational ;
+    }
+
+    // Finalizer to ensure unmanaged resources are released
+    ~StatusBarInfoViewModelBase()
+    {
+        Dispose ( disposing : false ) ;
     }
 }

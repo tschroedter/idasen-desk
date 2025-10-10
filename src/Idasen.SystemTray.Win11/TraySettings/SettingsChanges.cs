@@ -8,14 +8,11 @@ public class SettingsChanges : IObserveSettingsChanges , INotifySettingsChanges 
     private readonly Subject < bool > _advancedSubject = new( ) ;
     private readonly Subject < bool > _lockSubject     = new( ) ;
 
+    private bool _disposed ;
+
     public void Dispose ( )
     {
-        _lockSubject.OnCompleted ( ) ;
-        _advancedSubject.OnCompleted ( ) ;
-
-        _lockSubject.Dispose ( ) ;
-        _advancedSubject.Dispose ( ) ;
-
+        Dispose ( true ) ;
         GC.SuppressFinalize ( this ) ;
     }
 
@@ -24,4 +21,21 @@ public class SettingsChanges : IObserveSettingsChanges , INotifySettingsChanges 
 
     IObservable < bool > IObserveSettingsChanges.AdvancedSettingsChanged => _advancedSubject ;
     IObservable < bool > IObserveSettingsChanges.LockSettingsChanged     => _lockSubject ;
+
+    protected virtual void Dispose ( bool disposing )
+    {
+        if ( _disposed )
+            return ;
+
+        if ( disposing )
+        {
+            _lockSubject.OnCompleted ( ) ;
+            _advancedSubject.OnCompleted ( ) ;
+
+            _lockSubject.Dispose ( ) ;
+            _advancedSubject.Dispose ( ) ;
+        }
+
+        _disposed = true ;
+    }
 }
