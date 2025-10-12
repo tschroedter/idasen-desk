@@ -13,7 +13,7 @@ on:
           - Debug
   push:
     branches: [ main ]
-    tags: [ 'V*' ]
+    tags: [ 'v*' ]
   pull_request:
     branches: [ main ]
 
@@ -65,7 +65,7 @@ jobs:
           $refName = $env:GITHUB_REF_NAME
 
           $newVersion = $null
-          if ($ref -like 'refs/tags/V*' -and $refName -match '^V(?<ver>\d+\.\d+\.\d+)$') {
+          if ($ref -like 'refs/tags/v*' -and $refName -match '^v(?<ver>\d+\.\d+\.\d+)$') {
             $newVersion = $Matches['ver']
           }
           else {
@@ -140,12 +140,12 @@ jobs:
           Copy-Item -Path $exePath -Destination "../$targetName"
           echo "release_asset=$targetName" >> $env:GITHUB_OUTPUT
 
-      - name: Create and push git tag V<version>
+      - name: Create and push git tag v<version>
         if: github.event_name != 'pull_request' && !startsWith(github.ref, 'refs/tags/')
         shell: pwsh
         working-directory: .
         run: |
-          $tag = "V${{ steps.determine_version.outputs.version }}"
+          $tag = "v${{ steps.determine_version.outputs.version }}"
           git fetch --tags --quiet
           if (git rev-parse -q --verify "refs/tags/$tag") {
             Write-Host "Tag $tag already exists, skipping."
@@ -160,8 +160,8 @@ jobs:
         if: github.event_name != 'pull_request'
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: V${{ steps.determine_version.outputs.version }}
-          name: V${{ steps.determine_version.outputs.version }}
+          tag_name: v${{ steps.determine_version.outputs.version }}
+          name: v${{ steps.determine_version.outputs.version }}
           draft: true
           prerelease: false
           files: |

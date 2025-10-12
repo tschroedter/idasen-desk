@@ -16,7 +16,7 @@ public class VersionProviderTests
         var result = CreateSut ( ).GetVersion ( ) ;
 
         // Assert  
-        result.Should ( ).StartWith ( "V" ) ;
+        result.Should ( ).StartWith ( "v" ) ;
     }
 
     private static VersionProvider CreateSut ( )

@@ -13,7 +13,7 @@ public class VersionProvider ( ILogger logger ) : IVersionProvider
         if ( _cachedVersion != null )
             return _cachedVersion ;
 
-        var versionAsText = "V-.-.-" ;
+        var versionAsText = "v-.-.-" ;
 
         try
         {
@@ -25,7 +25,7 @@ public class VersionProvider ( ILogger logger ) : IVersionProvider
             }
             else
             {
-                versionAsText = $"V{version.Major}.{version.Minor}.{version.Build}" ;
+                versionAsText = $"v{version.Major}.{version.Minor}.{version.Build}" ;
 
                 logger.Information ( "Version fetched successfully: {Version}" ,
                                      versionAsText ) ;

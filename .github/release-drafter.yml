@@ -1,5 +1,5 @@
-name-template: 'V$RESOLVED_VERSION'
-tag-template: 'V$RESOLVED_VERSION'
+name-template: 'v$RESOLVED_VERSION'
+tag-template: 'v$RESOLVED_VERSION'
 categories:
   - title: '🚀 Features'
     labels:
