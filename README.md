@@ -27,10 +27,10 @@ This repository is about controlling [Ikea's Idasen Desk](https://www.ikea.com/a
 
 ## System Tray Icon
 The icon below is shown if the application is running and the desk height is not known.
-![taskbar](https://github.com/tschroedter/idasen-desk/blob/main-face-lift/docs/images/V0.0.222/System_Tray_Icon_Unknow_Height.png)
+![taskbar](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/V0.0.222/System_Tray_Icon_Unknow_Height.png)
 
 The icon is updated to show the current desk height as soon as the desk is moving.
-![taskbar](https://github.com/tschroedter/idasen-desk/blob/main-face-lift/docs/images/V0.0.222/System_Tray_Icon_Know_Height.png)
+![taskbar](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/V0.0.222/System_Tray_Icon_Know_Height.png)
 
 ---
 
@@ -47,14 +47,14 @@ At the moment the updated UI for the Windows 10/11 system tray application is a 
 - Stop
 - Exit
 
-![taskbar context menu](https://github.com/tschroedter/idasen-desk/blob/main-face-lift/docs/images/V0.0.222/System_Tray_Context_Menu.png)
+![taskbar context menu](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/V0.1.77/System_Tray_Context_Menu.png)
 
 The application will automatically connect to the Idasen Desk during start-up. Notifications will notify you about the progress:
 - Trying to connect,
 - Connected or
 - Failed to connect.
 
-![Notifications](https://github.com/tschroedter/idasen-desk/blob/main-face-lift/docs/images/V0.0.222/Notifications.png)
+![Notifications](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/V0.0.222/Notifications.png)
 
 # Actions
 The desk can be controlled by using the system tray context menu or the menu options on the left hand side when the settings menu is visible. To execute an action *double-click* the menu item and confirm the action in the shown dialog.
@@ -78,7 +78,7 @@ The desk can be controlled by using the system tray context menu or the menu opt
 _Note:_ The settings are stored per Windows user.
 
 ## Advanced Settings
-![settingsadvanced](https://github.com/tschroedter/idasen-desk/blob/main-face-lift/docs/images/V0.0.222/Settins_Advanced.png)
+![settingsadvanced](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/V0.0.222/Settins_Advanced.png)
 
 ### Log Folder
 This show the location of the log files.
@@ -102,22 +102,37 @@ The estimated units required to stop from max. movement speed to standstill. If 
 'Reset Settings' will reset all settings to their default values.
 
 ## Appearance
-![settings](https://github.com/tschroedter/idasen-desk/blob/main-face-lift/docs/images/V0.0.222/Settins_Appearance.png)
+![settings](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/V0.0.222/Settins_Appearance.png)
 
 ### Theme
 This allows to switch between the different themes.
 
 ## General Settings
-![settings](https://github.com/tschroedter/idasen-desk/blob/main-face-lift/docs/images/V0.0.222/Settings_General.png)
+![settings](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/V0.1.77/Settings_General.png)
 
-### Standing
-*Standing* will move the desk to the standing height specified in the settings.
+### Positions
+#### Standing
+- *Standing* will move the desk to the standing height specified in the settings.
+- The *Tray* check box allows to show or hide the position in the context menu.
 
-### Seating
-*Seating* will move the desk to the seating height specified in the settings.
+#### Seating
+- *Seating* will move the desk to the seating height specified in the settings.
+- The *Tray* check box allows to show or hide the position in the context menu.
+
+#### Custom 1
+- *Custom 1* will move the desk to the height specified in the settings.
+- The *Tray* check box allows to show or hide the position in the context menu.
+
+#### Custom 2
+- *Custom 2* will move the desk to the height specified in the settings.
+- The *Tray* check box allows to show or hide the position in the context menu.
+
+### Tray Menu
+#### Stop
+- The *Tray* check box allows to show or hide the *Stop* menu item in the context menu.
 
 ## Hot Keys
-![settingsadvanced](https://github.com/tschroedter/idasen-desk/blob/main-face-lift/docs/images/V0.0.222/Settins_Hotkeys.png)
+![settingsadvanced](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/V0.1.77/Settins_Hotkeys.png)
 At the moment the application supports the following hot keys:
 - Standing: _Ctrl + Shift + Alt + Cursor Up_
 - Seating: _Ctrl + Shift + Alt + Cursor Down_
@@ -126,12 +141,11 @@ At the moment the application supports the following hot keys:
 
 ---
 # Installation
-## Windows 10
-Download and run the self-contained application file: [Idasen.SystemTray.Win11.exe](https://github.com/tschroedter/idasen-desk/releases/download/V0.0.263/Idasen.Desk.exe)
+## Windows 10/11
+Download and run the self-contained application file: [Idasen.SystemTray.Win11.exe](https://github.com/tschroedter/idasen-desk/releases/download/V0.1.77/Idasen-SystemTray-0.1.77-win-x64.exe)
 
-## Windows 11
-Download and run the self-contained application file: [Idasen.SystemTray.Win11.exe](https://github.com/tschroedter/idasen-desk/releases/download/V0.0.263/Idasen.Desk.exe)
-
+## Scoop.sh
+I'm working on getting the application listed under [scoop.sh](https://scoop.sh/) to make installation and updates easier, including auto update.
 ---
 ### Trouble Pairing the desk?
 ## Solution 1
@@ -161,5 +175,5 @@ _Q: The application fails to connect to the Idasen desk?_
 
 A: Windows 10 needs to be connected to the Idasen desk which means the desk should be listed as a Bluetooth device.
 
-![Trying to connect](https://github.com/tschroedter/idasen-desk/blob/main-face-lift/docs/images/Windows%2010%20Bluetooth%20Settings.png)
+![Trying to connect](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/Windows%2010%20Bluetooth%20Settings.png)
 
