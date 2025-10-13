@@ -118,7 +118,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
             Content        = "Custom 1" ,
             Icon           = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleLeft24 } ,
             TargetPageType = typeof ( SettingsPage ) ,
-            ToolTip        = "Double-Click to move the desk to the Custom1 position."
+            ToolTip        = "Double-Click to move the desk to the Custom 1 position."
         } ;
         _custom1ViewItem.MouseDoubleClick += OnClickCustom1ViewItem ;
 
