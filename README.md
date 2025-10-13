@@ -4,7 +4,7 @@
 [![SonarCloud Analysis](https://github.com/tschroedter/idasen-desk/actions/workflows/sonarcloud.yml/badge.svg)](https://github.com/tschroedter/idasen-desk/actions/workflows/sonarcloud.yml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=tschroedter_idasen-desk&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=tschroedter_idasen-desk)
 
-# Latest Changes V0.1.77
+# Latest Changes V0.1.181
 - Added 2 new desk positions: Custom 1 and Custom 2
 - Desk positions can be 'finetuned' by using the up and down icons or arrow keys while the confirmation dialog is shown
 - Enhanced UI for the system tray application
@@ -142,7 +142,7 @@ At the moment the application supports the following hot keys:
 ---
 # Installation
 ## Windows 10/11
-Download and run the self-contained application file: [Idasen.SystemTray.Win11.exe](https://github.com/tschroedter/idasen-desk/releases/download/V0.1.77/Idasen-SystemTray-0.1.77-win-x64.exe)
+Download and run the self-contained application file: [Idasen.SystemTray.Win11.exe](https://github.com/tschroedter/idasen-desk/releases/download/v0.1.181/Idasen-SystemTray-0.1.181-win-x64.exe)
 
 ## Scoop.sh
 I'm working on getting the application listed under [scoop.sh](https://scoop.sh/) to make installation and updates easier, including auto update.
