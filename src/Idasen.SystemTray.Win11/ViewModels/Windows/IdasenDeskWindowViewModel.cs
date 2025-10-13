@@ -558,8 +558,8 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
     private void OnClickCustom1ViewItem ( object sender , RoutedEventArgs e )
     {
-        ConfirmAndExecute ( "Custom1" ,
-                            "Do you want to move the desk into the Custom1 position?" ,
+        ConfirmAndExecute ( "Custom 1 ?" ,
+                            "Do you want to move the desk into the Custom 1 position?" ,
                             "Move" ,
                             ( ) => _uiDeskManager.Custom1Async ( ) ) ;
     }

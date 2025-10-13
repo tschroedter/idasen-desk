@@ -221,7 +221,7 @@
                                 Grid.Column="0"
                                 Grid.ColumnSpan="6"
                                 Symbol="{x:Static ui:SymbolRegular.ArrowCircleLeft24}"
-                                PositionName="Custom1"
+                                PositionName="Custom 1"
                                 PositionValue="{Binding ViewModel.Custom1, Mode=TwoWay}"
                                 IsVisibleInContextMenu="{Binding ViewModel.Custom1IsVisibleInContextMenu, Mode=TwoWay}"
                                 Minimum="65"
