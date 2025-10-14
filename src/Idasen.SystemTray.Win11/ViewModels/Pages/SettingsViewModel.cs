@@ -21,7 +21,8 @@ public partial class SettingsViewModel (
     ILogger                 logger ,
     ILoggingSettingsManager settingsManager ,
     IScheduler              scheduler ,
-    ISettingsSynchronizer   synchronizer )
+    ISettingsSynchronizer   synchronizer ,
+    IMainWindow             mainWindow )
     : ObservableObject , INavigationAware , ISettingsViewModel
 {
     [ ObservableProperty ] private string _appVersion = string.Empty ;
@@ -74,7 +75,8 @@ public partial class SettingsViewModel (
 
     [ ObservableProperty ] private bool _standingIsVisibleInContextMenu = true ;
 
-    [ ObservableProperty ] private bool _stopIsVisibleInContextMenu = true ;
+    [ ObservableProperty ] private bool          _stopIsVisibleInContextMenu = true ;
+    private                        IDisposable ? _visibilitySubscription ;
 
     public async Task OnNavigatedToAsync ( )
     {
@@ -114,6 +116,9 @@ public partial class SettingsViewModel (
                 _autoSaveSubscription.Dispose ( ) ;
                 _autoSaveSubscription = null ;
             }
+
+            _visibilitySubscription?.Dispose ( ) ;
+            _visibilitySubscription = null ;
         }
 
         _disposed = true ;
@@ -135,6 +140,10 @@ public partial class SettingsViewModel (
 
         // Start auto-save after load
         SetupAutoSave ( ) ;
+
+        // Subscribe to main window visibility changes
+        SubscribeToMainWindowVisibility ( ) ;
+
         _isLoadingSettings = false ;
     }
 
@@ -254,5 +263,31 @@ public partial class SettingsViewModel (
         }
 
         // No extra save here; reset already persisted defaults
+    }
+
+    private void SubscribeToMainWindowVisibility ( )
+    {
+        if ( _visibilitySubscription != null )
+        {
+            logger.Warning ( "Visibility subscription already exists. Skipping duplicate subscription." ) ;
+            return ;
+        }
+
+        // Subscribe to VisibilityChanged
+        _visibilitySubscription = mainWindow.VisibilityChanged
+            .Where ( visibility => visibility != Visibility.Visible )
+            .Subscribe ( async void ( _ ) =>
+                         {
+                             try
+                             {
+                                 await synchronizer.StoreSettingsAsync ( this ,
+                                                                        CancellationToken.None ) ;
+                             }
+                             catch ( Exception ex )
+                             {
+                                 logger.Error ( ex ,
+                                                "Failed to save settings when visibility changed." ) ;
+                             }
+                         } ) ;
     }
 }

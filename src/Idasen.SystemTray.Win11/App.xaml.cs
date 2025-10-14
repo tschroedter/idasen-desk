@@ -104,6 +104,7 @@ public partial class App
                                                                            services.AddSingleton < Func < TimerCallback , object ? , TimeSpan , TimeSpan , ITimer > >
                                                                                    ( _ => ( callback , state , dueTime , period ) 
                                                                                        => new Timer ( callback , state , dueTime , period ) ) ;
+                                                                           services.AddSingleton ( _ => CreateMainWindow( ) ) ;
                                                                        } ).Build ( ) ;
 
     private static   Mutex ? _singleInstanceMutex ;
@@ -127,6 +128,11 @@ public partial class App
     private static TaskPoolScheduler CreateScheduler ( )
     {
         return TaskPoolScheduler.Default ;
+    }
+
+    private static IMainWindow CreateMainWindow()
+    {
+        return Application.Current.MainWindow as IdasenDeskWindow ?? throw new InvalidOperationException($"Failed to resolve: {nameof(IMainWindow)}");
     }
 
     private static ITaskbarIconProvider CreateTaskbarIconProvider ( IServiceProvider services )

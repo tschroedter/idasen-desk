@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis ;
 using System.Reactive.Linq ;
 using System.Reactive.Subjects ;
+using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.ViewModels.Windows ;
 using JetBrains.Annotations ;
 using Wpf.Ui ;
@@ -12,7 +13,7 @@ using Wpf.Ui.Controls ;
 namespace Idasen.SystemTray.Win11.Views.Windows ;
 
 [ ExcludeFromCodeCoverage ]
-public partial class IdasenDeskWindow : INavigationWindow , IDisposable
+public partial class IdasenDeskWindow : INavigationWindow , IMainWindow, IDisposable
 {
     private readonly Subject < Visibility > _visibilityChanged = new( ) ;
 

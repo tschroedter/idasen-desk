@@ -8,6 +8,7 @@ using Idasen.SystemTray.Win11.ViewModels.Pages ;
 using Microsoft.Reactive.Testing ;
 using NSubstitute ;
 using Serilog ;
+using System.Windows ;
 
 namespace Idasen.SystemTray.Win11.Tests.ViewModels.Pages ;
 
@@ -18,14 +19,18 @@ public class SettingsViewModelTests
     private readonly TestScheduler           _scheduler       = new( ) ;
     private readonly ILoggingSettingsManager _settingsManager = Substitute.For < ILoggingSettingsManager > ( ) ;
 
-    private readonly Subject < ISettings >     _settingsSaved = new( ) ;
-    private readonly Subject < StatusBarInfo > _statusSubject = new( ) ;
-    private readonly ISettingsSynchronizer     _synchronizer  = Substitute.For < ISettingsSynchronizer > ( ) ;
+    private readonly Subject < ISettings >   _settingsSaved   = new( ) ;
+    private readonly ISettingsSynchronizer   _synchronizer    = Substitute.For < ISettingsSynchronizer > ( ) ;
+    private readonly IMainWindow             _mainWindow      = Substitute.For < IMainWindow > ( ) ;
+    private readonly Subject < Visibility >  _visibilityChanges = new( ) ;
 
     public SettingsViewModelTests ( )
     {
         _settingsManager.SettingsFileName.Returns ( "TestSettings.json" ) ;
         _settingsManager.SettingsSaved.Returns ( _settingsSaved ) ;
+
+        // Visibility stream for the main window
+        _mainWindow.VisibilityChanged.Returns ( _visibilityChanges ) ;
 
         // Default synchronizer behaviors
         _synchronizer.LoadSettingsAsync ( Arg.Any < ISettingsViewModel > ( ) ,
@@ -39,7 +44,7 @@ public class SettingsViewModelTests
     public void Dispose ( )
     {
         _settingsSaved.Dispose ( ) ;
-        _statusSubject.Dispose ( ) ;
+        _visibilityChanges.Dispose ( ) ;
 
         GC.SuppressFinalize ( this ) ;
     }
@@ -158,11 +163,80 @@ public class SettingsViewModelTests
                                                                Arg.Any < CancellationToken > ( ) ) ;
     }
 
+    [ Fact ]
+    public async Task Visibility_Hidden_ShouldStoreSettings ( )
+    {
+        // Arrange
+        var vm = CreateSut ( ) ;
+        await vm.InitializeAsync ( CancellationToken.None ) ;
+
+        // Act
+        _visibilityChanges.OnNext ( Visibility.Hidden ) ;
+
+        // Assert
+        await _synchronizer.Received ( 1 )
+                           .StoreSettingsAsync ( vm , Arg.Any < CancellationToken > ( ) ) ;
+    }
+
+    [ Fact ]
+    public async Task Visibility_Visible_ShouldNotStoreSettings ( )
+    {
+        // Arrange
+        var vm = CreateSut ( ) ;
+        await vm.InitializeAsync ( CancellationToken.None ) ;
+
+        // Act
+        _visibilityChanges.OnNext ( Visibility.Visible ) ;
+
+        // Assert
+        await _synchronizer.DidNotReceive ( )
+                           .StoreSettingsAsync ( Arg.Any < ISettingsViewModel > ( ) , Arg.Any < CancellationToken > ( ) ) ;
+    }
+
+    [ Fact ]
+    public async Task SubscribeToMainWindowVisibility_ShouldNotDuplicate_Subscription ( )
+    {
+        // Arrange
+        var vm = CreateSut ( ) ;
+        await vm.InitializeAsync ( CancellationToken.None ) ;
+
+        // Try to invoke subscription again via reflection
+        var method = typeof ( SettingsViewModel ).GetMethod ( "SubscribeToMainWindowVisibility" ,
+                                                              BindingFlags.Instance | BindingFlags.NonPublic ) ;
+        method.Should ( ).NotBeNull ( ) ;
+        method.Invoke ( vm , null ) ;
+
+        // Act: push a single non-visible event
+        _visibilityChanges.OnNext ( Visibility.Collapsed ) ;
+
+        // Assert: should only store once (not twice)
+        await _synchronizer.Received ( 1 )
+                           .StoreSettingsAsync ( vm , Arg.Any < CancellationToken > ( ) ) ;
+    }
+
+    [ Fact ]
+    public async Task Visibility_AfterDispose_ShouldNotStoreSettings ( )
+    {
+        // Arrange
+        var vm = CreateSut ( ) ;
+        await vm.InitializeAsync ( CancellationToken.None ) ;
+
+        vm.Dispose ( ) ;
+
+        // Act
+        _visibilityChanges.OnNext ( Visibility.Hidden ) ;
+
+        // Assert
+        await _synchronizer.DidNotReceive ( )
+                           .StoreSettingsAsync ( Arg.Any < ISettingsViewModel > ( ) , Arg.Any < CancellationToken > ( ) ) ;
+    }
+
     private SettingsViewModel CreateSut ( )
     {
         return new SettingsViewModel ( _logger ,
                                        _settingsManager ,
                                        _scheduler ,
-                                       _synchronizer ) ;
+                                       _synchronizer ,
+                                       _mainWindow ) ;
     }
 }
