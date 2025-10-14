@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel ;
 using System.Diagnostics.CodeAnalysis ;
-using Idasen.SystemTray.Win11.ViewModels.Pages ;
 using Idasen.SystemTray.Win11.ViewModels.Windows ;
 using JetBrains.Annotations ;
 using Wpf.Ui ;
@@ -13,16 +12,12 @@ namespace Idasen.SystemTray.Win11.Views.Windows ;
 [ ExcludeFromCodeCoverage ]
 public partial class IdasenDeskWindow : INavigationWindow
 {
-    private readonly SettingsViewModel _settingsViewModel ;
-
     public IdasenDeskWindow ( IdasenDeskWindowViewModel   viewModel ,
                               INavigationViewPageProvider pageService ,
-                              INavigationService          navigationService ,
-                              SettingsViewModel           settingsViewModel )
+                              INavigationService          navigationService )
     {
-        ViewModel            = viewModel ;
-        _settingsViewModel   = settingsViewModel ;
-        DataContext          = this ;
+        ViewModel   = viewModel ;
+        DataContext = this ;
 
         SystemThemeWatcher.Watch ( this ) ;
 
@@ -66,14 +61,11 @@ public partial class IdasenDeskWindow : INavigationWindow
         Close ( ) ;
     }
 
-    private async void IdasenNotifyIcon_OnLeftClick ( object sender , RoutedEventArgs e )
+    private void IdasenNotifyIcon_OnLeftClick ( object sender , RoutedEventArgs e )
     {
         // Toggle: If visible -> hide; if hidden/minimized -> show and activate
         if ( Visibility == Visibility.Visible )
         {
-            // Save any pending settings changes before hiding the window
-            await _settingsViewModel.OnNavigatedFromAsync ( ).ConfigureAwait ( true ) ;
-
             ShowInTaskbar = false ;
             Visibility    = Visibility.Hidden ;
             return ;
@@ -106,11 +98,8 @@ public partial class IdasenDeskWindow : INavigationWindow
         Closing += OnWindowClosing ;
     }
 
-    private async void OnWindowClosing ( object ? sender , CancelEventArgs e )
+    private void OnWindowClosing ( object ? sender , CancelEventArgs e )
     {
-        // Save any pending settings changes before hiding the window
-        await _settingsViewModel.OnNavigatedFromAsync ( ).ConfigureAwait ( true ) ;
-
         // Cancel close and hide instead
         e.Cancel      = true ;
         ShowInTaskbar = false ;
