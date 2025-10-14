@@ -1,5 +1,8 @@
 ﻿using System.ComponentModel ;
 using System.Diagnostics.CodeAnalysis ;
+using System.Reactive.Linq ;
+using System.Reactive.Subjects ;
+using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.ViewModels.Windows ;
 using JetBrains.Annotations ;
 using Wpf.Ui ;
@@ -10,8 +13,11 @@ using Wpf.Ui.Controls ;
 namespace Idasen.SystemTray.Win11.Views.Windows ;
 
 [ ExcludeFromCodeCoverage ]
-public partial class IdasenDeskWindow : INavigationWindow
+public partial class IdasenDeskWindow : INavigationWindow , IMainWindow , IDisposable
 {
+    private readonly Subject < Visibility > _visibilityChanged = new( ) ;
+    private          bool                   _disposed ;
+
     public IdasenDeskWindow ( IdasenDeskWindowViewModel   viewModel ,
                               INavigationViewPageProvider pageService ,
                               INavigationService          navigationService )
@@ -25,9 +31,20 @@ public partial class IdasenDeskWindow : INavigationWindow
         SetPageService ( pageService ) ;
 
         navigationService.SetNavigationControl ( RootNavigation ) ;
+
+        // Publish the initial visibility state
+        _visibilityChanged.OnNext ( Visibility ) ;
     }
 
     public IdasenDeskWindowViewModel ViewModel { get ; }
+
+    public void Dispose ( )
+    {
+        Dispose ( true ) ;
+        GC.SuppressFinalize ( this ) ;
+    }
+
+    public IObservable < Visibility > VisibilityChanged => _visibilityChanged.AsObservable ( ) ;
 
     INavigationView INavigationWindow.GetNavigation ( )
     {
@@ -68,12 +85,16 @@ public partial class IdasenDeskWindow : INavigationWindow
         {
             ShowInTaskbar = false ;
             Visibility    = Visibility.Hidden ;
+            _visibilityChanged.OnNext ( Visibility ) ; // Publish visibility change
             return ;
         }
 
         // Show and bring to foreground
         ShowInTaskbar = true ;
         Visibility    = Visibility.Visible ;
+
+        _visibilityChanged.OnNext ( Visibility ) ;
+
         if ( WindowState == WindowState.Minimized )
             WindowState = WindowState.Normal ;
 
@@ -103,6 +124,26 @@ public partial class IdasenDeskWindow : INavigationWindow
         // Cancel close and hide instead
         e.Cancel      = true ;
         ShowInTaskbar = false ;
+        Visibility    = Visibility.Hidden ;
+        _visibilityChanged.OnNext ( Visibility ) ;
         Hide ( ) ;
+    }
+
+    protected virtual void Dispose ( bool disposing )
+    {
+        if ( _disposed )
+            return ;
+
+        if ( disposing )
+        {
+            // Unsubscribe event handlers
+            Closing -= OnWindowClosing ;
+
+            // Dispose managed resources
+            _visibilityChanged.OnCompleted ( ) ;
+            _visibilityChanged.Dispose ( ) ;
+        }
+
+        _disposed = true ;
     }
 }
