@@ -13,9 +13,10 @@ using Wpf.Ui.Controls ;
 namespace Idasen.SystemTray.Win11.Views.Windows ;
 
 [ ExcludeFromCodeCoverage ]
-public partial class IdasenDeskWindow : INavigationWindow , IMainWindow, IDisposable
+public partial class IdasenDeskWindow : INavigationWindow , IMainWindow , IDisposable
 {
     private readonly Subject < Visibility > _visibilityChanged = new( ) ;
+    private          bool                   _disposed ;
 
     public IdasenDeskWindow ( IdasenDeskWindowViewModel   viewModel ,
                               INavigationViewPageProvider pageService ,
@@ -35,9 +36,15 @@ public partial class IdasenDeskWindow : INavigationWindow , IMainWindow, IDispos
         _visibilityChanged.OnNext ( Visibility ) ;
     }
 
-    public IObservable < Visibility > VisibilityChanged => _visibilityChanged.AsObservable ( ) ;
-
     public IdasenDeskWindowViewModel ViewModel { get ; }
+
+    public void Dispose ( )
+    {
+        Dispose ( true ) ;
+        GC.SuppressFinalize ( this ) ;
+    }
+
+    public IObservable < Visibility > VisibilityChanged => _visibilityChanged.AsObservable ( ) ;
 
     INavigationView INavigationWindow.GetNavigation ( )
     {
@@ -122,11 +129,21 @@ public partial class IdasenDeskWindow : INavigationWindow , IMainWindow, IDispos
         Hide ( ) ;
     }
 
-    public void Dispose ( )
+    protected virtual void Dispose ( bool disposing )
     {
-        _visibilityChanged.OnCompleted ( ) ;
-        _visibilityChanged.Dispose ( ) ;
+        if ( _disposed )
+            return ;
 
-        GC.SuppressFinalize ( this ) ;
+        if ( disposing )
+        {
+            // Unsubscribe event handlers
+            Closing -= OnWindowClosing ;
+
+            // Dispose managed resources
+            _visibilityChanged.OnCompleted ( ) ;
+            _visibilityChanged.Dispose ( ) ;
+        }
+
+        _disposed = true ;
     }
 }
