@@ -177,3 +177,35 @@ A: Windows 10 needs to be connected to the Idasen desk which means the desk shou
 
 ![Trying to connect](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/Windows%2010%20Bluetooth%20Settings.png)
 
+---
+# Contributing
+
+Interested in contributing to this project? We welcome contributions!
+
+## Development Guidelines
+
+For comprehensive development guidelines, including:
+- Building and testing instructions
+- Code style and standards
+- Pull request guidelines
+- Common development tasks
+
+Please see our **[GitHub Copilot Instructions](.github/copilot-instructions.md)** which contains detailed information for developers.
+
+## Documentation
+
+Additional documentation can be found in the [docs/](docs/) directory:
+- [Changelog Automation Guide](docs/CHANGELOG_AUTOMATION.md)
+- [Implementation Details](docs/IMPLEMENTATION_SUMMARY.md)
+- [Workflow Diagrams](docs/WORKFLOW_DIAGRAM.md)
+
+## Pull Requests
+
+When submitting a pull request, please:
+1. Follow the code style guidelines
+2. Add appropriate labels for changelog automation
+3. Include tests for new features
+4. Update documentation as needed
+
+See the [Pull Request Template](.github/pull_request_template.md) for the complete checklist.
+
