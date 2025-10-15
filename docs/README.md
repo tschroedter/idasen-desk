@@ -6,6 +6,7 @@ This directory contains comprehensive documentation for the automated changelog 
 
 ### For Contributors
 - **[CHANGELOG_AUTOMATION.md](CHANGELOG_AUTOMATION.md)** - Complete guide on how to use the changelog automation system, including PR labeling strategies
+- **[GitHub Copilot Instructions](../.github/copilot-instructions.md)** - Comprehensive development guidelines for GitHub Copilot, including build/test instructions, code style, and contribution workflows
 
 ### For Maintainers  
 - **[IMPLEMENTATION_SUMMARY.md](IMPLEMENTATION_SUMMARY.md)** - Detailed overview of what was implemented, setup instructions, and maintenance guidelines
@@ -34,6 +35,7 @@ This directory contains comprehensive documentation for the automated changelog 
 ├── CHANGELOG.md                          # Main changelog (root of repo)
 ├── README.md                             # Project README
 ├── .github/
+│   ├── copilot-instructions.md          # GitHub Copilot development guidelines
 │   ├── release-drafter.yml              # Release drafter configuration
 │   ├── pull_request_template.md         # PR template with label guidance
 │   └── workflows/
