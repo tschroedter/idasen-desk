@@ -22,7 +22,7 @@ using DSolidBrush = System.Drawing.SolidBrush ;
 namespace Idasen.SystemTray.Win11.Utils.Icons ;
 
 [ ExcludeFromCodeCoverage ]
-public class DynamicIconCreator : IDynamicIconCreator
+public partial class DynamicIconCreator : IDynamicIconCreator
 {
     private const           int    IconHeight     = 16 ; // base logical height at 100% DPI
     private const           string FontFamily     = "Consolas" ;
