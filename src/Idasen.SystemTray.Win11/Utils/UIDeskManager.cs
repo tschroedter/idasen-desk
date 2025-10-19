@@ -18,7 +18,7 @@ using Wpf.Ui.Tray.Controls ;
 namespace Idasen.SystemTray.Win11.Utils ;
 
 [ ExcludeFromCodeCoverage ]
-public sealed class UiDeskManager : IUiDeskManager
+public sealed partial class UiDeskManager : IUiDeskManager
 {
     private const uint DeskHeightFactor = 100 ;
 
