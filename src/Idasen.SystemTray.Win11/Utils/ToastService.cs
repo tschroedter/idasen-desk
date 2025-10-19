@@ -3,7 +3,7 @@ using Microsoft.Toolkit.Uwp.Notifications ;
 
 namespace Idasen.SystemTray.Win11.Utils ;
 
-public class ToastService : IToastService
+public partial class ToastService : IToastService
 {
     public void Show ( NotificationParameters parameters )
     {

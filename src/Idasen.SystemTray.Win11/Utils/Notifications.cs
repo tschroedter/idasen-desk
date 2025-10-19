@@ -8,7 +8,7 @@ using Wpf.Ui.Tray.Controls ;
 namespace Idasen.SystemTray.Win11.Utils ;
 
 [ ExcludeFromCodeCoverage ]
-public class Notifications : INotifications
+public partial class Notifications : INotifications
 {
     private readonly ILogger                            _logger ;
     private readonly ISettingsManager                   _manager ;
