@@ -6,10 +6,18 @@ public static class ThemeDefaults
 {
     public static string GetDefaultThemeName ( )
     {
-        var theme = ApplicationThemeManager.GetAppTheme ( ) ;
+        try
+        {
+            var theme = ApplicationThemeManager.GetAppTheme ( ) ;
 
-        return theme is ApplicationTheme.Light or ApplicationTheme.Dark or ApplicationTheme.HighContrast
-                   ? theme.ToString ( )
-                   : nameof ( ApplicationTheme.Light ) ;
+            return theme is ApplicationTheme.Light or ApplicationTheme.Dark or ApplicationTheme.HighContrast
+                       ? theme.ToString ( )
+                       : nameof ( ApplicationTheme.Light ) ;
+        }
+        catch
+        {
+            // In test or non-UI contexts, fetching the theme can throw. Fall back to a safe default.
+            return nameof ( ApplicationTheme.Light ) ;
+        }
     }
 }
