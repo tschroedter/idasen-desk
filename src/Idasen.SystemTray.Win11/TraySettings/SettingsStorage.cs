@@ -3,6 +3,7 @@ using System.IO.Abstractions ;
 using System.Text.Json ;
 using System.Text.Json.Serialization ;
 using Idasen.SystemTray.Win11.Interfaces ;
+using Idasen.SystemTray.Win11.Utils ;
 
 namespace Idasen.SystemTray.Win11.TraySettings ;
 
@@ -35,7 +36,12 @@ public class SettingsStorage ( IFileSystem fileSystem ) : ISettingsStorage
             try
             {
                 if ( ! fileSystem.File.Exists ( settingsFileName ) )
-                    return new Settings ( ) ;
+                {
+                    // Create defaults and pick the current theme from Windows if available
+                    var defaults = new Settings ( ) ;
+                    defaults.AppearanceSettings.ThemeName = ThemeDefaults.GetDefaultThemeName ( ) ;
+                    return defaults ;
+                }
 
                 await using var openStream = fileSystem.File.Open ( settingsFileName ,
                                                                     FileMode.Open ,
@@ -164,7 +170,7 @@ public class SettingsStorage ( IFileSystem fileSystem ) : ISettingsStorage
         }
         catch
         {
-            // Swallow – best effort cleanup
+            // Swallow ? best effort cleanup
         }
     }
 }
