@@ -9,6 +9,7 @@
         <UseWPF>true</UseWPF>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <!-- <AssemblyName>$(MSBuildProjectName)</AssemblyName> -->
         <AssemblyName>Idasen.SystemTray</AssemblyName>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>

@@ -138,7 +138,7 @@ public class DynamicIconCreator : IDynamicIconCreator
         taskbarIcon.TooltipText = $"Desk Height: {value} cm" ;
     }
 
-    [ DllImport ( "gdi32.dll" ) ]
+    [ LibraryImport ( "gdi32.dll" ) ]
     [ return : MarshalAs ( UnmanagedType.Bool ) ]
-    private static extern bool DeleteObject ( IntPtr hObject ) ;
+    private static partial bool DeleteObject ( IntPtr hObject ) ;
 }
