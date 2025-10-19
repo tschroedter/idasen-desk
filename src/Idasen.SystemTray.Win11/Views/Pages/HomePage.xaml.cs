@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics ;
 using System.Diagnostics.CodeAnalysis ;
 using System.Windows.Input ;
+using Idasen.SystemTray.Win11.Utils ;
 using Idasen.SystemTray.Win11.ViewModels.Pages ;
 using Wpf.Ui.Abstractions.Controls ;
 
@@ -23,7 +24,7 @@ public partial class HomePage : INavigableView < DashboardViewModel >
     {
         try
         {
-            var uri = new Uri ( "https://www.paypal.com/donate/?hosted_button_id=KAWJDNVJTD7SJ" ) ;
+            var uri = new Uri ( Constants.DonateUrl ) ;
 
             Process.Start ( new ProcessStartInfo ( uri.AbsoluteUri )
             {

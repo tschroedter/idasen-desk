@@ -15,5 +15,7 @@ public static class Constants
     public const uint   DefaultDeskMaxHeightInCm       = 127 ;
     public const string DefaultAppearanceThemeName     = "theme_light" ;
 
+    public const string DonateUrl = "https://www.paypal.com/donate/?hosted_button_id=KAWJDNVJTD7SJ" ;
+
     public static readonly bool NotificationsEnabled = true ;
 }
