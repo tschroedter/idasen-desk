@@ -1,5 +1,4 @@
 ﻿using Idasen.SystemTray.Win11.Interfaces ;
-using Idasen.SystemTray.Win11.Utils ;
 
 namespace Idasen.SystemTray.Win11.TraySettings ;
 
@@ -9,8 +8,7 @@ public class Settings : ISettings
 
     public HeightSettings HeightSettings { get ; set ; } = new( ) ;
 
-    public AppearanceSettings AppearanceSettings { get ; set ; } =
-        new( ) { ThemeName = ThemeDefaults.GetDefaultThemeName ( ) } ;
+    public AppearanceSettings AppearanceSettings { get ; set ; } = new( ) ;
 
     public override string ToString ( )
     {

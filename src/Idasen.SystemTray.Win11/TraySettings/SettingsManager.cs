@@ -82,8 +82,11 @@ public partial class SettingsManager (
         {
             logger.Information ( "Resetting settings to defaults" ) ;
 
-            // Create a fresh default settings instance
-            _current = new Settings ( ) ;
+            // Create a fresh default settings instance and align theme with current Windows theme
+            _current = new Settings ( )
+            {
+                AppearanceSettings = { ThemeName = ThemeDefaults.GetDefaultThemeName ( ) }
+            } ;
 
             await SaveAsync ( token ).ConfigureAwait ( false ) ;
         }
