@@ -6,7 +6,7 @@ using Serilog ;
 
 namespace Idasen.SystemTray.Win11.TraySettings ;
 
-public class SettingsManager (
+public partial class SettingsManager (
     ILogger                logger ,
     ICommonApplicationData commonApplicationData ,
     ISettingsStorage       settingsStorage ,
