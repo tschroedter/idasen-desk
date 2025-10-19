@@ -5,7 +5,7 @@ namespace Idasen.SystemTray.Win11.Utils ;
 /// <summary>
 ///     Simplistic delegate command for the demo.
 /// </summary>
-public class DelegateCommand (
+public partial class DelegateCommand (
     Action < object ? >        execute ,
     Func < object ? , bool > ? canExecute = null ) : ICommand
 {
