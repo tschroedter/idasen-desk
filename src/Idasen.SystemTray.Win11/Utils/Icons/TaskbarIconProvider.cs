@@ -11,7 +11,7 @@ using Wpf.Ui.Tray.Controls ;
 namespace Idasen.SystemTray.Win11.Utils.Icons ;
 
 [ ExcludeFromCodeCoverage ]
-public class TaskbarIconProvider : ITaskbarIconProvider
+public partial class TaskbarIconProvider : ITaskbarIconProvider
 {
     private readonly IDynamicIconCreator _creator ;
     private readonly ISettingsManager    _manager ;
