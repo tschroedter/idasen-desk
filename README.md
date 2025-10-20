@@ -145,7 +145,15 @@ At the moment the application supports the following hot keys:
 Download and run the self-contained application file: [Idasen.SystemTray.Win11.exe](https://github.com/tschroedter/idasen-desk/releases/download/v0.1.182/Idasen-SystemTray-0.1.182-win-x64.exe)
 
 ## Scoop.sh
-I'm working on getting the application listed under [scoop.sh](https://scoop.sh/) to make installation and updates easier, including auto update.
+To install the Idasen SystemTray utility using [scoop.sh](https://scoop.sh/):
+
+```powershell
+scoop bucket add tschroedter https://github.com/tschroedter/scoop-bucket
+scoop install tschroedter/idasen-systemtray
+```
+
+_Note: The app doesn't have enough stars to be in the official repository so I created my own (see [PR #20](https://github.com/tschroedter/idasen-desk/issues/20))._
+
 ---
 ### Trouble Pairing the desk?
 ## Solution 1
