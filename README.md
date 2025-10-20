@@ -266,13 +266,13 @@ If Windows 11 still can't find your desk using the modern Bluetooth settings:
    ![Windows 11 Devices](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/Win11_Devices.png)
 
 2. **Access Legacy Settings**
-   - Scroll down and click "More devices and printer settings"
+   - Scroll down and click "More devices and printers settings"
    - The "Devices and Printers" window opens
    
    ![Add a device](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/Win11_Add_Devices_Printers.png)
 
 3. **Add Device**
-   - Right-click anywhere on the background
+   - Right-click in the window background (empty space)
    - Select "Add a device"
    - The "Choose a device or printer to add to this PC" window opens
    
