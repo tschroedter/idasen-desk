@@ -1,8 +1,10 @@
+using System.Diagnostics.CodeAnalysis ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Microsoft.Toolkit.Uwp.Notifications ;
 
 namespace Idasen.SystemTray.Win11.Utils ;
 
+[ ExcludeFromCodeCoverage ]
 public partial class ToastService : IToastService
 {
     public void Show ( NotificationParameters parameters )

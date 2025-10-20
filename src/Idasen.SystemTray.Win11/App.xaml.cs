@@ -105,6 +105,7 @@ public partial class App
                                                                                    ( _ => ( callback , state , dueTime , period ) 
                                                                                        => new Timer ( callback , state , dueTime , period ) ) ;
                                                                            services.AddSingleton ( _ => CreateMainWindow( ) ) ;
+                                                                           services.AddSingleton < IAssemblyVersionProvider , AssemblyVersionProvider > ( ) ;
                                                                        } ).Build ( ) ;
 
     private static   Mutex ? _singleInstanceMutex ;

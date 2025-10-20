@@ -1,6 +1,9 @@
 using FluentAssertions ;
 using Idasen.SystemTray.Win11.Utils ;
 using NSubstitute ;
+using System.Threading ;
+using System.Windows.Input ;
+using System.Windows.Threading ;
 
 namespace Idasen.SystemTray.Win11.Tests.Utils ;
 
@@ -47,6 +50,21 @@ public class DelegateCommandTests
 
         // Assert  
         result.Should ( ).BeFalse ( ) ;
+    }
+
+    [ Fact ]
+    public void CanExecute_ShouldForwardParameterToCanExecuteFunc ( )
+    {
+        // Arrange
+        var parameter = new object ( ) ;
+        _canExecuteFunc.Invoke ( parameter ).Returns ( true ) ;
+        var sut = CreateSut ( ) ;
+
+        // Act
+        sut.CanExecute ( parameter ) ;
+
+        // Assert
+        _canExecuteFunc.Received ( 1 ).Invoke ( parameter ) ;
     }
 
     private DelegateCommand CreateSut ( )
