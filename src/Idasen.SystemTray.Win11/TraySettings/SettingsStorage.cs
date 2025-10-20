@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis ;
 using System.IO ;
 using System.IO.Abstractions ;
 using System.Text.Json ;
@@ -38,8 +39,13 @@ public class SettingsStorage ( IFileSystem fileSystem ) : ISettingsStorage
                 if ( ! fileSystem.File.Exists ( settingsFileName ) )
                 {
                     // Create defaults and pick the current theme from Windows if available
-                    var defaults = new Settings ( ) ;
-                    defaults.AppearanceSettings.ThemeName = ThemeDefaults.GetDefaultThemeName ( ) ;
+                    var defaults = new Settings
+                    {
+                        AppearanceSettings =
+                        {
+                            ThemeName = ThemeDefaults.GetDefaultThemeName ( )
+                        }
+                    } ;
                     return defaults ;
                 }
 
@@ -156,11 +162,13 @@ public class SettingsStorage ( IFileSystem fileSystem ) : ISettingsStorage
         }
     }
 
+    [ ExcludeFromCodeCoverage ]
     private static bool IsSharingOrLockViolation ( IOException ex )
     {
-        return ex.HResult == SharingViolationHResult || ex.HResult == LockViolationHResult ;
+        return ex.HResult is SharingViolationHResult or LockViolationHResult ;
     }
 
+    [ ExcludeFromCodeCoverage ]
     private void SafeDelete ( string path )
     {
         try
@@ -170,7 +178,7 @@ public class SettingsStorage ( IFileSystem fileSystem ) : ISettingsStorage
         }
         catch
         {
-            // Swallow ? best effort cleanup
+            // Swallow best effort cleanup
         }
     }
 }

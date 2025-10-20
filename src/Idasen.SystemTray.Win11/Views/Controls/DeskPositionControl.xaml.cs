@@ -1,9 +1,11 @@
+using System.Diagnostics.CodeAnalysis ;
 using Wpf.Ui.Controls ;
 using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace Idasen.SystemTray.Win11.Views.Controls ;
 
+[ ExcludeFromCodeCoverage ]
 public partial class DeskPositionControl
 {
     public static readonly DependencyProperty SymbolProperty =

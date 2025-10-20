@@ -1,4 +1,5 @@
-﻿using System.Windows.Input ;
+﻿using System.Diagnostics.CodeAnalysis ;
+using System.Windows.Input ;
 
 namespace Idasen.SystemTray.Win11.Utils ;
 
@@ -22,6 +23,7 @@ public partial class DelegateCommand (
         return _canExecute ( parameter ) ;
     }
 
+    [ ExcludeFromCodeCoverage ]
     public event EventHandler ? CanExecuteChanged
     {
         add => CommandManager.RequerySuggested += value ;

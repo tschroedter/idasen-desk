@@ -1,10 +1,10 @@
-﻿using System.Reflection ;
-using Idasen.SystemTray.Win11.Interfaces ;
+﻿using Idasen.SystemTray.Win11.Interfaces ;
 using Serilog ;
 
 namespace Idasen.SystemTray.Win11.Utils ;
 
-public class VersionProvider ( ILogger logger ) : IVersionProvider
+public class VersionProvider ( ILogger logger ,
+                               IAssemblyVersionProvider versionProvider ) : IVersionProvider
 {
     private string ? _cachedVersion ;
 
@@ -17,7 +17,7 @@ public class VersionProvider ( ILogger logger ) : IVersionProvider
 
         try
         {
-            var version = GetAssemblyVersion ( ) ;
+            var version = versionProvider.GetAssemblyVersion( ) ;
 
             if ( version == null )
             {
@@ -40,12 +40,5 @@ public class VersionProvider ( ILogger logger ) : IVersionProvider
         _cachedVersion = versionAsText ;
 
         return versionAsText ;
-    }
-
-    private static Version ? GetAssemblyVersion ( )
-    {
-        return Assembly.GetExecutingAssembly ( )
-                       .GetName ( )
-                       .Version ;
     }
 }
