@@ -1,8 +1,10 @@
-﻿using System.IO.Abstractions.TestingHelpers ;
-using System.Text.Json ;
-using FluentAssertions ;
+﻿using FluentAssertions ;
 using Idasen.SystemTray.Win11.TraySettings ;
 using Idasen.SystemTray.Win11.Utils ;
+using System.IO.Abstractions.TestingHelpers ;
+using System.Text.Json ;
+using System.Text.Json.Serialization;
+using FluentAssertions.Execution ;
 
 namespace Idasen.SystemTray.Win11.Tests.TraySettings ;
 
@@ -177,6 +179,24 @@ public class SettingsStorageTests
 
         // Assert
         await act.Should ( ).ThrowAsync < OperationCanceledException > ( ) ;
+    }
+
+    [Fact]
+    public void JsonOptions_Invoked_DefaultValues()
+    {
+        // Arrange
+        // Act
+        // Assert
+        using var scope = new AssertionScope ( ) ;
+
+        SettingsStorage.JsonOptions
+                       .DefaultIgnoreCondition
+                       .Should ( )
+                       .Be ( JsonIgnoreCondition.WhenWritingNull ) ;
+        SettingsStorage.JsonOptions
+                       .PropertyNamingPolicy
+                       .Should ( )
+                       .Be ( JsonNamingPolicy.CamelCase ) ;
     }
 
     private SettingsStorage CreateSut ( )
