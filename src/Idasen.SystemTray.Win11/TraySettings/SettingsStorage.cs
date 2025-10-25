@@ -178,7 +178,7 @@ public class SettingsStorage ( IFileSystem fileSystem ) : ISettingsStorage
         }
         catch
         {
-            // Swallow best effort cleanup
+            // Swallow the best effort cleanup
         }
     }
 }

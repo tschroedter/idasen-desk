@@ -3,7 +3,7 @@ using Serilog ;
 
 namespace Idasen.SystemTray.Win11.TraySettings ;
 
-public partial class LoggingSettingsManager (
+public class LoggingSettingsManager (
     ILogger          logger ,
     ISettingsManager settingsManager )
     : ILoggingSettingsManager

@@ -140,5 +140,6 @@ public partial class DynamicIconCreator : IDynamicIconCreator
 
     [ LibraryImport ( "gdi32.dll" ) ]
     [ return : MarshalAs ( UnmanagedType.Bool ) ]
+    // ReSharper disable once UnusedMethodReturnValue.Local
     private static partial bool DeleteObject ( IntPtr hObject ) ;
 }

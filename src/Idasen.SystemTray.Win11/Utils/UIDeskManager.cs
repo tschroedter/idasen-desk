@@ -2,7 +2,6 @@
 using System.Reactive.Concurrency ;
 using System.Reactive.Linq ;
 using System.Reactive.Subjects ;
-using System.Windows ;
 using System.Windows.Input ;
 using Idasen.Aop ;
 using Idasen.BluetoothLE.Core ;
