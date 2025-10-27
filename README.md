@@ -5,6 +5,7 @@
 [![Release Drafter](https://github.com/tschroedter/idasen-desk/actions/workflows/release-drafter.yml/badge.svg)](https://github.com/tschroedter/idasen-desk/actions/workflows/release-drafter.yml)
 [![SonarCloud Analysis](https://github.com/tschroedter/idasen-desk/actions/workflows/sonarcloud.yml/badge.svg)](https://github.com/tschroedter/idasen-desk/actions/workflows/sonarcloud.yml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=tschroedter_idasen-desk&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=tschroedter_idasen-desk)
+[![Dependabot Status](https://img.shields.io/badge/Dependabot-enabled-success?logo=dependabot)](https://github.com/tschroedter/idasen-desk/network/updates)
 
 A Windows 10/11 desktop application for controlling [Ikea's Idasen standing desk](https://www.ikea.com/au/en/p/idasen-desk-sit-stand-black-dark-grey-s29280991/) via Bluetooth LE. While Ikea provides Android and iOS apps, this application brings convenient desk control directly to your Windows desktop through a system tray interface.
 
