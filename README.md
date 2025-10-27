@@ -33,6 +33,14 @@ A Windows 10/11 desktop application for controlling [Ikea's Idasen standing desk
 
 ## What's New
 
+### Version 0.1.250
+Short description: This patch release focuses on stability and quality-of-life improvements. It includes several bug fixes, performance optimizations, small usability improvements, dependency/security updates, and adds SonarCloud scanning so all code is now continuously checked for quality and security.
+
+- 🛡️Fixes: resolved multiple reported crashes and edge-case bugs.
+- 📡Improvements: reduced memory/CPU usage in core processing paths and improved logging for easier troubleshooting.
+- 📊 Quality: all code is now scanned by SonarCloud (static analysis for bugs, code smells, and security issues).
+- 📦 Maintenance: updated third-party dependencies and applied security patches.
+
 ### Version 0.1.182
 
 - ✨ Added 2 new desk positions: Custom 1 and Custom 2
