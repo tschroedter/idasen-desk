@@ -110,6 +110,11 @@ scoop bucket add tschroedter https://github.com/tschroedter/scoop-bucket
 scoop install tschroedter/idasen-systemtray
 ```
 
+And updating the app:
+```powershell
+scoop update tschroedter/idasen-systemtray
+```
+
 _Note: The app doesn't have enough stars to be in the official Scoop repository, so we maintain our own bucket ([PR #20](https://github.com/tschroedter/idasen-desk/issues/20))._
 
 ## Usage
