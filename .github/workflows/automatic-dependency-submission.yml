@@ -1,0 +1,38 @@
+name: Automatic Dependency Submission
+permissions:
+  contents: read
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.home }}/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.sln', '**/*.csproj', '**/packages.config') }}
+          restore-keys: ${{ runner.os }}-nuget-
+
+      - name: Restore
+        run: dotnet restore src/Idasen-Desk.sln -p:EnableWindowsTargeting=true
+
+      - name: Build (Release)
+        run: dotnet build src/Idasen-Desk.sln --configuration Release -p:EnableWindowsTargeting=true
+
+      - name: Test
+        run: dotnet test src/Idasen-Desk.sln --configuration Release --no-build -p:EnableWindowsTargeting=true
