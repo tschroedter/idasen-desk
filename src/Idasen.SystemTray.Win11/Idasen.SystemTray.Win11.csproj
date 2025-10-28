@@ -16,6 +16,7 @@
         <FileVersion>0.0.0.0</FileVersion>
         <Version>0.0.0</Version>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <EnableWindowsTargeting>true</EnableWindowsTargeting>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
