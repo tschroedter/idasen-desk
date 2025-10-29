@@ -95,7 +95,7 @@ Short description: This patch release focuses on stability and quality-of-life i
 
 Download the latest self-contained executable (no .NET runtime installation required):
 
-**[Download Idasen-SystemTray-0.1.182-win-x64.exe](https://github.com/tschroedter/idasen-desk/releases/download/v0.1.182/Idasen-SystemTray-0.1.182-win-x64.exe)**
+**[Download Idasen-SystemTray-0.1.182-win-x64.exe](https://github.com/tschroedter/idasen-desk/releases/download/v0.1.250/Idasen-SystemTray-0.1.250-win-x64.exe)**
 
 1. Download the executable from the link above
 2. Run the executable
