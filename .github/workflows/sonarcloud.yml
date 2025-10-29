@@ -70,9 +70,4 @@ jobs:
           .\.sonar\scanner\dotnet-sonarscanner begin /k:"tschroedter_idasen-desk" /o:"$Env:SONAR_ORGANIZATION" /d:sonar.token="$Env:SONAR_TOKEN" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="./TestResults/**/*.opencover.xml"
           dotnet build Idasen-Desk.sln --configuration Release --no-restore
           dotnet test Idasen-Desk.sln --configuration Release --no-build --verbosity detailed --collect:"XPlat Code Coverage;Format=opencover" --results-directory ./TestResults/ /p:Exclude="[*.Tests]*" /p:ExcludeByAttribute=Obsolete /p:ExcludeByAttribute=ObsoleteAttribute /p:ExcludeByAttribute=GeneratedCodeAttribute /p:ExcludeByAttribute=CompilerGeneratedAttribute /p:ExcludeByAttribute=ExcludeFromCodeCoverage /p:ExcludeByAttribute=ExcludeFromCodeCoverageAttribute
-          echo "Listing contents of TestResults directory:"
-          Get-ChildItem -Path ./TestResults/ -Recurse | Format-List
-          echo "End of TestResults directory contents."
-          echo "Contents of coverage.opencover.xml:"
-          Get-Content -Path ./TestResults/**/*.opencover.xml
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="$Env:SONAR_TOKEN"
