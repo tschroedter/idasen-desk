@@ -245,7 +245,7 @@ Enable this feature to lock the physical desk controller. When active, pressing 
 
 #### Units Till Stop
 
-_(Coming Soon)_ Fine-tune the estimated stopping distance from maximum movement speed. Adjust this if your desk overshoots or undershoots target heights.
+Fine-tune the estimated stopping distance from maximum movement speed. Adjust this if your desk overshoots or undershoots target heights.
 
 #### Reset Settings
 
