@@ -27,8 +27,6 @@ public partial class SettingsPage : INavigableView < SettingsViewModel >
             return ;
         }
 
-        e . Handled = true ;
-
         var eventArg = new MouseWheelEventArgs ( e . MouseDevice , e . Timestamp , e . Delta )
         {
             RoutedEvent = UIElement . MouseWheelEvent ,
@@ -36,5 +34,7 @@ public partial class SettingsPage : INavigableView < SettingsViewModel >
         } ;
 
         MainScrollViewer . RaiseEvent ( eventArg ) ;
+
+        e . Handled = true ;
     }
 }
