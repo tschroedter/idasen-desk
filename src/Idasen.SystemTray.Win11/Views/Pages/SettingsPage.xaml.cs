@@ -27,11 +27,6 @@ public partial class SettingsPage : INavigableView < SettingsViewModel >
             return ;
         }
 
-        if ( sender is not System . Windows . FrameworkElement element )
-        {
-            return ;
-        }
-
         e . Handled = true ;
 
         var eventArg = new MouseWheelEventArgs ( e . MouseDevice , e . Timestamp , e . Delta )
