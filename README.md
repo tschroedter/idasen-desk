@@ -34,6 +34,9 @@ A Windows 10/11 desktop application for controlling [Ikea's Idasen standing desk
 
 ## What's New
 
+### Version 0.1.280
+- 🎨 Enable support for mouse wheel scrolling inside 'SettingsPage'.
+
 ### Version 0.1.250
 Short description: This patch release focuses on stability and quality-of-life improvements. It includes several bug fixes, performance optimizations, small usability improvements, dependency/security updates, and adds SonarCloud scanning so all code is now continuously checked for quality and security.
 
@@ -95,7 +98,7 @@ Short description: This patch release focuses on stability and quality-of-life i
 
 Download the latest self-contained executable (no .NET runtime installation required):
 
-**[Download Latest](https://github.com/tschroedter/idasen-desk/releases/download/v0.1.250/Idasen-SystemTray-0.1.250-win-x64.exe)**
+**[Download Latest](https://github.com/tschroedter/idasen-desk/releases/download/v0.1.280/Idasen-SystemTray-0.1.280-win-x64.exe)**
 
 1. Download the executable from the link above
 2. Run the executable
