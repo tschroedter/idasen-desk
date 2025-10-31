@@ -9,6 +9,8 @@
 
 A Windows 10/11 desktop application for controlling [Ikea's Idasen standing desk](https://www.ikea.com/au/en/p/idasen-desk-sit-stand-black-dark-grey-s29280991/) via Bluetooth LE. While Ikea provides Android and iOS apps, this application brings convenient desk control directly to your Windows desktop through a system tray interface.
 
+> 📚 **[Visit the Wiki](https://github.com/tschroedter/idasen-desk/wiki)** for comprehensive documentation, guides, and troubleshooting.
+
 ## Table of Contents
 
 - [What's New](#whats-new)
@@ -386,6 +388,31 @@ dotnet test Idasen-Desk.sln --configuration Release
 - Use the [pull request template](.github/pull_request_template.md)
 - View [CI/CD workflows](.github/workflows/) in the Actions tab
 
+## Documentation
+
+### 📚 Wiki
+
+Comprehensive documentation is available in the [**Wiki**](https://github.com/tschroedter/idasen-desk/wiki):
+
+**For Users:**
+- [Getting Started](https://github.com/tschroedter/idasen-desk/wiki/Getting-Started) - Installation and setup
+- [User Guide](https://github.com/tschroedter/idasen-desk/wiki/User-Guide) - Complete usage instructions
+- [Troubleshooting](https://github.com/tschroedter/idasen-desk/wiki/Troubleshooting) - Common issues and solutions
+- [FAQ](https://github.com/tschroedter/idasen-desk/wiki/FAQ) - Frequently asked questions
+- [Configuration](https://github.com/tschroedter/idasen-desk/wiki/Configuration) - Advanced configuration options
+
+**For Developers:**
+- [Developer Guide](https://github.com/tschroedter/idasen-desk/wiki/Developer-Guide) - Contributing guidelines
+- [Build Instructions](https://github.com/tschroedter/idasen-desk/wiki/Build-Instructions) - How to build from source
+- [Architecture](https://github.com/tschroedter/idasen-desk/wiki/Architecture) - Technical architecture
+
+### 📖 Additional Resources
+
+- **[Changelog Automation Guide](docs/CHANGELOG_AUTOMATION.md)** - How our automated changelog works
+- **[Implementation Details](docs/IMPLEMENTATION_SUMMARY.md)** - Technical implementation overview
+- **[Workflow Diagrams](docs/WORKFLOW_DIAGRAM.md)** - Visual representation of CI/CD processes
+- **[SonarCloud Setup](docs/SONARCLOUD_SETUP.md)** - Code quality analysis setup
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
@@ -399,8 +426,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Links
 
+- **[Wiki](https://github.com/tschroedter/idasen-desk/wiki)** - Comprehensive documentation
 - **[Releases](https://github.com/tschroedter/idasen-desk/releases)** - Download the latest version
 - **[Issues](https://github.com/tschroedter/idasen-desk/issues)** - Report bugs or request features
+- **[Discussions](https://github.com/tschroedter/idasen-desk/discussions)** - Ask questions and share ideas
 - **[Changelog](CHANGELOG.md)** - View all changes
 - **[Ikea Idasen Desk](https://www.ikea.com/au/en/p/idasen-desk-sit-stand-black-dark-grey-s29280991/)** - Official product page
 
