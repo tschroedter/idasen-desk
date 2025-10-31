@@ -163,12 +163,6 @@ The default global hotkeys are:
 - **Custom 1**: `Ctrl + Shift + Alt + ←` (Left Arrow)
 - **Custom 2**: `Ctrl + Shift + Alt + →` (Right Arrow)
 
-To customize:
-1. Open Settings → **Hot Keys** tab
-2. Click on the hotkey field you want to change
-3. Press your desired key combination
-4. Click **Save**
-
 ## Next Steps
 
 Now that you're set up:

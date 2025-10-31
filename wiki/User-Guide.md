@@ -114,17 +114,6 @@ Global hotkeys work in any application, even when the settings window is closed.
 - Custom 1: `Ctrl + Shift + Alt + ←`
 - Custom 2: `Ctrl + Shift + Alt + →`
 
-**To Change a Hotkey:**
-1. Click on the hotkey field
-2. Press your desired key combination
-3. Settings are saved automatically
-
-**Hotkey Tips:**
-- Use unique combinations to avoid conflicts
-- Include at least one modifier (Ctrl, Shift, Alt)
-- Test in different applications to ensure it works globally
-- Avoid combinations used by other applications
-
 ### Appearance Settings
 
 ![Appearance Settings](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/V0.0.222/Settins_Appearance.png)
