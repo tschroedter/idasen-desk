@@ -13,6 +13,7 @@ A Windows 10/11 desktop application for controlling [Ikea's Idasen standing desk
 
 ## Table of Contents
 
+- [Thank You](#thank-you)
 - [What's New](#whats-new)
 - [Features](#features)
 - [Requirements](#requirements)
@@ -33,6 +34,10 @@ A Windows 10/11 desktop application for controlling [Ikea's Idasen standing desk
   - [Connection Issues](#connection-issues)
 - [Contributing](#contributing)
 - [License](#license)
+
+## Thank You
+
+A special thank you to all the amazing people who test this application and provide valuable feedback! Your contributions help make this app better for everyone. Special recognition goes to **Glakt** and other dedicated testers who have taken the time to report issues, test new features, and help improve the desk control experience. Your support is greatly appreciated! 🙏
 
 ## What's New
 
