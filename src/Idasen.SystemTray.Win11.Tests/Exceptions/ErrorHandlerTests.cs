@@ -39,8 +39,8 @@ public class ErrorHandlerTests
 
         // Assert
         _logger.Received ( 1 )
-               .Error(exception,
-                      "Test");
+               .Error ( exception ,
+                        "Test" ) ;
     }
 
     private static ErrorHandler CreateSut ( )

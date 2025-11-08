@@ -37,8 +37,7 @@ public class DeviceSettings
     public bool StopIsVisibleInContextMenu { get ; set ; } = true ;
 
     /// <summary>
-    ///      The estimated units required to stop from max. movement speed.
+    ///     The estimated units required to stop from max. movement speed.
     /// </summary>
     public uint MaxSpeedToStopMovement { get ; set ; } = StoppingHeightCalculatorSettings.MaxSpeedToStopMovement ;
-
 }

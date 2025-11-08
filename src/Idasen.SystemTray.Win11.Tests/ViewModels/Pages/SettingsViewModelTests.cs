@@ -1,5 +1,6 @@
 using System.Reactive.Subjects ;
 using System.Reflection ;
+using System.Windows ;
 using FluentAssertions ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.TraySettings ;
@@ -8,7 +9,6 @@ using Idasen.SystemTray.Win11.ViewModels.Pages ;
 using Microsoft.Reactive.Testing ;
 using NSubstitute ;
 using Serilog ;
-using System.Windows ;
 using Wpf.Ui.Appearance ;
 
 namespace Idasen.SystemTray.Win11.Tests.ViewModels.Pages ;
@@ -17,14 +17,16 @@ public sealed class SettingsViewModelTests
     : IDisposable
 {
     private readonly ILogger                 _logger          = Substitute.For < ILogger > ( ) ;
+    private readonly IMainWindow             _mainWindow      = Substitute.For < IMainWindow > ( ) ;
     private readonly TestScheduler           _scheduler       = new( ) ;
     private readonly ILoggingSettingsManager _settingsManager = Substitute.For < ILoggingSettingsManager > ( ) ;
 
-    private readonly Subject < ISettings >   _settingsSaved   = new( ) ;
-    private readonly ISettingsSynchronizer   _synchronizer    = Substitute.For < ISettingsSynchronizer > ( ) ;
-    private readonly IMainWindow             _mainWindow      = Substitute.For < IMainWindow > ( ) ;
-    private readonly Subject < Visibility >  _visibilityChanges = new( ) ;
-    private readonly IApplicationThemeManager _themeManager   = Substitute.For < IApplicationThemeManager > ( ) ;
+    private readonly Subject < ISettings >    _settingsSaved     = new( ) ;
+    private readonly ISettingsSynchronizer    _synchronizer      = Substitute.For < ISettingsSynchronizer > ( ) ;
+    private readonly IApplicationThemeManager _themeManager      = Substitute.For < IApplicationThemeManager > ( ) ;
+    private readonly Subject < Visibility >   _visibilityChanges = new( ) ;
+
+    private bool _disposed ;
 
     public SettingsViewModelTests ( )
     {
@@ -46,17 +48,15 @@ public sealed class SettingsViewModelTests
         _themeManager.ApplyAsync ( Arg.Any < ApplicationTheme > ( ) ).Returns ( Task.CompletedTask ) ;
     }
 
-    private bool _disposed ;
-
-    ~SettingsViewModelTests ( )
-    {
-        Dispose ( false ) ;
-    }
-
     public void Dispose ( )
     {
         Dispose ( true ) ;
         GC.SuppressFinalize ( this ) ;
+    }
+
+    ~SettingsViewModelTests ( )
+    {
+        Dispose ( false ) ;
     }
 
     private void Dispose ( bool disposing )
@@ -202,7 +202,8 @@ public sealed class SettingsViewModelTests
 
         // Assert
         await _synchronizer.Received ( 1 )
-                           .StoreSettingsAsync ( vm , Arg.Any < CancellationToken > ( ) ) ;
+                           .StoreSettingsAsync ( vm ,
+                                                 Arg.Any < CancellationToken > ( ) ) ;
     }
 
     [ Fact ]
@@ -217,7 +218,8 @@ public sealed class SettingsViewModelTests
 
         // Assert
         await _synchronizer.DidNotReceive ( )
-                           .StoreSettingsAsync ( Arg.Any < ISettingsViewModel > ( ) , Arg.Any < CancellationToken > ( ) ) ;
+                           .StoreSettingsAsync ( Arg.Any < ISettingsViewModel > ( ) ,
+                                                 Arg.Any < CancellationToken > ( ) ) ;
     }
 
     [ Fact ]
@@ -231,14 +233,16 @@ public sealed class SettingsViewModelTests
         var method = typeof ( SettingsViewModel ).GetMethod ( "SubscribeToMainWindowVisibility" ,
                                                               BindingFlags.Instance | BindingFlags.NonPublic ) ;
         method.Should ( ).NotBeNull ( ) ;
-        method.Invoke ( vm , null ) ;
+        method.Invoke ( vm ,
+                        null ) ;
 
         // Act: push a single non-visible event
         _visibilityChanges.OnNext ( Visibility.Collapsed ) ;
 
         // Assert: should only store once (not twice)
         await _synchronizer.Received ( 1 )
-                           .StoreSettingsAsync ( vm , Arg.Any < CancellationToken > ( ) ) ;
+                           .StoreSettingsAsync ( vm ,
+                                                 Arg.Any < CancellationToken > ( ) ) ;
     }
 
     [ Fact ]
@@ -255,7 +259,8 @@ public sealed class SettingsViewModelTests
 
         // Assert
         await _synchronizer.DidNotReceive ( )
-                           .StoreSettingsAsync ( Arg.Any < ISettingsViewModel > ( ) , Arg.Any < CancellationToken > ( ) ) ;
+                           .StoreSettingsAsync ( Arg.Any < ISettingsViewModel > ( ) ,
+                                                 Arg.Any < CancellationToken > ( ) ) ;
     }
 
     [ Fact ]

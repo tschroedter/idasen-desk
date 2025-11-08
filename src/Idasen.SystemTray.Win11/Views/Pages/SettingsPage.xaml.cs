@@ -34,21 +34,21 @@ public partial class SettingsPage : INavigableView < SettingsViewModel >
 
         // Detect whether the wheel event originated over an expander control
         var source = e.OriginalSource as DependencyObject ;
-        var overExpander = FindParentOfType<CardExpander> ( source ) is not null ||
-                           FindParentOfType<Expander> ( source ) is not null ;
+        var overExpander = FindParentOfType < CardExpander > ( source ) is not null ||
+                           FindParentOfType < Expander > ( source ) is not null ;
 
         // Increase scroll speed when over expander controls
-        var steps = overExpander ? 3 : 1 ;
+        var steps = overExpander
+                        ? 3
+                        : 1 ;
 
         var delta = e.Delta ;
         if ( delta > 0 )
-        {
-            for ( var i = 0 ; i < steps ; i ++ ) hostScrollViewer.LineUp ( ) ;
-        }
+            for ( var i = 0 ; i < steps ; i ++ )
+                hostScrollViewer.LineUp ( ) ;
         else if ( delta < 0 )
-        {
-            for ( var i = 0 ; i < steps ; i ++ ) hostScrollViewer.LineDown ( ) ;
-        }
+            for ( var i = 0 ; i < steps ; i ++ )
+                hostScrollViewer.LineDown ( ) ;
 
         e.Handled = true ;
     }
@@ -65,7 +65,7 @@ public partial class SettingsPage : INavigableView < SettingsViewModel >
         return null ;
     }
 
-    private static T ? FindParentOfType < T > ( DependencyObject? start )
+    private static T ? FindParentOfType < T > ( DependencyObject ? start )
         where T : DependencyObject
     {
         var current = start ;

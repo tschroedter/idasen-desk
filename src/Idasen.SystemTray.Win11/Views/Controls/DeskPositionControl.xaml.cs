@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis ;
+using System.Windows.Controls ;
+using System.Windows.Input ;
 using Wpf.Ui.Controls ;
-using System.Windows.Controls;
-using System.Windows.Input;
 
 namespace Idasen.SystemTray.Win11.Views.Controls ;
 
@@ -15,10 +15,10 @@ public partial class DeskPositionControl
                                       new PropertyMetadata ( SymbolRegular.ArrowCircleUp24 ) ) ;
 
     public static readonly DependencyProperty IsSymbolVisibleProperty =
-        DependencyProperty.Register(nameof(IsSymbolVisible),
-                                    typeof(Visibility),
-                                    typeof(DeskPositionControl),
-                                    new PropertyMetadata(Visibility.Visible));
+        DependencyProperty.Register ( nameof ( IsSymbolVisible ) ,
+                                      typeof ( Visibility ) ,
+                                      typeof ( DeskPositionControl ) ,
+                                      new PropertyMetadata ( Visibility.Visible ) ) ;
 
     public static readonly DependencyProperty PositionNameProperty =
         DependencyProperty.Register ( nameof ( PositionName ) ,
@@ -27,10 +27,10 @@ public partial class DeskPositionControl
                                       new PropertyMetadata ( "Stand" ) ) ;
 
     public static readonly DependencyProperty IsPositionNameVisibleProperty =
-        DependencyProperty.Register(nameof(IsPositionNameVisible),
-                                    typeof(Visibility),
-                                    typeof(DeskPositionControl),
-                                    new PropertyMetadata(Visibility.Visible));
+        DependencyProperty.Register ( nameof ( IsPositionNameVisible ) ,
+                                      typeof ( Visibility ) ,
+                                      typeof ( DeskPositionControl ) ,
+                                      new PropertyMetadata ( Visibility.Visible ) ) ;
 
     public static readonly DependencyProperty PositionValueProperty =
         DependencyProperty.Register ( nameof ( PositionValue ) ,
@@ -64,13 +64,13 @@ public partial class DeskPositionControl
         DependencyProperty.Register ( nameof ( Units ) ,
                                       typeof ( string ) ,
                                       typeof ( DeskPositionControl ) ,
-                                      new PropertyMetadata ( "cm") ) ;
+                                      new PropertyMetadata ( "cm" ) ) ;
 
     public static readonly DependencyProperty IsShowInTrayVisibleProperty =
-        DependencyProperty.Register( nameof(IsShowInTrayVisible),
-                                     typeof(Visibility),
-                                     typeof(DeskPositionControl),
-                                     new PropertyMetadata(Visibility.Visible));
+        DependencyProperty.Register ( nameof ( IsShowInTrayVisible ) ,
+                                      typeof ( Visibility ) ,
+                                      typeof ( DeskPositionControl ) ,
+                                      new PropertyMetadata ( Visibility.Visible ) ) ;
 
     public DeskPositionControl ( )
     {
@@ -100,9 +100,9 @@ public partial class DeskPositionControl
 
     public Visibility IsPositionNameVisible
     {
-        get => (Visibility)GetValue(IsPositionNameVisibleProperty);
-        set => SetValue(IsPositionNameVisibleProperty,
-                        value);
+        get => ( Visibility )GetValue ( IsPositionNameVisibleProperty ) ;
+        set => SetValue ( IsPositionNameVisibleProperty ,
+                          value ) ;
     }
 
     public double PositionValue
@@ -135,9 +135,9 @@ public partial class DeskPositionControl
 
     public string Units
     {
-        get => (string)GetValue(UnitsProperty);
-        set => SetValue(UnitsProperty,
-                        value);
+        get => ( string )GetValue ( UnitsProperty ) ;
+        set => SetValue ( UnitsProperty ,
+                          value ) ;
     }
 
     public Visibility IsShowInTrayVisible
@@ -159,24 +159,24 @@ public partial class DeskPositionControl
             PositionValue -- ;
     }
 
-    private void OnSliderPreviewKeyDown(object sender, KeyEventArgs e)
+    private void OnSliderPreviewKeyDown ( object sender , KeyEventArgs e )
     {
-        if (sender is Slider slider)
+        if ( sender is Slider slider )
         {
-            switch (e.Key)
+            switch ( e.Key )
             {
-                case Key.Up:
-                    if (slider.Value < slider.Maximum)
-                        slider.Value++;
-                    break;
-                case Key.Down:
-                    if (slider.Value > slider.Minimum)
-                        slider.Value--;
-                    break;
+                case Key.Up :
+                    if ( slider.Value < slider.Maximum )
+                        slider.Value ++ ;
+                    break ;
+                case Key.Down :
+                    if ( slider.Value > slider.Minimum )
+                        slider.Value -- ;
+                    break ;
             }
 
             // Update the PositionValue property to reflect the slider's value
-            PositionValue = slider.Value;
+            PositionValue = slider.Value ;
         }
     }
 }

@@ -111,27 +111,28 @@ public class LoggingSettingsManagerTests
 
         // Assert
         await act.Should ( ).ThrowAsync < InvalidOperationException > ( )
-            .WithMessage ( $"Failed to save settings in file {_settingsManager.SettingsFileName}" ) ;
+                 .WithMessage ( $"Failed to save settings in file {_settingsManager.SettingsFileName}" ) ;
 
         _logger.Received ( 1 ).Error ( exception ,
-                                        "Failed to save settings in file {SettingsFileName}",
-                                        _settingsManager.SettingsFileName ) ;
+                                       "Failed to save settings in file {SettingsFileName}" ,
+                                       _settingsManager.SettingsFileName ) ;
     }
 
-    [Fact]
-    public async Task LoadAsync_WhenExceptionThrown_ShouldLogErrorAndThrowInvalidOperationException()
+    [ Fact ]
+    public async Task LoadAsync_WhenExceptionThrown_ShouldLogErrorAndThrowInvalidOperationException ( )
     {
         // Arrange
         var token = CancellationToken.None ;
 
-        _settingsManager.LoadAsync(token).Throws(new ArgumentException("Test exception"));
+        _settingsManager.LoadAsync ( token ).Throws ( new ArgumentException ( "Test exception" ) ) ;
 
         // Act
-        Func<Task> act = async () => await _manager.LoadAsync(token);
+        var act = async ( ) => await _manager.LoadAsync ( token ) ;
 
         // Assert
-        await act.Should().ThrowAsync<InvalidOperationException>()
-                 .WithMessage($"Failed to load settings from file {_settingsManager.SettingsFileName}");
-        _logger.Received(1).Error(Arg.Any<Exception>(), "Failed to load settings");
+        await act.Should ( ).ThrowAsync < InvalidOperationException > ( )
+                 .WithMessage ( $"Failed to load settings from file {_settingsManager.SettingsFileName}" ) ;
+        _logger.Received ( 1 ).Error ( Arg.Any < Exception > ( ) ,
+                                       "Failed to load settings" ) ;
     }
 }

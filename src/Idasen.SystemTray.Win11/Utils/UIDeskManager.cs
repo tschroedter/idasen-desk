@@ -364,7 +364,7 @@ public sealed partial class UiDeskManager : IUiDeskManager
         }
         catch ( TaskCanceledException e )
         {
-            _logger.Warning ( e,
+            _logger.Warning ( e ,
                               "Auto connect was canceled" ) ;
         }
         catch ( Exception e )
@@ -675,8 +675,8 @@ public sealed partial class UiDeskManager : IUiDeskManager
     {
         _logger.Information ( "[{DeviceName}] Connected with address {BluetoothAddress} (MacAddress {MacAddress})" ,
                               desk.DeviceName ,
-                              desk.BluetoothAddress.MaskAddress (  ) ,
-                              desk.BluetoothAddress.ToMacAddress ( ).MaskMacAddress (  ) ) ;
+                              desk.BluetoothAddress.MaskAddress ( ) ,
+                              desk.BluetoothAddress.ToMacAddress ( ).MaskMacAddress ( ) ) ;
 
         _desk = desk ;
 

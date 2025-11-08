@@ -15,20 +15,22 @@
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <ui:SymbolIcon Grid.Column="0" MinWidth="32"
-                       Symbol="{Binding Symbol, ElementName=Root}" 
-                       HorizontalAlignment="Center" VerticalAlignment="Center" 
-                       Visibility="{Binding IsSymbolVisible, ElementName=Root, Mode=TwoWay}"/>
-        <Label Grid.Column="1" Content="{Binding PositionName, ElementName=Root}" VerticalAlignment="Center" MinWidth="80"
-               Padding="5,0,5,0" 
-               Visibility="{Binding IsPositionNameVisible, ElementName=Root, Mode=TwoWay}"/>
-        <Slider Grid.Column="2" Minimum="{Binding Minimum, ElementName=Root}" Maximum="{Binding Maximum, ElementName=Root}"
+                       Symbol="{Binding Symbol, ElementName=Root}"
+                       HorizontalAlignment="Center" VerticalAlignment="Center"
+                       Visibility="{Binding IsSymbolVisible, ElementName=Root, Mode=TwoWay}" />
+        <Label Grid.Column="1" Content="{Binding PositionName, ElementName=Root}" VerticalAlignment="Center"
+               MinWidth="80"
+               Padding="5,0,5,0"
+               Visibility="{Binding IsPositionNameVisible, ElementName=Root, Mode=TwoWay}" />
+        <Slider Grid.Column="2" Minimum="{Binding Minimum, ElementName=Root}"
+                Maximum="{Binding Maximum, ElementName=Root}"
                 Value="{Binding PositionValue, ElementName=Root, Mode=TwoWay}" TickPlacement="Both"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
                 VerticalAlignment="Center"
                 VerticalContentAlignment="Center"
                 PreviewKeyDown="OnSliderPreviewKeyDown"
-                Focusable="True"/>
+                Focusable="True" />
         <StackPanel Grid.Column="3"
                     Margin="5,0,5,0"
                     VerticalAlignment="Center"
@@ -55,10 +57,11 @@
         <TextBlock Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Right"
                    Text="{Binding PositionValue, ElementName=Root, StringFormat='0'}"
                    Padding="5,0,5,0" />
-        <Label Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Right" Content="{Binding Units, ElementName=Root, Mode=OneWay}" />
+        <Label Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Right"
+               Content="{Binding Units, ElementName=Root, Mode=OneWay}" />
         <CheckBox Grid.Column="6" VerticalAlignment="Center" MinWidth="75"
                   Content="Tray" ToolTip="Show in tray context menu"
                   IsChecked="{Binding IsVisibleInContextMenu, ElementName=Root, Mode=TwoWay}"
-                  Visibility="{Binding IsShowInTrayVisible, ElementName=Root, Mode=TwoWay}"/>
+                  Visibility="{Binding IsShowInTrayVisible, ElementName=Root, Mode=TwoWay}" />
     </Grid>
 </UserControl>

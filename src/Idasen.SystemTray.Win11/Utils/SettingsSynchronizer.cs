@@ -40,11 +40,11 @@ public class SettingsSynchronizer (
             model.Custom2IsVisibleInContextMenu  = current.HeightSettings.Custom2IsVisibleInContextMenu ;
             model.StopIsVisibleInContextMenu     = current.DeviceSettings.StopIsVisibleInContextMenu ;
 
-            model.LastKnownDeskHeight    = current.HeightSettings.LastKnownDeskHeight ;
-            model.DeskName               = nameConverter.EmptyIfDefault ( current.DeviceSettings.DeviceName ) ;
-            model.DeskAddress            = addressConverter.EmptyIfDefault ( current.DeviceSettings.DeviceAddress ) ;
-            model.ParentalLock           = current.DeviceSettings.DeviceLocked ;
-            model.Notifications          = current.DeviceSettings.NotificationsEnabled ;
+            model.LastKnownDeskHeight = current.HeightSettings.LastKnownDeskHeight ;
+            model.DeskName            = nameConverter.EmptyIfDefault ( current.DeviceSettings.DeviceName ) ;
+            model.DeskAddress         = addressConverter.EmptyIfDefault ( current.DeviceSettings.DeviceAddress ) ;
+            model.ParentalLock        = current.DeviceSettings.DeviceLocked ;
+            model.Notifications       = current.DeviceSettings.NotificationsEnabled ;
             model.MaxSpeedToStopMovement = current.DeviceSettings.MaxSpeedToStopMovement > 0
                                                ? current.DeviceSettings.MaxSpeedToStopMovement
                                                : StoppingHeightCalculatorSettings.MaxSpeedToStopMovement ;
@@ -54,7 +54,7 @@ public class SettingsSynchronizer (
 
             // Theme application moved to the UI layer (SettingsViewModel) to ensure it runs on the UI thread.
 
-            StoppingHeightCalculatorSettings.MaxSpeedToStopMovement = model.MaxSpeedToStopMovement;
+            StoppingHeightCalculatorSettings.MaxSpeedToStopMovement = model.MaxSpeedToStopMovement ;
         }
         catch ( Exception ex )
         {
@@ -119,13 +119,17 @@ public class SettingsSynchronizer (
         var newNotificationsEnabled = model.Notifications ;
 
         settings.HeightSettings.StandingHeightInCm = toUIntConverter.ConvertToUInt ( model.Standing ,
-            Constants.DefaultHeightStandingInCm ) ;
+                                                                                     Constants
+                                                                                        .DefaultHeightStandingInCm ) ;
         settings.HeightSettings.SeatingHeightInCm = toUIntConverter.ConvertToUInt ( model.Seating ,
-            Constants.DefaultHeightSeatingInCm ) ;
+                                                                                    Constants
+                                                                                       .DefaultHeightSeatingInCm ) ;
         settings.HeightSettings.Custom1HeightInCm = toUIntConverter.ConvertToUInt ( model.Custom1 ,
-            Constants.DefaultHeightStandingInCm ) ;
+                                                                                    Constants
+                                                                                       .DefaultHeightStandingInCm ) ;
         settings.HeightSettings.Custom2HeightInCm = toUIntConverter.ConvertToUInt ( model.Custom2 ,
-            Constants.DefaultHeightSeatingInCm ) ;
+                                                                                    Constants
+                                                                                       .DefaultHeightSeatingInCm ) ;
         settings.HeightSettings.LastKnownDeskHeight = model.LastKnownDeskHeight ;
 
         settings.HeightSettings.StandingIsVisibleInContextMenu = model.StandingIsVisibleInContextMenu ;

@@ -41,60 +41,60 @@
 
         <!-- Main content in first row -->
         <Grid Grid.Row="0">
-        <ui:TitleBar
-            x:Name="TitleBar"
-            Title="{Binding ViewModel.ApplicationTitle}"
-            Grid.Row="0"
-            ShowMinimize="False"
-            ShowMaximize="False"
-            ShowHelp="False"
-            ShowClose="True"
-            CloseWindowByDoubleClickOnIcon="True">
-            <ui:TitleBar.Icon>
-                <ui:ImageIcon Source="pack://application:,,,/Resources/cup-xl.ico" />
-            </ui:TitleBar.Icon>
-        </ui:TitleBar>
+            <ui:TitleBar
+                x:Name="TitleBar"
+                Title="{Binding ViewModel.ApplicationTitle}"
+                Grid.Row="0"
+                ShowMinimize="False"
+                ShowMaximize="False"
+                ShowHelp="False"
+                ShowClose="True"
+                CloseWindowByDoubleClickOnIcon="True">
+                <ui:TitleBar.Icon>
+                    <ui:ImageIcon Source="pack://application:,,,/Resources/cup-xl.ico" />
+                </ui:TitleBar.Icon>
+            </ui:TitleBar>
 
-        <ui:NavigationView
-            x:Name="RootNavigation"
-            Padding="42,0,42,0"
-            BreadcrumbBar="{Binding ElementName=BreadcrumbBar}"
-            FooterMenuItemsSource="{Binding ViewModel.FooterMenuItems, Mode=OneWay}"
-            FrameMargin="0"
-            IsBackButtonVisible="Visible"
-            IsPaneToggleVisible="True"
-            MenuItemsSource="{Binding ViewModel.MenuItems, Mode=OneWay}"
-            OpenPaneLength="110"
-            PaneDisplayMode="Left"
-            TitleBar="{Binding ElementName=TitleBar, Mode=OneWay}"
-            ScrollViewer.VerticalScrollBarVisibility="Auto"
-            ScrollViewer.HorizontalScrollBarVisibility="Auto"
-            ScrollViewer.CanContentScroll="True">
-            <ui:NavigationView.Header>
-                <ui:BreadcrumbBar x:Name="BreadcrumbBar" Margin="42,32,42,20" />
-            </ui:NavigationView.Header>
-            <ui:NavigationView.ContentOverlay>
-                <Grid>
-                    <ui:SnackbarPresenter x:Name="SnackbarPresenter" />
-                </Grid>
-            </ui:NavigationView.ContentOverlay>
-        </ui:NavigationView>
+            <ui:NavigationView
+                x:Name="RootNavigation"
+                Padding="42,0,42,0"
+                BreadcrumbBar="{Binding ElementName=BreadcrumbBar}"
+                FooterMenuItemsSource="{Binding ViewModel.FooterMenuItems, Mode=OneWay}"
+                FrameMargin="0"
+                IsBackButtonVisible="Visible"
+                IsPaneToggleVisible="True"
+                MenuItemsSource="{Binding ViewModel.MenuItems, Mode=OneWay}"
+                OpenPaneLength="110"
+                PaneDisplayMode="Left"
+                TitleBar="{Binding ElementName=TitleBar, Mode=OneWay}"
+                ScrollViewer.VerticalScrollBarVisibility="Auto"
+                ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                ScrollViewer.CanContentScroll="True">
+                <ui:NavigationView.Header>
+                    <ui:BreadcrumbBar x:Name="BreadcrumbBar" Margin="42,32,42,20" />
+                </ui:NavigationView.Header>
+                <ui:NavigationView.ContentOverlay>
+                    <Grid>
+                        <ui:SnackbarPresenter x:Name="SnackbarPresenter" />
+                    </Grid>
+                </ui:NavigationView.ContentOverlay>
+            </ui:NavigationView>
 
-        <ContentPresenter x:Name="RootContentDialog" Grid.Row="0" MinWidth="600"/>
+            <ContentPresenter x:Name="RootContentDialog" Grid.Row="0" MinWidth="600" />
 
-        <tray:NotifyIcon
-            Name="IdasenNotifyIcon"
-            FocusOnLeftClick="False"
-            Icon="pack://application:,,,/Resources/cup-xl.ico"
-            MenuOnRightClick="True"
-            LeftClick="IdasenNotifyIcon_OnLeftClick">
-            <!-- ContextMenu set in code
+            <tray:NotifyIcon
+                Name="IdasenNotifyIcon"
+                FocusOnLeftClick="False"
+                Icon="pack://application:,,,/Resources/cup-xl.ico"
+                MenuOnRightClick="True"
+                LeftClick="IdasenNotifyIcon_OnLeftClick">
+                <!-- ContextMenu set in code
             <tray:NotifyIcon.Menu>
                 <ContextMenu ItemsSource="{Binding ViewModel.TrayMenuItems, Mode=OneWay}" />
             </tray:NotifyIcon.Menu>
             -->
-        </tray:NotifyIcon>
-    </Grid>
+            </tray:NotifyIcon>
+        </Grid>
 
         <!-- Global InfoBar in bottom row -->
         <ui:InfoBar

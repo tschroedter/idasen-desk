@@ -129,8 +129,8 @@ public partial class DynamicIconCreator : IDynamicIconCreator
         if ( ! taskbarIcon.Dispatcher.CheckAccess ( ) )
         {
             taskbarIcon.Dispatcher.BeginInvoke ( new Action ( ( ) => PushIcons ( taskbarIcon ,
-                                                                                    imageSource ,
-                                                                                    value ) ) ) ;
+                                                                                 imageSource ,
+                                                                                 value ) ) ) ;
             return ;
         }
 

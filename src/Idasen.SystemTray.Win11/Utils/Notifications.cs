@@ -48,7 +48,7 @@ public partial class Notifications : INotifications
                            }
                            catch ( OperationCanceledException ex )
                            {
-                               _logger.Warning ( ex,
+                               _logger.Warning ( ex ,
                                                  "Notifications initialization canceled" ) ;
                            }
                            catch ( Exception ex )
@@ -68,6 +68,13 @@ public partial class Notifications : INotifications
         GC.SuppressFinalize ( this ) ;
     }
 
+    public void Show ( string title , string text , InfoBarSeverity serverity )
+    {
+        Show ( new NotificationParameters ( title ,
+                                            text ,
+                                            serverity ) ) ;
+    }
+
     protected virtual void Dispose ( bool disposing )
     {
         if ( ! _disposedValue )
@@ -83,13 +90,6 @@ public partial class Notifications : INotifications
 
             _disposedValue = true ;
         }
-    }
-
-    public void Show(string title, string text, InfoBarSeverity serverity)
-    {
-        Show(new NotificationParameters(title,
-                                        text,
-                                        serverity));
     }
 
     public void Show ( NotificationParameters parameters )

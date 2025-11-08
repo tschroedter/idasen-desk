@@ -3,17 +3,17 @@
 public interface IMainWindow
 {
     /// <summary>
-    /// Event triggered when the visibility of the main window changes.
+    ///     Event triggered when the visibility of the main window changes.
     /// </summary>
-    IObservable<Visibility> VisibilityChanged { get; }
+    IObservable < Visibility > VisibilityChanged { get ; }
 
     /// <summary>
-    /// Shows the main window.
+    ///     Shows the main window.
     /// </summary>
-    void ShowWindow();
+    void ShowWindow ( ) ;
 
     /// <summary>
-    /// Closes the main window.
+    ///     Closes the main window.
     /// </summary>
-    void CloseWindow();
+    void CloseWindow ( ) ;
 }

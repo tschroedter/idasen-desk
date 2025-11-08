@@ -1,13 +1,13 @@
-﻿using Idasen.SystemTray.Win11.Interfaces ;
-using Idasen.SystemTray.Win11.Utils ;
-using Idasen.SystemTray.Win11.ViewModels.Pages;
-using Idasen.SystemTray.Win11.Views.Pages ;
-using System.Collections.ObjectModel ;
+﻿using System.Collections.ObjectModel ;
 using System.Diagnostics.CodeAnalysis ;
 using System.Reactive.Concurrency ;
 using System.Reactive.Linq ;
 using System.Windows.Controls ;
 using System.Windows.Input ;
+using Idasen.SystemTray.Win11.Interfaces ;
+using Idasen.SystemTray.Win11.Utils ;
+using Idasen.SystemTray.Win11.ViewModels.Pages ;
+using Idasen.SystemTray.Win11.Views.Pages ;
 using Wpf.Ui.Controls ;
 using ILogger = Serilog.ILogger ;
 using MenuItem = Wpf.Ui.Controls.MenuItem ;
@@ -20,7 +20,7 @@ namespace Idasen.SystemTray.Win11.ViewModels.Windows ;
 [ ExcludeFromCodeCoverage ]
 public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDisposable
 {
-    private const string DisconnectLiteral = "Disconnect";
+    private const string DisconnectLiteral = "Disconnect" ;
 
     private readonly NavigationViewItem ? _closeWindowViewItem ;
     private readonly NavigationViewItem ? _connectViewItem ;
@@ -47,8 +47,10 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
     // Cached commands
     private readonly NavigationViewItem ? _sitViewItem ;
     private readonly NavigationViewItem ? _standViewItem ;
-    private readonly NavigationViewItem ? _stopViewItem ;
-    private readonly IUiDeskManager       _uiDeskManager ;
+
+    private readonly StatusBarInfoViewModelBase _statusBarInfoViewModel ;
+    private readonly NavigationViewItem ?       _stopViewItem ;
+    private readonly IUiDeskManager             _uiDeskManager ;
 
     private IDisposable ? _advancedSubscription ;
 
@@ -65,22 +67,20 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
     [ ObservableProperty ] private ObservableCollection < object > _menuItems = [] ;
 
-    private NotifyIcon ? _notifyIcon ;
+    private                        NotifyIcon ?    _notifyIcon ;
+    [ ObservableProperty ] private string          _statusBarMessage ;
+    [ ObservableProperty ] private InfoBarSeverity _statusBarSeverity ;
+
+    [ ObservableProperty ] private string _statusBarTitle ;
 
     [ ObservableProperty ] private ObservableCollection < MenuItem > _trayMenuItems = [] ;
 
-    [ObservableProperty] private string          _statusBarTitle ;
-    [ObservableProperty] private string          _statusBarMessage ;
-    [ObservableProperty] private InfoBarSeverity _statusBarSeverity ;
-
-    private readonly             StatusBarInfoViewModelBase _statusBarInfoViewModel ;
-
-    public IdasenDeskWindowViewModel ( ILogger                                                  logger ,
-                                       IUiDeskManager                                           uiDeskManager ,
-                                       IObserveSettingsChanges                                  settingsChanges ,
-                                       IScheduler                                               scheduler ,
-                                       ISettingsManager                                         settingsManager,
-                                       Func<TimerCallback, object?, TimeSpan, TimeSpan, ITimer> timerFactory)
+    public IdasenDeskWindowViewModel ( ILogger logger ,
+                                       IUiDeskManager uiDeskManager ,
+                                       IObserveSettingsChanges settingsChanges ,
+                                       IScheduler scheduler ,
+                                       ISettingsManager settingsManager ,
+                                       Func < TimerCallback , object ? , TimeSpan , TimeSpan , ITimer > timerFactory )
     {
         _logger          = logger ;
         _uiDeskManager   = uiDeskManager ;
@@ -290,33 +290,35 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
             menuItemExit
         ] ;
 
-        _statusBarInfoViewModel = new StatusBarInfoViewModelBase(uiDeskManager,
-                                                                 scheduler,
-                                                                 timerFactory);
+        _statusBarInfoViewModel = new StatusBarInfoViewModelBase ( uiDeskManager ,
+                                                                   scheduler ,
+                                                                   timerFactory ) ;
 
-        _statusBarTitle    = _statusBarInfoViewModel.Title;
-        _statusBarMessage  = _statusBarInfoViewModel.Message;
-        _statusBarSeverity = _statusBarInfoViewModel.Severity;
+        _statusBarTitle    = _statusBarInfoViewModel.Title ;
+        _statusBarMessage  = _statusBarInfoViewModel.Message ;
+        _statusBarSeverity = _statusBarInfoViewModel.Severity ;
 
-        _statusBarInfoViewModel.PropertyChanged += (_, e) =>
-        {
-            if ( e.PropertyName ==
-                 nameof ( StatusBarInfoViewModelBase.Title ) )
-            {
-                _statusBarTitle = _statusBarInfoViewModel.Title ;
-                OnPropertyChanged(nameof(StatusBarTitle));
-            }
-            else if ( e.PropertyName == nameof ( StatusBarInfoViewModelBase.Message ) )
-            {
-                _statusBarMessage = _statusBarInfoViewModel.Message ;
-                OnPropertyChanged(nameof(StatusBarMessage));
-            }
-            else if ( e.PropertyName == nameof ( StatusBarInfoViewModelBase.Severity ) )
-            {
-                _statusBarSeverity = _statusBarInfoViewModel.Severity ;
-                OnPropertyChanged(nameof(StatusBarSeverity));
-            }
-        };
+        _statusBarInfoViewModel.PropertyChanged += ( _ , e ) =>
+                                                   {
+                                                       if ( e.PropertyName ==
+                                                            nameof ( StatusBarInfoViewModelBase.Title ) )
+                                                       {
+                                                           _statusBarTitle = _statusBarInfoViewModel.Title ;
+                                                           OnPropertyChanged ( nameof ( StatusBarTitle ) ) ;
+                                                       }
+                                                       else if ( e.PropertyName ==
+                                                                 nameof ( StatusBarInfoViewModelBase.Message ) )
+                                                       {
+                                                           _statusBarMessage = _statusBarInfoViewModel.Message ;
+                                                           OnPropertyChanged ( nameof ( StatusBarMessage ) ) ;
+                                                       }
+                                                       else if ( e.PropertyName ==
+                                                                 nameof ( StatusBarInfoViewModelBase.Severity ) )
+                                                       {
+                                                           _statusBarSeverity = _statusBarInfoViewModel.Severity ;
+                                                           OnPropertyChanged ( nameof ( StatusBarSeverity ) ) ;
+                                                       }
+                                                   } ;
     }
 
     /// <summary>

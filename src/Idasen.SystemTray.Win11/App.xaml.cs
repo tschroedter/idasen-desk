@@ -44,77 +44,161 @@ public partial class App
                                                   .ConfigureAppConfiguration ( GetBasePath )
                                                   .UseServiceProviderFactory ( new AutofacServiceProviderFactory ( ) )
                                                   .ConfigureContainer < ContainerBuilder > ( builder =>
-                                                   {
-                                                       // Register Serilog logger instance for DI
-                                                       builder.RegisterLogger ( LoggerProvider.CreateLogger ( AppContext.BaseDirectory ) ) ;
-                                                       builder.RegisterModule < BluetoothLEAop > ( ) ;
-                                                       builder
-                                                          .RegisterModule < BluetoothLECoreModule > ( ) ;
-                                                       builder
-                                                          .RegisterModule < BluetoothLELinakModule > ( ) ;
-                                                   } )
+                                                                                             {
+                                                                                                 // Register Serilog logger instance for DI
+                                                                                                 builder
+                                                                                                    .RegisterLogger ( LoggerProvider
+                                                                                                                         .CreateLogger ( AppContext
+                                                                                                                                            .BaseDirectory ) ) ;
+                                                                                                 builder
+                                                                                                    .RegisterModule <
+                                                                                                         BluetoothLEAop > ( ) ;
+                                                                                                 builder
+                                                                                                    .RegisterModule <
+                                                                                                         BluetoothLECoreModule > ( ) ;
+                                                                                                 builder
+                                                                                                    .RegisterModule <
+                                                                                                         BluetoothLELinakModule > ( ) ;
+                                                                                             } )
                                                   .ConfigureServices ( ( _ ,
                                                                          services ) =>
                                                                        {
-                                                                           services.AddHostedService < ApplicationHostService > ( ) ;
+                                                                           services
+                                                                              .AddHostedService <
+                                                                                   ApplicationHostService > ( ) ;
 
                                                                            // Page resolver service
-                                                                           services.AddSingleton < INavigationViewPageProvider , PageService > ( ) ;
-                                                                           services.AddSingleton < INavigationService , NavigationService > ( ) ;
+                                                                           services
+                                                                              .AddSingleton <
+                                                                                   INavigationViewPageProvider ,
+                                                                                   PageService > ( ) ;
+                                                                           services
+                                                                              .AddSingleton < INavigationService ,
+                                                                                   NavigationService > ( ) ;
 
                                                                            // Theme manipulation
-                                                                           services.AddSingleton < IThemeService , ThemeService > ( ) ;
+                                                                           services
+                                                                              .AddSingleton < IThemeService ,
+                                                                                   ThemeService > ( ) ;
 
                                                                            // TaskBar manipulation
-                                                                           services.AddSingleton < ITaskBarService , TaskBarService > ( ) ;
+                                                                           services
+                                                                              .AddSingleton < ITaskBarService ,
+                                                                                   TaskBarService > ( ) ;
 
                                                                            // Main window with navigation
-                                                                           services.AddSingleton < INavigationWindow , IdasenDeskWindow > ( ) ;
-                                                                           services.AddSingleton < IdasenDeskWindowViewModel > ( ) ;
+                                                                           services
+                                                                              .AddSingleton < INavigationWindow ,
+                                                                                   IdasenDeskWindow > ( ) ;
+                                                                           services
+                                                                              .AddSingleton <
+                                                                                   IdasenDeskWindowViewModel > ( ) ;
                                                                            services.AddSingleton < HomePage > ( ) ;
-                                                                           services.AddSingleton < DashboardViewModel > ( ) ;
+                                                                           services
+                                                                              .AddSingleton < DashboardViewModel > ( ) ;
                                                                            services.AddSingleton < StatusPage > ( ) ;
-                                                                           services.AddSingleton < StatusViewModel > ( ) ;
+                                                                           services
+                                                                              .AddSingleton < StatusViewModel > ( ) ;
                                                                            services.AddSingleton < SettingsPage > ( ) ;
-                                                                           services.AddSingleton < SettingsViewModel > ( ) ;
-                                                                           services.AddSingleton < IVersionProvider , VersionProvider > ( ) ;
-                                                                           services.AddSingleton < INotifications , Notifications > ( ) ;
-                                                                           services.AddSingleton < IToastService , ToastService > ( ) ;
-                                                                           services.AddSingleton < SettingsChanges > ( ) ;
-                                                                           services.AddSingleton < IObserveSettingsChanges > ( GetSettingsChanged ) ;
-                                                                           services.AddSingleton < INotifySettingsChanges > ( GetSettingsChanged ) ;
-                                                                           services.AddSingleton < ISettingsManager , SettingsManager > ( ) ;
-                                                                           services.AddSingleton < ILoggingSettingsManager , LoggingSettingsManager > ( ) ;
-                                                                           services.AddSingleton < ICommonApplicationData , CommonApplicationData > ( ) ;
-                                                                           services.AddSingleton < ISettingsStorage , SettingsStorage > ( ) ;
-                                                                           services.AddSingleton < ITaskbarIconProvider , TaskbarIconProvider > ( ) ;
-                                                                           services.AddSingleton < IUiDeskManager , UiDeskManager > ( ) ;
-                                                                           services.AddSingleton < IDynamicIconCreator , DynamicIconCreator > ( ) ;
-                                                                           services.AddSingleton ( _ => CreateScheduler ( ) ) ;
-                                                                           services.AddSingleton ( CreateTaskbarIconProvider ) ;
-                                                                           services.AddTransient < IDeviceNameConverter , DeviceNameConverter > ( ) ;
-                                                                           services.AddTransient < IDoubleToUIntConverter , DoubleToUIntConverter > ( ) ;
-                                                                           services.AddTransient < IStringToUIntConverter , StringToUIntConverter > ( ) ;
-                                                                           services.AddTransient < IDeviceAddressToULongConverter , DeviceAddressToULongConverter > ( ) ;
-                                                                           services.AddSingleton ( provider => new Func < IDeskProvider > ( provider.GetRequiredService < IDeskProvider > ) ) ;
-                                                                           services.AddSingleton < IFileSystem , FileSystem > ( ) ;
-                                                                           services.AddTransient < IThemeSwitcher , ThemeSwitcher > ( ) ;
-                                                                           services.AddTransient < ISettingsSynchronizer , SettingsSynchronizer > ( ) ;
-                                                                           services.AddSingleton < IApplicationThemeManager , MyApplicationThemeManager > ( ) ;
-                                                                           services.AddSingleton < Func < TimerCallback , object ? , TimeSpan , TimeSpan , ITimer > >
-                                                                                   ( _ => ( callback , state , dueTime , period ) 
-                                                                                       => new Timer ( callback , state , dueTime , period ) ) ;
-                                                                           services.AddSingleton ( _ => CreateMainWindow( ) ) ;
-                                                                           services.AddSingleton < IAssemblyVersionProvider , AssemblyVersionProvider > ( ) ;
+                                                                           services
+                                                                              .AddSingleton < SettingsViewModel > ( ) ;
+                                                                           services
+                                                                              .AddSingleton < IVersionProvider ,
+                                                                                   VersionProvider > ( ) ;
+                                                                           services
+                                                                              .AddSingleton < INotifications ,
+                                                                                   Notifications > ( ) ;
+                                                                           services
+                                                                              .AddSingleton < IToastService ,
+                                                                                   ToastService > ( ) ;
+                                                                           services
+                                                                              .AddSingleton < SettingsChanges > ( ) ;
+                                                                           services
+                                                                              .AddSingleton <
+                                                                                   IObserveSettingsChanges > ( GetSettingsChanged ) ;
+                                                                           services
+                                                                              .AddSingleton <
+                                                                                   INotifySettingsChanges > ( GetSettingsChanged ) ;
+                                                                           services
+                                                                              .AddSingleton < ISettingsManager ,
+                                                                                   SettingsManager > ( ) ;
+                                                                           services
+                                                                              .AddSingleton < ILoggingSettingsManager ,
+                                                                                   LoggingSettingsManager > ( ) ;
+                                                                           services
+                                                                              .AddSingleton < ICommonApplicationData ,
+                                                                                   CommonApplicationData > ( ) ;
+                                                                           services
+                                                                              .AddSingleton < ISettingsStorage ,
+                                                                                   SettingsStorage > ( ) ;
+                                                                           services
+                                                                              .AddSingleton < ITaskbarIconProvider ,
+                                                                                   TaskbarIconProvider > ( ) ;
+                                                                           services
+                                                                              .AddSingleton < IUiDeskManager ,
+                                                                                   UiDeskManager > ( ) ;
+                                                                           services
+                                                                              .AddSingleton < IDynamicIconCreator ,
+                                                                                   DynamicIconCreator > ( ) ;
+                                                                           services.AddSingleton ( _ =>
+                                                                                                       CreateScheduler ( ) ) ;
+                                                                           services
+                                                                              .AddSingleton ( CreateTaskbarIconProvider ) ;
+                                                                           services
+                                                                              .AddTransient < IDeviceNameConverter ,
+                                                                                   DeviceNameConverter > ( ) ;
+                                                                           services
+                                                                              .AddTransient < IDoubleToUIntConverter ,
+                                                                                   DoubleToUIntConverter > ( ) ;
+                                                                           services
+                                                                              .AddTransient < IStringToUIntConverter ,
+                                                                                   StringToUIntConverter > ( ) ;
+                                                                           services
+                                                                              .AddTransient <
+                                                                                   IDeviceAddressToULongConverter ,
+                                                                                   DeviceAddressToULongConverter > ( ) ;
+                                                                           services.AddSingleton ( provider =>
+                                                                                                       new Func <
+                                                                                                           IDeskProvider > ( provider
+                                                                                                                                .GetRequiredService
+                                                                                                                                 < IDeskProvider > ) ) ;
+                                                                           services
+                                                                              .AddSingleton < IFileSystem ,
+                                                                                   FileSystem > ( ) ;
+                                                                           services
+                                                                              .AddTransient < IThemeSwitcher ,
+                                                                                   ThemeSwitcher > ( ) ;
+                                                                           services
+                                                                              .AddTransient < ISettingsSynchronizer ,
+                                                                                   SettingsSynchronizer > ( ) ;
+                                                                           services
+                                                                              .AddSingleton < IApplicationThemeManager ,
+                                                                                   MyApplicationThemeManager > ( ) ;
+                                                                           services
+                                                                              .AddSingleton <
+                                                                                       Func < TimerCallback , object ? ,
+                                                                                           TimeSpan , TimeSpan ,
+                                                                                           ITimer > >
+                                                                                   ( _ => ( callback , state , dueTime ,
+                                                                                            period )
+                                                                                              => new Timer ( callback ,
+                                                                                                             state ,
+                                                                                                             dueTime ,
+                                                                                                             period ) ) ;
+                                                                           services.AddSingleton ( _ =>
+                                                                                                       CreateMainWindow ( ) ) ;
+                                                                           services
+                                                                              .AddSingleton < IAssemblyVersionProvider ,
+                                                                                   AssemblyVersionProvider > ( ) ;
                                                                        } ).Build ( ) ;
 
-    private static   Mutex ? _singleInstanceMutex ;
+    private static Mutex ? _singleInstanceMutex ;
 
     private readonly ILogger _logger = LoggerProvider.CreateLogger ( AppContext.BaseDirectory ) ;
 
     static App ( )
     {
-        Log.Logger = GetLogger (  ) ;
+        Log.Logger = GetLogger ( ) ;
     }
 
     private static Window CurrentWindow =>
@@ -131,9 +215,10 @@ public partial class App
         return TaskPoolScheduler.Default ;
     }
 
-    private static IMainWindow CreateMainWindow()
+    private static IMainWindow CreateMainWindow ( )
     {
-        return Application.Current.MainWindow as IdasenDeskWindow ?? throw new InvalidOperationException($"Failed to resolve: {nameof(IMainWindow)}");
+        return Current.MainWindow as IdasenDeskWindow ??
+               throw new InvalidOperationException ( $"Failed to resolve: {nameof ( IMainWindow )}" ) ;
     }
 
     private static ITaskbarIconProvider CreateTaskbarIconProvider ( IServiceProvider services )
@@ -174,7 +259,7 @@ public partial class App
             }
 
             await HandleStartingApplication ( ) ;
-            
+
             await HandleInitializingApplication ( ) ;
 
             var versionProvider = GetVersionProvider ( ) ;
@@ -255,13 +340,13 @@ public partial class App
     private static IVersionProvider GetVersionProvider ( )
     {
         return GetService < IVersionProvider > ( ) ??
-               throw new InvalidOperationException( $"Failed to resolve: {nameof ( IVersionProvider )}" ) ;
+               throw new InvalidOperationException ( $"Failed to resolve: {nameof ( IVersionProvider )}" ) ;
     }
 
     private static ILogger GetLogger ( )
     {
         return GetService < ILogger > ( ) ??
-               throw new InvalidOperationException( $"Failed to resolve: {nameof ( ILogger )}" ) ;
+               throw new InvalidOperationException ( $"Failed to resolve: {nameof ( ILogger )}" ) ;
     }
 
     /// <summary>
@@ -285,7 +370,7 @@ public partial class App
         }
         finally
         {
-            ReleaseSingleInstanceMutex();
+            ReleaseSingleInstanceMutex ( ) ;
         }
     }
 

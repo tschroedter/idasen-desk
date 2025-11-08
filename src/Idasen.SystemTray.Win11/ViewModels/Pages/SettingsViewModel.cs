@@ -18,12 +18,12 @@ namespace Idasen.SystemTray.Win11.ViewModels.Pages ;
 
 [ ExcludeFromCodeCoverage ]
 public partial class SettingsViewModel (
-    ILogger                 logger ,
-    ILoggingSettingsManager settingsManager ,
-    IScheduler              scheduler ,
-    ISettingsSynchronizer   synchronizer ,
+    ILogger                  logger ,
+    ILoggingSettingsManager  settingsManager ,
+    IScheduler               scheduler ,
+    ISettingsSynchronizer    synchronizer ,
     IApplicationThemeManager themeManager ,
-    IMainWindow             mainWindow )
+    IMainWindow              mainWindow )
     : ObservableObject , INavigationAware , ISettingsViewModel
 {
     [ ObservableProperty ] private string _appVersion = string.Empty ;
@@ -141,7 +141,8 @@ public partial class SettingsViewModel (
         }
         catch ( Exception ex )
         {
-            logger.Error ( ex , "Failed to apply theme during initialization" ) ;
+            logger.Error ( ex ,
+                           "Failed to apply theme during initialization" ) ;
         }
 
         SettingsFileFullPath = settingsManager.SettingsFileName ;
@@ -288,19 +289,20 @@ public partial class SettingsViewModel (
 
         // Subscribe to VisibilityChanged
         _visibilitySubscription = mainWindow.VisibilityChanged
-            .Where ( visibility => visibility != Visibility.Visible )
-            .Subscribe ( async void ( _ ) =>
-                         {
-                             try
-                             {
-                                 await synchronizer.StoreSettingsAsync ( this ,
-                                                                        CancellationToken.None ) ;
-                             }
-                             catch ( Exception ex )
-                             {
-                                 logger.Error ( ex ,
-                                                "Failed to save settings when visibility changed." ) ;
-                             }
-                         } ) ;
+                                            .Where ( visibility => visibility != Visibility.Visible )
+                                            .Subscribe ( async void ( _ ) =>
+                                                         {
+                                                             try
+                                                             {
+                                                                 await synchronizer.StoreSettingsAsync ( this ,
+                                                                                                         CancellationToken
+                                                                                                            .None ) ;
+                                                             }
+                                                             catch ( Exception ex )
+                                                             {
+                                                                 logger.Error ( ex ,
+                                                                                "Failed to save settings when visibility changed." ) ;
+                                                             }
+                                                         } ) ;
     }
 }

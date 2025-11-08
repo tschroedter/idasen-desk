@@ -132,7 +132,7 @@
                                 ToolTip="The estimated units required to stop from max. movement speed."
                                 IsSymbolVisible="Collapsed"
                                 Units="units"
-                                IsShowInTrayVisible="Collapsed"/>
+                                IsShowInTrayVisible="Collapsed" />
                             <!-- Row 17 Blank -->
                             <!-- Row 18 -->
                             <Separator Grid.Row="18" Grid.Column="0" Grid.ColumnSpan="2" />

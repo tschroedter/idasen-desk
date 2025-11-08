@@ -15,6 +15,8 @@ public partial class StatusBarInfoViewModelBase : ObservableObject , IDisposable
 
     private readonly IUiDeskManager _uiDeskManager ;
 
+    private bool _disposed ;
+
     [ ObservableProperty ] private uint _height ;
 
     [ ObservableProperty ] private string _message = "Unknown" ;
@@ -22,8 +24,6 @@ public partial class StatusBarInfoViewModelBase : ObservableObject , IDisposable
     [ ObservableProperty ] private InfoBarSeverity _severity = InfoBarSeverity.Informational ;
 
     [ ObservableProperty ] private string _title = "Desk Status" ;
-
-    private bool _disposed ;
 
     public StatusBarInfoViewModelBase (
         IUiDeskManager                                                   uiDeskManager ,
@@ -48,27 +48,27 @@ public partial class StatusBarInfoViewModelBase : ObservableObject , IDisposable
 
     protected IScheduler Scheduler { get ; }
 
-    protected virtual void Dispose(bool disposing)
+    public void Dispose ( )
     {
-        if (_disposed)
-            return;
+        Dispose ( true ) ;
+        GC.SuppressFinalize ( this ) ;
+    }
 
-        if (disposing)
+    protected virtual void Dispose ( bool disposing )
+    {
+        if ( _disposed )
+            return ;
+
+        if ( disposing )
         {
             // Dispose managed resources
-            _timer.Dispose();
-            _statusBarInfoChanged.Dispose();
+            _timer.Dispose ( ) ;
+            _statusBarInfoChanged.Dispose ( ) ;
         }
 
         // Dispose unmanaged resources if any
 
-        _disposed = true;
-    }
-
-    public void Dispose()
-    {
-        Dispose(disposing: true);
-        GC.SuppressFinalize(this);
+        _disposed = true ;
     }
 
     private void OnStatusBarInfoChangedInternal ( StatusBarInfo info )
@@ -112,8 +112,8 @@ public partial class StatusBarInfoViewModelBase : ObservableObject , IDisposable
     }
 
     // Finalizer to ensure unmanaged resources are released
-    ~StatusBarInfoViewModelBase()
+    ~StatusBarInfoViewModelBase ( )
     {
-        Dispose ( disposing : false ) ;
+        Dispose ( false ) ;
     }
 }
