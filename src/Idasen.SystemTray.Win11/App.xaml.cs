@@ -351,8 +351,8 @@ public partial class App
 
     private static ISettingsManager GetSettingsManager()
     {
-        return GetService<ISettingsManager>() ??
-               throw new InvalidOperationException($"Failed to resolve: {nameof(ISettingsManager)}");
+        return GetService < ISettingsManager > () ??
+               throw new InvalidOperationException ( $"Failed to resolve: {nameof ( ISettingsManager )}" ) ;
     }
 
     /// <summary>
