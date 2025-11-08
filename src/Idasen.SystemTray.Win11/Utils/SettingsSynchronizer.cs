@@ -25,32 +25,8 @@ public class SettingsSynchronizer (
 
             await settingsManager.LoadAsync ( token ).ConfigureAwait ( false ) ;
 
-            var current = settingsManager.CurrentSettings ;
-
-            model.MinHeight = current.HeightSettings.DeskMinHeightInCm ;
-            model.MaxHeight = current.HeightSettings.DeskMaxHeightInCm ;
-            model.Standing  = current.HeightSettings.StandingHeightInCm ;
-            model.Seating   = current.HeightSettings.SeatingHeightInCm ;
-            model.Custom1   = current.HeightSettings.Custom1HeightInCm ;
-            model.Custom2   = current.HeightSettings.Custom2HeightInCm ;
-
-            model.StandingIsVisibleInContextMenu = current.HeightSettings.StandingIsVisibleInContextMenu ;
-            model.SeatingIsVisibleInContextMenu  = current.HeightSettings.SeatingIsVisibleInContextMenu ;
-            model.Custom1IsVisibleInContextMenu  = current.HeightSettings.Custom1IsVisibleInContextMenu ;
-            model.Custom2IsVisibleInContextMenu  = current.HeightSettings.Custom2IsVisibleInContextMenu ;
-            model.StopIsVisibleInContextMenu     = current.DeviceSettings.StopIsVisibleInContextMenu ;
-
-            model.LastKnownDeskHeight = current.HeightSettings.LastKnownDeskHeight ;
-            model.DeskName            = nameConverter.EmptyIfDefault ( current.DeviceSettings.DeviceName ) ;
-            model.DeskAddress         = addressConverter.EmptyIfDefault ( current.DeviceSettings.DeviceAddress ) ;
-            model.ParentalLock        = current.DeviceSettings.DeviceLocked ;
-            model.Notifications       = current.DeviceSettings.NotificationsEnabled ;
-            model.MaxSpeedToStopMovement = current.DeviceSettings.MaxSpeedToStopMovement > 0
-                                               ? current.DeviceSettings.MaxSpeedToStopMovement
-                                               : StoppingHeightCalculatorSettings.MaxSpeedToStopMovement ;
-
-            var themeName = current.AppearanceSettings.ThemeName ;
-            model.CurrentTheme = ParseThemeName ( themeName ) ;
+            ApplySettingsToModel ( model ,
+                                   settingsManager.CurrentSettings ) ;
 
             // Theme application moved to the UI layer (SettingsViewModel) to ensure it runs on the UI thread.
 
@@ -59,9 +35,9 @@ public class SettingsSynchronizer (
         catch ( Exception ex )
         {
             logger.Error ( ex ,
-                           "Failed to load settings" ) ;
+                           "Failed to load settings! Using defaults settings." ) ;
 
-            throw new InvalidOperationException ( "Failed to load settings" ) ;
+            throw new InvalidOperationException ( "Failed to load settings! Using defaults settings." ) ;
         }
     }
 
@@ -91,6 +67,35 @@ public class SettingsSynchronizer (
     public void ChangeTheme ( string parameter )
     {
         themeSwitcher.ChangeTheme ( parameter ) ;
+    }
+
+    private void ApplySettingsToModel ( ISettingsViewModel model ,
+                                        ISettings current )
+    {
+        model.MinHeight = current.HeightSettings.DeskMinHeightInCm ;
+        model.MaxHeight = current.HeightSettings.DeskMaxHeightInCm ;
+        model.Standing  = current.HeightSettings.StandingHeightInCm ;
+        model.Seating   = current.HeightSettings.SeatingHeightInCm ;
+        model.Custom1   = current.HeightSettings.Custom1HeightInCm ;
+        model.Custom2   = current.HeightSettings.Custom2HeightInCm ;
+
+        model.StandingIsVisibleInContextMenu = current.HeightSettings.StandingIsVisibleInContextMenu ;
+        model.SeatingIsVisibleInContextMenu  = current.HeightSettings.SeatingIsVisibleInContextMenu ;
+        model.Custom1IsVisibleInContextMenu  = current.HeightSettings.Custom1IsVisibleInContextMenu ;
+        model.Custom2IsVisibleInContextMenu  = current.HeightSettings.Custom2IsVisibleInContextMenu ;
+        model.StopIsVisibleInContextMenu     = current.DeviceSettings.StopIsVisibleInContextMenu ;
+
+        model.LastKnownDeskHeight = current.HeightSettings.LastKnownDeskHeight ;
+        model.DeskName            = nameConverter.EmptyIfDefault ( current.DeviceSettings.DeviceName ) ;
+        model.DeskAddress         = addressConverter.EmptyIfDefault ( current.DeviceSettings.DeviceAddress ) ;
+        model.ParentalLock        = current.DeviceSettings.DeviceLocked ;
+        model.Notifications       = current.DeviceSettings.NotificationsEnabled ;
+        model.MaxSpeedToStopMovement = current.DeviceSettings.MaxSpeedToStopMovement > 0
+                                           ? current.DeviceSettings.MaxSpeedToStopMovement
+                                           : StoppingHeightCalculatorSettings.MaxSpeedToStopMovement ;
+
+        var themeName = current.AppearanceSettings.ThemeName ;
+        model.CurrentTheme = ParseThemeName ( themeName ) ;
     }
 
     public bool HasParentalLockChanged ( ISettingsViewModel model )

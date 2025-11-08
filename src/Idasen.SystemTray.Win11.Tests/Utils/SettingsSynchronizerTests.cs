@@ -255,9 +255,9 @@ public class SettingsSynchronizerTests
 
         // Assert
         await act.Should ( ).ThrowAsync < InvalidOperationException > ( )
-                 .WithMessage ( "Failed to load settings" ) ;
+                 .WithMessage ( "Failed to load settings! Using defaults settings." ) ;
         _logger.Received ( 1 ).Error ( testException ,
-                                       "Failed to load settings" ) ;
+                                       "Failed to load settings! Using defaults settings." ) ;
     }
 
     [ Fact ]
