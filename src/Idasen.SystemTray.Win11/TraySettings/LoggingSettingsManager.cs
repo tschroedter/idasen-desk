@@ -3,6 +3,7 @@ using Serilog ;
 
 namespace Idasen.SystemTray.Win11.TraySettings ;
 
+// ReSharper disable once PartialTypeWithSinglePart
 public partial class LoggingSettingsManager (
     ILogger          logger ,
     ISettingsManager settingsManager )

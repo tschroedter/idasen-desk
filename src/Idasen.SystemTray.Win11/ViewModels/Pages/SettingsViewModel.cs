@@ -80,7 +80,6 @@ public partial class SettingsViewModel (
     private                        IDisposable ? _visibilitySubscription ;
 
     // Add theme manager field
-    private readonly IApplicationThemeManager _themeManager = themeManager ;
 
     public async Task OnNavigatedToAsync ( )
     {
@@ -138,7 +137,7 @@ public partial class SettingsViewModel (
         // Ensure theme is applied and await completion to avoid startup races
         try
         {
-            await _themeManager.ApplyAsync ( CurrentTheme ) ;
+            await themeManager.ApplyAsync ( CurrentTheme ) ;
         }
         catch ( Exception ex )
         {

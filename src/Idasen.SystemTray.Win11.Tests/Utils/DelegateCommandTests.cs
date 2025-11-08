@@ -1,9 +1,6 @@
 using FluentAssertions ;
 using Idasen.SystemTray.Win11.Utils ;
 using NSubstitute ;
-using System.Threading ;
-using System.Windows.Input ;
-using System.Windows.Threading ;
 
 namespace Idasen.SystemTray.Win11.Tests.Utils ;
 

@@ -48,6 +48,11 @@ public sealed class SettingsViewModelTests
 
     private bool _disposed ;
 
+    ~SettingsViewModelTests ( )
+    {
+        Dispose ( false ) ;
+    }
+
     public void Dispose ( )
     {
         Dispose ( true ) ;
