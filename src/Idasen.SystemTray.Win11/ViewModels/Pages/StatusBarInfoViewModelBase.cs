@@ -62,8 +62,12 @@ public partial class StatusBarInfoViewModelBase : ObservableObject , IDisposable
         if ( disposing )
         {
             // Dispose managed resources
+            // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
+            // ReSharper disable ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
             _timer?.Dispose ( ) ;
             _statusBarInfoChanged?.Dispose ( ) ;
+            // ReSharper restore ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
+            // ReSharper restore ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
         }
 
         // Dispose unmanaged resources if any
