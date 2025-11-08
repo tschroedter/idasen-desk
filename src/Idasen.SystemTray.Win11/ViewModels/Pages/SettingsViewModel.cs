@@ -130,10 +130,7 @@ public partial class SettingsViewModel (
     {
         _isLoadingSettings = true ;
 
-        await synchronizer.LoadSettingsAsync ( this ,
-                                               token ) ;
-
-        await themeManager.ApplyAsync(CurrentTheme);
+        await LoadAndApplySettings ( token ) ;
 
         SettingsFileFullPath = settingsManager.SettingsFileName ;
         LogFolderPath        = LoggingFile.Path ;
@@ -149,6 +146,14 @@ public partial class SettingsViewModel (
         SubscribeToMainWindowVisibility ( ) ;
 
         _isLoadingSettings = false ;
+    }
+
+    private async Task LoadAndApplySettings ( CancellationToken token )
+    {
+        await synchronizer.LoadSettingsAsync ( this ,
+                                               token ) ;
+
+        await themeManager.ApplyAsync(CurrentTheme);
     }
 
     private void SetupAutoSave ( )
@@ -196,7 +201,7 @@ public partial class SettingsViewModel (
     {
         // Keep continuation on UI thread to safely update bindable properties
         CurrentTheme = await Task.Run ( ApplicationThemeManager.GetAppTheme ) ;
-        AppVersion   = $"UiDesktopApp1 - {GetAssemblyVersion ( )}" ;
+        AppVersion   = $"{GetAssemblyVersion ( )}" ;
 
         _isInitialized = true ;
     }
@@ -249,12 +254,9 @@ public partial class SettingsViewModel (
 
             _isLoadingSettings = true ;
 
-            // Reset settings to defaults at the source and persist once
             await settingsManager.ResetSettingsAsync ( CancellationToken.None ) ;
 
-            // Reload the ViewModel from the freshly reset settings
-            await synchronizer.LoadSettingsAsync ( this ,
-                                                   CancellationToken.None ) ;
+            await LoadAndApplySettings ( CancellationToken.None ) ;
         }
         catch ( Exception ex )
         {
