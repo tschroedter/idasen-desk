@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Idasen.SystemTray.Win11", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Idasen.SystemTray.Win11.Tests", "Idasen.SystemTray.Win11.Tests\Idasen.SystemTray.Win11.Tests.csproj", "{21B96C5C-F01B-4A68-AD4C-50021059B025}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Idasen.SystemTray.Win11.IntegrationTests", "Idasen.SystemTray.Win11.IntegrationTests\Idasen.SystemTray.Win11.IntegrationTests.csproj", "{0F603239-8917-EA01-7982-17CC19A4F95E}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,10 +21,6 @@ Global
 		{21B96C5C-F01B-4A68-AD4C-50021059B025}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{21B96C5C-F01B-4A68-AD4C-50021059B025}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{21B96C5C-F01B-4A68-AD4C-50021059B025}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0F603239-8917-EA01-7982-17CC19A4F95E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0F603239-8917-EA01-7982-17CC19A4F95E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0F603239-8917-EA01-7982-17CC19A4F95E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0F603239-8917-EA01-7982-17CC19A4F95E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
