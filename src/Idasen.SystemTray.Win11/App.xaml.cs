@@ -349,6 +349,12 @@ public partial class App
                throw new InvalidOperationException ( $"Failed to resolve: {nameof ( ILogger )}" ) ;
     }
 
+    private static ISettingsManager GetSettingsManager()
+    {
+        return GetService<ISettingsManager>() ??
+               throw new InvalidOperationException($"Failed to resolve: {nameof(ISettingsManager)}");
+    }
+
     /// <summary>
     ///     Occurs when the application is closing.
     /// </summary>
@@ -358,6 +364,8 @@ public partial class App
         try
         {
             _logger.Information ( "##### Exiting..." ) ;
+
+            await OneExitSaveSettings ( ) ;
 
             await Host.StopAsync ( ) ;
 
@@ -371,6 +379,32 @@ public partial class App
         finally
         {
             ReleaseSingleInstanceMutex ( ) ;
+        }
+    }
+
+    private async Task OneExitSaveSettings ( )
+    {
+        _logger.Information ( "##### Saving settings..." ) ;
+
+        var manager = GetSettingsManager ( ) ;
+
+        using var cts = new CancellationTokenSource ( TimeSpan.FromSeconds ( 10 ) ) ;
+        try
+        {
+            // await instead of blocking; pass the timed cancellation token
+            await manager.SaveAsync ( cts.Token ) ;
+
+            _logger.Information ( "##### Saving settings...Done" ) ;
+        }
+        catch ( OperationCanceledException e )
+        {
+            _logger.Warning ( e ,
+                              "Saving settings was canceled after timeout." ) ;
+        }
+        catch ( Exception ex )
+        {
+            _logger.Error ( ex ,
+                            "Failed to save settings." ) ;
         }
     }
 
