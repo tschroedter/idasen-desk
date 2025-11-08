@@ -134,7 +134,7 @@ public partial class SettingsViewModel (
         await synchronizer.LoadSettingsAsync ( this ,
                                                token ) ;
 
-        await themeManager.ApplyAsync ( CurrentTheme ) ;
+        await themeManager.ApplyAsync(CurrentTheme);
 
         SettingsFileFullPath = settingsManager.SettingsFileName ;
         LogFolderPath        = LoggingFile.Path ;
