@@ -135,4 +135,78 @@ public class LoggingSettingsManagerTests
         _logger.Received ( 1 ).Error ( Arg.Any < Exception > ( ) ,
                                        "Failed to load settings" ) ;
     }
+
+    [Fact]
+    public void Properties_ShouldReturnValuesFromSettingsManager()
+    {
+        var settings = Substitute.For<ISettings>();
+        var settingsSaved = Substitute.For<IObservable<ISettings>>();
+
+        _settingsManager.CurrentSettings.Returns(settings);
+        _settingsManager.SettingsFileName.Returns("someFile");
+        _settingsManager.SettingsSaved.Returns(settingsSaved);
+
+        _manager.CurrentSettings.Should().Be(settings);
+        _manager.SettingsFileName.Should().Be("someFile");
+        _manager.SettingsSaved.Should().Be(settingsSaved);
+    }
+
+    [Fact]
+    public async Task UpgradeSettingsAsync_WhenThrows_ShouldReturnFalseAndLogError()
+    {
+        _settingsManager.UpgradeSettingsAsync(Arg.Any<CancellationToken>())
+                         .Returns(Task.FromException<bool>(new InvalidOperationException("boom")));
+
+        var result = await _manager.UpgradeSettingsAsync(CancellationToken.None);
+
+        result.Should().BeFalse();
+
+        var errorCalls = _logger.ReceivedCalls()
+                                .Where(c => c.GetMethodInfo().Name == nameof(_logger.Error));
+
+        errorCalls.Count().Should().BeGreaterThanOrEqualTo(1);
+    }
+
+    [Fact]
+    public async Task ResetSettingsAsync_ShouldLogInformationAndCallReset()
+    {
+        _settingsManager.ResetSettingsAsync(Arg.Any<CancellationToken>())
+                        .Returns(Task.CompletedTask);
+
+        await _manager.ResetSettingsAsync(CancellationToken.None);
+
+        await _settingsManager.Received(1)
+                              .ResetSettingsAsync(CancellationToken.None);
+
+        var infoCalls = _logger.ReceivedCalls()
+                               .Where(c => c.GetMethodInfo().Name == nameof(_logger.Information));
+
+        infoCalls.Count().Should().BeGreaterThanOrEqualTo(1);
+    }
+
+    [Fact]
+    public async Task SaveAsync_WhenSettingsFileNotFoundAfterSave_ShouldLogWarning()
+    {
+        // Arrange: ensure a path that does not exist
+        var tempDir = Path.GetTempPath();
+        var settingsFile = Path.Combine(tempDir, Guid.NewGuid().ToString() + ".json");
+
+        _settingsManager.SettingsFileName.Returns(settingsFile);
+
+        // Ensure SaveAsync succeeds
+        _settingsManager.SaveAsync(Arg.Any<CancellationToken>())
+                        .Returns(Task.CompletedTask);
+
+        // Act
+        await _manager.SaveAsync(CancellationToken.None);
+
+        // Assert
+        await _settingsManager.Received(1)
+                              .SaveAsync(CancellationToken.None);
+
+        var warningCalls = _logger.ReceivedCalls()
+                                  .Where(c => c.GetMethodInfo().Name == nameof(_logger.Warning));
+
+        warningCalls.Count().Should().BeGreaterThanOrEqualTo(1);
+    }
 }

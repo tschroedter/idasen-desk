@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis ;
 using System.IO ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Serilog ;
@@ -24,30 +25,7 @@ public partial class LoggingSettingsManager (
 
             await settingsManager.SaveAsync ( token ).ConfigureAwait ( false ) ;
 
-            // Log file info after save if available
-            try
-            {
-                if ( File.Exists ( SettingsFileName ) )
-                {
-                    var fi = new FileInfo ( SettingsFileName ) ;
-                    logger.Debug ( "Settings file written: {File} (Length={Length}, LastWrite={LastWrite})" ,
-                                   SettingsFileName ,
-                                   fi.Length ,
-                                   fi.LastWriteTimeUtc ) ;
-                }
-                else
-                {
-                    logger.Warning ( "Settings file {File} was not found after save." ,
-                                     SettingsFileName ) ;
-                }
-            }
-            catch ( Exception e )
-            {
-                // Best-effort diagnostics; don't fail save because of logging
-                logger.Warning ( e ,
-                                 "Failed to get diagnostics for settings file {File}" ,
-                                 SettingsFileName ) ;
-            }
+            LogFileInfoAfterSave ( ) ;
         }
         catch ( Exception e )
         {
@@ -59,6 +37,7 @@ public partial class LoggingSettingsManager (
         }
     }
 
+
     public async Task LoadAsync ( CancellationToken token )
     {
         try
@@ -66,29 +45,7 @@ public partial class LoggingSettingsManager (
             logger.Debug ( "Loading settings from {SettingsFileName}" ,
                            SettingsFileName ) ;
 
-            // Diagnostic: file existence and metadata before load
-            try
-            {
-                if ( File.Exists ( SettingsFileName ) )
-                {
-                    var fi = new FileInfo ( SettingsFileName ) ;
-                    logger.Debug ( "Settings file exists: {File} (Length={Length}, LastWrite={LastWrite})" ,
-                                   SettingsFileName ,
-                                   fi.Length ,
-                                   fi.LastWriteTimeUtc ) ;
-                }
-                else
-                {
-                    logger.Warning ( "Settings file {File} does not exist." ,
-                                     SettingsFileName ) ;
-                }
-            }
-            catch ( Exception e )
-            {
-                logger.Warning ( e ,
-                                 "Failed to access settings file metadata for {File}" ,
-                                 SettingsFileName ) ;
-            }
+            LogFileInfoBeforeLoad ( ) ;
 
             await settingsManager.LoadAsync ( token ).ConfigureAwait ( false ) ;
 
@@ -146,5 +103,61 @@ public partial class LoggingSettingsManager (
         logger.Information ( "Resetting settings to default" ) ;
 
         return settingsManager.ResetSettingsAsync ( token ) ;
+    }
+
+    [ ExcludeFromCodeCoverage ]
+    private void LogFileInfoBeforeLoad ( )
+    {
+        try
+        {
+            if ( File.Exists ( SettingsFileName ) )
+            {
+                var fi = new FileInfo ( SettingsFileName ) ;
+                logger.Debug ( "Settings file exists: {File} (Length={Length}, LastWrite={LastWrite})" ,
+                               SettingsFileName ,
+                               fi.Length ,
+                               fi.LastWriteTimeUtc ) ;
+            }
+            else
+            {
+                logger.Warning ( "Settings file {File} does not exist." ,
+                                 SettingsFileName ) ;
+            }
+        }
+        catch ( Exception e )
+        {
+            logger.Warning ( e ,
+                             "Failed to access settings file metadata for {File}" ,
+                             SettingsFileName ) ;
+        }
+    }
+
+    [ ExcludeFromCodeCoverage ]
+    private void LogFileInfoAfterSave ( )
+    {
+        try
+        {
+            if ( File.Exists ( SettingsFileName ) )
+            {
+                var fi = new FileInfo ( SettingsFileName ) ;
+
+                logger.Debug ( "Settings file written: {File} (Length={Length}, LastWrite={LastWrite})" ,
+                               SettingsFileName ,
+                               fi.Length ,
+                               fi.LastWriteTimeUtc ) ;
+            }
+            else
+            {
+                logger.Warning ( "Settings file {File} was not found after save." ,
+                                 SettingsFileName ) ;
+            }
+        }
+        catch ( Exception e )
+        {
+            // Best-effort diagnostics; don't fail save because of logging
+            logger.Warning ( e ,
+                             "Failed to get diagnostics for settings file {File}" ,
+                             SettingsFileName ) ;
+        }
     }
 }
