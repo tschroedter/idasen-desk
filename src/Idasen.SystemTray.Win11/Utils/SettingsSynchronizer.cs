@@ -37,7 +37,10 @@ public class SettingsSynchronizer (
             logger.Error ( ex ,
                            "Failed to load settings! Using defaults settings." ) ;
 
-            throw new InvalidOperationException ( "Failed to load settings! Using defaults settings." ) ;
+            await settingsManager.ResetSettingsAsync ( token ) ;
+
+            ApplySettingsToModel ( model ,
+                                   settingsManager.CurrentSettings ) ;
         }
     }
 
