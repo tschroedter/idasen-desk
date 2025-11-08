@@ -134,16 +134,7 @@ public partial class SettingsViewModel (
         await synchronizer.LoadSettingsAsync ( this ,
                                                token ) ;
 
-        // Ensure theme is applied and await completion to avoid startup races
-        try
-        {
-            await themeManager.ApplyAsync ( CurrentTheme ) ;
-        }
-        catch ( Exception ex )
-        {
-            logger.Error ( ex ,
-                           "Failed to apply theme during initialization" ) ;
-        }
+        await themeManager.ApplyAsync ( CurrentTheme ) ;
 
         SettingsFileFullPath = settingsManager.SettingsFileName ;
         LogFolderPath        = LoggingFile.Path ;

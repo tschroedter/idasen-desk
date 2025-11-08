@@ -79,9 +79,9 @@ public class MyApplicationThemeManager ( ILogger logger ) : IApplicationThemeMan
             logger.Error ( e ,
                            "Failed to schedule theme apply for {Theme}" ,
                            theme ) ;
-            throw new InvalidOperationException ( $"Failed to schedule theme apply for {theme}" ,
-                                                  e ) ;
         }
+
+        return Task.CompletedTask ;
     }
 
     private void DoApply ( ApplicationTheme theme )
