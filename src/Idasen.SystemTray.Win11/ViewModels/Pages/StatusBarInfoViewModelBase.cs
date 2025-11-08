@@ -62,8 +62,8 @@ public partial class StatusBarInfoViewModelBase : ObservableObject , IDisposable
         if ( disposing )
         {
             // Dispose managed resources
-            _timer.Dispose ( ) ;
-            _statusBarInfoChanged.Dispose ( ) ;
+            _timer?.Dispose ( ) ;
+            _statusBarInfoChanged?.Dispose ( ) ;
         }
 
         // Dispose unmanaged resources if any
