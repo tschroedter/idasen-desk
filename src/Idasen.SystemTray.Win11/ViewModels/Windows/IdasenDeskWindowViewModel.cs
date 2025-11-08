@@ -73,7 +73,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
     [ ObservableProperty ] private string _statusBarTitle ;
 
-    [ ObservableProperty ] private readonly ObservableCollection < MenuItem > _trayMenuItems = [] ;
+    [ ObservableProperty ] private ObservableCollection < MenuItem > _trayMenuItems = [] ;
 
     public IdasenDeskWindowViewModel ( ILogger logger ,
                                        IUiDeskManager uiDeskManager ,
