@@ -52,10 +52,7 @@ public class SettingsSynchronizer (
             var themeName = current.AppearanceSettings.ThemeName ;
             model.CurrentTheme = ParseThemeName ( themeName ) ;
 
-            if ( ! string.Equals ( themeSwitcher.CurrentThemeName ,
-                                   themeName ,
-                                   StringComparison.Ordinal ) )
-                themeSwitcher.ChangeTheme ( current.AppearanceSettings.ThemeName ) ;
+            // Theme application moved to the UI layer (SettingsViewModel) to ensure it runs on the UI thread.
 
             StoppingHeightCalculatorSettings.MaxSpeedToStopMovement = model.MaxSpeedToStopMovement;
         }

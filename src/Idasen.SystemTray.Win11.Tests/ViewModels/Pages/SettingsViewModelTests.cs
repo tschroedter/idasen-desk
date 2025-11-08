@@ -12,25 +12,25 @@ using System.Windows ;
 
 namespace Idasen.SystemTray.Win11.Tests.ViewModels.Pages ;
 
-public class SettingsViewModelTests
+public sealed class SettingsViewModelTests
     : IDisposable
 {
     private readonly ILogger                 _logger          = Substitute.For < ILogger > ( ) ;
     private readonly TestScheduler           _scheduler       = new( ) ;
     private readonly ILoggingSettingsManager _settingsManager = Substitute.For < ILoggingSettingsManager > ( ) ;
 
-    private readonly Subject < ISettings >   _settingsSaved   = new( ) ;
+    private readonly Subject < ISettings >   _settings_saved   = new( ) ;
     private readonly ISettingsSynchronizer   _synchronizer    = Substitute.For < ISettingsSynchronizer > ( ) ;
     private readonly IMainWindow             _mainWindow      = Substitute.For < IMainWindow > ( ) ;
-    private readonly Subject < Visibility >  _visibilityChanges = new( ) ;
+    private readonly Subject < Visibility >  _visibility_changes = new( ) ;
 
     public SettingsViewModelTests ( )
     {
         _settingsManager.SettingsFileName.Returns ( "TestSettings.json" ) ;
-        _settingsManager.SettingsSaved.Returns ( _settingsSaved ) ;
+        _settingsManager.SettingsSaved.Returns ( _settings_saved ) ;
 
         // Visibility stream for the main window
-        _mainWindow.VisibilityChanged.Returns ( _visibilityChanges ) ;
+        _mainWindow.VisibilityChanged.Returns ( _visibility_changes ) ;
 
         // Default synchronizer behaviors
         _synchronizer.LoadSettingsAsync ( Arg.Any < ISettingsViewModel > ( ) ,
@@ -41,12 +41,26 @@ public class SettingsViewModelTests
                      .Returns ( Task.CompletedTask ) ;
     }
 
+    private bool _disposed ;
+
     public void Dispose ( )
     {
-        _settingsSaved.Dispose ( ) ;
-        _visibilityChanges.Dispose ( ) ;
-
+        Dispose ( true ) ;
         GC.SuppressFinalize ( this ) ;
+    }
+
+    private void Dispose ( bool disposing )
+    {
+        if ( _disposed )
+            return ;
+
+        if ( disposing )
+        {
+            _settings_saved.Dispose ( ) ;
+            _visibility_changes.Dispose ( ) ;
+        }
+
+        _disposed = true ;
     }
 
     [ Fact ]
@@ -63,9 +77,12 @@ public class SettingsViewModelTests
                            .LoadSettingsAsync ( vm ,
                                                 CancellationToken.None ) ;
 
+        // The ViewModel applies theme on the UI thread by invoking the synchronizer.ChangeTheme with CurrentTheme.ToString()
+        _synchronizer.Received ( 1 ).ChangeTheme ( "Unknown" ) ;
+
         // simulate settings saved event and verify ViewModel updates
         var s = new Settings { HeightSettings = { LastKnownDeskHeight = 150 } } ;
-        _settingsSaved.OnNext ( s ) ;
+        _settings_saved.OnNext ( s ) ;
 
         // Pump scheduled work (ObserveOn(TestScheduler)) so the subscription runs
         _scheduler.Start ( ) ;
@@ -171,7 +188,7 @@ public class SettingsViewModelTests
         await vm.InitializeAsync ( CancellationToken.None ) ;
 
         // Act
-        _visibilityChanges.OnNext ( Visibility.Hidden ) ;
+        _visibility_changes.OnNext ( Visibility.Hidden ) ;
 
         // Assert
         await _synchronizer.Received ( 1 )
@@ -186,7 +203,7 @@ public class SettingsViewModelTests
         await vm.InitializeAsync ( CancellationToken.None ) ;
 
         // Act
-        _visibilityChanges.OnNext ( Visibility.Visible ) ;
+        _visibility_changes.OnNext ( Visibility.Visible ) ;
 
         // Assert
         await _synchronizer.DidNotReceive ( )
@@ -207,7 +224,7 @@ public class SettingsViewModelTests
         method.Invoke ( vm , null ) ;
 
         // Act: push a single non-visible event
-        _visibilityChanges.OnNext ( Visibility.Collapsed ) ;
+        _visibility_changes.OnNext ( Visibility.Collapsed ) ;
 
         // Assert: should only store once (not twice)
         await _synchronizer.Received ( 1 )
@@ -224,7 +241,7 @@ public class SettingsViewModelTests
         vm.Dispose ( ) ;
 
         // Act
-        _visibilityChanges.OnNext ( Visibility.Hidden ) ;
+        _visibility_changes.OnNext ( Visibility.Hidden ) ;
 
         // Assert
         await _synchronizer.DidNotReceive ( )

@@ -131,6 +131,8 @@ public partial class SettingsViewModel (
         await synchronizer.LoadSettingsAsync ( this ,
                                                token ) ;
 
+        await ApplyThemeFromSettings ( ) ;
+
         SettingsFileFullPath = settingsManager.SettingsFileName ;
         LogFolderPath        = LoggingFile.Path ;
 
@@ -145,6 +147,31 @@ public partial class SettingsViewModel (
         SubscribeToMainWindowVisibility ( ) ;
 
         _isLoadingSettings = false ;
+    }
+
+    private async Task ApplyThemeFromSettings ( )
+    {
+        // Apply theme on UI thread after settings are loaded
+        try
+        {
+            var appDispatcher = Application.Current?.Dispatcher ;
+
+            // Use synchronizer.ChangeTheme to keep logic consistent with rest of app
+            var themeName = CurrentTheme.ToString ( ) ;
+
+            if ( appDispatcher == null || appDispatcher.CheckAccess ( ) )
+            {
+                synchronizer.ChangeTheme ( themeName ) ;
+            }
+            else
+            {
+                await appDispatcher.InvokeAsync ( () => synchronizer.ChangeTheme ( themeName ) ) ;
+            }
+        }
+        catch ( Exception ex )
+        {
+            logger.Error ( ex , "Failed to apply theme on UI thread" ) ;
+        }
     }
 
     private void SetupAutoSave ( )

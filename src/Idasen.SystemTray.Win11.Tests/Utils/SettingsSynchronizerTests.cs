@@ -79,7 +79,6 @@ public class SettingsSynchronizerTests
         _model.ParentalLock.Should ( ).BeTrue ( ) ;
         _model.Notifications.Should ( ).BeTrue ( ) ;
         _model.CurrentTheme.Should ( ).Be ( ApplicationTheme.Dark ) ;
-        _themeSwitcher.Received ( 1 ).ChangeTheme ( "Dark" ) ;
     }
 
     [ Fact ]
