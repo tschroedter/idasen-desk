@@ -365,7 +365,7 @@ public partial class App
         {
             _logger.Information ( "##### Exiting..." ) ;
 
-            await OneExitSaveSettings ( ) ;
+            await OnExitSaveSettings ( ) ;
 
             await Host.StopAsync ( ) ;
 
@@ -382,7 +382,7 @@ public partial class App
         }
     }
 
-    private async Task OneExitSaveSettings ( )
+    private async Task OnExitSaveSettings ( )
     {
         _logger.Information ( "##### Saving settings..." ) ;
 
