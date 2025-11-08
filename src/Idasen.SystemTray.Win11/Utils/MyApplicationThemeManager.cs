@@ -75,13 +75,12 @@ public class MyApplicationThemeManager ( ILogger logger ) : IApplicationThemeMan
         }
         catch ( Exception e )
         {
-            // Log and rethrow with contextual information to satisfy static analysis
+            // Log and propagate the exception to satisfy static analysis and inform callers
             logger.Error ( e ,
                            "Failed to schedule theme apply for {Theme}" ,
                            theme ) ;
+            return Task.FromException(e) ;
         }
-
-        return Task.CompletedTask ;
     }
 
     private void DoApply ( ApplicationTheme theme )
