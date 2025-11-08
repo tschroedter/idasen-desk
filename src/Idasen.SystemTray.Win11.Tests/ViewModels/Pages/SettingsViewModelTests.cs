@@ -9,6 +9,7 @@ using Microsoft.Reactive.Testing ;
 using NSubstitute ;
 using Serilog ;
 using System.Windows ;
+using Wpf.Ui.Appearance ;
 
 namespace Idasen.SystemTray.Win11.Tests.ViewModels.Pages ;
 
@@ -19,18 +20,19 @@ public sealed class SettingsViewModelTests
     private readonly TestScheduler           _scheduler       = new( ) ;
     private readonly ILoggingSettingsManager _settingsManager = Substitute.For < ILoggingSettingsManager > ( ) ;
 
-    private readonly Subject < ISettings >   _settings_saved   = new( ) ;
+    private readonly Subject < ISettings >   _settingsSaved   = new( ) ;
     private readonly ISettingsSynchronizer   _synchronizer    = Substitute.For < ISettingsSynchronizer > ( ) ;
     private readonly IMainWindow             _mainWindow      = Substitute.For < IMainWindow > ( ) ;
-    private readonly Subject < Visibility >  _visibility_changes = new( ) ;
+    private readonly Subject < Visibility >  _visibilityChanges = new( ) ;
+    private readonly IApplicationThemeManager _themeManager   = Substitute.For < IApplicationThemeManager > ( ) ;
 
     public SettingsViewModelTests ( )
     {
         _settingsManager.SettingsFileName.Returns ( "TestSettings.json" ) ;
-        _settingsManager.SettingsSaved.Returns ( _settings_saved ) ;
+        _settingsManager.SettingsSaved.Returns ( _settingsSaved ) ;
 
         // Visibility stream for the main window
-        _mainWindow.VisibilityChanged.Returns ( _visibility_changes ) ;
+        _mainWindow.VisibilityChanged.Returns ( _visibilityChanges ) ;
 
         // Default synchronizer behaviors
         _synchronizer.LoadSettingsAsync ( Arg.Any < ISettingsViewModel > ( ) ,
@@ -39,6 +41,9 @@ public sealed class SettingsViewModelTests
         _synchronizer.StoreSettingsAsync ( Arg.Any < ISettingsViewModel > ( ) ,
                                            Arg.Any < CancellationToken > ( ) )
                      .Returns ( Task.CompletedTask ) ;
+
+        // Default theme manager behavior
+        _themeManager.ApplyAsync ( Arg.Any < ApplicationTheme > ( ) ).Returns ( Task.CompletedTask ) ;
     }
 
     private bool _disposed ;
@@ -56,8 +61,8 @@ public sealed class SettingsViewModelTests
 
         if ( disposing )
         {
-            _settings_saved.Dispose ( ) ;
-            _visibility_changes.Dispose ( ) ;
+            _settingsSaved.Dispose ( ) ;
+            _visibilityChanges.Dispose ( ) ;
         }
 
         _disposed = true ;
@@ -77,12 +82,12 @@ public sealed class SettingsViewModelTests
                            .LoadSettingsAsync ( vm ,
                                                 CancellationToken.None ) ;
 
-        // The ViewModel applies theme on the UI thread by invoking the synchronizer.ChangeTheme with CurrentTheme.ToString()
-        _synchronizer.Received ( 1 ).ChangeTheme ( "Unknown" ) ;
+        // The ViewModel applies theme on the UI thread by invoking the theme manager
+        await _themeManager.Received ( 1 ).ApplyAsync ( ApplicationTheme.Unknown ) ;
 
         // simulate settings saved event and verify ViewModel updates
         var s = new Settings { HeightSettings = { LastKnownDeskHeight = 150 } } ;
-        _settings_saved.OnNext ( s ) ;
+        _settingsSaved.OnNext ( s ) ;
 
         // Pump scheduled work (ObserveOn(TestScheduler)) so the subscription runs
         _scheduler.Start ( ) ;
@@ -188,7 +193,7 @@ public sealed class SettingsViewModelTests
         await vm.InitializeAsync ( CancellationToken.None ) ;
 
         // Act
-        _visibility_changes.OnNext ( Visibility.Hidden ) ;
+        _visibilityChanges.OnNext ( Visibility.Hidden ) ;
 
         // Assert
         await _synchronizer.Received ( 1 )
@@ -203,7 +208,7 @@ public sealed class SettingsViewModelTests
         await vm.InitializeAsync ( CancellationToken.None ) ;
 
         // Act
-        _visibility_changes.OnNext ( Visibility.Visible ) ;
+        _visibilityChanges.OnNext ( Visibility.Visible ) ;
 
         // Assert
         await _synchronizer.DidNotReceive ( )
@@ -224,7 +229,7 @@ public sealed class SettingsViewModelTests
         method.Invoke ( vm , null ) ;
 
         // Act: push a single non-visible event
-        _visibility_changes.OnNext ( Visibility.Collapsed ) ;
+        _visibilityChanges.OnNext ( Visibility.Collapsed ) ;
 
         // Assert: should only store once (not twice)
         await _synchronizer.Received ( 1 )
@@ -241,11 +246,26 @@ public sealed class SettingsViewModelTests
         vm.Dispose ( ) ;
 
         // Act
-        _visibility_changes.OnNext ( Visibility.Hidden ) ;
+        _visibilityChanges.OnNext ( Visibility.Hidden ) ;
 
         // Assert
         await _synchronizer.DidNotReceive ( )
                            .StoreSettingsAsync ( Arg.Any < ISettingsViewModel > ( ) , Arg.Any < CancellationToken > ( ) ) ;
+    }
+
+    [ Fact ]
+    public async Task InitializeAsync_AppliesCurrentTheme_WithThemeManager ( )
+    {
+        // Arrange
+        var vm = CreateSut ( ) ;
+        // Set a non-default theme before initialization
+        vm.CurrentTheme = ApplicationTheme.Dark ;
+
+        // Act
+        await vm.InitializeAsync ( CancellationToken.None ) ;
+
+        // Assert - theme manager should be asked to apply the current theme
+        await _themeManager.Received ( 1 ).ApplyAsync ( ApplicationTheme.Dark ) ;
     }
 
     private SettingsViewModel CreateSut ( )
@@ -254,6 +274,7 @@ public sealed class SettingsViewModelTests
                                        _settingsManager ,
                                        _scheduler ,
                                        _synchronizer ,
+                                       _themeManager ,
                                        _mainWindow ) ;
     }
 }

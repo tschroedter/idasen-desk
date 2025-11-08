@@ -7,4 +7,6 @@ public interface IApplicationThemeManager
     public ApplicationTheme GetAppTheme ( ) ;
 
     public void Apply ( ApplicationTheme theme ) ;
+
+    public Task ApplyAsync ( ApplicationTheme theme ) ;
 }
