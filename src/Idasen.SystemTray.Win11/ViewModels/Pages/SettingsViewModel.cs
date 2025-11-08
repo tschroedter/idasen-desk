@@ -79,7 +79,6 @@ public partial class SettingsViewModel (
     [ ObservableProperty ] private bool          _stopIsVisibleInContextMenu = true ;
     private                        IDisposable ? _visibilitySubscription ;
 
-    // Add theme manager field
 
     public async Task OnNavigatedToAsync ( )
     {
