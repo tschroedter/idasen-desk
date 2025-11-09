@@ -42,7 +42,7 @@ A special thank you to all the amazing people who test this application and prov
 ## What's New
 
 ### Version 0.1.329
-- 🔧 Fix failing to load settings and applying settings.
+- 🔧 Fixed 'Failed to load settings' error.
 
 ### Version 0.1.299
 - Increase scroll speed when using mouse wheel.
