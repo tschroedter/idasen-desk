@@ -8,10 +8,10 @@ namespace Idasen.SystemTray.Win11.Utils ;
 public class AssemblyVersionProvider
     : IAssemblyVersionProvider
 {
-    public Version? GetAssemblyVersion()
+    public Version ? GetAssemblyVersion ( )
     {
-        return Assembly.GetExecutingAssembly()
-                       .GetName()
-                       .Version;
+        return Assembly.GetExecutingAssembly ( )
+                       .GetName ( )
+                       .Version ;
     }
 }

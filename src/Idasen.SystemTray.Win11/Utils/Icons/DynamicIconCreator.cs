@@ -129,8 +129,8 @@ public partial class DynamicIconCreator : IDynamicIconCreator
         if ( ! taskbarIcon.Dispatcher.CheckAccess ( ) )
         {
             taskbarIcon.Dispatcher.BeginInvoke ( new Action ( ( ) => PushIcons ( taskbarIcon ,
-                                                                                    imageSource ,
-                                                                                    value ) ) ) ;
+                                                                                 imageSource ,
+                                                                                 value ) ) ) ;
             return ;
         }
 
@@ -140,5 +140,6 @@ public partial class DynamicIconCreator : IDynamicIconCreator
 
     [ LibraryImport ( "gdi32.dll" ) ]
     [ return : MarshalAs ( UnmanagedType.Bool ) ]
+    // ReSharper disable once UnusedMethodReturnValue.Local
     private static partial bool DeleteObject ( IntPtr hObject ) ;
 }

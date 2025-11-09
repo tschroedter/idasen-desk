@@ -2,5 +2,5 @@
 
 public interface IAssemblyVersionProvider
 {
-    Version? GetAssemblyVersion() ;
+    Version ? GetAssemblyVersion ( ) ;
 }

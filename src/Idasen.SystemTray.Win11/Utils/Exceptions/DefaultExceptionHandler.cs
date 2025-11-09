@@ -12,7 +12,9 @@ public class DefaultExceptionHandler : IExceptionHandler
 
     public void Handle ( Exception exception , ILogger logger )
     {
+#pragma warning disable CA2254
         logger.Error ( exception ,
                        exception.Message ) ;
+#pragma warning restore CA2254
     }
 }

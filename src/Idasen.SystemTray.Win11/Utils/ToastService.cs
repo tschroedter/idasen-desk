@@ -5,6 +5,7 @@ using Microsoft.Toolkit.Uwp.Notifications ;
 namespace Idasen.SystemTray.Win11.Utils ;
 
 [ ExcludeFromCodeCoverage ]
+// ReSharper disable once PartialTypeWithSinglePart
 public partial class ToastService : IToastService
 {
     public void Show ( NotificationParameters parameters )

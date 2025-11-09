@@ -3,8 +3,9 @@ using Serilog ;
 
 namespace Idasen.SystemTray.Win11.Utils ;
 
-public class VersionProvider ( ILogger logger ,
-                               IAssemblyVersionProvider versionProvider ) : IVersionProvider
+public class VersionProvider (
+    ILogger                  logger ,
+    IAssemblyVersionProvider versionProvider ) : IVersionProvider
 {
     private string ? _cachedVersion ;
 
@@ -17,7 +18,7 @@ public class VersionProvider ( ILogger logger ,
 
         try
         {
-            var version = versionProvider.GetAssemblyVersion( ) ;
+            var version = versionProvider.GetAssemblyVersion ( ) ;
 
             if ( version == null )
             {

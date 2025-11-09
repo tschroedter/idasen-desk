@@ -1,8 +1,11 @@
+using System.Diagnostics.CodeAnalysis ;
+using System.IO ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Serilog ;
 
 namespace Idasen.SystemTray.Win11.TraySettings ;
 
+// ReSharper disable once PartialTypeWithSinglePart
 public partial class LoggingSettingsManager (
     ILogger          logger ,
     ISettingsManager settingsManager )
@@ -21,6 +24,8 @@ public partial class LoggingSettingsManager (
                            CurrentSettings ) ;
 
             await settingsManager.SaveAsync ( token ).ConfigureAwait ( false ) ;
+
+            LogFileInfoAfterSave ( ) ;
         }
         catch ( Exception e )
         {
@@ -32,12 +37,15 @@ public partial class LoggingSettingsManager (
         }
     }
 
+
     public async Task LoadAsync ( CancellationToken token )
     {
         try
         {
             logger.Debug ( "Loading settings from {SettingsFileName}" ,
                            SettingsFileName ) ;
+
+            LogFileInfoBeforeLoad ( ) ;
 
             await settingsManager.LoadAsync ( token ).ConfigureAwait ( false ) ;
 
@@ -95,5 +103,61 @@ public partial class LoggingSettingsManager (
         logger.Information ( "Resetting settings to default" ) ;
 
         return settingsManager.ResetSettingsAsync ( token ) ;
+    }
+
+    [ ExcludeFromCodeCoverage ]
+    private void LogFileInfoBeforeLoad ( )
+    {
+        try
+        {
+            if ( File.Exists ( SettingsFileName ) )
+            {
+                var fi = new FileInfo ( SettingsFileName ) ;
+                logger.Debug ( "Settings file exists: {File} (Length={Length}, LastWrite={LastWrite})" ,
+                               SettingsFileName ,
+                               fi.Length ,
+                               fi.LastWriteTimeUtc ) ;
+            }
+            else
+            {
+                logger.Warning ( "Settings file {File} does not exist." ,
+                                 SettingsFileName ) ;
+            }
+        }
+        catch ( Exception e )
+        {
+            logger.Warning ( e ,
+                             "Failed to access settings file metadata for {File}" ,
+                             SettingsFileName ) ;
+        }
+    }
+
+    [ ExcludeFromCodeCoverage ]
+    private void LogFileInfoAfterSave ( )
+    {
+        try
+        {
+            if ( File.Exists ( SettingsFileName ) )
+            {
+                var fi = new FileInfo ( SettingsFileName ) ;
+
+                logger.Debug ( "Settings file written: {File} (Length={Length}, LastWrite={LastWrite})" ,
+                               SettingsFileName ,
+                               fi.Length ,
+                               fi.LastWriteTimeUtc ) ;
+            }
+            else
+            {
+                logger.Warning ( "Settings file {File} was not found after save." ,
+                                 SettingsFileName ) ;
+            }
+        }
+        catch ( Exception e )
+        {
+            // Best-effort diagnostics; don't fail save because of logging
+            logger.Warning ( e ,
+                             "Failed to get diagnostics for settings file {File}" ,
+                             SettingsFileName ) ;
+        }
     }
 }

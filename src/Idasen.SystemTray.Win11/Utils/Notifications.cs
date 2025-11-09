@@ -48,7 +48,7 @@ public partial class Notifications : INotifications
                            }
                            catch ( OperationCanceledException ex )
                            {
-                               _logger.Warning ( ex,
+                               _logger.Warning ( ex ,
                                                  "Notifications initialization canceled" ) ;
                            }
                            catch ( Exception ex )

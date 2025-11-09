@@ -40,12 +40,10 @@ public class ApplicationHostService ( IServiceProvider serviceProvider ) : IHost
     {
         if ( ! Application.Current.Windows.OfType < IdasenDeskWindow > ( ).Any ( ) )
         {
-            var navigationWindow = (
-                                        serviceProvider.GetService ( typeof ( INavigationWindow ) ) as INavigationWindow
-                                    ) ;
+            var navigationWindow = serviceProvider.GetService ( typeof ( INavigationWindow ) ) as INavigationWindow ;
 
-            if (navigationWindow is null )
-                throw new InvalidOperationException ( "Can't create the main window!" );
+            if ( navigationWindow is null )
+                throw new InvalidOperationException ( "Can't create the main window!" ) ;
 
             navigationWindow.ShowWindow ( ) ;
 

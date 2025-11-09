@@ -54,8 +54,8 @@ public class SettingsStorage ( IFileSystem fileSystem ) : ISettingsStorage
                                                                     FileAccess.Read ,
                                                                     FileShare.Read ) ;
                 var result = await JsonSerializer.DeserializeAsync < Settings > ( openStream ,
-                                 JsonOptions ,
-                                 token ).ConfigureAwait ( false ) ;
+                                                                                  JsonOptions ,
+                                                                                  token ).ConfigureAwait ( false ) ;
 
                 return result ?? new Settings ( ) ;
             }
@@ -178,7 +178,7 @@ public class SettingsStorage ( IFileSystem fileSystem ) : ISettingsStorage
         }
         catch
         {
-            // Swallow best effort cleanup
+            // Swallow the best effort cleanup
         }
     }
 }

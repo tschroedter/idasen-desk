@@ -39,8 +39,21 @@ public class ErrorHandlerTests
 
         // Assert
         _logger.Received ( 1 )
-               .Error(exception,
-                      "Test");
+               .Error ( exception ,
+                        "Test" ) ;
+    }
+
+    [ Fact ]
+    public void Handle_ShouldDoNothing_WhenNoHandlerFound ( )
+    {
+        // Arrange  
+        var sut = CreateSut ( ) ;
+        sut.Handlers.Clear ( ) ; // No handlers added
+        var exception = new InvalidOperationException ( "Test" ) ;
+
+        // Act
+        // Assert
+        Assert.Throws < InvalidOperationException > ( ( ) => sut.Handle ( exception , _logger ) ) ;
     }
 
     private static ErrorHandler CreateSut ( )

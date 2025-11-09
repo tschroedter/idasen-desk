@@ -18,11 +18,12 @@ namespace Idasen.SystemTray.Win11.ViewModels.Pages ;
 
 [ ExcludeFromCodeCoverage ]
 public partial class SettingsViewModel (
-    ILogger                 logger ,
-    ILoggingSettingsManager settingsManager ,
-    IScheduler              scheduler ,
-    ISettingsSynchronizer   synchronizer ,
-    IMainWindow             mainWindow )
+    ILogger                  logger ,
+    ILoggingSettingsManager  settingsManager ,
+    IScheduler               scheduler ,
+    ISettingsSynchronizer    synchronizer ,
+    IApplicationThemeManager themeManager ,
+    IMainWindow              mainWindow )
     : ObservableObject , INavigationAware , ISettingsViewModel
 {
     [ ObservableProperty ] private string _appVersion = string.Empty ;
@@ -78,6 +79,7 @@ public partial class SettingsViewModel (
     [ ObservableProperty ] private bool          _stopIsVisibleInContextMenu = true ;
     private                        IDisposable ? _visibilitySubscription ;
 
+
     public async Task OnNavigatedToAsync ( )
     {
         if ( _isInitialized )
@@ -128,8 +130,7 @@ public partial class SettingsViewModel (
     {
         _isLoadingSettings = true ;
 
-        await synchronizer.LoadSettingsAsync ( this ,
-                                               token ) ;
+        await LoadAndApplySettings ( token ) ;
 
         SettingsFileFullPath = settingsManager.SettingsFileName ;
         LogFolderPath        = LoggingFile.Path ;
@@ -145,6 +146,14 @@ public partial class SettingsViewModel (
         SubscribeToMainWindowVisibility ( ) ;
 
         _isLoadingSettings = false ;
+    }
+
+    private async Task LoadAndApplySettings ( CancellationToken token )
+    {
+        await synchronizer.LoadSettingsAsync ( this ,
+                                               token ) ;
+
+        await themeManager.ApplyAsync(CurrentTheme);
     }
 
     private void SetupAutoSave ( )
@@ -192,7 +201,7 @@ public partial class SettingsViewModel (
     {
         // Keep continuation on UI thread to safely update bindable properties
         CurrentTheme = await Task.Run ( ApplicationThemeManager.GetAppTheme ) ;
-        AppVersion   = $"UiDesktopApp1 - {GetAssemblyVersion ( )}" ;
+        AppVersion   = $"{GetAssemblyVersion ( )}" ;
 
         _isInitialized = true ;
     }
@@ -245,12 +254,9 @@ public partial class SettingsViewModel (
 
             _isLoadingSettings = true ;
 
-            // Reset settings to defaults at the source and persist once
             await settingsManager.ResetSettingsAsync ( CancellationToken.None ) ;
 
-            // Reload the ViewModel from the freshly reset settings
-            await synchronizer.LoadSettingsAsync ( this ,
-                                                   CancellationToken.None ) ;
+            await LoadAndApplySettings ( CancellationToken.None ) ;
         }
         catch ( Exception ex )
         {
@@ -275,19 +281,20 @@ public partial class SettingsViewModel (
 
         // Subscribe to VisibilityChanged
         _visibilitySubscription = mainWindow.VisibilityChanged
-            .Where ( visibility => visibility != Visibility.Visible )
-            .Subscribe ( async void ( _ ) =>
-                         {
-                             try
-                             {
-                                 await synchronizer.StoreSettingsAsync ( this ,
-                                                                        CancellationToken.None ) ;
-                             }
-                             catch ( Exception ex )
-                             {
-                                 logger.Error ( ex ,
-                                                "Failed to save settings when visibility changed." ) ;
-                             }
-                         } ) ;
+                                            .Where ( visibility => visibility != Visibility.Visible )
+                                            .Subscribe ( async void ( _ ) =>
+                                                         {
+                                                             try
+                                                             {
+                                                                 await synchronizer.StoreSettingsAsync ( this ,
+                                                                                                         CancellationToken
+                                                                                                            .None ) ;
+                                                             }
+                                                             catch ( Exception ex )
+                                                             {
+                                                                 logger.Error ( ex ,
+                                                                                "Failed to save settings when visibility changed." ) ;
+                                                             }
+                                                         } ) ;
     }
 }

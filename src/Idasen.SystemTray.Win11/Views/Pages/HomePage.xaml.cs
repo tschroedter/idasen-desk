@@ -14,8 +14,8 @@ public partial class HomePage : INavigableView < DashboardViewModel >
 
     public HomePage ( DashboardViewModel viewModel , IConfiguration configuration )
     {
-        ViewModel   = viewModel ;
-        DataContext = this ;
+        ViewModel      = viewModel ;
+        DataContext    = this ;
         _configuration = configuration ;
 
         InitializeComponent ( ) ;
@@ -28,7 +28,7 @@ public partial class HomePage : INavigableView < DashboardViewModel >
         try
         {
             var donateUrl = _configuration [ "DonateUrl" ] ?? string.Empty ;
-            
+
             if ( string.IsNullOrEmpty ( donateUrl ) )
                 return ;
 

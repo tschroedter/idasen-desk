@@ -79,7 +79,6 @@ public class SettingsSynchronizerTests
         _model.ParentalLock.Should ( ).BeTrue ( ) ;
         _model.Notifications.Should ( ).BeTrue ( ) ;
         _model.CurrentTheme.Should ( ).Be ( ApplicationTheme.Dark ) ;
-        _themeSwitcher.Received ( 1 ).ChangeTheme ( "Dark" ) ;
     }
 
     [ Fact ]
@@ -255,10 +254,10 @@ public class SettingsSynchronizerTests
                                                              CancellationToken.None ) ;
 
         // Assert
-        await act.Should ( ).ThrowAsync < InvalidOperationException > ( )
-                 .WithMessage ( "Failed to load settings" ) ;
+        await act.Should ( ).NotThrowAsync < InvalidOperationException > ( ) ;
+
         _logger.Received ( 1 ).Error ( testException ,
-                                       "Failed to load settings" ) ;
+                                       "Failed to load settings! Using default settings." ) ;
     }
 
     [ Fact ]
