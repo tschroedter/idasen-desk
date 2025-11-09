@@ -51,16 +51,9 @@ public class ErrorHandlerTests
         sut.Handlers.Clear ( ) ; // No handlers added
         var exception = new InvalidOperationException ( "Test" ) ;
 
-        // Act  
-        sut.Handle ( exception ,
-                     _logger ) ;
-
+        // Act
         // Assert
-#pragma warning disable CA2254
-        _logger.Received ( 0 )
-               .Warning ( exception ,
-                          Arg.Is<string>(s => s.Contains("No handler found for exception:"))) ;
-#pragma warning restore CA2254
+        Assert.Throws < InvalidOperationException > ( ( ) => sut.Handle ( exception , _logger ) ) ;
     }
 
     private static ErrorHandler CreateSut ( )

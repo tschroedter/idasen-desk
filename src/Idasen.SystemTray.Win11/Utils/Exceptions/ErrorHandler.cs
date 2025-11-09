@@ -20,8 +20,7 @@ public class ErrorHandler
                           logger ) ;
 
             if ( handler is null )
-                logger.Warning ( exception ,
-                                 "No handler found for exception: {Exception}" ,
-                                 exception ) ;
+                throw new InvalidOperationException( $"No handler found for exception of type {exception.GetType().FullName}: {exception.Message}", 
+                                                     exception);
     }
 }
