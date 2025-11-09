@@ -35,7 +35,7 @@ public class SettingsSynchronizer (
         catch ( Exception ex )
         {
             logger.Error ( ex ,
-                           "Failed to load settings! Using defaults settings." ) ;
+                           "Failed to load settings! Using default settings." ) ;
 
             await settingsManager.ResetSettingsAsync ( token ) ;
 
