@@ -174,6 +174,16 @@ public partial class App
                                                                            services
                                                                               .AddSingleton < IApplicationThemeManager ,
                                                                                    MyApplicationThemeManager > ( ) ;
+                                                                           // Power events wrapper used by resume theme restore
+                                                                           services.AddSingleton<IPowerEvents, PowerEventsWrapper>();
+                                                                           services
+                                                                              .AddSingleton < ThemeRestoreOnResume > ( ) ;
+                                                                           services
+                                                                              .AddHostedService < ThemeRestoreActivator > ( ) ;
+                                                                           services
+                                                                              .AddTransient <
+                                                                                   IThemeRestoreWithDelayOnResume ,
+                                                                                   ThemeRestoreWithDelayOnResume > ( ) ;
                                                                            services
                                                                               .AddSingleton <
                                                                                        Func < TimerCallback , object ? ,
