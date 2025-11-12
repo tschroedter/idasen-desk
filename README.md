@@ -41,6 +41,10 @@ A special thank you to all the amazing people who test this application and prov
 
 ## What's New
 
+### Version 0.1.336
+- 🔧 Fixed restoring theme after resuming from hibernation.
+- 🔧 Fixed restoring theme when connecting eGPU.
+
 ### Version 0.1.329
 - 🔧 Fixed 'Failed to load settings' error.
 
@@ -111,7 +115,7 @@ Short description: This patch release focuses on stability and quality-of-life i
 
 Download the latest self-contained executable (no .NET runtime installation required):
 
-**[Download Latest](https://github.com/tschroedter/idasen-desk/releases/download/v0.1.329/Idasen-SystemTray-0.1.329-win-x64.exe)**
+**[Download Latest](https://github.com/tschroedter/idasen-desk/releases/download/v0.1.336/Idasen-SystemTray-0.1.336-win-x64.exe)**
 
 1. Download the executable from the link above
 2. Run the executable
