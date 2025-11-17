@@ -11,6 +11,8 @@ A Windows 10/11 desktop application for controlling [Ikea's Idasen standing desk
 
 > 📚 **[Visit the Wiki](https://github.com/tschroedter/idasen-desk/wiki)** for comprehensive documentation, guides, and troubleshooting.
 
+This project uses the [idasen-desk-core](https://github.com/tschroedter/idasen-desk-core) library for all Bluetooth communication with the Idasen desk.
+
 ## Table of Contents
 
 - [Thank You](#thank-you)
