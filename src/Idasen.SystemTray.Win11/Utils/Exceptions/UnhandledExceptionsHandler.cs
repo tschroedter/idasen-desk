@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis ;
+using System.Runtime.InteropServices ;
 using System.Windows.Threading ;
 using Idasen.BluetoothLE.Characteristics.Common ;
 using Serilog ;
@@ -8,7 +9,9 @@ namespace Idasen.SystemTray.Win11.Utils.Exceptions ;
 [ ExcludeFromCodeCoverage ]
 public static class UnhandledExceptionsHandler
 {
-    private static readonly ErrorHandler ErrorHandler = new( ) ;
+    // HRESULT for "{Desktop composition is disabled} The operation could not be completed because desktop composition is disabled. (0x80263001)"
+    private const           int          DesktopCompositionDisabledHResult = unchecked ( ( int )0x80263001 ) ;
+    private static readonly ErrorHandler ErrorHandler                      = new( ) ;
     private static          bool         _registered ;
 
     public static void RegisterGlobalExceptionHandling ( )
@@ -43,6 +46,15 @@ public static class UnhandledExceptionsHandler
         UnobservedTaskExceptionEventArgs args ,
         ILogger                          log )
     {
+        // If the task exception contains the DWM composition-disabled COMException, log and mark observed.
+        if ( IsDesktopCompositionDisabledException ( args.Exception ) )
+        {
+            log.Warning ( args.Exception ,
+                          "Ignored DWM COM exception: desktop composition is disabled." ) ;
+            args.SetObserved ( ) ;
+            return ;
+        }
+
         ErrorHandler.Handle ( args.Exception ,
                               log ) ;
 
@@ -53,6 +65,15 @@ public static class UnhandledExceptionsHandler
         DispatcherUnhandledExceptionEventArgs args ,
         ILogger                               log )
     {
+        // If it's the desktop composition disabled COMException, swallow it to avoid app termination.
+        if ( IsDesktopCompositionDisabledException ( args.Exception ) )
+        {
+            log.Warning ( args.Exception ,
+                          "Dispatcher exception ignored: desktop composition is disabled." ) ;
+            args.Handled = true ;
+            return ;
+        }
+
         if ( args.Exception.IsBluetoothDisabledException ( ) )
             HandleBluetoothDisabledException ( args ,
                                                log ) ;
@@ -65,6 +86,7 @@ public static class UnhandledExceptionsHandler
                                                  ILogger                               log )
     {
         log.Error ( args.Exception ,
+                    "{Message}",
                     args.Exception.Message ) ;
     }
 
@@ -88,12 +110,43 @@ public static class UnhandledExceptionsHandler
         var message = string.Concat ( exceptionMessage ,
                                       terminatingMessage ) ;
 
+        // If domain-level unhandled exception is the DWM composition disabled COMException, log a warning.
+        if ( exception != null &&
+             IsDesktopCompositionDisabledException ( exception ) )
+        {
+            log.Warning ( exception ,
+                          "Unhandled domain exception (DWM composition disabled).{Terminating}" ,
+                          terminatingMessage ) ;
+            return ;
+        }
+
         if ( exception != null &&
              exception.IsBluetoothDisabledException ( ) )
             exception.LogBluetoothStatusException ( log ,
                                                     string.Empty ) ;
         else
             log.Error ( exception ,
+                        "{Message}",
                         message ) ;
+    }
+
+    private static bool IsDesktopCompositionDisabledException ( Exception ? exception )
+    {
+        switch ( exception )
+        {
+            case null :
+                return false ;
+
+            case COMException { HResult: DesktopCompositionDisabledHResult } :
+                return true ;
+        }
+
+        // sometimes wrapped in TargetInvocationException or AggregateException - walk inner exceptions
+        if ( exception.InnerException != null )
+            return IsDesktopCompositionDisabledException ( exception.InnerException ) ;
+
+        // fallback by message content (defensive)
+        return exception.Message.Contains ( "Desktop composition is disabled" ,
+                                            StringComparison.OrdinalIgnoreCase ) ;
     }
 }
