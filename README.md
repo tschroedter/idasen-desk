@@ -11,6 +11,8 @@ A Windows 10/11 desktop application for controlling [Ikea's Idasen standing desk
 
 > 📚 **[Visit the Wiki](https://github.com/tschroedter/idasen-desk/wiki)** for comprehensive documentation, guides, and troubleshooting.
 
+This project uses the [idasen-desk-core](https://github.com/tschroedter/idasen-desk-core) library for all Bluetooth communication with the Idasen desk.
+
 ## Table of Contents
 
 - [Thank You](#thank-you)
@@ -40,6 +42,10 @@ A Windows 10/11 desktop application for controlling [Ikea's Idasen standing desk
 A special thank you to all the amazing people who test this application and provide valuable feedback! Your contributions help make this app better for everyone. Special recognition goes to **Glakt** and other dedicated testers who have taken the time to report issues, test new features, and help improve the desk control experience. Your support is greatly appreciated! 🙏
 
 ## What's New
+
+### Version 0.1.336
+- 🔧 Fixed restoring theme after resuming from hibernation.
+- 🔧 Fixed restoring theme when connecting eGPU.
 
 ### Version 0.1.329
 - 🔧 Fixed 'Failed to load settings' error.
@@ -111,7 +117,7 @@ Short description: This patch release focuses on stability and quality-of-life i
 
 Download the latest self-contained executable (no .NET runtime installation required):
 
-**[Download Latest](https://github.com/tschroedter/idasen-desk/releases/download/v0.1.329/Idasen-SystemTray-0.1.329-win-x64.exe)**
+**[Download Latest](https://github.com/tschroedter/idasen-desk/releases/download/v0.1.336/Idasen-SystemTray-0.1.336-win-x64.exe)**
 
 1. Download the executable from the link above
 2. Run the executable
