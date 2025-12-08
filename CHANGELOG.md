@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/tschroedter/idasen-desk/compare/v0.1.345...HEAD)
+## [Unreleased](https://github.com/tschroedter/idasen-desk/compare/v0.1.350...HEAD)
 
 ## [0.1.78](https://github.com/tschroedter/idasen-desk/releases/tag/V0.1.78) - 2024-10-07
 
@@ -21,6 +21,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fixed vulnerabilities in external NuGet packages by updating to latest version
+
+## [v0.1.350](https://github.com/tschroedter/idasen-desk/compare/v0.1.345...v0.1.350) - 2025-12-08
+
+Fix minor SonarCloud issue: '...class should be marked partial...'
 
 ## [v0.1.345](https://github.com/tschroedter/idasen-desk/compare/v0.1.336...v0.1.345) - 2025-12-04
 
