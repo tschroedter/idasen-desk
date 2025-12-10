@@ -87,7 +87,7 @@ public class MyApplicationThemeManager ( ILogger logger ) : IApplicationThemeMan
     {
         ApplicationThemeManager.Apply ( theme ) ;
 
-        logger.Information ( "Successfully applied theme '{Theme}'..." ,
-                             theme ) ;
+        logger.Debug ( "Successfully applied theme '{Theme}'..." ,
+                       theme ) ;
     }
 }
