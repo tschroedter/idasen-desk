@@ -43,6 +43,9 @@ A special thank you to all the amazing people who test this application and prov
 
 ## What's New
 
+### Version 0.1.357
+- 📦 Updated NuGet packages.
+
 ### Version 0.1.350
 - 🔧 Fixed minor SonarCloud issue: '...class should be marked partial...'
  
@@ -123,7 +126,7 @@ Short description: This patch release focuses on stability and quality-of-life i
 
 Download the latest self-contained executable (no .NET runtime installation required):
 
-**[Download Latest](https://github.com/tschroedter/idasen-desk/releases/download/v0.1.336/Idasen-SystemTray-0.1.336-win-x64.exe)**
+**[Download Latest](https://github.com/tschroedter/idasen-desk/releases/download/v0.1.357/Idasen-SystemTray-0.1.357-win-x64.exe)**
 
 1. Download the executable from the link above
 2. Run the executable
