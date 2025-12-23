@@ -50,7 +50,7 @@ A special thank you to all the amazing people who test this application and prov
 - 🔧 Fixed minor SonarCloud issue: '...class should be marked partial...'
  
 ### Version 0.1.345
-- 🔧 Fixed not catching to catching COMException (0x80263001).
+- 🔧 Fixed not catching COMException (0x80263001).
 
 ### Version 0.1.336
 - 🔧 Fixed restoring theme after resuming from hibernation.
