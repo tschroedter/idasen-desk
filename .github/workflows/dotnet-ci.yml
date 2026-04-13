@@ -158,7 +158,7 @@ jobs:
 
       - name: Create GitHub Release (draft)
         if: github.event_name != 'pull_request'
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: v${{ steps.determine_version.outputs.version }}
           name: v${{ steps.determine_version.outputs.version }}
