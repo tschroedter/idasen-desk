@@ -16,7 +16,7 @@ public partial class TaskbarIconProvider : ITaskbarIconProvider
     private readonly IDynamicIconCreator _creator ;
     private readonly ISettingsManager    _manager ;
     private readonly IScheduler          _scheduler ;
-    private readonly object              _syncRoot = new( ) ;
+    private readonly Lock                _syncRoot = new( ) ;
     private          IDisposable ?       _disposable ;
     private          bool                _isDisposed ;
     private          bool                _isInitialized ;
