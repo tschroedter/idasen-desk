@@ -15,6 +15,8 @@ jobs:
   sonarcloud:
     name: SonarCloud Static Analysis
     runs-on: windows-latest
+    # Skip this job for PRs from forks (including Dependabot)
+    if: github.event.pull_request.head.repo.full_name == github.repository || github.event_name != 'pull_request'
     defaults:
       run:
         shell: pwsh
@@ -32,7 +34,7 @@ jobs:
           dotnet-version: '8.0.x'
 
       - name: Cache SonarCloud packages
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~\sonar\cache
           key: ${{ runner.os }}-sonar
@@ -40,14 +42,14 @@ jobs:
 
       - name: Cache SonarCloud scanner
         id: cache-sonar-scanner
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: .\.sonar\scanner
           key: ${{ runner.os }}-sonar-scanner
           restore-keys: ${{ runner.os }}-sonar-scanner
 
       - name: Cache NuGet packages
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~\AppData\Local\NuGet\v3-cache
           key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
