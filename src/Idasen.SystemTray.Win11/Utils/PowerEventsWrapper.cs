@@ -34,7 +34,7 @@ public partial class PowerEventsWrapper : IPowerEvents
 
     private void SystemEvents_PowerModeChanged ( object ? sender , PowerModeChangedEventArgs e )
     {
-        PowerModeChanged?.Invoke ( sender ,
+        PowerModeChanged?.Invoke ( sender ?? this ,
                                    e ) ;
     }
 }

@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFramework>net8.0-windows10.0.19041</TargetFramework>
+        <TargetFramework>net10.0-windows10.0.19041</TargetFramework>
         <WindowsSdkPackageVersion>10.0.19041.56</WindowsSdkPackageVersion>
         <ApplicationManifest>app.manifest</ApplicationManifest>
         <ApplicationIcon>Resources\cup-xl.ico</ApplicationIcon>
@@ -16,6 +16,7 @@
         <FileVersion>0.0.0.0</FileVersion>
         <Version>0.0.0</Version>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <NoWarn>$(NoWarn);NU1510</NoWarn>
         <EnableWindowsTargeting>true</EnableWindowsTargeting>
     </PropertyGroup>
 
@@ -58,6 +59,7 @@
         <PackageReference Include="Serilog.Settings.Configuration" Version="10.0.0" />
         <PackageReference Include="Serilog.Sinks.Console" Version="6.1.1" />
         <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
+        <PackageReference Include="System.Drawing.Common" Version="10.0.7" />
         <PackageReference Include="System.IO.Abstractions" Version="22.1.1" />
         <PackageReference Include="Testably.Abstractions.FileSystem.Interface" Version="10.2.0" />
         <PackageReference Include="WPF-UI" Version="4.2.1" />
