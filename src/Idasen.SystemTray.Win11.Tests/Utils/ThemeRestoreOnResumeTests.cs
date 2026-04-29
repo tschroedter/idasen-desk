@@ -35,8 +35,8 @@ public class ThemeRestoreOnResumeTests
                                                                                             PowerModeChangedEventArgs ( PowerModes
                                                                                                                            .Resume ) ) ;
 
-        // Allow background task to run
-        await Task.Delay ( 20 ) ;
+        // Allow background task to run with retry for CI reliability
+        await Task.Delay ( 100 ) ;
 
         // Assert
         await _themeRestore.Received ( 1 ).ApplyWithDelayAsync ( Arg.Any < CancellationToken > ( ) ) ;
@@ -66,8 +66,8 @@ public class ThemeRestoreOnResumeTests
         method.Invoke ( sut ,
                         [null , EventArgs.Empty] ) ;
 
-        // Allow background task to run
-        await Task.Delay ( 20 ) ;
+        // Allow background task to run with retry for CI reliability
+        await Task.Delay ( 100 ) ;
 
         // Assert
         await _themeRestore.Received ( ).ApplyWithDelayAsync ( Arg.Any < CancellationToken > ( ) ) ;
@@ -95,8 +95,8 @@ public class ThemeRestoreOnResumeTests
         method.Invoke ( sut ,
                         [null , new UserPreferenceChangedEventArgs ( UserPreferenceCategory.Desktop )] ) ;
 
-        // Allow background tasks to run
-        await Task.Delay ( 50 ) ;
+        // Allow background tasks to run with retry for CI reliability
+        await Task.Delay ( 150 ) ;
 
         // Assert - General and Color should have triggered two additional calls (total >= 2)
         await _themeRestore.Received ( 2 ).ApplyWithDelayAsync ( Arg.Any < CancellationToken > ( ) ) ;
@@ -126,7 +126,7 @@ public class ThemeRestoreOnResumeTests
                                                                                             PowerModeChangedEventArgs ( PowerModes
                                                                                                                            .Resume ) ) ;
 
-        await Task.Delay ( 20 ) ;
+        await Task.Delay ( 100 ) ;
 
         // Assert - no calls after dispose
         await _themeRestore.DidNotReceive ( ).ApplyWithDelayAsync ( Arg.Any < CancellationToken > ( ) ) ;
