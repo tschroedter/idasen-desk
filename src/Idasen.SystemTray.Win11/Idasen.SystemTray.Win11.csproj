@@ -78,6 +78,7 @@
         <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
         <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
         <PublishTrimmed>false</PublishTrimmed>
+        <StartupObject>Idasen.SystemTray.Win11.App</StartupObject>
         <!-- keep false until you handle trimming warnings -->
     </PropertyGroup>
 
