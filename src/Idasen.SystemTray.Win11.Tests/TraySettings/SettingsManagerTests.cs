@@ -9,14 +9,14 @@ using Serilog ;
 
 namespace Idasen.SystemTray.Win11.Tests.TraySettings ;
 
-public class SettingsManagerTests
-    : IDisposable
+public class SettingsManagerTests : IDisposable
 {
     private readonly ICommonApplicationData _commonApplicationData = Substitute.For < ICommonApplicationData > ( ) ;
     private readonly IFileSystem            _fileSystem            = Substitute.For < IFileSystem > ( ) ;
     private readonly ILogger                _logger                = Substitute.For < ILogger > ( ) ;
     private readonly SettingsManager        _settingsManager ;
     private readonly ISettingsStorage       _settingsStorage = Substitute.For < ISettingsStorage > ( ) ;
+    private bool _disposed;
 
     public SettingsManagerTests ( )
     {
@@ -29,9 +29,21 @@ public class SettingsManagerTests
 
     public void Dispose ( )
     {
-        _settingsManager.Dispose ( ) ;
-
+        Dispose ( true ) ;
         GC.SuppressFinalize ( this ) ;
+    }
+
+    protected virtual void Dispose ( bool disposing )
+    {
+        if ( _disposed )
+            return ;
+
+        if ( disposing )
+        {
+            _settingsManager.Dispose ( ) ;
+        }
+
+        _disposed = true ;
     }
 
     [ Fact ]
@@ -76,15 +88,16 @@ public class SettingsManagerTests
     {
         // Arrange
         await File.WriteAllTextAsync ( "TestSettingsFilePath" ,
-                                       "{}" ) ;
+                                       "{}",
+                                       TestContext.Current.CancellationToken ) ;
         _fileSystem.File.Exists ( "TestSettingsFilePath" ).Returns ( true ) ;
         _fileSystem.File.ReadAllTextAsync ( "TestSettingsFilePath" ,
-                                            CancellationToken.None ).Returns ( "{}" ) ;
+                                            TestContext.Current.CancellationToken ).Returns ( "{}" ) ;
         _settingsStorage.LoadSettingsAsync ( "TestSettingsFilePath" ,
-                                             CancellationToken.None ).Returns ( new Settings ( ) ) ;
+                                             TestContext.Current.CancellationToken ).Returns ( new Settings ( ) ) ;
 
         // Act
-        var result = await _settingsManager.UpgradeSettingsAsync ( CancellationToken.None ) ;
+        var result = await _settingsManager.UpgradeSettingsAsync ( TestContext.Current.CancellationToken ) ;
 
         // Assert
         result.Should ( ).BeTrue ( ) ;
