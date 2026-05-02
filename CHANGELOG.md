@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/tschroedter/idasen-desk/compare/v0.1.357...HEAD)
+## [Unreleased](https://github.com/tschroedter/idasen-desk/compare/v0.1.387...HEAD)
 
 ## [0.1.78](https://github.com/tschroedter/idasen-desk/releases/tag/V0.1.78) - 2024-10-07
 
@@ -21,6 +21,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fixed vulnerabilities in external NuGet packages by updating to latest version
+
+## [v0.1.387](https://github.com/tschroedter/idasen-desk/compare/v0.1.357...v0.1.387) - 2026-05-02
+
+### Changes
+
+- Upgrade to .NET 10.0 and resolve security vulnerability @tschroedter (https://github.com/tschroedter/idasen-desk/pull/106)
+- Update NuGet packages to latest compatible versions @tschroedter (https://github.com/tschroedter/idasen-desk/pull/105)
+- chore: update all NuGet packages to latest versions @tschroedter (https://github.com/tschroedter/idasen-desk/pull/104)
+- Skip SonarCloud analysis for fork PRs to prevent secret access failures @[copilot-swe-agent[bot]](https://github.com/apps/copilot-swe-agent) (https://github.com/tschroedter/idasen-desk/pull/100)
+
+### 🐛 Bug Fixes
+
+- 108 desk cannot be controlled after interrupted desk movement @tschroedter (https://github.com/tschroedter/idasen-desk/pull/109)
+- fix: increase test delays for CI reliability @tschroedter (https://github.com/tschroedter/idasen-desk/pull/107)
+
+### 🧰 Maintenance
+
+- chore(deps): bump release-drafter/release-drafter from 6 to 7 @[dependabot[bot]](https://github.com/apps/dependabot) (https://github.com/tschroedter/idasen-desk/pull/102)
+- chore(deps): bump actions/cache from 4 to 5 @[dependabot[bot]](https://github.com/apps/dependabot) (https://github.com/tschroedter/idasen-desk/pull/99)
 
 ## [v0.1.357](https://github.com/tschroedter/idasen-desk/compare/v0.1.350...v0.1.357) - 2025-12-10
 
