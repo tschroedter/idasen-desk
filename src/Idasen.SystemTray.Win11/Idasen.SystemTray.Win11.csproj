@@ -76,11 +76,18 @@
         <!-- SelfContained is only set to true during publish via command line -->
     </PropertyGroup>
 
+    <!-- Keep publish output compatible with the release workflow, which ships the single executable. -->
+    <PropertyGroup>
+        <PublishSingleFile>true</PublishSingleFile>
+        <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+        <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    </PropertyGroup>
+
     <!-- 
     Publish Single File Configuration
     Use the following command to publish as a self-contained single file:
 
-    dotnet publish -c Release -r win-x64 /p:SelfContained=true /p:PublishSingleFile=true /p:EnableCompressionInSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true
+    dotnet publish -c Release -r win-x64 /p:SelfContained=true
     -->
 
 
