@@ -36,7 +36,8 @@ public class ThemeRestoreOnResumeTests
                                                                                                                            .Resume ) ) ;
 
         // Allow background task to run with retry for CI reliability
-        await Task.Delay ( 100 ) ;
+        await Task.Delay ( 100 ,
+                           TestContext.Current.CancellationToken ) ;
 
         // Assert
         await _themeRestore.Received ( 1 ).ApplyWithDelayAsync ( Arg.Any < CancellationToken > ( ) ) ;
@@ -67,7 +68,8 @@ public class ThemeRestoreOnResumeTests
                         [null , EventArgs.Empty] ) ;
 
         // Allow background task to run with retry for CI reliability
-        await Task.Delay ( 100 ) ;
+        await Task.Delay ( 100 ,
+                           TestContext.Current.CancellationToken ) ;
 
         // Assert
         await _themeRestore.Received ( ).ApplyWithDelayAsync ( Arg.Any < CancellationToken > ( ) ) ;
@@ -96,7 +98,8 @@ public class ThemeRestoreOnResumeTests
                         [null , new UserPreferenceChangedEventArgs ( UserPreferenceCategory.Desktop )] ) ;
 
         // Allow background tasks to run with retry for CI reliability
-        await Task.Delay ( 150 ) ;
+        await Task.Delay ( 150 ,
+                           TestContext.Current.CancellationToken ) ;
 
         // Assert - General and Color should have triggered two additional calls (total >= 2)
         await _themeRestore.Received ( 2 ).ApplyWithDelayAsync ( Arg.Any < CancellationToken > ( ) ) ;
@@ -126,7 +129,8 @@ public class ThemeRestoreOnResumeTests
                                                                                             PowerModeChangedEventArgs ( PowerModes
                                                                                                                            .Resume ) ) ;
 
-        await Task.Delay ( 100 ) ;
+        await Task.Delay ( 100 ,
+                           TestContext.Current.CancellationToken ) ;
 
         // Assert - no calls after dispose
         await _themeRestore.DidNotReceive ( ).ApplyWithDelayAsync ( Arg.Any < CancellationToken > ( ) ) ;

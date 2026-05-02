@@ -47,7 +47,7 @@
         <PackageReference Include="Autofac" Version="9.1.0" />
         <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="11.0.0" />
         <PackageReference Include="AutofacSerilogIntegration" Version="5.0.0" />
-        <PackageReference Include="Idasen.Desk.Core" Version="0.1.160" />
+        <PackageReference Include="Idasen.Desk.Core" Version="0.1.243" />
         <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.1.3" />
         <PackageReference Include="NHotkey.Wpf" Version="4.0.0" />
         <PackageReference Include="Serilog" Version="4.3.1" />
@@ -69,18 +69,28 @@
         <PackageReference Include="xunit.abstractions" Version="2.0.3" />
     </ItemGroup>
 
-    <!-- Publish Single  -->
+    <!-- Platform configuration for WPF application -->
     <PropertyGroup>
         <RuntimeIdentifier>win-x64</RuntimeIdentifier>
-        <SelfContained>true</SelfContained>
-        <!-- or false if you want .NET installed separately -->
+        <!-- NOT self-contained by default - allows test projects to reference this project -->
+        <!-- SelfContained is only set to true during publish via command line -->
+    </PropertyGroup>
+
+    <!-- Keep publish output compatible with the release workflow, which ships the single executable. -->
+    <PropertyGroup>
         <PublishSingleFile>true</PublishSingleFile>
         <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
         <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
-        <PublishTrimmed>false</PublishTrimmed>
-        <StartupObject>Idasen.SystemTray.Win11.App</StartupObject>
-        <!-- keep false until you handle trimming warnings -->
     </PropertyGroup>
+
+    <!-- 
+    Publish Single File Configuration
+    Use the following command to publish as a self-contained single file:
+
+    dotnet publish -c Release -r win-x64 /p:SelfContained=true
+    -->
+
+
 
     <!-- Single concise include; prevent bundling -->
     <ItemGroup>
