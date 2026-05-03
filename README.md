@@ -44,6 +44,7 @@ A special thank you to all the amazing people who test this application and prov
 ## What's New
 
 ### Version 0.1.388
+- ✨ Upgrade to .NET 10.0 and resolve security vulnerability
 - 🐛 Fixed: Desk cannot be controlled after interrupted desk movement (#108).
 - 🧰 Maintenance: Updated NuGet packages and other dependency/CI maintenance.
 
