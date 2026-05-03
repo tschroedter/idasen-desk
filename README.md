@@ -7,7 +7,7 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=tschroedter_idasen-desk&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=tschroedter_idasen-desk)
 [![Dependabot Status](https://img.shields.io/badge/Dependabot-enabled-success?logo=dependabot)](https://github.com/tschroedter/idasen-desk/network/updates)
 
-A Windows 10/11 desktop application for controlling [Ikea's Idasen standing desk](https://www.ikea.com/au/en/p/idasen-desk-sit-stand-black-dark-grey-s29280991/) via Bluetooth LE. While Ikea provides Android and iOS apps, this application brings convenient desk control directly to your Windows desktop through a system tray interface.
+A Windows 10/11 desktop application for controlling [Ikea's Idasen standing desk](https://www.ikea.com/au/en/p/idasen-desk-sit-stand-black-dark-grey-s29280991/) via Bluetooth LE. While Ikea provides an official app, this project offers more features, better stability, and a native Windows experience.
 
 > 📚 **[Visit the Wiki](https://github.com/tschroedter/idasen-desk/wiki)** for comprehensive documentation, guides, and troubleshooting.
 
@@ -39,9 +39,13 @@ This project uses the [idasen-desk-core](https://github.com/tschroedter/idasen-d
 
 ## Thank You
 
-A special thank you to all the amazing people who test this application and provide valuable feedback! Your contributions help make this app better for everyone. Special recognition goes to **Glakt** and other dedicated testers who have taken the time to report issues, test new features, and help improve the desk control experience. Your support is greatly appreciated! 🙏
+A special thank you to all the amazing people who test this application and provide valuable feedback! Your contributions help make this app better for everyone. Special recognition goes to **Glak...**
 
 ## What's New
+
+### Version 0.1.387
+- 🐛 Fixed: Desk cannot be controlled after interrupted desk movement (#108).
+- 🧰 Maintenance: Updated NuGet packages and other dependency/CI maintenance.
 
 ### Version 0.1.357
 - 📦 Updated NuGet packages.
@@ -66,7 +70,7 @@ A special thank you to all the amazing people who test this application and prov
 - 🎨 Enable support for mouse wheel scrolling inside 'SettingsPage'.
 
 ### Version 0.1.250
-Short description: This patch release focuses on stability and quality-of-life improvements. It includes several bug fixes, performance optimizations, small usability improvements, dependency/security updates, and adds SonarCloud scanning so all code is now continuously checked for quality and security.
+Short description: This patch release focuses on stability and quality-of-life improvements. It includes several bug fixes, performance optimizations, small usability improvements, dependency/security updates, and improved observability.
 
 - 🛡️Fixes: resolved multiple reported crashes and edge-case bugs.
 - 📡Improvements: reduced memory/CPU usage in core processing paths and improved logging for easier troubleshooting.
@@ -126,7 +130,7 @@ Short description: This patch release focuses on stability and quality-of-life i
 
 Download the latest self-contained executable (no .NET runtime installation required):
 
-**[Download Latest](https://github.com/tschroedter/idasen-desk/releases/download/v0.1.357/Idasen-SystemTray-0.1.357-win-x64.exe)**
+**[Download Latest](https://github.com/tschroedter/idasen-desk/releases/download/v0.1.387/Idasen-SystemTray-0.1.387-win-x64.exe)**
 
 1. Download the executable from the link above
 2. Run the executable
@@ -457,5 +461,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **[Issues](https://github.com/tschroedter/idasen-desk/issues)** - Report bugs or request features
 - **[Discussions](https://github.com/tschroedter/idasen-desk/discussions)** - Ask questions and share ideas
 - **[Changelog](CHANGELOG.md)** - View all changes
-- **[Ikea Idasen Desk](https://www.ikea.com/au/en/p/idasen-desk-sit-stand-black-dark-grey-s29280991/)** - Official product page
-
+- **[Ikea Idasen Desk](https://www.ikea.com/au/en/p/idasen-desk/s29280991/)** - Official product page
