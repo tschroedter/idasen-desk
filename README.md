@@ -43,7 +43,7 @@ A special thank you to all the amazing people who test this application and prov
 
 ## What's New
 
-### Version 0.1.387
+### Version 0.1.388
 - 🐛 Fixed: Desk cannot be controlled after interrupted desk movement (#108).
 - 🧰 Maintenance: Updated NuGet packages and other dependency/CI maintenance.
 
@@ -130,7 +130,7 @@ Short description: This patch release focuses on stability and quality-of-life i
 
 Download the latest self-contained executable (no .NET runtime installation required):
 
-**[Download Latest](https://github.com/tschroedter/idasen-desk/releases/download/v0.1.387/Idasen-SystemTray-0.1.387-win-x64.exe)**
+**[Download Latest](https://github.com/tschroedter/idasen-desk/releases/download/v0.1.388/Idasen-SystemTray-0.1.388-win-x64.exe)**
 
 1. Download the executable from the link above
 2. Run the executable
