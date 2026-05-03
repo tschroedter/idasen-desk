@@ -39,7 +39,7 @@ This project uses the [idasen-desk-core](https://github.com/tschroedter/idasen-d
 
 ## Thank You
 
-A special thank you to all the amazing people who test this application and provide valuable feedback! Your contributions help make this app better for everyone. Special recognition goes to **Glak...**
+A special thank you to all the amazing people who test this application and provide valuable feedback! Your contributions help make this app better for everyone. Special recognition goes to **Glak and ducklingasa**.
 
 ## What's New
 
