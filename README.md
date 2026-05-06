@@ -7,7 +7,7 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=tschroedter_idasen-desk&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=tschroedter_idasen-desk)
 [![Dependabot Status](https://img.shields.io/badge/Dependabot-enabled-success?logo=dependabot)](https://github.com/tschroedter/idasen-desk/network/updates)
 
-A Windows 10/11 desktop application for controlling [Ikea's Idasen standing desk](https://www.ikea.com/au/en/p/idasen-desk-sit-stand-black-dark-grey-s29280991/) via Bluetooth LE. While Ikea provides an official app, this project offers more features, better stability, and a native Windows experience.
+A Windows 10/11 desktop application for controlling [Ikea's Idasen standing desk](https://www.ikea.com/au/en/p/idasen-desk-sit-stand-black-dark-grey-s29280991/) via Bluetooth LE. While Ikea provides a mobile app, this application offers desktop integration with system tray controls, global hotkeys, and advanced configuration options.
 
 > 📚 **[Visit the Wiki](https://github.com/tschroedter/idasen-desk/wiki)** for comprehensive documentation, guides, and troubleshooting.
 
@@ -39,9 +39,12 @@ This project uses the [idasen-desk-core](https://github.com/tschroedter/idasen-d
 
 ## Thank You
 
-A special thank you to all the amazing people who test this application and provide valuable feedback! Your contributions help make this app better for everyone. Special recognition goes to **Glak and ducklingasa**.
+A special thank you to all the amazing people who test this application and provide valuable feedback! Your contributions help make this app better for everyone. Special recognition goes to **Glakshmips**, who has been incredibly supportive and helpful through all the years. 🚀
 
 ## What's New
+
+### Version 0.1.401
+- 🔗 Fixed the donation link.
 
 ### Version 0.1.388
 - ✨ Upgrade to .NET 10.0 and resolve security vulnerability
@@ -71,7 +74,7 @@ A special thank you to all the amazing people who test this application and prov
 - 🎨 Enable support for mouse wheel scrolling inside 'SettingsPage'.
 
 ### Version 0.1.250
-Short description: This patch release focuses on stability and quality-of-life improvements. It includes several bug fixes, performance optimizations, small usability improvements, dependency/security updates, and improved observability.
+Short description: This patch release focuses on stability and quality-of-life improvements. It includes several bug fixes, performance optimizations, small usability improvements, dependency/security updates, and code quality tooling enhancements.
 
 - 🛡️Fixes: resolved multiple reported crashes and edge-case bugs.
 - 📡Improvements: reduced memory/CPU usage in core processing paths and improved logging for easier troubleshooting.
@@ -131,7 +134,7 @@ Short description: This patch release focuses on stability and quality-of-life i
 
 Download the latest self-contained executable (no .NET runtime installation required):
 
-**[Download Latest](https://github.com/tschroedter/idasen-desk/releases/download/v0.1.388/Idasen-SystemTray-0.1.388-win-x64.exe)**
+**[Download Latest](https://github.com/tschroedter/idasen-desk/releases/download/v0.1.401/Idasen-SystemTray-0.1.401-win-x64.exe)**
 
 1. Download the executable from the link above
 2. Run the executable
