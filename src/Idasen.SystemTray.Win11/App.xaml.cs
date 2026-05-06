@@ -93,6 +93,10 @@ public partial class App
                                                                            services
                                                                               .AddSingleton <
                                                                                    IdasenDeskWindowViewModel > ( ) ;
+                                                                           services.AddSingleton < IProcessLauncher ,
+                                                                                    ProcessLauncher > ( ) ;
+                                                                           services.AddSingleton < IDonateService ,
+                                                                                    DonateService > ( ) ;
                                                                            services.AddSingleton < HomePage > ( ) ;
                                                                            services
                                                                               .AddSingleton < DashboardViewModel > ( ) ;
