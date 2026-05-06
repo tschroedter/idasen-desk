@@ -41,7 +41,7 @@ public partial class HomePage : INavigableView < DashboardViewModel >
 
             if ( string.IsNullOrEmpty ( donateUrl ) )
             {
-                _logger.Warning ( "DonateUrl is not configured in appsettings.json, using default URL" );
+                _logger.Debug ( "DonateUrl is not configured. Using built-in default donate URL." );
                 donateUrl = DefaultDonateUrl ;
             }
 
