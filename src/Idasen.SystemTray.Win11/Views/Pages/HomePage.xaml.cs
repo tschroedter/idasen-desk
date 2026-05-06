@@ -128,15 +128,27 @@ public partial class HomePage : INavigableView < DashboardViewModel >
                 CreateNoWindow = true
             };
 
-            var process = Process.Start ( processStartInfo ) ;
+            using var process = Process.Start ( processStartInfo ) ;
 
-            if ( process != null )
+            if ( process == null )
+            {
+                _logger.Error ( "Both primary and fallback methods failed to open URL" );
+                return ;
+            }
+
+            if ( ! process.WaitForExit ( 5000 ) )
+            {
+                _logger.Error ( "Fallback method did not complete within the expected time" );
+                return ;
+            }
+
+            if ( process.ExitCode == 0 )
             {
                 _logger.Information ( "Successfully opened URL using fallback method" );
             }
             else
             {
-                _logger.Error ( "Both primary and fallback methods failed to open URL" );
+                _logger.Error ( "Fallback method failed with exit code {ExitCode}" , process.ExitCode );
             }
         }
         catch ( Exception ex )
