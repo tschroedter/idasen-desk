@@ -62,10 +62,10 @@
         <PackageReference Include="System.Drawing.Common" Version="10.0.7" />
         <PackageReference Include="System.IO.Abstractions" Version="22.1.1" />
         <PackageReference Include="Testably.Abstractions.FileSystem.Interface" Version="10.2.0" />
-        <PackageReference Include="WPF-UI" Version="4.3.0" />
+        <PackageReference Include="WPF-UI" Version="4.2.1" />
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.7" />
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
-        <PackageReference Include="WPF-UI.Tray" Version="4.3.0" />
+        <PackageReference Include="WPF-UI.Tray" Version="4.2.1" />
         <PackageReference Include="xunit.abstractions" Version="2.0.3" />
     </ItemGroup>
 
