@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics ;
 using System.Diagnostics.CodeAnalysis ;
+using System.IO ;
 using System.Windows.Input ;
 using Idasen.SystemTray.Win11.ViewModels.Pages ;
 using Microsoft.Extensions.Configuration ;
@@ -92,9 +93,12 @@ public partial class HomePage : INavigableView < DashboardViewModel >
         {
             _logger.Information ( "Trying fallback method with cmd /c start" );
 
+            var systemRoot = Environment.GetEnvironmentVariable ( "SystemRoot" ) ?? "C:\\Windows" ;
+            var cmdPath = Path.Combine ( systemRoot , "System32" , "cmd.exe" ) ;
+
             var processStartInfo = new ProcessStartInfo
             {
-                FileName = "cmd.exe" ,
+                FileName = cmdPath ,
                 Arguments = $"/c start \"\" \"{url}\"" ,
                 UseShellExecute = false ,
                 CreateNoWindow = true
