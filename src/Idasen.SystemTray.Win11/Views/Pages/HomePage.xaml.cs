@@ -44,16 +44,40 @@ public partial class HomePage : INavigableView < DashboardViewModel >
                 _logger.Debug ( "DonateUrl is not configured. Using built-in default donate URL." );
                 donateUrl = DefaultDonateUrl ;
             }
+            else if ( !TryCreateDonateUri ( donateUrl , out _ ) )
+            {
+                _logger.Warning ( "DonateUrl is invalid or not an absolute HTTP/HTTPS URI, using default URL" );
+                donateUrl = DefaultDonateUrl ;
+            }
 
-            _logger.Information ( "Donate button clicked. Using DonateUrl: {DonateUrl}" , donateUrl );
+            if ( !TryCreateDonateUri ( donateUrl , out var donateUri ) )
+            {
+                _logger.Error ( "Unable to open donate URL because neither the configured value nor the fallback URL is a valid absolute HTTP/HTTPS URI." );
+                return ;
+            }
 
-            OpenUrlInBrowser ( donateUrl ) ;
+            _logger.Information ( "Donate button clicked. Using DonateUrl: {DonateUrl}" , donateUri.AbsoluteUri );
+
+            OpenUrlInBrowser ( donateUri.AbsoluteUri ) ;
         }
-        catch (Exception ex)
+        catch ( Exception ex )
         {
-            _logger.Error ( ex , 
+            _logger.Error ( ex ,
                             "An error occurred while trying to open the donate URL." );
         }
+    }
+
+    private static bool TryCreateDonateUri ( string url , [ NotNullWhen ( true ) ] out Uri? donateUri )
+    {
+        if ( Uri.TryCreate ( url , UriKind.Absolute , out var parsedUri )
+             && ( parsedUri.Scheme == Uri.UriSchemeHttp || parsedUri.Scheme == Uri.UriSchemeHttps ) )
+        {
+            donateUri = parsedUri ;
+            return true ;
+        }
+
+        donateUri = null ;
+        return false ;
     }
 
     private void OpenUrlInBrowser ( string url )
