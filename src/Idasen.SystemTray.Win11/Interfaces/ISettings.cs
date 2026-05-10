@@ -9,4 +9,6 @@ public interface ISettings
     HeightSettings HeightSettings { get ; set ; }
 
     AppearanceSettings AppearanceSettings { get ; set ; }
+
+    HotkeySettings HotkeySettings { get ; set ; }
 }

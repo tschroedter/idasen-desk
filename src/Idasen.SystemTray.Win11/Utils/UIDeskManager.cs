@@ -43,6 +43,8 @@ public sealed partial class UiDeskManager : IUiDeskManager
                                                             ModifierKeys.Control | ModifierKeys.Alt |
                                                             ModifierKeys.Shift) ;
 
+    private static readonly char [ ] ModifierSeparators = [ ',' , ' ' ] ;
+
     private readonly IErrorManager             _errorManager ;
     private readonly ITaskbarIconProvider      _iconProvider ;
     private readonly ILogger                   _logger ;
@@ -115,6 +117,7 @@ public sealed partial class UiDeskManager : IUiDeskManager
         // Always attempt to unregister hotkeys and event handlers
         try
         {
+            _logger.Debug ( "Unregistering global hotkeys..." ) ;
             HotkeyManager.HotkeyAlreadyRegistered -= HotkeyManager_HotkeyAlreadyRegistered ;
             HotkeyManager.Current.Remove ( HotkeyNameStanding ) ;
             HotkeyManager.Current.Remove ( HotkeyNameSeating ) ;
@@ -123,7 +126,7 @@ public sealed partial class UiDeskManager : IUiDeskManager
         }
         catch
         {
-            // ignore cleanup errors
+            // ignore cleanup errors - hotkeys may not have been registered
         }
 
         // Attempt to cancel any pending operations, then clean up regardless
@@ -273,18 +276,15 @@ public sealed partial class UiDeskManager : IUiDeskManager
 
         HotkeyManager.HotkeyAlreadyRegistered += HotkeyManager_HotkeyAlreadyRegistered ;
 
-        HotkeyManager.Current.AddOrReplace ( HotkeyNameStanding ,
-                                             StandingGesture ,
-                                             OnGlobalHotKeyStanding ) ;
-        HotkeyManager.Current.AddOrReplace ( HotkeyNameSeating ,
-                                             SittingGesture ,
-                                             OnGlobalHotKeySeating ) ;
-        HotkeyManager.Current.AddOrReplace ( HotkeyNameCustom1 ,
-                                             Custom1Gesture ,
-                                             OnGlobalHotKeyCustom1 ) ;
-        HotkeyManager.Current.AddOrReplace ( HotkeyNameCustom2 ,
-                                             Custom2Gesture ,
-                                             OnGlobalHotKeyCustom2 ) ;
+        // Register global hotkeys if enabled in settings
+        if ( _manager.CurrentSettings.HotkeySettings.GlobalHotkeysEnabled )
+        {
+            RegisterGlobalHotkeys ( ) ;
+        }
+        else
+        {
+            _logger.Information ( "Global hotkeys are disabled in settings" ) ;
+        }
 
         // Pass a cancellable token to allow clean shutdown
         _notifications.Initialize ( notifyIcon ,
@@ -293,6 +293,49 @@ public sealed partial class UiDeskManager : IUiDeskManager
         _ = AutoConnectAsync ( ) ;
 
         return this ;
+    }
+
+    private void RegisterGlobalHotkeys ( )
+    {
+        var hotkeySettings = _manager.CurrentSettings.HotkeySettings ;
+
+        _logger.Information ( "Registering global hotkeys..." ) ;
+
+        // Create gestures from settings or use defaults
+        var standingGesture = CreateKeyGesture ( hotkeySettings.StandingKey ,
+                                                hotkeySettings.StandingModifiers ,
+                                                StandingGesture ) ;
+
+        var seatingGesture = CreateKeyGesture ( hotkeySettings.SeatingKey ,
+                                               hotkeySettings.SeatingModifiers ,
+                                               SittingGesture ) ;
+
+        var custom1Gesture = CreateKeyGesture ( hotkeySettings.Custom1Key ,
+                                               hotkeySettings.Custom1Modifiers ,
+                                               Custom1Gesture ) ;
+
+        var custom2Gesture = CreateKeyGesture ( hotkeySettings.Custom2Key ,
+                                               hotkeySettings.Custom2Modifiers ,
+                                               Custom2Gesture ) ;
+
+        // Register hotkeys
+        HotkeyManager.Current.AddOrReplace ( HotkeyNameStanding ,
+                                            standingGesture ,
+                                            OnGlobalHotKeyStanding ) ;
+
+        HotkeyManager.Current.AddOrReplace ( HotkeyNameSeating ,
+                                            seatingGesture ,
+                                            OnGlobalHotKeySeating ) ;
+
+        HotkeyManager.Current.AddOrReplace ( HotkeyNameCustom1 ,
+                                            custom1Gesture ,
+                                            OnGlobalHotKeyCustom1 ) ;
+
+        HotkeyManager.Current.AddOrReplace ( HotkeyNameCustom2 ,
+                                            custom2Gesture ,
+                                            OnGlobalHotKeyCustom2 ) ;
+
+        _logger.Information ( "Global hotkeys registered successfully" ) ;
     }
 
     public async Task StandAsync ( )
@@ -476,6 +519,65 @@ public sealed partial class UiDeskManager : IUiDeskManager
                               $"The hotkey '{e.Name}' is already registered by another application." ,
                               InfoBarSeverity.Warning ) ;
     }
+
+    /// <summary>
+    ///     Parses a key string to a Key enum value.
+    /// </summary>
+    private static Key ParseKey ( string keyString )
+    {
+        if ( Enum.TryParse < Key > ( keyString , true , out var key ) )
+            return key ;
+
+        throw new ArgumentException ( $"Invalid key string: '{keyString}'" ,
+                                      nameof ( keyString ) ) ;
+    }
+
+    /// <summary>
+    ///     Parses a modifier string (e.g., "Control, Alt, Shift") to ModifierKeys enum value.
+    /// </summary>
+    private static ModifierKeys ParseModifierKeys ( string modifierString )
+    {
+        var modifiers = ModifierKeys.None ;
+
+        if ( string.IsNullOrWhiteSpace ( modifierString ) )
+            return modifiers ;
+
+        var parts = modifierString.Split ( ModifierSeparators ,
+                                           StringSplitOptions.RemoveEmptyEntries ) ;
+
+        foreach ( var part in parts )
+            if ( Enum.TryParse < ModifierKeys > ( part , true , out var modifier ) )
+                modifiers |= modifier ;
+
+        return modifiers ;
+    }
+
+    /// <summary>
+    ///     Creates a KeyGesture from key and modifier strings, with fallback to default gesture.
+    /// </summary>
+    private KeyGesture CreateKeyGesture ( string keyString ,
+                                         string modifierString ,
+                                         KeyGesture defaultGesture )
+    {
+        try
+        {
+            var key       = ParseKey ( keyString ) ;
+            var modifiers = ParseModifierKeys ( modifierString ) ;
+
+            return new KeyGesture ( key ,
+                                   modifiers ) ;
+        }
+        catch ( Exception ex )
+        {
+            _logger.Warning ( ex ,
+                             "Failed to parse hotkey configuration (Key: '{Key}', Modifiers: '{Modifiers}'). Using default." ,
+                             keyString ,
+                             modifierString ) ;
+
+            return defaultGesture ;
+        }
+    }
+
 
     private void OnErrorChanged ( IErrorDetails details )
     {

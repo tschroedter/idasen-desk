@@ -15,5 +15,12 @@ public static class Constants
     public const uint   DefaultDeskMaxHeightInCm       = 127 ;
     public const string DefaultAppearanceThemeName     = "theme_light" ;
 
+    public const bool   DefaultGlobalHotkeysEnabled = true ;
+    public const string DefaultHotkeyModifiers      = "Control, Alt, Shift" ;
+    public const string DefaultStandingKey          = "Up" ;
+    public const string DefaultSeatingKey           = "Down" ;
+    public const string DefaultCustom1Key           = "Left" ;
+    public const string DefaultCustom2Key           = "Right" ;
+
     public static readonly bool NotificationsEnabled = true ;
 }

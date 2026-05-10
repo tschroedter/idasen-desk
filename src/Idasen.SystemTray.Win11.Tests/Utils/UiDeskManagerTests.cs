@@ -1,5 +1,6 @@
 using System.Reactive.Concurrency ;
 using System.Reflection ;
+using System.Windows.Input ;
 using FluentAssertions ;
 using Idasen.BluetoothLE.Linak.Interfaces ;
 using Idasen.SystemTray.Win11.Interfaces ;
@@ -197,5 +198,280 @@ public class UiDeskManagerTests
 
         await settingsManager.Received ( 1 ).LoadAsync ( Arg.Any < CancellationToken > ( ) ) ;
         desk.Received ( 1 ).MoveTo ( 66u * 100u ) ;
+    }
+
+    // Hotkey Configuration Tests
+
+    [ Fact ]
+    public void ParseKey_WithValidKeyString_ReturnsCorrectKey ( )
+    {
+        // Arrange
+        var parseKeyMethod = typeof ( UiDeskManager ).GetMethod ( "ParseKey" ,
+                                                                  BindingFlags.NonPublic | BindingFlags.Static ) ;
+
+        // Act
+        var result = ( Key )parseKeyMethod !.Invoke ( null ,
+                                                      [ "F1" ] ) !;
+
+        // Assert
+        result.Should ( ).Be ( Key.F1 ) ;
+    }
+
+    [ Theory ]
+    [ InlineData ( "Up" , Key.Up ) ]
+    [ InlineData ( "Down" , Key.Down ) ]
+    [ InlineData ( "Left" , Key.Left ) ]
+    [ InlineData ( "Right" , Key.Right ) ]
+    [ InlineData ( "F5" , Key.F5 ) ]
+    [ InlineData ( "A" , Key.A ) ]
+    [ InlineData ( "Space" , Key.Space ) ]
+    public void ParseKey_WithVariousKeys_ReturnsCorrectKey ( string keyString , Key expectedKey )
+    {
+        // Arrange
+        var parseKeyMethod = typeof ( UiDeskManager ).GetMethod ( "ParseKey" ,
+                                                                  BindingFlags.NonPublic | BindingFlags.Static ) ;
+
+        // Act
+        var result = ( Key )parseKeyMethod !.Invoke ( null ,
+                                                      [ keyString ] ) !;
+
+        // Assert
+        result.Should ( ).Be ( expectedKey ) ;
+    }
+
+    [ Fact ]
+    public void ParseKey_WithInvalidKeyString_ThrowsArgumentException ( )
+    {
+        // Arrange
+        var parseKeyMethod = typeof ( UiDeskManager ).GetMethod ( "ParseKey" ,
+                                                                  BindingFlags.NonPublic | BindingFlags.Static ) ;
+
+        // Act
+        var act = ( ) => parseKeyMethod !.Invoke ( null ,
+                                                   [ "InvalidKey" ] ) ;
+
+        // Assert
+        act.Should ( ).Throw < TargetInvocationException > ( )
+           .WithInnerException < ArgumentException > ( )
+           .WithMessage ( "Invalid key string: 'InvalidKey'*" ) ;
+    }
+
+    [ Fact ]
+    public void ParseModifierKeys_WithSingleModifier_ReturnsCorrectModifier ( )
+    {
+        // Arrange
+        var parseModifierKeysMethod = typeof ( UiDeskManager ).GetMethod ( "ParseModifierKeys" ,
+                                                                           BindingFlags.NonPublic | BindingFlags.Static ) ;
+
+        // Act
+        var result = ( ModifierKeys )parseModifierKeysMethod !.Invoke ( null ,
+                                                                        [ "Control" ] ) !;
+
+        // Assert
+        result.Should ( ).Be ( ModifierKeys.Control ) ;
+    }
+
+    [ Theory ]
+    [ InlineData ( "Control" , ModifierKeys.Control ) ]
+    [ InlineData ( "Alt" , ModifierKeys.Alt ) ]
+    [ InlineData ( "Shift" , ModifierKeys.Shift ) ]
+    [ InlineData ( "Windows" , ModifierKeys.Windows ) ]
+    public void ParseModifierKeys_WithVariousModifiers_ReturnsCorrectModifier ( string modifierString ,
+                                                                                ModifierKeys expectedModifier )
+    {
+        // Arrange
+        var parseModifierKeysMethod = typeof ( UiDeskManager ).GetMethod ( "ParseModifierKeys" ,
+                                                                           BindingFlags.NonPublic | BindingFlags.Static ) ;
+
+        // Act
+        var result = ( ModifierKeys )parseModifierKeysMethod !.Invoke ( null ,
+                                                                        [ modifierString ] ) !;
+
+        // Assert
+        result.Should ( ).Be ( expectedModifier ) ;
+    }
+
+    [ Fact ]
+    public void ParseModifierKeys_WithMultipleModifiers_ReturnsCombinedModifiers ( )
+    {
+        // Arrange
+        var parseModifierKeysMethod = typeof ( UiDeskManager ).GetMethod ( "ParseModifierKeys" ,
+                                                                           BindingFlags.NonPublic | BindingFlags.Static ) ;
+
+        // Act
+        var result = ( ModifierKeys )parseModifierKeysMethod !.Invoke ( null ,
+                                                                        [ "Control, Alt, Shift" ] ) !;
+
+        // Assert
+        result.Should ( ).Be ( ModifierKeys.Control | ModifierKeys.Alt | ModifierKeys.Shift ) ;
+    }
+
+    [ Theory ]
+    [ InlineData ( "Control,Alt" , ModifierKeys.Control | ModifierKeys.Alt ) ]
+    [ InlineData ( "Control, Shift" , ModifierKeys.Control | ModifierKeys.Shift ) ]
+    [ InlineData ( "Alt, Shift, Windows" , ModifierKeys.Alt | ModifierKeys.Shift | ModifierKeys.Windows ) ]
+    public void ParseModifierKeys_WithVariousCombinations_ReturnsCombinedModifiers ( string modifierString ,
+                                                                                     ModifierKeys expectedModifiers )
+    {
+        // Arrange
+        var parseModifierKeysMethod = typeof ( UiDeskManager ).GetMethod ( "ParseModifierKeys" ,
+                                                                           BindingFlags.NonPublic | BindingFlags.Static ) ;
+
+        // Act
+        var result = ( ModifierKeys )parseModifierKeysMethod !.Invoke ( null ,
+                                                                        [ modifierString ] ) !;
+
+        // Assert
+        result.Should ( ).Be ( expectedModifiers ) ;
+    }
+
+    [ Fact ]
+    public void ParseModifierKeys_WithEmptyString_ReturnsNone ( )
+    {
+        // Arrange
+        var parseModifierKeysMethod = typeof ( UiDeskManager ).GetMethod ( "ParseModifierKeys" ,
+                                                                           BindingFlags.NonPublic | BindingFlags.Static ) ;
+
+        // Act
+        var result = ( ModifierKeys )parseModifierKeysMethod !.Invoke ( null ,
+                                                                        [ string.Empty ] ) !;
+
+        // Assert
+        result.Should ( ).Be ( ModifierKeys.None ) ;
+    }
+
+    [ Fact ]
+    public void ParseModifierKeys_WithWhitespace_ReturnsNone ( )
+    {
+        // Arrange
+        var parseModifierKeysMethod = typeof ( UiDeskManager ).GetMethod ( "ParseModifierKeys" ,
+                                                                           BindingFlags.NonPublic | BindingFlags.Static ) ;
+
+        // Act
+        var result = ( ModifierKeys )parseModifierKeysMethod !.Invoke ( null ,
+                                                                        [ "   " ] ) !;
+
+        // Assert
+        result.Should ( ).Be ( ModifierKeys.None ) ;
+    }
+
+    [ Fact ]
+    public void ParseModifierKeys_WithInvalidModifier_IgnoresInvalidAndReturnsParsedOnes ( )
+    {
+        // Arrange
+        var parseModifierKeysMethod = typeof ( UiDeskManager ).GetMethod ( "ParseModifierKeys" ,
+                                                                           BindingFlags.NonPublic | BindingFlags.Static ) ;
+
+        // Act
+        var result = ( ModifierKeys )parseModifierKeysMethod !.Invoke ( null ,
+                                                                        [ "Control, InvalidModifier, Shift" ] ) !;
+
+        // Assert
+        result.Should ( ).Be ( ModifierKeys.Control | ModifierKeys.Shift ) ;
+    }
+
+    [ Fact ]
+    public void CreateKeyGesture_WithValidInputs_ReturnsKeyGesture ( )
+    {
+        // Arrange
+        var sut = CreateSut ( out _ ,
+                              out var settingsManager ,
+                              out _ ) ;
+        var settings = ( Settings )settingsManager.CurrentSettings ;
+
+        var createKeyGestureMethod = typeof ( UiDeskManager ).GetMethod ( "CreateKeyGesture" ,
+                                                                          BindingFlags.NonPublic | BindingFlags.Instance ) ;
+
+        var defaultGesture = new KeyGesture ( Key.F12 ,
+                                             ModifierKeys.Windows ) ;
+
+        // Act
+        var result = ( KeyGesture )createKeyGestureMethod !.Invoke ( sut ,
+                                                                     [
+                                                                         "F1" ,
+                                                                         "Control, Shift" ,
+                                                                         defaultGesture
+                                                                     ] ) !;
+
+        // Assert
+        result.Key.Should ( ).Be ( Key.F1 ) ;
+        result.Modifiers.Should ( ).Be ( ModifierKeys.Control | ModifierKeys.Shift ) ;
+    }
+
+    [ Fact ]
+    public void CreateKeyGesture_WithInvalidKey_ReturnsDefaultGesture ( )
+    {
+        // Arrange
+        var sut = CreateSut ( out _ ,
+                              out var settingsManager ,
+                              out _ ) ;
+        var settings = ( Settings )settingsManager.CurrentSettings ;
+
+        var createKeyGestureMethod = typeof ( UiDeskManager ).GetMethod ( "CreateKeyGesture" ,
+                                                                          BindingFlags.NonPublic | BindingFlags.Instance ) ;
+
+        var defaultGesture = new KeyGesture ( Key.F12 ,
+                                             ModifierKeys.Windows ) ;
+
+        // Act
+        var result = ( KeyGesture )createKeyGestureMethod !.Invoke ( sut ,
+                                                                     [
+                                                                         "InvalidKey" ,
+                                                                         "Control" ,
+                                                                         defaultGesture
+                                                                     ] ) !;
+
+        // Assert
+        result.Key.Should ( ).Be ( Key.F12 ) ;
+        result.Modifiers.Should ( ).Be ( ModifierKeys.Windows ) ;
+    }
+
+    [ Fact ]
+    public void HotkeySettings_DefaultConfiguration_EnablesHotkeys ( )
+    {
+        // Arrange & Act
+        var settings = new Settings ( ) ;
+
+        // Assert
+        settings.HotkeySettings.GlobalHotkeysEnabled.Should ( ).BeTrue ( ) ;
+    }
+
+    [ Fact ]
+    public void HotkeySettings_CanBeDisabled_ViaConfiguration ( )
+    {
+        // Arrange
+        var settings = new Settings
+        {
+            HotkeySettings = new HotkeySettings
+            {
+                GlobalHotkeysEnabled = false
+            }
+        } ;
+
+        // Act & Assert
+        settings.HotkeySettings.GlobalHotkeysEnabled.Should ( ).BeFalse ( ) ;
+    }
+
+    [ Fact ]
+    public void HotkeySettings_CustomKeys_CanBeConfigured ( )
+    {
+        // Arrange
+        var settings = new Settings
+        {
+            HotkeySettings = new HotkeySettings
+            {
+                StandingKey       = "F9" ,
+                StandingModifiers = "Control, Alt" ,
+                SeatingKey        = "F10" ,
+                SeatingModifiers  = "Control, Alt"
+            }
+        } ;
+
+        // Act & Assert
+        using var scope = new FluentAssertions.Execution.AssertionScope ( ) ;
+        settings.HotkeySettings.StandingKey.Should ( ).Be ( "F9" ) ;
+        settings.HotkeySettings.StandingModifiers.Should ( ).Be ( "Control, Alt" ) ;
+        settings.HotkeySettings.SeatingKey.Should ( ).Be ( "F10" ) ;
+        settings.HotkeySettings.SeatingModifiers.Should ( ).Be ( "Control, Alt" ) ;
     }
 }
