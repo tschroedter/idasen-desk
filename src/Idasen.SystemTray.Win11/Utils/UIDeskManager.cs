@@ -736,7 +736,7 @@ public sealed partial class UiDeskManager : IUiDeskManager
         {
             _logger.Error ( e ,
                             "Failed to unregister some hotkeys" ) ;
-            throw ; // Re-throw so the caller knows it failed
+            throw new InvalidOperationException ( "Failed to unregister global hotkeys. Hotkeys may still be active." , e ) ;
         }
     }
 

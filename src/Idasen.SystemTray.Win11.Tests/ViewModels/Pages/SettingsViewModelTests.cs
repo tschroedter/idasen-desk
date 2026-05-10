@@ -278,6 +278,60 @@ public sealed class SettingsViewModelTests
         await _themeManager.Received ( 1 ).ApplyAsync ( ApplicationTheme.Dark ) ;
     }
 
+    [ Fact ]
+    public void GlobalHotkeysEnabled_DefaultsToTrue ( )
+    {
+        // Arrange & Act
+        var vm = CreateSut ( ) ;
+
+        // Assert
+        vm.GlobalHotkeysEnabled.Should ( ).BeTrue ( ) ;
+    }
+
+    [ Fact ]
+    public void GlobalHotkeysEnabled_CanBeSetToFalse ( )
+    {
+        // Arrange
+        var vm = CreateSut ( ) ;
+
+        // Act
+        vm.GlobalHotkeysEnabled = false ;
+
+        // Assert
+        vm.GlobalHotkeysEnabled.Should ( ).BeFalse ( ) ;
+    }
+
+    [ Fact ]
+    public async Task GlobalHotkeysEnabled_ChangeTriggersAutoSave ( )
+    {
+        // Arrange
+        var vm = CreateSut ( ) ;
+        await vm.InitializeAsync ( CancellationToken.None ) ;
+
+        // Act - change the property
+        vm.GlobalHotkeysEnabled = false ;
+
+        // Advance scheduler by debounce time (300ms + buffer)
+        _scheduler.AdvanceBy ( TimeSpan.FromMilliseconds ( 400 ).Ticks ) ;
+
+        // Assert
+        await _synchronizer.Received ( 1 )
+                           .StoreSettingsAsync ( vm ,
+                                                 Arg.Any < CancellationToken > ( ) ) ;
+    }
+
+    [ Fact ]
+    public void GlobalHotkeysEnabled_ImplementsISettingsViewModel ( )
+    {
+        // Arrange
+        var vm = CreateSut ( ) ;
+
+        // Act & Assert - Verify the property works through the interface
+        ( ( ISettingsViewModel )vm ).GlobalHotkeysEnabled = false ;
+
+        vm.GlobalHotkeysEnabled.Should ( ).BeFalse ( ) ;
+    }
+
     private SettingsViewModel CreateSut ( )
     {
         return new SettingsViewModel ( _logger ,

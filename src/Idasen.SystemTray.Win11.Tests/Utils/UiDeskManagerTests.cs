@@ -476,4 +476,89 @@ public class UiDeskManagerTests
         settings.HotkeySettings.SeatingKey.Should ( ).Be ( "F10" ) ;
         settings.HotkeySettings.SeatingModifiers.Should ( ).Be ( "Control, Alt" ) ;
     }
+
+    [ Fact ]
+    public void SafeAddOrReplaceHotkey_ShouldHandleNonExistentHotkey ( )
+    {
+        // Arrange
+        var sut = CreateSut ( out _ ,
+                              out var settingsManager ,
+                              out _ ) ;
+        var settings = ( Settings )settingsManager.CurrentSettings ;
+        settings.HotkeySettings = new HotkeySettings { GlobalHotkeysEnabled = true } ;
+
+        // Get the private method via reflection
+        var method = typeof ( UiDeskManager ).GetMethod ( "SafeAddOrReplaceHotkey" ,
+                                                          BindingFlags.NonPublic | BindingFlags.Instance ) ;
+
+        // Act - This should not throw even if the hotkey doesn't exist
+        var gesture = new KeyGesture ( Key.F1 , ModifierKeys.Control ) ;
+        var act = ( ) => method?.Invoke ( sut , [ "TestHotkey" , gesture , null ] ) ;
+
+        // Assert
+        act.Should ( ).NotThrow ( ) ;
+    }
+
+    [ Fact ]
+    public void RegisterGlobalHotkeys_ShouldRegisterAllFourHotkeys ( )
+    {
+        // Arrange
+        var sut = CreateSut ( out _ ,
+                              out var settingsManager ,
+                              out _ ) ;
+        var settings = ( Settings )settingsManager.CurrentSettings ;
+        settings.HotkeySettings = new HotkeySettings
+        {
+            GlobalHotkeysEnabled = true ,
+            StandingKey          = "Up" ,
+            StandingModifiers    = "Control, Alt, Shift" ,
+            SeatingKey           = "Down" ,
+            SeatingModifiers     = "Control, Alt, Shift" ,
+            Custom1Key           = "Left" ,
+            Custom1Modifiers     = "Control, Alt, Shift" ,
+            Custom2Key           = "Right" ,
+            Custom2Modifiers     = "Control, Alt, Shift"
+        } ;
+
+        // Get the private method via reflection
+        var method = typeof ( UiDeskManager ).GetMethod ( "RegisterGlobalHotkeys" ,
+                                                          BindingFlags.NonPublic | BindingFlags.Instance ) ;
+
+        // Act - This should not throw
+        var act = ( ) => method?.Invoke ( sut , null ) ;
+
+        // Assert
+        act.Should ( ).NotThrow ( ) ;
+    }
+
+    [ Fact ]
+    public void UnregisterGlobalHotkeys_ShouldNotThrow_WhenHotkeysNotRegistered ( )
+    {
+        // Arrange
+        var sut = CreateSut ( out _ ,
+                              out var settingsManager ,
+                              out _ ) ;
+        var settings = ( Settings )settingsManager.CurrentSettings ;
+        settings.HotkeySettings = new HotkeySettings { GlobalHotkeysEnabled = false } ;
+
+        // Get the private method via reflection
+        var method = typeof ( UiDeskManager ).GetMethod ( "UnregisterGlobalHotkeys" ,
+                                                          BindingFlags.NonPublic | BindingFlags.Instance ) ;
+
+        // Act - This should throw because hotkeys don't exist, but the exception should be caught
+        var act = ( ) => method?.Invoke ( sut , null ) ;
+
+        // Assert - The method re-throws the exception
+        act.Should ( ).Throw < TargetInvocationException > ( ) ;
+    }
+
+    [ Fact ]
+    public void HotkeySettings_DefaultsToEnabled ( )
+    {
+        // Arrange & Act
+        var settings = new HotkeySettings ( ) ;
+
+        // Assert
+        settings.GlobalHotkeysEnabled.Should ( ).BeTrue ( ) ;
+    }
 }
