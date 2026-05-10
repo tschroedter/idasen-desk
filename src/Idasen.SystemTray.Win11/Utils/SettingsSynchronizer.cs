@@ -54,6 +54,12 @@ public class SettingsSynchronizer (
         var hotkeyChanged   = HaveHotkeySettingsChanged ( model ) ;
         var anyChanged      = HaveAnySettingsChanged ( model ) || lockChanged || advancedChanged || hotkeyChanged ;
 
+        logger.Debug ( "Settings change check - Lock: {LockChanged}, Advanced: {AdvancedChanged}, Hotkey: {HotkeyChanged}, Any: {AnyChanged}" ,
+                       lockChanged ,
+                       advancedChanged ,
+                       hotkeyChanged ,
+                       anyChanged ) ;
+
         if ( ! anyChanged )
         {
             logger.Debug ( "No settings changes detected. Skipping save and notifications." ) ;
@@ -206,9 +212,13 @@ public class SettingsSynchronizer (
 
     private void HotkeyChanged ( ISettings settings )
     {
-        logger.Information ( "Hotkey settings have changed..." ) ;
+        logger.Information ( "Hotkey settings have changed. GlobalHotkeysEnabled: {Enabled}" ,
+                             settings.HotkeySettings.GlobalHotkeysEnabled ) ;
 
         settingsChanges.HotkeySettingsChanged.OnNext ( settings.HotkeySettings.GlobalHotkeysEnabled ) ;
+
+        logger.Debug ( "Published HotkeySettingsChanged notification with value: {Enabled}" ,
+                       settings.HotkeySettings.GlobalHotkeysEnabled ) ;
     }
 
     private void AdvancedSettingsChanged ( bool advancedChanged )

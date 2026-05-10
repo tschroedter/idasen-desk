@@ -338,24 +338,41 @@ public sealed partial class UiDeskManager : IUiDeskManager
                                                hotkeySettings.Custom2Modifiers ,
                                                Custom2Gesture ) ;
 
-        // Register hotkeys
-        HotkeyManager.Current.AddOrReplace ( HotkeyNameStanding ,
-                                            standingGesture ,
-                                            OnGlobalHotKeyStanding ) ;
-
-        HotkeyManager.Current.AddOrReplace ( HotkeyNameSeating ,
-                                            seatingGesture ,
-                                            OnGlobalHotKeySeating ) ;
-
-        HotkeyManager.Current.AddOrReplace ( HotkeyNameCustom1 ,
-                                            custom1Gesture ,
-                                            OnGlobalHotKeyCustom1 ) ;
-
-        HotkeyManager.Current.AddOrReplace ( HotkeyNameCustom2 ,
-                                            custom2Gesture ,
-                                            OnGlobalHotKeyCustom2 ) ;
+        // Register hotkeys - safely handle if they don't exist
+        SafeAddOrReplaceHotkey ( HotkeyNameStanding , standingGesture , OnGlobalHotKeyStanding ) ;
+        SafeAddOrReplaceHotkey ( HotkeyNameSeating , seatingGesture , OnGlobalHotKeySeating ) ;
+        SafeAddOrReplaceHotkey ( HotkeyNameCustom1 , custom1Gesture , OnGlobalHotKeyCustom1 ) ;
+        SafeAddOrReplaceHotkey ( HotkeyNameCustom2 , custom2Gesture , OnGlobalHotKeyCustom2 ) ;
 
         _logger.Information ( "Global hotkeys registered successfully" ) ;
+    }
+
+    private void SafeAddOrReplaceHotkey ( string name , KeyGesture gesture , EventHandler < HotkeyEventArgs > handler )
+    {
+        try
+        {
+            // Try to remove first to avoid the "not registered" error when using AddOrReplace
+            try
+            {
+                HotkeyManager.Current.Remove ( name ) ;
+                _logger.Debug ( "Removed existing hotkey: {HotkeyName}" , name ) ;
+            }
+            catch ( Exception ex )
+            {
+                // Hotkey doesn't exist, that's fine
+                _logger.Debug ( ex , "Hotkey {HotkeyName} was not previously registered" , name ) ;
+            }
+
+            // Now add the hotkey
+            HotkeyManager.Current.AddOrReplace ( name , gesture , handler ) ;
+            _logger.Debug ( "Registered hotkey: {HotkeyName} with gesture: {Gesture}" , name , gesture ) ;
+        }
+        catch ( Exception e )
+        {
+            _logger.Error ( e ,
+                            "Failed to register hotkey: {HotkeyName}" ,
+                            name ) ;
+        }
     }
 
     public async Task StandAsync ( )
@@ -657,17 +674,38 @@ public sealed partial class UiDeskManager : IUiDeskManager
 
     private void OnHotkeySettingsChanged ( bool enabled )
     {
-        _logger.Information ( "Hotkey settings changed. Enabled: {Enabled}" ,
+        _logger.Information ( "Hotkey settings changed event received. Enabled: {Enabled}" ,
                               enabled ) ;
 
-        if ( enabled )
+        // Hotkey registration must happen on the UI thread
+        var dispatcher = Application.Current?.Dispatcher ;
+        if ( dispatcher == null )
         {
-            RegisterGlobalHotkeys ( ) ;
+            _logger.Error ( "Cannot access UI dispatcher for hotkey registration" ) ;
+            return ;
         }
-        else
+
+        dispatcher.Invoke ( ( ) =>
         {
-            UnregisterGlobalHotkeys ( ) ;
-        }
+            try
+            {
+                if ( enabled )
+                {
+                    _logger.Information ( "Registering hotkeys due to settings change" ) ;
+                    RegisterGlobalHotkeys ( ) ;
+                }
+                else
+                {
+                    _logger.Information ( "Unregistering hotkeys due to settings change" ) ;
+                    UnregisterGlobalHotkeys ( ) ;
+                }
+            }
+            catch ( Exception e )
+            {
+                _logger.Error ( e ,
+                                "Failed to handle hotkey settings change" ) ;
+            }
+        } ) ;
     }
 
     private void UnregisterGlobalHotkeys ( )
@@ -676,15 +714,29 @@ public sealed partial class UiDeskManager : IUiDeskManager
 
         try
         {
+            _logger.Debug ( "Attempting to remove hotkey: {HotkeyName}" , HotkeyNameStanding ) ;
             HotkeyManager.Current.Remove ( HotkeyNameStanding ) ;
+            _logger.Information ( "Successfully removed hotkey: {HotkeyName}" , HotkeyNameStanding ) ;
+
+            _logger.Debug ( "Attempting to remove hotkey: {HotkeyName}" , HotkeyNameSeating ) ;
             HotkeyManager.Current.Remove ( HotkeyNameSeating ) ;
+            _logger.Information ( "Successfully removed hotkey: {HotkeyName}" , HotkeyNameSeating ) ;
+
+            _logger.Debug ( "Attempting to remove hotkey: {HotkeyName}" , HotkeyNameCustom1 ) ;
             HotkeyManager.Current.Remove ( HotkeyNameCustom1 ) ;
+            _logger.Information ( "Successfully removed hotkey: {HotkeyName}" , HotkeyNameCustom1 ) ;
+
+            _logger.Debug ( "Attempting to remove hotkey: {HotkeyName}" , HotkeyNameCustom2 ) ;
             HotkeyManager.Current.Remove ( HotkeyNameCustom2 ) ;
+            _logger.Information ( "Successfully removed hotkey: {HotkeyName}" , HotkeyNameCustom2 ) ;
+
+            _logger.Information ( "Successfully unregistered all global hotkeys" ) ;
         }
         catch ( Exception e )
         {
-            _logger.Warning ( e ,
-                              "Failed to unregister some hotkeys" ) ;
+            _logger.Error ( e ,
+                            "Failed to unregister some hotkeys" ) ;
+            throw ; // Re-throw so the caller knows it failed
         }
     }
 
