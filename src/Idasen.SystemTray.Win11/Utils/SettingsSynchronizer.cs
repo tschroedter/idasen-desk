@@ -51,7 +51,8 @@ public class SettingsSynchronizer (
 
         var lockChanged     = HasParentalLockChanged ( model ) ;
         var advancedChanged = HaveAdvancedSettingsChanged ( model ) ;
-        var anyChanged      = HaveAnySettingsChanged ( model ) || lockChanged || advancedChanged ;
+        var hotkeyChanged   = HaveHotkeySettingsChanged ( model ) ;
+        var anyChanged      = HaveAnySettingsChanged ( model ) || lockChanged || advancedChanged || hotkeyChanged ;
 
         if ( ! anyChanged )
         {
@@ -64,6 +65,7 @@ public class SettingsSynchronizer (
 
         await DoStoreSettingsAsync ( advancedChanged ,
                                      lockChanged ,
+                                     hotkeyChanged ,
                                      token ).ConfigureAwait ( false ) ;
     }
 
@@ -97,6 +99,8 @@ public class SettingsSynchronizer (
                                            ? current.DeviceSettings.MaxSpeedToStopMovement
                                            : StoppingHeightCalculatorSettings.MaxSpeedToStopMovement ;
 
+        model.GlobalHotkeysEnabled = current.HotkeySettings.GlobalHotkeysEnabled ;
+
         var themeName = current.AppearanceSettings.ThemeName ;
         model.CurrentTheme = ParseThemeName ( themeName ) ;
     }
@@ -116,6 +120,13 @@ public class SettingsSynchronizer (
 
         return settings.DeviceSettings.DeviceName    != newDeviceName ||
                settings.DeviceSettings.DeviceAddress != newDeviceAddress ;
+    }
+
+    public bool HaveHotkeySettingsChanged ( ISettingsViewModel model )
+    {
+        var settings = settingsManager.CurrentSettings ;
+
+        return settings.HotkeySettings.GlobalHotkeysEnabled != model.GlobalHotkeysEnabled ;
     }
 
     public void UpdateCurrentSettings ( ISettingsViewModel model )
@@ -152,6 +163,8 @@ public class SettingsSynchronizer (
         settings.DeviceSettings.NotificationsEnabled   = newNotificationsEnabled ;
         settings.DeviceSettings.MaxSpeedToStopMovement = model.MaxSpeedToStopMovement ;
 
+        settings.HotkeySettings.GlobalHotkeysEnabled = model.GlobalHotkeysEnabled ;
+
         settings.AppearanceSettings.ThemeName = themeSwitcher.CurrentThemeName ;
 
         StoppingHeightCalculatorSettings.MaxSpeedToStopMovement = model.MaxSpeedToStopMovement ;
@@ -159,6 +172,7 @@ public class SettingsSynchronizer (
 
     private async Task DoStoreSettingsAsync ( bool              advancedChanged ,
                                               bool              lockChanged ,
+                                              bool              hotkeyChanged ,
                                               CancellationToken token )
     {
         try
@@ -171,6 +185,8 @@ public class SettingsSynchronizer (
             if ( advancedChanged ) AdvancedSettingsChanged ( advancedChanged ) ;
 
             if ( lockChanged ) LockChanged ( settingsManager.CurrentSettings ) ;
+
+            if ( hotkeyChanged ) HotkeyChanged ( settingsManager.CurrentSettings ) ;
         }
         catch ( Exception e )
         {
@@ -186,6 +202,13 @@ public class SettingsSynchronizer (
         logger.Information ( "Advanced Locked settings have changed..." ) ;
 
         settingsChanges.LockSettingsChanged.OnNext ( settings.DeviceSettings.DeviceLocked ) ;
+    }
+
+    private void HotkeyChanged ( ISettings settings )
+    {
+        logger.Information ( "Hotkey settings have changed..." ) ;
+
+        settingsChanges.HotkeySettingsChanged.OnNext ( settings.HotkeySettings.GlobalHotkeysEnabled ) ;
     }
 
     private void AdvancedSettingsChanged ( bool advancedChanged )
@@ -235,7 +258,10 @@ public class SettingsSynchronizer (
                               themeSwitcher.CurrentThemeName ,
                               StringComparison.Ordinal ) ;
 
-        return heightChanged || visibilityChanged || deviceChanged || themeChanged ;
+        var hotkeyChanged =
+            current.HotkeySettings.GlobalHotkeysEnabled != model.GlobalHotkeysEnabled ;
+
+        return heightChanged || visibilityChanged || deviceChanged || themeChanged || hotkeyChanged ;
     }
 
     private static ApplicationTheme ParseThemeName ( string themeName )

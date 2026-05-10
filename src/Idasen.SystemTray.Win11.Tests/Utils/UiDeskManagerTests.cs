@@ -26,6 +26,7 @@ public class UiDeskManagerTests
         var dp              = Substitute.For < IDeskProvider > ( ) ;
         var providerFactory = new Func < IDeskProvider > ( ( ) => dp ) ;
         var errorManager    = Substitute.For < IErrorManager > ( ) ;
+        var settingsChanges = Substitute.For < IObserveSettingsChanges > ( ) ;
 
         deskProvider = dp ;
 
@@ -39,7 +40,8 @@ public class UiDeskManagerTests
                                      notifications ,
                                      scheduler ,
                                      providerFactory ,
-                                     errorManager ) ;
+                                     errorManager ,
+                                     settingsChanges ) ;
 
         desk = Substitute.For < IDesk > ( ) ;
         typeof ( UiDeskManager )

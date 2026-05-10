@@ -76,8 +76,10 @@ public partial class SettingsViewModel (
 
     [ ObservableProperty ] private bool _standingIsVisibleInContextMenu = true ;
 
-    [ ObservableProperty ] private bool          _stopIsVisibleInContextMenu = true ;
-    private                        IDisposable ? _visibilitySubscription ;
+    [ ObservableProperty ] private bool _stopIsVisibleInContextMenu = true ;
+    [ ObservableProperty ] private bool _globalHotkeysEnabled       = true ;
+
+    private IDisposable ? _visibilitySubscription ;
 
 
     public async Task OnNavigatedToAsync ( )

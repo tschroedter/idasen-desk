@@ -52,6 +52,7 @@ public sealed partial class UiDeskManager : IUiDeskManager
     private readonly INotifications            _notifications ;
     private readonly Func < IDeskProvider > ?  _providerFactory ;
     private readonly IScheduler                _scheduler ;
+    private readonly IObserveSettingsChanges   _settingsChanges ;
     private readonly Subject < StatusBarInfo > _statusBarInfoSubject ;
 
     private IDesk ?         _desk ;
@@ -62,18 +63,20 @@ public sealed partial class UiDeskManager : IUiDeskManager
     private NotifyIcon ?    _notifyIcon ;
 
     [ UsedImplicitly ] private IDisposable ? _onErrorChanged ;
+    [ UsedImplicitly ] private IDisposable ? _onHotkeySettingsChanged ;
 
     private CancellationToken         _token ;
     private CancellationTokenSource ? _tokenSource ;
 
     public UiDeskManager (
-        ILogger                logger ,
-        ISettingsManager       manager ,
-        ITaskbarIconProvider   iconProvider ,
-        INotifications         notifications ,
-        IScheduler             scheduler ,
-        Func < IDeskProvider > deskProviderFactory ,
-        IErrorManager          errorManager )
+        ILogger                  logger ,
+        ISettingsManager         manager ,
+        ITaskbarIconProvider     iconProvider ,
+        INotifications           notifications ,
+        IScheduler               scheduler ,
+        Func < IDeskProvider >   deskProviderFactory ,
+        IErrorManager            errorManager ,
+        IObserveSettingsChanges  settingsChanges )
     {
         Guard.ArgumentNotNull ( logger ,
                                 nameof ( logger ) ) ;
@@ -89,6 +92,8 @@ public sealed partial class UiDeskManager : IUiDeskManager
                                 nameof ( deskProviderFactory ) ) ;
         Guard.ArgumentNotNull ( errorManager ,
                                 nameof ( errorManager ) ) ;
+        Guard.ArgumentNotNull ( settingsChanges ,
+                                nameof ( settingsChanges ) ) ;
 
         _logger               = logger ;
         _manager              = manager ;
@@ -97,6 +102,7 @@ public sealed partial class UiDeskManager : IUiDeskManager
         _scheduler            = scheduler ;
         _providerFactory      = deskProviderFactory ;
         _errorManager         = errorManager ;
+        _settingsChanges      = settingsChanges ;
         _statusBarInfoSubject = new Subject < StatusBarInfo > ( ) ;
     }
 
@@ -153,6 +159,15 @@ public sealed partial class UiDeskManager : IUiDeskManager
 
             try
             {
+                _onHotkeySettingsChanged?.Dispose ( ) ;
+            }
+            catch
+            {
+                // ignore cleanup errors
+            }
+
+            try
+            {
                 _heightChanged?.Dispose ( ) ;
             }
             catch
@@ -200,6 +215,7 @@ public sealed partial class UiDeskManager : IUiDeskManager
             }
 
             _onErrorChanged = null ;
+            _onHotkeySettingsChanged = null ;
             _heightChanged  = null ;
             _finished       = null ;
             _deskProvider   = null ;
@@ -273,6 +289,10 @@ public sealed partial class UiDeskManager : IUiDeskManager
         _onErrorChanged = _errorManager.ErrorChanged
                                        .ObserveOn ( _scheduler )
                                        .Subscribe ( OnErrorChanged ) ;
+
+        _onHotkeySettingsChanged = _settingsChanges.HotkeySettingsChanged
+                                                   .ObserveOn ( _scheduler )
+                                                   .Subscribe ( OnHotkeySettingsChanged ) ;
 
         HotkeyManager.HotkeyAlreadyRegistered += HotkeyManager_HotkeyAlreadyRegistered ;
 
@@ -633,6 +653,39 @@ public sealed partial class UiDeskManager : IUiDeskManager
     {
         HandleHotkey ( nameof ( Custom2Async ) ,
                        Custom2Async ) ;
+    }
+
+    private void OnHotkeySettingsChanged ( bool enabled )
+    {
+        _logger.Information ( "Hotkey settings changed. Enabled: {Enabled}" ,
+                              enabled ) ;
+
+        if ( enabled )
+        {
+            RegisterGlobalHotkeys ( ) ;
+        }
+        else
+        {
+            UnregisterGlobalHotkeys ( ) ;
+        }
+    }
+
+    private void UnregisterGlobalHotkeys ( )
+    {
+        _logger.Information ( "Unregistering global hotkeys..." ) ;
+
+        try
+        {
+            HotkeyManager.Current.Remove ( HotkeyNameStanding ) ;
+            HotkeyManager.Current.Remove ( HotkeyNameSeating ) ;
+            HotkeyManager.Current.Remove ( HotkeyNameCustom1 ) ;
+            HotkeyManager.Current.Remove ( HotkeyNameCustom2 ) ;
+        }
+        catch ( Exception e )
+        {
+            _logger.Warning ( e ,
+                              "Failed to unregister some hotkeys" ) ;
+        }
     }
 
     private static string HeightMessage ( uint heightInCm )

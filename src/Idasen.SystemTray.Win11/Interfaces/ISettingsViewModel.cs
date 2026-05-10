@@ -22,4 +22,5 @@ public interface ISettingsViewModel : IDisposable
     bool             Custom2IsVisibleInContextMenu  { get ; set ; }
     bool             StopIsVisibleInContextMenu     { get ; set ; }
     uint             MaxSpeedToStopMovement         { get ; set ; }
+    bool             GlobalHotkeysEnabled           { get ; set ; }
 }

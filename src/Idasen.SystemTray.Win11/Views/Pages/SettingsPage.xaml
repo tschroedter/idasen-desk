@@ -270,6 +270,11 @@
                 <!-- Hot Keys -->
                 <ui:CardExpander CornerRadius="0,0,8,8" Header="Hot Keys">
                     <StackPanel>
+                        <TextBlock Margin="0,12,0,0" Text="Global Hotkeys" />
+                        <CheckBox Margin="0,12,0,0" 
+                                  Content="Enable global hotkeys" 
+                                  ToolTip="Enable or disable all global hotkeys for desk control"
+                                  IsChecked="{Binding ViewModel.GlobalHotkeysEnabled, Mode=TwoWay}" />
                         <TextBlock Margin="0,12,0,0" Text="Definitions" />
                         <Grid Margin="0,12,0,0">
                             <Grid.ColumnDefinitions>
