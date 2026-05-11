@@ -107,6 +107,15 @@ public class SettingsSynchronizer (
 
         model.GlobalHotkeysEnabled = current.HotkeySettings.GlobalHotkeysEnabled ;
 
+        model.StandingKey       = current.HotkeySettings.StandingKey ;
+        model.StandingModifiers = current.HotkeySettings.StandingModifiers ;
+        model.SeatingKey        = current.HotkeySettings.SeatingKey ;
+        model.SeatingModifiers  = current.HotkeySettings.SeatingModifiers ;
+        model.Custom1Key        = current.HotkeySettings.Custom1Key ;
+        model.Custom1Modifiers  = current.HotkeySettings.Custom1Modifiers ;
+        model.Custom2Key        = current.HotkeySettings.Custom2Key ;
+        model.Custom2Modifiers  = current.HotkeySettings.Custom2Modifiers ;
+
         var themeName = current.AppearanceSettings.ThemeName ;
         model.CurrentTheme = ParseThemeName ( themeName ) ;
     }
@@ -132,7 +141,15 @@ public class SettingsSynchronizer (
     {
         var settings = settingsManager.CurrentSettings ;
 
-        return settings.HotkeySettings.GlobalHotkeysEnabled != model.GlobalHotkeysEnabled ;
+        return settings.HotkeySettings.GlobalHotkeysEnabled != model.GlobalHotkeysEnabled ||
+               settings.HotkeySettings.StandingKey          != model.StandingKey          ||
+               settings.HotkeySettings.StandingModifiers    != model.StandingModifiers    ||
+               settings.HotkeySettings.SeatingKey           != model.SeatingKey           ||
+               settings.HotkeySettings.SeatingModifiers     != model.SeatingModifiers     ||
+               settings.HotkeySettings.Custom1Key           != model.Custom1Key           ||
+               settings.HotkeySettings.Custom1Modifiers     != model.Custom1Modifiers     ||
+               settings.HotkeySettings.Custom2Key           != model.Custom2Key           ||
+               settings.HotkeySettings.Custom2Modifiers     != model.Custom2Modifiers ;
     }
 
     public void UpdateCurrentSettings ( ISettingsViewModel model )
@@ -170,6 +187,14 @@ public class SettingsSynchronizer (
         settings.DeviceSettings.MaxSpeedToStopMovement = model.MaxSpeedToStopMovement ;
 
         settings.HotkeySettings.GlobalHotkeysEnabled = model.GlobalHotkeysEnabled ;
+        settings.HotkeySettings.StandingKey          = model.StandingKey ;
+        settings.HotkeySettings.StandingModifiers    = model.StandingModifiers ;
+        settings.HotkeySettings.SeatingKey           = model.SeatingKey ;
+        settings.HotkeySettings.SeatingModifiers     = model.SeatingModifiers ;
+        settings.HotkeySettings.Custom1Key           = model.Custom1Key ;
+        settings.HotkeySettings.Custom1Modifiers     = model.Custom1Modifiers ;
+        settings.HotkeySettings.Custom2Key           = model.Custom2Key ;
+        settings.HotkeySettings.Custom2Modifiers     = model.Custom2Modifiers ;
 
         settings.AppearanceSettings.ThemeName = themeSwitcher.CurrentThemeName ;
 
@@ -269,7 +294,15 @@ public class SettingsSynchronizer (
                               StringComparison.Ordinal ) ;
 
         var hotkeyChanged =
-            current.HotkeySettings.GlobalHotkeysEnabled != model.GlobalHotkeysEnabled ;
+            current.HotkeySettings.GlobalHotkeysEnabled != model.GlobalHotkeysEnabled ||
+            current.HotkeySettings.StandingKey          != model.StandingKey          ||
+            current.HotkeySettings.StandingModifiers    != model.StandingModifiers    ||
+            current.HotkeySettings.SeatingKey           != model.SeatingKey           ||
+            current.HotkeySettings.SeatingModifiers     != model.SeatingModifiers     ||
+            current.HotkeySettings.Custom1Key           != model.Custom1Key           ||
+            current.HotkeySettings.Custom1Modifiers     != model.Custom1Modifiers     ||
+            current.HotkeySettings.Custom2Key           != model.Custom2Key           ||
+            current.HotkeySettings.Custom2Modifiers     != model.Custom2Modifiers ;
 
         return heightChanged || visibilityChanged || deviceChanged || themeChanged || hotkeyChanged ;
     }

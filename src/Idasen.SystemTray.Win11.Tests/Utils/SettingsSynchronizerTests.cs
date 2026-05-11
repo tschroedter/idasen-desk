@@ -311,9 +311,28 @@ public class SettingsSynchronizerTests
     {
         // Arrange
         var sut = CreateSut ( ) ;
-        var hotkeySettings = new HotkeySettings { GlobalHotkeysEnabled = true } ;
+        var hotkeySettings = new HotkeySettings
+        {
+            GlobalHotkeysEnabled = true ,
+            StandingKey          = Constants.DefaultStandingKey ,
+            StandingModifiers    = Constants.DefaultHotkeyModifiers ,
+            SeatingKey           = Constants.DefaultSeatingKey ,
+            SeatingModifiers     = Constants.DefaultHotkeyModifiers ,
+            Custom1Key           = Constants.DefaultCustom1Key ,
+            Custom1Modifiers     = Constants.DefaultHotkeyModifiers ,
+            Custom2Key           = Constants.DefaultCustom2Key ,
+            Custom2Modifiers     = Constants.DefaultHotkeyModifiers
+        } ;
         _settings.HotkeySettings = hotkeySettings ;
-        _model.GlobalHotkeysEnabled = true ;
+        _model.GlobalHotkeysEnabled.Returns ( true ) ;
+        _model.StandingKey.Returns ( Constants.DefaultStandingKey ) ;
+        _model.StandingModifiers.Returns ( Constants.DefaultHotkeyModifiers ) ;
+        _model.SeatingKey.Returns ( Constants.DefaultSeatingKey ) ;
+        _model.SeatingModifiers.Returns ( Constants.DefaultHotkeyModifiers ) ;
+        _model.Custom1Key.Returns ( Constants.DefaultCustom1Key ) ;
+        _model.Custom1Modifiers.Returns ( Constants.DefaultHotkeyModifiers ) ;
+        _model.Custom2Key.Returns ( Constants.DefaultCustom2Key ) ;
+        _model.Custom2Modifiers.Returns ( Constants.DefaultHotkeyModifiers ) ;
 
         // Act
         var result = sut.HaveHotkeySettingsChanged ( _model ) ;
@@ -343,9 +362,28 @@ public class SettingsSynchronizerTests
     {
         // Arrange
         var sut = CreateSut ( ) ;
-        var hotkeySettings = new HotkeySettings { GlobalHotkeysEnabled = true } ;
+        var hotkeySettings = new HotkeySettings
+        {
+            GlobalHotkeysEnabled = true ,
+            StandingKey          = Constants.DefaultStandingKey ,
+            StandingModifiers    = Constants.DefaultHotkeyModifiers ,
+            SeatingKey           = Constants.DefaultSeatingKey ,
+            SeatingModifiers     = Constants.DefaultHotkeyModifiers ,
+            Custom1Key           = Constants.DefaultCustom1Key ,
+            Custom1Modifiers     = Constants.DefaultHotkeyModifiers ,
+            Custom2Key           = Constants.DefaultCustom2Key ,
+            Custom2Modifiers     = Constants.DefaultHotkeyModifiers
+        } ;
         _settings.HotkeySettings = hotkeySettings ;
-        _model.GlobalHotkeysEnabled = true ;
+        _model.GlobalHotkeysEnabled.Returns ( true ) ;
+        _model.StandingKey.Returns ( Constants.DefaultStandingKey ) ;
+        _model.StandingModifiers.Returns ( Constants.DefaultHotkeyModifiers ) ;
+        _model.SeatingKey.Returns ( Constants.DefaultSeatingKey ) ;
+        _model.SeatingModifiers.Returns ( Constants.DefaultHotkeyModifiers ) ;
+        _model.Custom1Key.Returns ( Constants.DefaultCustom1Key ) ;
+        _model.Custom1Modifiers.Returns ( Constants.DefaultHotkeyModifiers ) ;
+        _model.Custom2Key.Returns ( Constants.DefaultCustom2Key ) ;
+        _model.Custom2Modifiers.Returns ( Constants.DefaultHotkeyModifiers ) ;
 
         // Act
         await sut.StoreSettingsAsync ( _model , CancellationToken.None ) ;

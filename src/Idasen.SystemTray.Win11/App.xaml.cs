@@ -201,10 +201,13 @@ public partial class App
                                                                                                              period ) ) ;
                                                                            services.AddSingleton ( _ =>
                                                                                                        CreateMainWindow ( ) ) ;
-                                                                           services
-                                                                              .AddSingleton < IAssemblyVersionProvider ,
-                                                                                   AssemblyVersionProvider > ( ) ;
-                                                                       } ).Build ( ) ;
+                                                                               services
+                                                                                  .AddSingleton < IAssemblyVersionProvider ,
+                                                                                       AssemblyVersionProvider > ( ) ;
+                                                                               services
+                                                                                  .AddSingleton < IAvailableKeysProvider ,
+                                                                                       AvailableKeysProvider > ( ) ;
+                                                                           } ).Build ( ) ;
 
     private static Mutex ? _singleInstanceMutex ;
 

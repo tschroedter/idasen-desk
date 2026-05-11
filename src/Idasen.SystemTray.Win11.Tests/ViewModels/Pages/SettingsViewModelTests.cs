@@ -21,10 +21,11 @@ public sealed class SettingsViewModelTests
     private readonly TestScheduler           _scheduler       = new( ) ;
     private readonly ILoggingSettingsManager _settingsManager = Substitute.For < ILoggingSettingsManager > ( ) ;
 
-    private readonly Subject < ISettings >    _settingsSaved     = new( ) ;
-    private readonly ISettingsSynchronizer    _synchronizer      = Substitute.For < ISettingsSynchronizer > ( ) ;
-    private readonly IApplicationThemeManager _themeManager      = Substitute.For < IApplicationThemeManager > ( ) ;
-    private readonly Subject < Visibility >   _visibilityChanges = new( ) ;
+    private readonly Subject < ISettings >     _settingsSaved        = new( ) ;
+    private readonly ISettingsSynchronizer     _synchronizer         = Substitute.For < ISettingsSynchronizer > ( ) ;
+    private readonly IApplicationThemeManager  _themeManager         = Substitute.For < IApplicationThemeManager > ( ) ;
+    private readonly IAvailableKeysProvider    _availableKeysProvider = Substitute.For < IAvailableKeysProvider > ( ) ;
+    private readonly Subject < Visibility >    _visibilityChanges    = new( ) ;
 
     private bool _disposed ;
 
@@ -35,6 +36,14 @@ public sealed class SettingsViewModelTests
 
         // Visibility stream for the main window
         _mainWindow.VisibilityChanged.Returns ( _visibilityChanges ) ;
+
+        // Mock available keys
+        _availableKeysProvider.AvailableKeys.Returns ( new List < string >
+        {
+            "Up" , "Down" , "Left" , "Right" ,
+            "F1" , "F2" , "F3" , "F4" , "F5" , "F6" ,
+            "F7" , "F8" , "F9" , "F10" , "F11" , "F12"
+        } ) ;
 
         // Default synchronizer behaviors
         _synchronizer.LoadSettingsAsync ( Arg.Any < ISettingsViewModel > ( ) ,
@@ -332,6 +341,411 @@ public sealed class SettingsViewModelTests
         vm.GlobalHotkeysEnabled.Should ( ).BeFalse ( ) ;
     }
 
+    [ Fact ]
+    public void AvailableKeys_ShouldReturnProviderKeys ( )
+    {
+        // Arrange
+        var expectedKeys = new List < string > { "F1" , "F2" , "Up" , "Down" } ;
+        _availableKeysProvider.AvailableKeys.Returns ( expectedKeys ) ;
+        var vm = CreateSut ( ) ;
+
+        // Act
+        var actualKeys = vm.AvailableKeys ;
+
+        // Assert
+        actualKeys.Should ( ).BeSameAs ( expectedKeys ) ;
+    }
+
+    [ Fact ]
+    public void AvailableKeys_ShouldNotBeNull ( )
+    {
+        // Arrange
+        var vm = CreateSut ( ) ;
+
+        // Act
+        var keys = vm.AvailableKeys ;
+
+        // Assert
+        keys.Should ( ).NotBeNull ( ) ;
+    }
+
+    [ Fact ]
+    public void HotkeyKeys_DefaultValues_ShouldBeSet ( )
+    {
+        // Arrange & Act
+        var vm = CreateSut ( ) ;
+
+        // Assert
+        vm.StandingKey.Should ( ).Be ( Constants.DefaultStandingKey ) ;
+        vm.SeatingKey.Should ( ).Be ( Constants.DefaultSeatingKey ) ;
+        vm.Custom1Key.Should ( ).Be ( Constants.DefaultCustom1Key ) ;
+        vm.Custom2Key.Should ( ).Be ( Constants.DefaultCustom2Key ) ;
+    }
+
+    [ Fact ]
+    public void HotkeyModifiers_DefaultValues_ShouldBeSet ( )
+    {
+        // Arrange & Act
+        var vm = CreateSut ( ) ;
+
+        // Assert
+        vm.StandingModifiers.Should ( ).Be ( Constants.DefaultHotkeyModifiers ) ;
+        vm.SeatingModifiers.Should ( ).Be ( Constants.DefaultHotkeyModifiers ) ;
+        vm.Custom1Modifiers.Should ( ).Be ( Constants.DefaultHotkeyModifiers ) ;
+        vm.Custom2Modifiers.Should ( ).Be ( Constants.DefaultHotkeyModifiers ) ;
+    }
+
+    [ Fact ]
+    public void StandingKey_CanBeChanged ( )
+    {
+        // Arrange
+        var vm = CreateSut ( ) ;
+
+        // Act
+        vm.StandingKey = "F5" ;
+
+        // Assert
+        vm.StandingKey.Should ( ).Be ( "F5" ) ;
+    }
+
+    [ Fact ]
+    public void StandingModifiers_CanBeChanged ( )
+    {
+        // Arrange
+        var vm = CreateSut ( ) ;
+
+        // Act
+        vm.StandingModifiers = "Control, Shift" ;
+
+        // Assert
+        vm.StandingModifiers.Should ( ).Be ( "Control, Shift" ) ;
+    }
+
+    [ Fact ]
+    public void StandingControl_ShouldReturnTrue_WhenModifiersContainControl ( )
+    {
+        // Arrange
+        var vm = CreateSut ( ) ;
+        vm.StandingModifiers = "Control, Alt" ;
+
+        // Act
+        var hasControl = vm.StandingControl ;
+
+        // Assert
+        hasControl.Should ( ).BeTrue ( ) ;
+    }
+
+    [ Fact ]
+    public void StandingControl_ShouldReturnFalse_WhenModifiersDoNotContainControl ( )
+    {
+        // Arrange
+        var vm = CreateSut ( ) ;
+        vm.StandingModifiers = "Alt, Shift" ;
+
+        // Act
+        var hasControl = vm.StandingControl ;
+
+        // Assert
+        hasControl.Should ( ).BeFalse ( ) ;
+    }
+
+    [ Fact ]
+    public void StandingControl_Set_ShouldAddControl_WhenNotPresent ( )
+    {
+        // Arrange
+        var vm = CreateSut ( ) ;
+        vm.StandingModifiers = "Alt" ;
+
+        // Act
+        vm.StandingControl = true ;
+
+        // Assert
+        vm.StandingModifiers.Should ( ).Contain ( "Control" ) ;
+    }
+
+    [ Fact ]
+    public void StandingControl_Set_ShouldRemoveControl_WhenPresent ( )
+    {
+        // Arrange
+        var vm = CreateSut ( ) ;
+        vm.StandingModifiers = "Control, Alt" ;
+
+        // Act
+        vm.StandingControl = false ;
+
+        // Assert
+        vm.StandingModifiers.Should ( ).NotContain ( "Control" ) ;
+    }
+
+    [ Fact ]
+    public void StandingAlt_ShouldReturnTrue_WhenModifiersContainAlt ( )
+    {
+        // Arrange
+        var vm = CreateSut ( ) ;
+        vm.StandingModifiers = "Control, Alt" ;
+
+        // Act
+        var hasAlt = vm.StandingAlt ;
+
+        // Assert
+        hasAlt.Should ( ).BeTrue ( ) ;
+    }
+
+    [ Fact ]
+    public void StandingAlt_Set_ShouldAddAlt_WhenNotPresent ( )
+    {
+        // Arrange
+        var vm = CreateSut ( ) ;
+        vm.StandingModifiers = "Control" ;
+
+        // Act
+        vm.StandingAlt = true ;
+
+        // Assert
+        vm.StandingModifiers.Should ( ).Contain ( "Alt" ) ;
+    }
+
+    [ Fact ]
+    public void StandingShift_ShouldReturnTrue_WhenModifiersContainShift ( )
+    {
+        // Arrange
+        var vm = CreateSut ( ) ;
+        vm.StandingModifiers = "Shift" ;
+
+        // Act
+        var hasShift = vm.StandingShift ;
+
+        // Assert
+        hasShift.Should ( ).BeTrue ( ) ;
+    }
+
+    [ Fact ]
+    public void StandingShift_Set_ShouldAddShift_WhenNotPresent ( )
+    {
+        // Arrange
+        var vm = CreateSut ( ) ;
+        vm.StandingModifiers = string.Empty ;
+
+        // Act
+        vm.StandingShift = true ;
+
+        // Assert
+        vm.StandingModifiers.Should ( ).Be ( "Shift" ) ;
+    }
+
+    [ Fact ]
+    public void SeatingControl_ShouldReturnTrue_WhenModifiersContainControl ( )
+    {
+        // Arrange
+        var vm = CreateSut ( ) ;
+        vm.SeatingModifiers = "Control" ;
+
+        // Act
+        var hasControl = vm.SeatingControl ;
+
+        // Assert
+        hasControl.Should ( ).BeTrue ( ) ;
+    }
+
+    [ Fact ]
+    public void SeatingControl_Set_ShouldUpdateSeatingModifiers ( )
+    {
+        // Arrange
+        var vm = CreateSut ( ) ;
+        vm.SeatingModifiers = string.Empty ;
+
+        // Act
+        vm.SeatingControl = true ;
+
+        // Assert
+        vm.SeatingModifiers.Should ( ).Contain ( "Control" ) ;
+    }
+
+    [ Fact ]
+    public void Custom1Control_Set_ShouldUpdateCustom1Modifiers ( )
+    {
+        // Arrange
+        var vm = CreateSut ( ) ;
+        vm.Custom1Modifiers = string.Empty ;
+
+        // Act
+        vm.Custom1Control = true ;
+
+        // Assert
+        vm.Custom1Modifiers.Should ( ).Contain ( "Control" ) ;
+    }
+
+    [ Fact ]
+    public void Custom1Alt_Set_ShouldUpdateCustom1Modifiers ( )
+    {
+        // Arrange
+        var vm = CreateSut ( ) ;
+        vm.Custom1Modifiers = string.Empty ;
+
+        // Act
+        vm.Custom1Alt = true ;
+
+        // Assert
+        vm.Custom1Modifiers.Should ( ).Contain ( "Alt" ) ;
+    }
+
+    [ Fact ]
+    public void Custom2Shift_Set_ShouldUpdateCustom2Modifiers ( )
+    {
+        // Arrange
+        var vm = CreateSut ( ) ;
+        vm.Custom2Modifiers = string.Empty ;
+
+        // Act
+        vm.Custom2Shift = true ;
+
+        // Assert
+        vm.Custom2Modifiers.Should ( ).Contain ( "Shift" ) ;
+    }
+
+    [ Fact ]
+    public void ModifierProperties_CaseInsensitive_ShouldWorkCorrectly ( )
+    {
+        // Arrange
+        var vm = CreateSut ( ) ;
+        vm.StandingModifiers = "control, ALT, sHiFt" ;
+
+        // Act & Assert
+        vm.StandingControl.Should ( ).BeTrue ( ) ;
+        vm.StandingAlt.Should ( ).BeTrue ( ) ;
+        vm.StandingShift.Should ( ).BeTrue ( ) ;
+    }
+
+    [ Fact ]
+    public void ModifierProperties_WithSpaces_ShouldBeParsedCorrectly ( )
+    {
+        // Arrange
+        var vm = CreateSut ( ) ;
+        vm.StandingModifiers = "  Control  ,  Alt  " ;
+
+        // Act & Assert
+        vm.StandingControl.Should ( ).BeTrue ( ) ;
+        vm.StandingAlt.Should ( ).BeTrue ( ) ;
+        vm.StandingShift.Should ( ).BeFalse ( ) ;
+    }
+
+    [ Fact ]
+    public void ModifierProperties_EmptyString_ShouldReturnFalse ( )
+    {
+        // Arrange
+        var vm = CreateSut ( ) ;
+        vm.StandingModifiers = string.Empty ;
+
+        // Act & Assert
+        vm.StandingControl.Should ( ).BeFalse ( ) ;
+        vm.StandingAlt.Should ( ).BeFalse ( ) ;
+        vm.StandingShift.Should ( ).BeFalse ( ) ;
+    }
+
+    [ Fact ]
+    public void UpdateModifier_ShouldNotCreateDuplicates ( )
+    {
+        // Arrange
+        var vm = CreateSut ( ) ;
+        vm.StandingModifiers = "Control" ;
+
+        // Act
+        vm.StandingControl = true ; // Try to add Control again
+
+        // Assert
+        vm.StandingModifiers.Split ( ',' ).Where ( s => s.Trim ( ) == "Control" ).Should ( ).HaveCount ( 1 ) ;
+    }
+
+    [ Fact ]
+    public void UpdateModifier_MultipleChanges_ShouldWorkCorrectly ( )
+    {
+        // Arrange
+        var vm = CreateSut ( ) ;
+        vm.StandingModifiers = string.Empty ;
+
+        // Act
+        vm.StandingControl = true ;
+        vm.StandingAlt = true ;
+        vm.StandingShift = true ;
+
+        // Assert
+        vm.StandingModifiers.Should ( ).Contain ( "Control" ) ;
+        vm.StandingModifiers.Should ( ).Contain ( "Alt" ) ;
+        vm.StandingModifiers.Should ( ).Contain ( "Shift" ) ;
+    }
+
+    [ Fact ]
+    public void UpdateModifier_RemoveAll_ShouldResultInEmptyString ( )
+    {
+        // Arrange
+        var vm = CreateSut ( ) ;
+        vm.StandingModifiers = "Control, Alt, Shift" ;
+
+        // Act
+        vm.StandingControl = false ;
+        vm.StandingAlt = false ;
+        vm.StandingShift = false ;
+
+        // Assert
+        vm.StandingModifiers.Should ( ).BeEmpty ( ) ;
+    }
+
+    [ Fact ]
+    public async Task HotkeyKey_Change_ShouldTriggerAutoSave ( )
+    {
+        // Arrange
+        var vm = CreateSut ( ) ;
+        await vm.InitializeAsync ( CancellationToken.None ) ;
+
+        // Act
+        vm.StandingKey = "F10" ;
+        _scheduler.AdvanceBy ( TimeSpan.FromMilliseconds ( 400 ).Ticks ) ;
+
+        // Assert
+        await _synchronizer.Received ( 1 )
+                           .StoreSettingsAsync ( vm ,
+                                                 Arg.Any < CancellationToken > ( ) ) ;
+    }
+
+    [ Fact ]
+    public async Task HotkeyModifier_Change_ShouldTriggerAutoSave ( )
+    {
+        // Arrange
+        var vm = CreateSut ( ) ;
+        await vm.InitializeAsync ( CancellationToken.None ) ;
+
+        // Act
+        vm.StandingModifiers = "Control, Shift" ;
+        _scheduler.AdvanceBy ( TimeSpan.FromMilliseconds ( 400 ).Ticks ) ;
+
+        // Assert
+        await _synchronizer.Received ( 1 )
+                           .StoreSettingsAsync ( vm ,
+                                                 Arg.Any < CancellationToken > ( ) ) ;
+    }
+
+    [ Fact ]
+    public async Task HotkeyModifierCheckbox_Change_ShouldTriggerAutoSave ( )
+    {
+        // Arrange
+        var vm = CreateSut ( ) ;
+        await vm.InitializeAsync ( CancellationToken.None ) ;
+
+        // Ensure we start without Control
+        vm.StandingModifiers = "Alt" ;
+        _scheduler.AdvanceBy ( TimeSpan.FromMilliseconds ( 400 ).Ticks ) ;
+        _synchronizer.ClearReceivedCalls ( ) ; // Clear any prior calls
+
+        // Act
+        vm.StandingControl = true ; // This should update StandingModifiers and trigger auto-save
+        _scheduler.AdvanceBy ( TimeSpan.FromMilliseconds ( 400 ).Ticks ) ;
+
+        // Assert
+        await _synchronizer.Received ( 1 )
+                           .StoreSettingsAsync ( vm ,
+                                                 Arg.Any < CancellationToken > ( ) ) ;
+    }
+
     private SettingsViewModel CreateSut ( )
     {
         return new SettingsViewModel ( _logger ,
@@ -339,6 +753,7 @@ public sealed class SettingsViewModelTests
                                        _scheduler ,
                                        _synchronizer ,
                                        _themeManager ,
-                                       _mainWindow ) ;
+                                       _mainWindow ,
+                                       _availableKeysProvider ) ;
     }
 }

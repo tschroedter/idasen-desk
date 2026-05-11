@@ -23,4 +23,12 @@ public interface ISettingsViewModel : IDisposable
     bool             StopIsVisibleInContextMenu     { get ; set ; }
     uint             MaxSpeedToStopMovement         { get ; set ; }
     bool             GlobalHotkeysEnabled           { get ; set ; }
+    string           StandingKey                    { get ; set ; }
+    string           StandingModifiers              { get ; set ; }
+    string           SeatingKey                     { get ; set ; }
+    string           SeatingModifiers               { get ; set ; }
+    string           Custom1Key                     { get ; set ; }
+    string           Custom1Modifiers               { get ; set ; }
+    string           Custom2Key                     { get ; set ; }
+    string           Custom2Modifiers               { get ; set ; }
 }

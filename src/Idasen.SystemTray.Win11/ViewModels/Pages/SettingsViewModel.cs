@@ -23,7 +23,8 @@ public partial class SettingsViewModel (
     IScheduler               scheduler ,
     ISettingsSynchronizer    synchronizer ,
     IApplicationThemeManager themeManager ,
-    IMainWindow              mainWindow )
+    IMainWindow              mainWindow ,
+    IAvailableKeysProvider   availableKeysProvider )
     : ObservableObject , INavigationAware , ISettingsViewModel
 {
     [ ObservableProperty ] private string _appVersion = string.Empty ;
@@ -78,6 +79,225 @@ public partial class SettingsViewModel (
 
     [ ObservableProperty ] private bool _stopIsVisibleInContextMenu = true ;
     [ ObservableProperty ] private bool _globalHotkeysEnabled       = true ;
+
+    [ ObservableProperty ] private string _standingKey       = Constants.DefaultStandingKey ;
+    [ ObservableProperty ] private string _standingModifiers = Constants.DefaultHotkeyModifiers ;
+    [ ObservableProperty ] private string _seatingKey        = Constants.DefaultSeatingKey ;
+    [ ObservableProperty ] private string _seatingModifiers  = Constants.DefaultHotkeyModifiers ;
+    [ ObservableProperty ] private string _custom1Key        = Constants.DefaultCustom1Key ;
+    [ ObservableProperty ] private string _custom1Modifiers  = Constants.DefaultHotkeyModifiers ;
+    [ ObservableProperty ] private string _custom2Key        = Constants.DefaultCustom2Key ;
+    [ ObservableProperty ] private string _custom2Modifiers  = Constants.DefaultHotkeyModifiers ;
+
+    private bool _isUpdatingModifiers ;
+    private static readonly char [ ] ModifierSeparators = [ ',' , ' ' ] ;
+
+    /// <summary>
+    ///     Gets the available keys for hotkey configuration.
+    /// </summary>
+    public IReadOnlyList < string > AvailableKeys => availableKeysProvider.AvailableKeys ;
+
+    public bool StandingControl
+    {
+        get => ContainsModifier ( StandingModifiers , "Control" ) ;
+        set => UpdateModifier ( "Standing" , "Control" , value ) ;
+    }
+
+    public bool StandingAlt
+    {
+        get => ContainsModifier ( StandingModifiers , "Alt" ) ;
+        set => UpdateModifier ( "Standing" , "Alt" , value ) ;
+    }
+
+    public bool StandingShift
+    {
+        get => ContainsModifier ( StandingModifiers , "Shift" ) ;
+        set => UpdateModifier ( "Standing" , "Shift" , value ) ;
+    }
+
+    public bool SeatingControl
+    {
+        get => ContainsModifier ( SeatingModifiers , "Control" ) ;
+        set => UpdateModifier ( "Seating" , "Control" , value ) ;
+    }
+
+    public bool SeatingAlt
+    {
+        get => ContainsModifier ( SeatingModifiers , "Alt" ) ;
+        set => UpdateModifier ( "Seating" , "Alt" , value ) ;
+    }
+
+    public bool SeatingShift
+    {
+        get => ContainsModifier ( SeatingModifiers , "Shift" ) ;
+        set => UpdateModifier ( "Seating" , "Shift" , value ) ;
+    }
+
+    public bool Custom1Control
+    {
+        get => ContainsModifier ( Custom1Modifiers , "Control" ) ;
+        set => UpdateModifier ( "Custom1" , "Control" , value ) ;
+    }
+
+    public bool Custom1Alt
+    {
+        get => ContainsModifier ( Custom1Modifiers , "Alt" ) ;
+        set => UpdateModifier ( "Custom1" , "Alt" , value ) ;
+    }
+
+    public bool Custom1Shift
+    {
+        get => ContainsModifier ( Custom1Modifiers , "Shift" ) ;
+        set => UpdateModifier ( "Custom1" , "Shift" , value ) ;
+    }
+
+    public bool Custom2Control
+    {
+        get => ContainsModifier ( Custom2Modifiers , "Control" ) ;
+        set => UpdateModifier ( "Custom2" , "Control" , value ) ;
+    }
+
+    public bool Custom2Alt
+    {
+        get => ContainsModifier ( Custom2Modifiers , "Alt" ) ;
+        set => UpdateModifier ( "Custom2" , "Alt" , value ) ;
+    }
+
+    public bool Custom2Shift
+    {
+        get => ContainsModifier ( Custom2Modifiers , "Shift" ) ;
+        set => UpdateModifier ( "Custom2" , "Shift" , value ) ;
+    }
+
+    private void UpdateModifier ( string hotkeyName , string modifier , bool add )
+    {
+        if ( _isUpdatingModifiers )
+            return ;
+
+        _isUpdatingModifiers = true ;
+
+        try
+        {
+            var currentModifiers = hotkeyName switch
+            {
+                "Standing" => StandingModifiers ,
+                "Seating"  => SeatingModifiers ,
+                "Custom1"  => Custom1Modifiers ,
+                "Custom2"  => Custom2Modifiers ,
+                _          => string.Empty
+            } ;
+
+            var modifiers = ParseModifiers ( currentModifiers ) ;
+
+            if ( add )
+            {
+                if ( ! modifiers.Contains ( modifier ) )
+                    modifiers.Add ( modifier ) ;
+            }
+            else
+            {
+                modifiers.Remove ( modifier ) ;
+            }
+
+            var newValue = string.Join ( ", " , modifiers ) ;
+
+            switch ( hotkeyName )
+            {
+                case "Standing":
+                    StandingModifiers = newValue ;
+                    break ;
+                case "Seating":
+                    SeatingModifiers = newValue ;
+                    break ;
+                case "Custom1":
+                    Custom1Modifiers = newValue ;
+                    break ;
+                case "Custom2":
+                    Custom2Modifiers = newValue ;
+                    break ;
+            }
+        }
+        finally
+        {
+            _isUpdatingModifiers = false ;
+        }
+    }
+
+    private static bool ContainsModifier ( string modifierString , string modifier )
+    {
+        if ( string.IsNullOrWhiteSpace ( modifierString ) )
+            return false ;
+
+        return modifierString.Contains ( modifier , StringComparison.OrdinalIgnoreCase ) ;
+    }
+
+    private static List < string > ParseModifiers ( string modifierString )
+    {
+        if ( string.IsNullOrWhiteSpace ( modifierString ) )
+            return new List < string > ( ) ;
+
+        return modifierString
+              .Split ( ModifierSeparators , StringSplitOptions.RemoveEmptyEntries )
+              .Select ( s => s.Trim ( ) )
+              .Where ( s => ! string.IsNullOrEmpty ( s ) )
+              .ToList ( ) ;
+    }
+
+    partial void OnStandingModifiersChanged ( string value )
+    {
+        if ( _isUpdatingModifiers )
+        {
+            return ;
+        }
+
+        logger.Debug ( "value = {Value}", value );
+
+        OnPropertyChanged ( nameof ( StandingControl ) ) ;
+        OnPropertyChanged ( nameof ( StandingAlt ) ) ;
+        OnPropertyChanged ( nameof ( StandingShift ) ) ;
+    }
+
+    partial void OnSeatingModifiersChanged ( string value )
+    {
+        if (_isUpdatingModifiers)
+        {
+            return;
+        }
+
+        logger.Debug("value = {Value}", value);
+
+        OnPropertyChanged(nameof(SeatingControl));
+        OnPropertyChanged(nameof(SeatingAlt));
+        OnPropertyChanged(nameof(SeatingShift));
+    }
+
+    partial void OnCustom1ModifiersChanged ( string value )
+    {
+        if (_isUpdatingModifiers)
+        {
+            return;
+        }
+
+        logger.Debug("value = {Value}", value);
+
+        OnPropertyChanged(nameof(Custom1Control));
+        OnPropertyChanged(nameof(Custom1Alt));
+        OnPropertyChanged(nameof(Custom1Shift));
+    }
+
+    partial void OnCustom2ModifiersChanged ( string value )
+    {
+        if (_isUpdatingModifiers)
+        {
+            return;
+        }
+
+        logger.Debug("value = {Value}", value);
+
+        OnPropertyChanged(nameof(Custom2Control));
+        OnPropertyChanged(nameof(Custom2Alt));
+        OnPropertyChanged(nameof(Custom2Shift));
+    }
 
     private IDisposable ? _visibilitySubscription ;
 
