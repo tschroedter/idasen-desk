@@ -6,27 +6,30 @@
     x:Name="Root">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="32" />
-            <ColumnDefinition Width="100" />
-            <ColumnDefinition Width="90" />
-            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" MinWidth="32" />
+            <ColumnDefinition Width="Auto" MinWidth="80" />
+            <ColumnDefinition Width="Auto" MinWidth="90" />
+            <ColumnDefinition Width="*" MinWidth="220" />
         </Grid.ColumnDefinitions>
 
         <!-- Icon -->
         <ui:SymbolIcon Grid.Column="0"
+                       MinWidth="32"
                        Symbol="{Binding Symbol, ElementName=Root}"
                        HorizontalAlignment="Center" 
                        VerticalAlignment="Center" />
 
         <!-- Label -->
         <Label Grid.Column="1" 
+               MinWidth="80"
                Content="{Binding HotkeyName, ElementName=Root}"
                ToolTip="{Binding HotkeyTooltip, ElementName=Root}"
                VerticalAlignment="Center" 
                Padding="5,0,5,0" />
 
         <!-- Key ComboBox -->
-        <ComboBox Grid.Column="2" 
+        <ComboBox Grid.Column="2"
+                  MinWidth="90"
                   ItemsSource="{Binding AvailableKeys, ElementName=Root}"
                   SelectedItem="{Binding SelectedKey, ElementName=Root, Mode=TwoWay}"
                   ToolTip="{Binding KeyTooltip, ElementName=Root}" />
@@ -37,12 +40,15 @@
                     Orientation="Horizontal" 
                     Margin="5,0,0,0">
             <CheckBox Content="Ctrl" 
+                      MinWidth="50"
                       IsChecked="{Binding IsControlChecked, ElementName=Root, Mode=TwoWay}" 
-                      Margin="0,0,5,0" />
+                      Margin="0,0,10,0" />
             <CheckBox Content="Alt" 
+                      MinWidth="45"
                       IsChecked="{Binding IsAltChecked, ElementName=Root, Mode=TwoWay}" 
-                      Margin="0,0,5,0" />
+                      Margin="0,0,10,0" />
             <CheckBox Content="Shift" 
+                      MinWidth="55"
                       IsChecked="{Binding IsShiftChecked, ElementName=Root, Mode=TwoWay}" />
         </StackPanel>
     </Grid>
