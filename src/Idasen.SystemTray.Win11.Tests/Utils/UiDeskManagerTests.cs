@@ -379,7 +379,6 @@ public class UiDeskManagerTests
         var sut = CreateSut ( out _ ,
                               out var settingsManager ,
                               out _ ) ;
-        var settings = ( Settings )settingsManager.CurrentSettings ;
 
         var createKeyGestureMethod = typeof ( UiDeskManager ).GetMethod ( "CreateKeyGesture" ,
                                                                           BindingFlags.NonPublic | BindingFlags.Instance ) ;
