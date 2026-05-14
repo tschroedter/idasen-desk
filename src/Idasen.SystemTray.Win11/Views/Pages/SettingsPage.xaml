@@ -281,6 +281,7 @@
                         <StackPanel Margin="0,12,0,0">
                             <!-- Standing -->
                             <controls:HotkeyDefinitionControl
+                                HorizontalAlignment="Stretch"
                                 Symbol="{x:Static ui:SymbolRegular.ArrowCircleUp24}"
                                 HotkeyName="Stand"
                                 HotkeyTooltip="The global hot key to move the desk to the standing height."
@@ -294,6 +295,7 @@
                             <!-- Seating -->
                             <controls:HotkeyDefinitionControl
                                 Margin="0,5,0,0"
+                                HorizontalAlignment="Stretch"
                                 Symbol="{x:Static ui:SymbolRegular.ArrowCircleDown24}"
                                 HotkeyName="Sit"
                                 HotkeyTooltip="The global hot key to move the desk to the seating height."
@@ -307,6 +309,7 @@
                             <!-- Custom 1 -->
                             <controls:HotkeyDefinitionControl
                                 Margin="0,5,0,0"
+                                HorizontalAlignment="Stretch"
                                 Symbol="{x:Static ui:SymbolRegular.ArrowCircleLeft24}"
                                 HotkeyName="Custom 1"
                                 HotkeyTooltip="The global hot key to move the desk to the custom 1 height."
@@ -320,6 +323,7 @@
                             <!-- Custom 2 -->
                             <controls:HotkeyDefinitionControl
                                 Margin="0,5,0,0"
+                                HorizontalAlignment="Stretch"
                                 Symbol="{x:Static ui:SymbolRegular.ArrowCircleRight24}"
                                 HotkeyName="Custom 2"
                                 HotkeyTooltip="The global hot key to move the desk to the custom 2 height."
