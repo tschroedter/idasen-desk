@@ -4,9 +4,9 @@ This document summarizes the unit test coverage for the global hotkey customizat
 
 ## Test Statistics
 
-- **Total Tests Added**: 26 new tests
-- **Test Files Modified**: 3 files
-- **Overall Test Suite**: 218 tests (all passing ✅)
+- **Coverage Scope**: This document summarizes the hotkey-related unit tests added or updated for this feature.
+- **Test Files Modified**: Multiple test files were updated to cover hotkey settings, parsing, synchronization, and storage scenarios.
+- **Test Suite Status**: All relevant tests should pass in local runs and CI validation.
 
 ## Test Coverage by Component
 
