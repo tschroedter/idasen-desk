@@ -103,7 +103,7 @@ public class AvailableKeysProviderTests
         var keys = provider.AvailableKeys ;
 
         // Assert
-        // 4 arrow keys + 12 function keys = 16 total
+        // 4 arrow keys + 10 number keys + 12 function keys = 26 total
         keys.Should ( ).HaveCount ( 26 ) ;
     }
 
