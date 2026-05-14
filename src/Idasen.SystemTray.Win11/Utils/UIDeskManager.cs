@@ -704,36 +704,68 @@ public sealed partial class UiDeskManager : IUiDeskManager
         } ) ;
     }
 
-    private void UnregisterGlobalHotkeys ( )
+    private Exception? TryUnregisterGlobalHotkey ( string hotkeyName )
     {
-        _logger.Information ( "Unregistering global hotkeys..." ) ;
-
         try
         {
-            _logger.Debug ( "Attempting to remove hotkey: {HotkeyName}" , HotkeyNameStanding ) ;
-            HotkeyManager.Current.Remove ( HotkeyNameStanding ) ;
-            _logger.Information ( "Successfully removed hotkey: {HotkeyName}" , HotkeyNameStanding ) ;
-
-            _logger.Debug ( "Attempting to remove hotkey: {HotkeyName}" , HotkeyNameSeating ) ;
-            HotkeyManager.Current.Remove ( HotkeyNameSeating ) ;
-            _logger.Information ( "Successfully removed hotkey: {HotkeyName}" , HotkeyNameSeating ) ;
-
-            _logger.Debug ( "Attempting to remove hotkey: {HotkeyName}" , HotkeyNameCustom1 ) ;
-            HotkeyManager.Current.Remove ( HotkeyNameCustom1 ) ;
-            _logger.Information ( "Successfully removed hotkey: {HotkeyName}" , HotkeyNameCustom1 ) ;
-
-            _logger.Debug ( "Attempting to remove hotkey: {HotkeyName}" , HotkeyNameCustom2 ) ;
-            HotkeyManager.Current.Remove ( HotkeyNameCustom2 ) ;
-            _logger.Information ( "Successfully removed hotkey: {HotkeyName}" , HotkeyNameCustom2 ) ;
-
-            _logger.Information ( "Successfully unregistered all global hotkeys" ) ;
+            _logger.Debug ( "Attempting to remove hotkey: {HotkeyName}" , hotkeyName ) ;
+            HotkeyManager.Current.Remove ( hotkeyName ) ;
+            _logger.Information ( "Successfully removed hotkey: {HotkeyName}" , hotkeyName ) ;
+            return null ;
         }
         catch ( Exception e )
         {
             _logger.Error ( e ,
-                            "Failed to unregister some hotkeys" ) ;
-            throw new InvalidOperationException ( "Failed to unregister global hotkeys. Hotkeys may still be active." , e ) ;
+                            "Failed to remove hotkey: {HotkeyName}" ,
+                            hotkeyName ) ;
+            return e ;
         }
+    }
+
+    private void UnregisterGlobalHotkeys ( )
+    {
+        _logger.Information ( "Unregistering global hotkeys..." ) ;
+
+        var failedHotkeys = new System.Collections.Generic.List<string> ( ) ;
+        Exception? firstException = null ;
+
+        var standingException = TryUnregisterGlobalHotkey ( HotkeyNameStanding ) ;
+        if ( standingException is not null )
+        {
+            failedHotkeys.Add ( HotkeyNameStanding ) ;
+            firstException ??= standingException ;
+        }
+
+        var seatingException = TryUnregisterGlobalHotkey ( HotkeyNameSeating ) ;
+        if ( seatingException is not null )
+        {
+            failedHotkeys.Add ( HotkeyNameSeating ) ;
+            firstException ??= seatingException ;
+        }
+
+        var custom1Exception = TryUnregisterGlobalHotkey ( HotkeyNameCustom1 ) ;
+        if ( custom1Exception is not null )
+        {
+            failedHotkeys.Add ( HotkeyNameCustom1 ) ;
+            firstException ??= custom1Exception ;
+        }
+
+        var custom2Exception = TryUnregisterGlobalHotkey ( HotkeyNameCustom2 ) ;
+        if ( custom2Exception is not null )
+        {
+            failedHotkeys.Add ( HotkeyNameCustom2 ) ;
+            firstException ??= custom2Exception ;
+        }
+
+        if ( failedHotkeys.Count == 0 )
+        {
+            _logger.Information ( "Successfully unregistered all global hotkeys" ) ;
+            return ;
+        }
+
+        throw new InvalidOperationException (
+            $"Failed to unregister global hotkeys: {string.Join ( ", " , failedHotkeys )}. Hotkeys may still be active." ,
+            firstException ) ;
     }
 
     private static string HeightMessage ( uint heightInCm )
