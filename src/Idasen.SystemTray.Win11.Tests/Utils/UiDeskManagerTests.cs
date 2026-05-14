@@ -532,7 +532,7 @@ public class UiDeskManagerTests
     }
 
     [ Fact ]
-    public void UnregisterGlobalHotkeys_ShouldNotThrow_WhenHotkeysNotRegistered ( )
+    public void UnregisterGlobalHotkeys_ShouldThrowTargetInvocationException_WhenHotkeysNotRegistered ( )
     {
         // Arrange
         var sut = CreateSut ( out _ ,
@@ -545,10 +545,10 @@ public class UiDeskManagerTests
         var method = typeof ( UiDeskManager ).GetMethod ( "UnregisterGlobalHotkeys" ,
                                                           BindingFlags.NonPublic | BindingFlags.Instance ) ;
 
-        // Act - This should throw because hotkeys don't exist, but the exception should be caught
+        // Act
         var act = ( ) => method?.Invoke ( sut , null ) ;
 
-        // Assert - The method re-throws the exception
+        // Assert
         act.Should ( ).Throw < TargetInvocationException > ( ) ;
     }
 
