@@ -296,15 +296,11 @@ public sealed partial class UiDeskManager : IUiDeskManager
 
         HotkeyManager.HotkeyAlreadyRegistered += HotkeyManager_HotkeyAlreadyRegistered ;
 
-        // Register global hotkeys if enabled in settings
-        if ( _manager.CurrentSettings.HotkeySettings.GlobalHotkeysEnabled )
-        {
-            RegisterGlobalHotkeys ( ) ;
-        }
-        else
-        {
-            _logger.Information ( "Global hotkeys are disabled in settings" ) ;
-        }
+        // Do not register hotkeys here because persisted settings may not have been
+        // loaded yet during startup. Hotkey registration must happen after the
+        // settings load has completed so we do not apply default registrations for
+        // users who have disabled global hotkeys in Settings.json.
+        _logger.Debug ( "Deferring global hotkey registration until persisted settings are loaded" ) ;
 
         // Pass a cancellable token to allow clean shutdown
         _notifications.Initialize ( notifyIcon ,
