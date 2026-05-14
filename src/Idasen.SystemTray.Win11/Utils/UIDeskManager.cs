@@ -427,6 +427,39 @@ public sealed partial class UiDeskManager : IUiDeskManager
 
             await _manager.LoadAsync ( CancellationToken.None ).ConfigureAwait ( false ) ;
 
+            // Register global hotkeys after settings are loaded if they are enabled
+            var hotkeySettings = _manager.CurrentSettings.HotkeySettings ;
+            if ( hotkeySettings.GlobalHotkeysEnabled )
+            {
+                _logger.Debug ( "Settings loaded with global hotkeys enabled. Registering hotkeys..." ) ;
+
+                // Hotkey registration must happen on the UI thread
+                var dispatcher = Application.Current?.Dispatcher ;
+                if ( dispatcher != null )
+                {
+                    await dispatcher.InvokeAsync ( ( ) =>
+                    {
+                        try
+                        {
+                            RegisterGlobalHotkeys ( ) ;
+                        }
+                        catch ( Exception e )
+                        {
+                            _logger.Error ( e ,
+                                            "Failed to register hotkeys during startup" ) ;
+                        }
+                    } ) ;
+                }
+                else
+                {
+                    _logger.Warning ( "Cannot access UI dispatcher for hotkey registration during startup" ) ;
+                }
+            }
+            else
+            {
+                _logger.Debug ( "Settings loaded with global hotkeys disabled. Skipping hotkey registration." ) ;
+            }
+
             _logger.Debug ( "Trying to auto connect to Idasen Desk..." ) ;
 
             await Task.Delay ( 3000 ,
