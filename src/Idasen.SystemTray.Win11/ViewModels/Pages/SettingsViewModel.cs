@@ -228,7 +228,8 @@ public partial class SettingsViewModel (
         if ( string.IsNullOrWhiteSpace ( modifierString ) )
             return false ;
 
-        return modifierString.Contains ( modifier , StringComparison.OrdinalIgnoreCase ) ;
+        return ParseModifiers ( modifierString )
+              .Any ( parsedModifier => string.Equals ( parsedModifier , modifier , StringComparison.OrdinalIgnoreCase ) ) ;
     }
 
     private static List < string > ParseModifiers ( string modifierString )
