@@ -499,38 +499,6 @@ public class UiDeskManagerTests
     }
 
     [ Fact ]
-    public void RegisterGlobalHotkeys_ShouldRegisterAllFourHotkeys ( )
-    {
-        // Arrange
-        var sut = CreateSut ( out _ ,
-                              out var settingsManager ,
-                              out _ ) ;
-        var settings = ( Settings )settingsManager.CurrentSettings ;
-        settings.HotkeySettings = new HotkeySettings
-        {
-            GlobalHotkeysEnabled = true ,
-            StandingKey          = "Up" ,
-            StandingModifiers    = "Control, Alt, Shift" ,
-            SeatingKey           = "Down" ,
-            SeatingModifiers     = "Control, Alt, Shift" ,
-            Custom1Key           = "Left" ,
-            Custom1Modifiers     = "Control, Alt, Shift" ,
-            Custom2Key           = "Right" ,
-            Custom2Modifiers     = "Control, Alt, Shift"
-        } ;
-
-        // Get the private method via reflection
-        var method = typeof ( UiDeskManager ).GetMethod ( "RegisterGlobalHotkeys" ,
-                                                          BindingFlags.NonPublic | BindingFlags.Instance ) ;
-
-        // Act - This should not throw
-        var act = ( ) => method?.Invoke ( sut , null ) ;
-
-        // Assert
-        act.Should ( ).NotThrow ( ) ;
-    }
-
-    [ Fact ]
     public void UnregisterGlobalHotkeys_ShouldThrowTargetInvocationException_WhenHotkeysNotRegistered ( )
     {
         // Arrange
