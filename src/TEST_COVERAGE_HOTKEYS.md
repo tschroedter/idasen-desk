@@ -144,7 +144,6 @@ var result = await CreateSut().LoadSettingsAsync(TestFileName, CancellationToken
 All tests are part of the CI pipeline and must pass before merging:
 - Build verification
 - Full test suite execution
-- Code coverage reporting
 
 ## Future Test Enhancements
 
