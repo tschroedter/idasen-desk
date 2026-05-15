@@ -588,9 +588,16 @@ public sealed partial class UiDeskManager : IUiDeskManager
 
     /// <summary>
     ///     Parses a key string to a Key enum value.
+    ///     Maps user-friendly number keys ("1", "2", etc.) to their Key enum equivalents ("D1", "D2", etc.).
     /// </summary>
     private static Key ParseKey ( string keyString )
     {
+        // Handle user-friendly number key display names (1-9, 0) by mapping to their Key enum names (D1-D9, D0)
+        if ( keyString.Length == 1 && char.IsDigit ( keyString [ 0 ] ) )
+        {
+            keyString = "D" + keyString ;
+        }
+
         if ( Enum.TryParse < Key > ( keyString , true , out var key ) )
             return key ;
 

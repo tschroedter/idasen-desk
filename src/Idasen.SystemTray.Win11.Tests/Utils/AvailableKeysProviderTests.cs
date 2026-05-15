@@ -57,16 +57,16 @@ public class AvailableKeysProviderTests
         var keys = provider.AvailableKeys ;
 
         // Assert
-        keys.Should ( ).Contain ( "D1" ) ;
-        keys.Should ( ).Contain ( "D2" ) ;
-        keys.Should ( ).Contain ( "D3" ) ;
-        keys.Should ( ).Contain ( "D4" ) ;
-        keys.Should ( ).Contain ( "D5" ) ;
-        keys.Should ( ).Contain ( "D6" ) ;
-        keys.Should ( ).Contain ( "D7" ) ;
-        keys.Should ( ).Contain ( "D8" ) ;
-        keys.Should ( ).Contain ( "D9" ) ;
-        keys.Should ( ).Contain ( "D0" ) ;
+        keys.Should ( ).Contain ( "1" ) ;
+        keys.Should ( ).Contain ( "2" ) ;
+        keys.Should ( ).Contain ( "3" ) ;
+        keys.Should ( ).Contain ( "4" ) ;
+        keys.Should ( ).Contain ( "5" ) ;
+        keys.Should ( ).Contain ( "6" ) ;
+        keys.Should ( ).Contain ( "7" ) ;
+        keys.Should ( ).Contain ( "8" ) ;
+        keys.Should ( ).Contain ( "9" ) ;
+        keys.Should ( ).Contain ( "0" ) ;
     }
 
     [ Fact ]
@@ -148,16 +148,16 @@ public class AvailableKeysProviderTests
         keys [ 1 ].Should ( ).Be ( "Down" ) ;
         keys [ 2 ].Should ( ).Be ( "Left" ) ;
         keys [ 3 ].Should ( ).Be ( "Right" ) ;
-        keys [ 4 ].Should ( ).Be ( "D1" ) ;
-        keys [ 5 ].Should ( ).Be ( "D2" ) ;
-        keys [ 6 ].Should ( ).Be ( "D3" ) ;
-        keys [ 7 ].Should ( ).Be ( "D4" ) ;
-        keys [ 8 ].Should ( ).Be ( "D5" ) ;
-        keys [ 9 ].Should ( ).Be ( "D6" ) ;
-        keys [ 10 ].Should ( ).Be ( "D7" ) ;
-        keys [ 11 ].Should ( ).Be ( "D8" ) ;
-        keys [ 12 ].Should ( ).Be ( "D9" ) ;
-        keys [ 13 ].Should ( ).Be ( "D0" ) ;
+        keys [ 4 ].Should ( ).Be ( "1" ) ;
+        keys [ 5 ].Should ( ).Be ( "2" ) ;
+        keys [ 6 ].Should ( ).Be ( "3" ) ;
+        keys [ 7 ].Should ( ).Be ( "4" ) ;
+        keys [ 8 ].Should ( ).Be ( "5" ) ;
+        keys [ 9 ].Should ( ).Be ( "6" ) ;
+        keys [ 10 ].Should ( ).Be ( "7" ) ;
+        keys [ 11 ].Should ( ).Be ( "8" ) ;
+        keys [ 12 ].Should ( ).Be ( "9" ) ;
+        keys [ 13 ].Should ( ).Be ( "0" ) ;
         keys [ 14 ].Should ( ).Be ( "F1" ) ;
         keys [ 15 ].Should ( ).Be ( "F2" ) ;
         keys [ 16 ].Should ( ).Be ( "F3" ) ;
