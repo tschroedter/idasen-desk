@@ -32,17 +32,26 @@ public class SettingsTests
             ThemeName = "Test"
         } ;
 
+        var hotkeySettings = new HotkeySettings
+        {
+            GlobalHotkeysEnabled = true ,
+            StandingKey          = "Up" ,
+            StandingModifiers    = "Control, Alt, Shift"
+        } ;
+
         var settings = new Settings
         {
             DeviceSettings     = deviceSettings ,
             HeightSettings     = heightSettings ,
-            AppearanceSettings = appearanceSettings
+            AppearanceSettings = appearanceSettings ,
+            HotkeySettings     = hotkeySettings
         } ;
 
         var expected =
             $"DeviceSettings = {deviceSettings}, " +
             $"HeightSettings = {heightSettings}, " +
-            $"AppearanceSettings = {appearanceSettings}" ;
+            $"AppearanceSettings = {appearanceSettings}, " +
+            $"HotkeySettings = {hotkeySettings}" ;
 
         // Act  
         var result = settings.ToString ( ) ;

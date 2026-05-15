@@ -1,4 +1,4 @@
-﻿<Page
+<Page
     x:Class="Idasen.SystemTray.Win11.Views.Pages.SettingsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -8,6 +8,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     xmlns:controls="clr-namespace:Idasen.SystemTray.Win11.Views.Controls"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:viewModels="clr-namespace:Idasen.SystemTray.Win11.ViewModels.Pages"
     Title="SettingsPage"
     d:DataContext="{d:DesignInstance local:SettingsPage, IsDesignTimeCreatable=False}"
     d:DesignHeight="640"
@@ -270,62 +272,73 @@
                 <!-- Hot Keys -->
                 <ui:CardExpander CornerRadius="0,0,8,8" Header="Hot Keys">
                     <StackPanel>
+                        <TextBlock Margin="0,12,0,0" Text="Global Hotkeys" />
+                        <CheckBox Margin="0,12,0,0" 
+                                  Content="Enable global hotkeys" 
+                                  ToolTip="Enable or disable all global hotkeys for desk control"
+                                  IsChecked="{Binding ViewModel.GlobalHotkeysEnabled, Mode=TwoWay}" />
                         <TextBlock Margin="0,12,0,0" Text="Definitions" />
-                        <Grid Margin="0,12,0,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="32" />
-                                <ColumnDefinition Width="100" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition />
-                                <RowDefinition Height="5" />
-                                <RowDefinition />
-                                <RowDefinition Height="5" />
-                                <RowDefinition />
-                                <RowDefinition Height="5" />
-                                <RowDefinition />
-                            </Grid.RowDefinitions>
-                            <!-- Row 0 -->
-                            <ui:SymbolIcon Grid.Row="0" Grid.Column="0"
-                                           Symbol="{x:Static ui:SymbolRegular.ArrowCircleUp24}"
-                                           HorizontalAlignment="Center" VerticalAlignment="Center" />
-                            <Label Grid.Row="0" Grid.Column="1" Content="Stand"
-                                   ToolTip="The global hot key to move the desk to the standing height."
-                                   VerticalAlignment="Center" Padding="5,0,5,0" />
-                            <TextBox Grid.Row="0" Grid.Column="2" IsEnabled="False" Text="Ctrl+Shift+Alt+Cursor Up"
-                                     Width="Auto" />
-                            <!-- Row 2 -->
-                            <ui:SymbolIcon Grid.Row="2" Grid.Column="0"
-                                           Symbol="{x:Static ui:SymbolRegular.ArrowCircleDown24}"
-                                           HorizontalAlignment="Center" VerticalAlignment="Center" />
-                            <Label Grid.Row="2" Grid.Column="1" Content="Sit"
-                                   ToolTip="The global hot key to move the desk to the seating height."
-                                   VerticalAlignment="Center" Padding="5,0,5,0" />
-                            <TextBox Grid.Row="2" Grid.Column="2" IsEnabled="False" Text="Ctrl+Shift+Alt+Cursor Down"
-                                     Width="Auto" />
-                            <!-- Row 4 -->
-                            <ui:SymbolIcon Grid.Row="4" Grid.Column="0"
-                                           Symbol="{x:Static ui:SymbolRegular.ArrowCircleLeft24}"
-                                           HorizontalAlignment="Center" VerticalAlignment="Center" />
-                            <Label Grid.Row="4" Grid.Column="1" Content="Custom 1"
-                                   ToolTip="The global hot key to move the desk to the custom 1 height."
-                                   VerticalAlignment="Center" Padding="5,0,5,0" />
-                            <TextBox Grid.Row="4" Grid.Column="2" IsEnabled="False" Text="Ctrl+Shift+Alt+Cursor Left"
-                                     Width="Auto" />
-                            <!-- Row 6 -->
-                            <ui:SymbolIcon Grid.Row="6" Grid.Column="0"
-                                           Symbol="{x:Static ui:SymbolRegular.ArrowCircleRight24}"
-                                           HorizontalAlignment="Center" VerticalAlignment="Center" />
-                            <Label Grid.Row="6" Grid.Column="1" Content="Custom 2"
-                                   ToolTip="The global hot key to move the desk to the custom 2 height."
-                                   VerticalAlignment="Center" Padding="5,0,5,0" />
-                            <TextBox Grid.Row="6" Grid.Column="2" IsEnabled="False" Text="Ctrl+Shift+Alt+Cursor Right"
-                                     Width="Auto" />
-                        </Grid>
+                        <StackPanel Margin="0,12,0,0">
+                            <!-- Standing -->
+                            <controls:HotkeyDefinitionControl
+                                HorizontalAlignment="Stretch"
+                                Symbol="{x:Static ui:SymbolRegular.ArrowCircleUp24}"
+                                HotkeyName="Stand"
+                                HotkeyTooltip="The global hot key to move the desk to the standing height."
+                                AvailableKeys="{Binding ViewModel.AvailableKeys}"
+                                SelectedKey="{Binding ViewModel.StandingKey, Mode=TwoWay}"
+                                KeyTooltip="Select the key for standing hotkey"
+                                IsControlChecked="{Binding ViewModel.StandingControl, Mode=TwoWay}"
+                                IsAltChecked="{Binding ViewModel.StandingAlt, Mode=TwoWay}"
+                                IsShiftChecked="{Binding ViewModel.StandingShift, Mode=TwoWay}" />
+
+                            <!-- Seating -->
+                            <controls:HotkeyDefinitionControl
+                                Margin="0,5,0,0"
+                                HorizontalAlignment="Stretch"
+                                Symbol="{x:Static ui:SymbolRegular.ArrowCircleDown24}"
+                                HotkeyName="Sit"
+                                HotkeyTooltip="The global hot key to move the desk to the seating height."
+                                AvailableKeys="{Binding ViewModel.AvailableKeys}"
+                                SelectedKey="{Binding ViewModel.SeatingKey, Mode=TwoWay}"
+                                KeyTooltip="Select the key for seating hotkey"
+                                IsControlChecked="{Binding ViewModel.SeatingControl, Mode=TwoWay}"
+                                IsAltChecked="{Binding ViewModel.SeatingAlt, Mode=TwoWay}"
+                                IsShiftChecked="{Binding ViewModel.SeatingShift, Mode=TwoWay}" />
+
+                            <!-- Custom 1 -->
+                            <controls:HotkeyDefinitionControl
+                                Margin="0,5,0,0"
+                                HorizontalAlignment="Stretch"
+                                Symbol="{x:Static ui:SymbolRegular.ArrowCircleLeft24}"
+                                HotkeyName="Custom 1"
+                                HotkeyTooltip="The global hot key to move the desk to the custom 1 height."
+                                AvailableKeys="{Binding ViewModel.AvailableKeys}"
+                                SelectedKey="{Binding ViewModel.Custom1Key, Mode=TwoWay}"
+                                KeyTooltip="Select the key for custom 1 hotkey"
+                                IsControlChecked="{Binding ViewModel.Custom1Control, Mode=TwoWay}"
+                                IsAltChecked="{Binding ViewModel.Custom1Alt, Mode=TwoWay}"
+                                IsShiftChecked="{Binding ViewModel.Custom1Shift, Mode=TwoWay}" />
+
+                            <!-- Custom 2 -->
+                            <controls:HotkeyDefinitionControl
+                                Margin="0,5,0,0"
+                                HorizontalAlignment="Stretch"
+                                Symbol="{x:Static ui:SymbolRegular.ArrowCircleRight24}"
+                                HotkeyName="Custom 2"
+                                HotkeyTooltip="The global hot key to move the desk to the custom 2 height."
+                                AvailableKeys="{Binding ViewModel.AvailableKeys}"
+                                SelectedKey="{Binding ViewModel.Custom2Key, Mode=TwoWay}"
+                                KeyTooltip="Select the key for custom 2 hotkey"
+                                IsControlChecked="{Binding ViewModel.Custom2Control, Mode=TwoWay}"
+                                IsAltChecked="{Binding ViewModel.Custom2Alt, Mode=TwoWay}"
+                                IsShiftChecked="{Binding ViewModel.Custom2Shift, Mode=TwoWay}" />
+                        </StackPanel>
                     </StackPanel>
                 </ui:CardExpander>
             </StackPanel>
         </ScrollViewer>
     </Grid>
 </Page>
+
+

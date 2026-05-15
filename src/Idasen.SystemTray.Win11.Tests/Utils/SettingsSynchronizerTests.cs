@@ -18,6 +18,7 @@ public class SettingsSynchronizerTests
     private readonly AppearanceSettings      _appearanceSettings = new( ) ;
     private readonly DeviceSettings          _deviceSettings     = new( ) ;
     private readonly HeightSettings          _heightSettings     = new( ) ;
+    private readonly HotkeySettings          _hotkeySettings     = new( ) ;
     private readonly ILogger                 _logger             = Substitute.For < ILogger > ( ) ;
     private readonly ISettingsViewModel      _model              = Substitute.For < ISettingsViewModel > ( ) ;
     private readonly IDeviceNameConverter    _nameConverter      = Substitute.For < IDeviceNameConverter > ( ) ;
@@ -33,6 +34,7 @@ public class SettingsSynchronizerTests
         _settings.DeviceSettings     = _deviceSettings ;
         _settings.HeightSettings     = _heightSettings ;
         _settings.AppearanceSettings = _appearanceSettings ;
+        _settings.HotkeySettings     = _hotkeySettings ;
         return new SettingsSynchronizer ( _logger ,
                                           _settingsManager ,
                                           _toUIntConverter ,
@@ -286,5 +288,138 @@ public class SettingsSynchronizerTests
                  .WithMessage ( "Failed to store settings" ) ;
         _logger.Received ( 1 ).Error ( Arg.Any < Exception > ( ) ,
                                        "Failed to store settings" ) ;
+    }
+
+    [ Fact ]
+    public void HaveHotkeySettingsChanged_ShouldReturnTrue_WhenGlobalHotkeysEnabledChanged ( )
+    {
+        // Arrange
+        var sut = CreateSut ( ) ;
+        var hotkeySettings = new HotkeySettings { GlobalHotkeysEnabled = true } ;
+        _settings.HotkeySettings = hotkeySettings ;
+        _model.GlobalHotkeysEnabled = false ;
+
+        // Act
+        var result = sut.HaveHotkeySettingsChanged ( _model ) ;
+
+        // Assert
+        result.Should ( ).BeTrue ( ) ;
+    }
+
+    [ Fact ]
+    public void HaveHotkeySettingsChanged_ShouldReturnFalse_WhenGlobalHotkeysEnabledUnchanged ( )
+    {
+        // Arrange
+        var sut = CreateSut ( ) ;
+        var hotkeySettings = new HotkeySettings
+        {
+            GlobalHotkeysEnabled = true ,
+            StandingKey          = Constants.DefaultStandingKey ,
+            StandingModifiers    = Constants.DefaultHotkeyModifiers ,
+            SeatingKey           = Constants.DefaultSeatingKey ,
+            SeatingModifiers     = Constants.DefaultHotkeyModifiers ,
+            Custom1Key           = Constants.DefaultCustom1Key ,
+            Custom1Modifiers     = Constants.DefaultHotkeyModifiers ,
+            Custom2Key           = Constants.DefaultCustom2Key ,
+            Custom2Modifiers     = Constants.DefaultHotkeyModifiers
+        } ;
+        _settings.HotkeySettings = hotkeySettings ;
+        _model.GlobalHotkeysEnabled.Returns ( true ) ;
+        _model.StandingKey.Returns ( Constants.DefaultStandingKey ) ;
+        _model.StandingModifiers.Returns ( Constants.DefaultHotkeyModifiers ) ;
+        _model.SeatingKey.Returns ( Constants.DefaultSeatingKey ) ;
+        _model.SeatingModifiers.Returns ( Constants.DefaultHotkeyModifiers ) ;
+        _model.Custom1Key.Returns ( Constants.DefaultCustom1Key ) ;
+        _model.Custom1Modifiers.Returns ( Constants.DefaultHotkeyModifiers ) ;
+        _model.Custom2Key.Returns ( Constants.DefaultCustom2Key ) ;
+        _model.Custom2Modifiers.Returns ( Constants.DefaultHotkeyModifiers ) ;
+
+        // Act
+        var result = sut.HaveHotkeySettingsChanged ( _model ) ;
+
+        // Assert
+        result.Should ( ).BeFalse ( ) ;
+    }
+
+    [ Fact ]
+    public async Task StoreSettingsAsync_ShouldNotifyHotkeySettingsChanged_WhenGlobalHotkeysEnabledChanged ( )
+    {
+        // Arrange
+        var sut = CreateSut ( ) ;
+        var hotkeySettings = new HotkeySettings { GlobalHotkeysEnabled = false } ;
+        _settings.HotkeySettings = hotkeySettings ;
+        _model.GlobalHotkeysEnabled = true ;
+
+        // Act
+        await sut.StoreSettingsAsync ( _model , CancellationToken.None ) ;
+
+        // Assert
+        _settingsChanges.HotkeySettingsChanged.Received ( 1 ).OnNext ( true ) ;
+    }
+
+    [ Fact ]
+    public async Task StoreSettingsAsync_ShouldNotNotifyHotkeySettingsChanged_WhenGlobalHotkeysEnabledUnchanged ( )
+    {
+        // Arrange
+        var sut = CreateSut ( ) ;
+        var hotkeySettings = new HotkeySettings
+        {
+            GlobalHotkeysEnabled = true ,
+            StandingKey          = Constants.DefaultStandingKey ,
+            StandingModifiers    = Constants.DefaultHotkeyModifiers ,
+            SeatingKey           = Constants.DefaultSeatingKey ,
+            SeatingModifiers     = Constants.DefaultHotkeyModifiers ,
+            Custom1Key           = Constants.DefaultCustom1Key ,
+            Custom1Modifiers     = Constants.DefaultHotkeyModifiers ,
+            Custom2Key           = Constants.DefaultCustom2Key ,
+            Custom2Modifiers     = Constants.DefaultHotkeyModifiers
+        } ;
+        _settings.HotkeySettings = hotkeySettings ;
+        _model.GlobalHotkeysEnabled.Returns ( true ) ;
+        _model.StandingKey.Returns ( Constants.DefaultStandingKey ) ;
+        _model.StandingModifiers.Returns ( Constants.DefaultHotkeyModifiers ) ;
+        _model.SeatingKey.Returns ( Constants.DefaultSeatingKey ) ;
+        _model.SeatingModifiers.Returns ( Constants.DefaultHotkeyModifiers ) ;
+        _model.Custom1Key.Returns ( Constants.DefaultCustom1Key ) ;
+        _model.Custom1Modifiers.Returns ( Constants.DefaultHotkeyModifiers ) ;
+        _model.Custom2Key.Returns ( Constants.DefaultCustom2Key ) ;
+        _model.Custom2Modifiers.Returns ( Constants.DefaultHotkeyModifiers ) ;
+
+        // Act
+        await sut.StoreSettingsAsync ( _model , CancellationToken.None ) ;
+
+        // Assert
+        _settingsChanges.HotkeySettingsChanged.DidNotReceive ( ).OnNext ( Arg.Any < bool > ( ) ) ;
+    }
+
+    [ Fact ]
+    public async Task LoadSettingsAsync_ShouldLoadGlobalHotkeysEnabled ( )
+    {
+        // Arrange
+        var sut = CreateSut ( ) ;
+        var hotkeySettings = new HotkeySettings { GlobalHotkeysEnabled = false } ;
+        _settings.HotkeySettings = hotkeySettings ;
+
+        // Act
+        await sut.LoadSettingsAsync ( _model , CancellationToken.None ) ;
+
+        // Assert
+        _model.Received ( 1 ).GlobalHotkeysEnabled = false ;
+    }
+
+    [ Fact ]
+    public async Task StoreSettingsAsync_ShouldUpdateGlobalHotkeysEnabled ( )
+    {
+        // Arrange
+        var sut = CreateSut ( ) ;
+        var hotkeySettings = new HotkeySettings { GlobalHotkeysEnabled = true } ;
+        _settings.HotkeySettings = hotkeySettings ;
+        _model.GlobalHotkeysEnabled = false ;
+
+        // Act
+        await sut.StoreSettingsAsync ( _model , CancellationToken.None ) ;
+
+        // Assert
+        hotkeySettings.GlobalHotkeysEnabled.Should ( ).BeFalse ( ) ;
     }
 }

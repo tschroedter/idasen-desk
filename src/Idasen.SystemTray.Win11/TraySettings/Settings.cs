@@ -10,10 +10,13 @@ public class Settings : ISettings
 
     public AppearanceSettings AppearanceSettings { get ; set ; } = new( ) ;
 
+    public HotkeySettings HotkeySettings { get ; set ; } = new( ) ;
+
     public override string ToString ( )
     {
         return $"{nameof ( DeviceSettings )} = {DeviceSettings}, " +
                $"{nameof ( HeightSettings )} = {HeightSettings}, " +
-               $"{nameof ( AppearanceSettings )} = {AppearanceSettings}" ;
+               $"{nameof ( AppearanceSettings )} = {AppearanceSettings}, " +
+               $"{nameof ( HotkeySettings )} = {HotkeySettings}" ;
     }
 }

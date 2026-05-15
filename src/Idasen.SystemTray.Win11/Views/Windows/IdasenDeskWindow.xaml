@@ -10,6 +10,7 @@
     Title="{Binding ViewModel.ApplicationTitle, Mode=OneWay}"
     Width="780"
     Height="780"
+    MinWidth="750"
     d:DataContext="{d:DesignInstance local:IdasenDeskWindow,
                                      IsDesignTimeCreatable=True}"
     d:DesignHeight="750"

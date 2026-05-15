@@ -6,4 +6,5 @@ public interface INotifySettingsChanges
 {
     ISubject < bool > AdvancedSettingsChanged { get ; }
     ISubject < bool > LockSettingsChanged     { get ; }
+    ISubject < bool > HotkeySettingsChanged   { get ; }
 }

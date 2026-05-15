@@ -199,6 +199,70 @@ public class SettingsStorageTests
                        .Be ( JsonNamingPolicy.CamelCase ) ;
     }
 
+    [ Fact ]
+    public async Task LoadSettingsAsync_WithDisabledHotkeys_ReturnsCorrectSettings ( )
+    {
+        // Arrange
+        var settings = new Settings
+        {
+            HotkeySettings = new HotkeySettings
+            {
+                GlobalHotkeysEnabled = false
+            }
+        } ;
+
+        var serialize = JsonSerializer.Serialize ( settings ,
+                                                   SettingsStorage.JsonOptions ) ;
+        _mockFileSystem.AddFile ( TestFileName ,
+                                  new MockFileData ( serialize ) ) ;
+
+        // Act
+        var result = await CreateSut ( ).LoadSettingsAsync ( TestFileName ,
+                                                             CancellationToken.None ) ;
+
+        // Assert
+        result.Should ( ).NotBeNull ( ) ;
+        result.HotkeySettings
+              .GlobalHotkeysEnabled
+              .Should ( )
+              .BeFalse ( ) ;
+    }
+
+    [ Fact ]
+    public async Task LoadSettingsAsync_WithCustomHotkeys_ReturnsCorrectSettings ( )
+    {
+        // Arrange
+        var settings = new Settings
+        {
+            HotkeySettings = new HotkeySettings
+            {
+                GlobalHotkeysEnabled = true ,
+                StandingKey          = "F1" ,
+                StandingModifiers    = "Control, Shift" ,
+                SeatingKey           = "F2" ,
+                SeatingModifiers     = "Alt, Shift"
+            }
+        } ;
+
+        var serialize = JsonSerializer.Serialize ( settings ,
+                                                   SettingsStorage.JsonOptions ) ;
+        _mockFileSystem.AddFile ( TestFileName ,
+                                  new MockFileData ( serialize ) ) ;
+
+        // Act
+        var result = await CreateSut ( ).LoadSettingsAsync ( TestFileName ,
+                                                             CancellationToken.None ) ;
+
+        // Assert
+        using var scope = new AssertionScope ( ) ;
+        result.Should ( ).NotBeNull ( ) ;
+        result.HotkeySettings.GlobalHotkeysEnabled.Should ( ).BeTrue ( ) ;
+        result.HotkeySettings.StandingKey.Should ( ).Be ( "F1" ) ;
+        result.HotkeySettings.StandingModifiers.Should ( ).Be ( "Control, Shift" ) ;
+        result.HotkeySettings.SeatingKey.Should ( ).Be ( "F2" ) ;
+        result.HotkeySettings.SeatingModifiers.Should ( ).Be ( "Alt, Shift" ) ;
+    }
+
     private SettingsStorage CreateSut ( )
     {
         _mockFileSystem.AddDirectory ( Path.GetDirectoryName ( TestFileName ) ?? string.Empty ) ;
