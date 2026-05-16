@@ -31,10 +31,13 @@
         <!-- Key ComboBox -->
         <ComboBox Grid.Column="2"
                   MinWidth="90"
+                  MaxDropDownHeight="300"
                   HorizontalAlignment="Stretch"
                   ItemsSource="{Binding AvailableKeys, ElementName=Root}"
                   SelectedItem="{Binding SelectedKey, ElementName=Root, Mode=TwoWay}"
-                  ToolTip="{Binding KeyTooltip, ElementName=Root}" />
+                  ToolTip="{Binding KeyTooltip, ElementName=Root}"
+                  ScrollViewer.CanContentScroll="True"
+                  ScrollViewer.VerticalScrollBarVisibility="Auto" />
 
         <!-- Modifier Checkboxes -->
         <Grid Grid.Column="3" 
