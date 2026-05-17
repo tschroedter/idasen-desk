@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/tschroedter/idasen-desk/compare/v0.1.401...HEAD)
+## [Unreleased](https://github.com/tschroedter/idasen-desk/compare/v0.1.420...HEAD)
 
 ## [0.1.78](https://github.com/tschroedter/idasen-desk/releases/tag/V0.1.78) - 2024-10-07
 
@@ -21,6 +21,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fixed vulnerabilities in external NuGet packages by updating to latest version
+
+## [v0.1.420](https://github.com/tschroedter/idasen-desk/compare/v0.1.401...v0.1.420) - 2026-05-17
+
+### Changes
+
+### 🚀 Features
+
+- Option to disable and customise global hotkeys
+  - Added configurable global hotkeys in Settings
+  - Added support for enabling/disabling global hotkeys
+  - Added selectable hotkey keys and modifier combinations
+  - Added available key provider and hotkey definition UI controls
+  - Added hotkey settings persistence and synchronisation
+  
+
+### 🐛 Fixes
+
+- Global Hotkey Improvements: Fix Startup Registration and Enhance UX
+  - Fixed startup hotkey registration timing so persisted settings are respected
+  - Improved hotkey registration/un-registration behaviour when settings change
+  - Added safer hotkey replacement and unregister logic
+  - Improved logging around hotkey lifecycle events
+  
+
+### 📝 Documentation
+
+- Added hotkey customisation guide
+  - New `HOTKEY_CUSTOMIZATION.md` explaining how to disable and customise hotkeys
+  - Included examples for F-keys, arrow keys, numpad keys, and modifiers
+  
+
+### ✅ Tests
+
+- Added comprehensive test coverage for hotkey settings, parsing, synchronisation, storage, and UI behaviour
 
 ## [v0.1.401](https://github.com/tschroedter/idasen-desk/compare/v0.1.387...v0.1.401) - 2026-05-06
 
