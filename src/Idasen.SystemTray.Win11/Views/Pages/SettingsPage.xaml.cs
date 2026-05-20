@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis ;
 using System.Windows.Controls ;
+using System.Windows.Controls.Primitives ;
 using System.Windows.Input ;
 using System.Windows.Media ;
 using Idasen.SystemTray.Win11.ViewModels.Pages ;
@@ -28,12 +29,13 @@ public partial class SettingsPage : INavigableView < SettingsViewModel >
 
     private void OnPreviewMouseWheel ( object sender , MouseWheelEventArgs e )
     {
-        // Check if the element under mouse belongs to a ComboBoxItem or is inside a ComboBox dropdown
+        // Check if the event originated from or over a ComboBox or its parts
         var elementUnderMouse = Mouse.DirectlyOver as DependencyObject;
+        var originalSource = e.OriginalSource as DependencyObject;
 
+        // Check both the element under mouse and the original source
         // DynamicScrollViewer is used inside ComboBox dropdowns (in the Popup visual tree)
-        var insideComboBox = FindParentOfType < System.Windows.Controls.ComboBoxItem > ( elementUnderMouse ) is not null
-                             || FindParentOfType < DynamicScrollViewer > ( elementUnderMouse ) is not null;
+        var insideComboBox = IsInsideComboBox ( elementUnderMouse ) || IsInsideComboBox ( originalSource );
 
         if (insideComboBox)
         {
@@ -89,5 +91,23 @@ public partial class SettingsPage : INavigableView < SettingsViewModel >
         }
 
         return null ;
+    }
+
+    private static bool IsInsideComboBox ( DependencyObject ? element )
+    {
+        if ( element is null ) return false ;
+
+        // Direct check if element is a ComboBox
+        if ( element is ComboBox ) return true ;
+
+        // Check if element is inside a ComboBox or ComboBoxItem
+        if ( FindParentOfType < ComboBox > ( element ) is not null ) return true ;
+        if ( FindParentOfType < ComboBoxItem > ( element ) is not null ) return true ;
+
+        // Check if we're inside a Popup that belongs to a ComboBox
+        // Note: ComboBox dropdowns are rendered in a Popup (separate visual tree)
+        var popup = FindParentOfType < Popup > ( element ) ;
+
+        return popup?.PlacementTarget is ComboBox ;
     }
 }
