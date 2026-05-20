@@ -28,6 +28,16 @@ public partial class SettingsPage : INavigableView < SettingsViewModel >
 
     private void OnPreviewMouseWheel ( object sender , MouseWheelEventArgs e )
     {
+        // Check if the element under mouse (e.g., TextBox or similar) belongs to a ComboBoxItem
+        // Check if we're inside a Popup (which is used by ComboBox dropdowns)
+        var elementUnderMouse = Mouse.DirectlyOver as DependencyObject;
+        var parentComboBox = FindParentOfType<System.Windows.Controls.ComboBoxItem>(elementUnderMouse);
+        if (parentComboBox is not null)//&& parentComboBox.IsDropDownOpen )
+        {
+            // Let the ComboBox handle its own scrolling
+            return;
+        }
+
         // Try to scroll the nearest hosting ScrollViewer (e.g., DynamicScrollViewer in Navigation host)
         var hostScrollViewer = FindParentScrollViewer ( this ) ?? MainScrollViewer ;
         if ( hostScrollViewer is null ) return ;
