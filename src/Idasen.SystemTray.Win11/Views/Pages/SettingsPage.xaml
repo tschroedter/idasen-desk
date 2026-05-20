@@ -334,6 +334,7 @@
                                 IsAltChecked="{Binding ViewModel.Custom2Alt, Mode=TwoWay}"
                                 IsShiftChecked="{Binding ViewModel.Custom2Shift, Mode=TwoWay}" />
                         </StackPanel>
+                        <TextBlock Margin="0,12,0,0" TextWrapping="Wrap" FontStyle="Italic" Text="Available hotkeys: arrow keys (Up, Down, Left, Right), number keys (1-9), function keys (F1-F12)." />
                     </StackPanel>
                 </ui:CardExpander>
             </StackPanel>
