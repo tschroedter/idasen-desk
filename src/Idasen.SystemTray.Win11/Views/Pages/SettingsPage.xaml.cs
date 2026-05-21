@@ -134,8 +134,10 @@ public partial class SettingsPage : INavigableView < SettingsViewModel >
         var current = element ;
         DependencyObject ? visualRoot = null ;
 
+        var maxDepth = 0; // Prevent infinite loops in case of malformed visual trees
+
         // Walk up the visual tree to find the root
-        while ( current != null )
+        while (maxDepth < 100)
         {
             visualRoot = current ;
             var parent = VisualTreeHelper.GetParent ( current ) ;
@@ -145,20 +147,24 @@ public partial class SettingsPage : INavigableView < SettingsViewModel >
                 break ;
             }
             current = parent ;
+            maxDepth ++;
         }
 
-        // Check if the visual root has a Popup as its logical parent
-        if ( visualRoot is not null )
+        switch ( visualRoot )
         {
+            // Check if the visual root has a Popup as its logical parent
+            case null :
+                return null ;
             // Try FrameworkElement.Parent first (faster)
-            if ( visualRoot is FrameworkElement fe && fe.Parent is Popup p1 )
+            case FrameworkElement { Parent: Popup p1 } :
                 return p1 ;
-
-            // Try LogicalTreeHelper
-            var logicalParent = LogicalTreeHelper.GetParent ( visualRoot ) ;
-            if ( logicalParent is Popup p2 ) 
-                return p2 ;
         }
+
+        // Try LogicalTreeHelper
+        var logicalParent = LogicalTreeHelper.GetParent ( visualRoot ) ;
+
+        if ( logicalParent is Popup p2 ) 
+            return p2 ;
 
         return null ;
     }
