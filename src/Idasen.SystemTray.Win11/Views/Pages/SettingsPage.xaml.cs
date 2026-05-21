@@ -5,6 +5,7 @@ using System.Windows.Input ;
 using System.Windows.Media ;
 using Idasen.SystemTray.Win11.ViewModels.Pages ;
 using Serilog ;
+using Serilog.Events ;
 using Wpf.Ui.Abstractions.Controls ;
 using Wpf.Ui.Controls ;
 
@@ -37,35 +38,45 @@ public partial class SettingsPage : INavigableView < SettingsViewModel >
         var elementUnderMouse = Mouse.DirectlyOver as DependencyObject ;
         var originalSource = e.OriginalSource as DependencyObject ;
 
-        // Log element types for debugging
-        _logger.Debug ( "Mouse wheel: ElementUnderMouse={ElementType}, OriginalSource={SourceType}" ,
-                        elementUnderMouse?.GetType().Name ?? "null" ,
-                        originalSource?.GetType().Name ?? "null" ) ;
-
-        // Check for popup
-        var mousePopup = FindAssociatedPopup ( elementUnderMouse ) ;
-        var sourcePopup = FindAssociatedPopup ( originalSource ) ;
-
-        if ( mousePopup is not null )
+        // Guard debug logging and associated popup lookups behind level check
+        if ( _logger.IsEnabled ( LogEventLevel.Debug ) )
         {
-            _logger.Debug ( "Mouse popup found: PlacementTarget={TargetType}" ,
-                            mousePopup.PlacementTarget?.GetType().Name ?? "null" ) ;
-        }
+            // Log element types for debugging
+            _logger.Debug ( "Mouse wheel: ElementUnderMouse={ElementType}, OriginalSource={SourceType}" ,
+                            elementUnderMouse?.GetType().Name ?? "null" ,
+                            originalSource?.GetType().Name ?? "null" ) ;
 
-        if ( sourcePopup is not null )
-        {
-            _logger.Debug ( "Source popup found: PlacementTarget={TargetType}" ,
-                            sourcePopup.PlacementTarget?.GetType().Name ?? "null" ) ;
+            // Check for popup (only for logging purposes)
+            var mousePopup = FindAssociatedPopup ( elementUnderMouse ) ;
+            var sourcePopup = FindAssociatedPopup ( originalSource ) ;
+
+            if ( mousePopup is not null )
+            {
+                _logger.Debug ( "Mouse popup found: PlacementTarget={TargetType}" ,
+                                mousePopup.PlacementTarget?.GetType().Name ?? "null" ) ;
+            }
+
+            if ( sourcePopup is not null )
+            {
+                _logger.Debug ( "Source popup found: PlacementTarget={TargetType}" ,
+                                sourcePopup.PlacementTarget?.GetType().Name ?? "null" ) ;
+            }
         }
 
         // Check both the element under mouse and the original source
         var insideComboBox = IsInsideComboBox ( elementUnderMouse ) || IsInsideComboBox ( originalSource ) ;
 
-        _logger.Debug ( "InsideComboBox={Inside}" , insideComboBox ) ;
+        if ( _logger.IsEnabled ( LogEventLevel.Debug ) )
+        {
+            _logger.Debug ( "InsideComboBox={Inside}" , insideComboBox ) ;
+        }
 
         if ( insideComboBox )
         {
-            _logger.Debug ( "Returning early - inside ComboBox" ) ;
+            if ( _logger.IsEnabled ( LogEventLevel.Debug ) )
+            {
+                _logger.Debug ( "Returning early - inside ComboBox" ) ;
+            }
             // Let the ComboBox handle its own scrolling
             return ;
         }
