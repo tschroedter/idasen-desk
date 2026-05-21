@@ -86,9 +86,8 @@ public partial class SettingsPage : INavigableView < SettingsViewModel >
         if ( hostScrollViewer is null ) return ;
 
         // Detect whether the wheel event originated over an expander control
-        var source = e.OriginalSource as DependencyObject ;
-        var overExpander = FindParentOfType < CardExpander > ( source ) is not null ||
-                           FindParentOfType < Expander > ( source ) is not null ;
+        var overExpander = FindParentOfType < CardExpander > ( originalSource ) is not null ||
+                           FindParentOfType < Expander > ( originalSource ) is not null ;
 
         // Increase scroll speed when over expander controls
         var steps = overExpander
