@@ -150,22 +150,21 @@ public partial class SettingsPage : INavigableView < SettingsViewModel >
             maxDepth ++;
         }
 
-        switch ( visualRoot )
+        // Check if the visual root has a Popup as its logical parent
+        if ( visualRoot != null )
         {
-            // Check if the visual root has a Popup as its logical parent
-            case null :
-                return null ;
-            // Try FrameworkElement.Parent first (faster)
-            case FrameworkElement { Parent: Popup p1 } :
-                return p1 ;
+            if ( visualRoot is FrameworkElement { Parent: Popup p1 } ) return p1 ;
+
+            // Try LogicalTreeHelper
+            var logicalParent = LogicalTreeHelper.GetParent ( visualRoot ) ;
+
+            if ( logicalParent is Popup p2 )
+                return p2 ;
+
+            return null ;
         }
 
-        // Try LogicalTreeHelper
-        var logicalParent = LogicalTreeHelper.GetParent ( visualRoot ) ;
-
-        if ( logicalParent is Popup p2 ) 
-            return p2 ;
-
+        // Try FrameworkElement.Parent first (faster)
         return null ;
     }
 
