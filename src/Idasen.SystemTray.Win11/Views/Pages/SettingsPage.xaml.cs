@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics.CodeAnalysis ;
-using System.Windows ;
 using System.Windows.Controls ;
 using System.Windows.Controls.Primitives ;
 using System.Windows.Input ;
@@ -154,10 +153,8 @@ public partial class SettingsPage : INavigableView < SettingsViewModel >
         // Check if the visual root has a Popup as its logical parent
         if ( visualRoot is FrameworkElement { Parent: Popup popupParent1 } ) return popupParent1 ;
 
-        if ( visualRoot == null ) return null ;
-
         // Try LogicalTreeHelper
-        var logicalParent = LogicalTreeHelper.GetParent ( visualRoot ) ;
+        var logicalParent = LogicalTreeHelper.GetParent ( visualRoot! ) ;
 
         if ( logicalParent is Popup popupParent2)
             return popupParent2;
