@@ -34,8 +34,8 @@ public partial class SettingsPage : INavigableView < SettingsViewModel >
     private void OnPreviewMouseWheel ( object sender , MouseWheelEventArgs e )
     {
         // Check if the event originated from or over a ComboBox or its parts
-        var elementUnderMouse = Mouse.DirectlyOver as DependencyObject;
-        var originalSource = e.OriginalSource as DependencyObject;
+        var elementUnderMouse = Mouse.DirectlyOver as DependencyObject ;
+        var originalSource = e.OriginalSource as DependencyObject ;
 
         // Log element types for debugging
         _logger.Debug ( "Mouse wheel: ElementUnderMouse={ElementType}, OriginalSource={SourceType}" ,
@@ -43,8 +43,8 @@ public partial class SettingsPage : INavigableView < SettingsViewModel >
                         originalSource?.GetType().Name ?? "null" ) ;
 
         // Check for popup
-        var mousePopup = FindAssociatedPopup ( elementUnderMouse );
-        var sourcePopup = FindAssociatedPopup ( originalSource );
+        var mousePopup = FindAssociatedPopup ( elementUnderMouse ) ;
+        var sourcePopup = FindAssociatedPopup ( originalSource ) ;
 
         if ( mousePopup is not null )
         {
@@ -59,15 +59,15 @@ public partial class SettingsPage : INavigableView < SettingsViewModel >
         }
 
         // Check both the element under mouse and the original source
-        var insideComboBox = IsInsideComboBox ( elementUnderMouse ) || IsInsideComboBox ( originalSource );
+        var insideComboBox = IsInsideComboBox ( elementUnderMouse ) || IsInsideComboBox ( originalSource ) ;
 
         _logger.Debug ( "InsideComboBox={Inside}" , insideComboBox ) ;
 
-        if (insideComboBox)
+        if ( insideComboBox )
         {
             _logger.Debug ( "Returning early - inside ComboBox" ) ;
             // Let the ComboBox handle its own scrolling
-            return;
+            return ;
         }
 
         // Try to scroll the nearest hosting ScrollViewer (e.g., DynamicScrollViewer in Navigation host)
@@ -156,8 +156,8 @@ public partial class SettingsPage : INavigableView < SettingsViewModel >
         // Try LogicalTreeHelper
         var logicalParent = LogicalTreeHelper.GetParent ( visualRoot! ) ;
 
-        if ( logicalParent is Popup popupParent2)
-            return popupParent2;
+        if ( logicalParent is Popup popupParent2 )
+            return popupParent2 ;
 
         return null ;
     }
