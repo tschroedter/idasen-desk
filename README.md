@@ -44,11 +44,12 @@ A special thank you to all the amazing people who test this application and prov
 ## What's New
 
 ### Version 0.1.435
-- ⌨️ **Configurable Global Hotkeys**: Hotkeys can now be fully customized through the **Settings UI** — choose your own keys and modifier combinations for each desk position, or disable hotkeys entirely.
+- ⌨️ **Configurable Global Hotkeys**:
   - Enable/disable all global hotkeys from the Settings → Hot Keys page
   - Select individual keys (e.g. F-keys, arrow keys, numpad) and modifier combinations (Ctrl, Alt, Shift, Win) per position
   - Settings are persisted automatically — no manual JSON editing required
   - See the [Hotkey Customization Guide](docs/HOTKEY_CUSTOMIZATION.md) for advanced JSON-based configuration
+- 🐛 Fixed mouse wheel scrolling detection for ComboBox dropdowns in Settings.
 
 ### Version 0.1.401
 - 🔗 Fixed the donation link.
@@ -141,7 +142,7 @@ Short description: This patch release focuses on stability and quality-of-life i
 
 Download the latest self-contained executable (no .NET runtime installation required):
 
-**[Download Latest](https://github.com/tschroedter/idasen-desk/releases/download/v0.1.401/Idasen-SystemTray-0.1.401-win-x64.exe)**
+**[Download Latest](https://github.com/tschroedter/idasen-desk/releases/download/v0.1.435/Idasen-SystemTray-0.1.435-win-x64.exe)**
 
 1. Download the executable from the link above
 2. Run the executable
