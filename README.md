@@ -43,6 +43,13 @@ A special thank you to all the amazing people who test this application and prov
 
 ## What's New
 
+### Version 0.1.435
+- ⌨️ **Configurable Global Hotkeys**: Hotkeys can now be fully customised through the **Settings UI** — choose your own keys and modifier combinations for each desk position, or disable hotkeys entirely.
+  - Enable/disable all global hotkeys from the Settings → Hot Keys page
+  - Select individual keys (e.g. F-keys, arrow keys, numpad) and modifier combinations (Ctrl, Alt, Shift, Win) per position
+  - Settings are persisted automatically — no manual JSON editing required
+  - See the [Hotkey Customization Guide](docs/HOTKEY_CUSTOMIZATION.md) for advanced JSON-based configuration
+
 ### Version 0.1.401
 - 🔗 Fixed the donation link.
 
@@ -105,7 +112,7 @@ Short description: This patch release focuses on stability and quality-of-life i
 
 - 🖥️ **System Tray Integration**: Unobtrusive control directly from your Windows taskbar
 - 🎯 **Preset Positions**: Four customizable height positions (Standing, Seating, Custom 1, Custom 2)
-- ⌨️ **Global Hotkeys**: Control your desk from any application
+- ⌨️ **Configurable Global Hotkeys**: Control your desk from any application using fully customisable hotkeys — change keys/modifiers or disable them entirely from the Settings UI
 - 🔄 **Auto-Connect**: Automatically connects to your desk on startup
 - 📏 **Fine-Tuning**: Adjust positions using arrow keys during confirmation
 - 🔔 **Desktop Notifications**: Stay informed about connection status and desk movement
@@ -243,12 +250,20 @@ Each position includes:
 
 ![Hotkey Settings](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/V0.1.77/Settins_Hotkeys.png)
 
+Global hotkeys are fully configurable through the **Settings → Hot Keys** page. For each desk position you can:
+
+- **Enable or disable** all global hotkeys using the toggle at the top of the Hot Keys page
+- **Choose a key** (F-keys, arrow keys, numpad, letters, etc.)
+- **Choose modifiers** (Ctrl, Alt, Shift, Win — any combination)
+
 Default global hotkeys (works in any application):
 
 - **Standing**: `Ctrl + Shift + Alt + ↑` (Up Arrow)
 - **Seating**: `Ctrl + Shift + Alt + ↓` (Down Arrow)
 - **Custom 1**: `Ctrl + Shift + Alt + ←` (Left Arrow)
 - **Custom 2**: `Ctrl + Shift + Alt + →` (Right Arrow)
+
+For advanced configuration (e.g. editing `Settings.json` directly), see the **[Hotkey Customization Guide](docs/HOTKEY_CUSTOMIZATION.md)**.
 
 ### Appearance
 
@@ -409,7 +424,7 @@ dotnet test Idasen-Desk.sln --configuration Release
 
 ### Tech Stack
 
-- **Language**: C# / .NET 8.0
+- **Language**: C# / .NET 10.0
 - **UI Framework**: WPF (Windows Presentation Foundation)
 - **Architecture**: MVVM with Autofac DI
 - **Testing**: xUnit, NSubstitute, FluentAssertions
@@ -442,6 +457,7 @@ Comprehensive documentation is available in the [**Wiki**](https://github.com/ts
 
 ### 📖 Additional Resources
 
+- **[Hotkey Customization Guide](docs/HOTKEY_CUSTOMIZATION.md)** - How to customise or disable global hotkeys
 - **[Changelog Automation Guide](docs/CHANGELOG_AUTOMATION.md)** - How our automated changelog works
 - **[Implementation Details](docs/IMPLEMENTATION_SUMMARY.md)** - Technical implementation overview
 - **[Workflow Diagrams](docs/WORKFLOW_DIAGRAM.md)** - Visual representation of CI/CD processes
