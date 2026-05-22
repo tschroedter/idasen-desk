@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/tschroedter/idasen-desk/compare/v0.1.420...HEAD)
+## [Unreleased](https://github.com/tschroedter/idasen-desk/compare/v0.1.435...HEAD)
 
 ## [0.1.78](https://github.com/tschroedter/idasen-desk/releases/tag/V0.1.78) - 2024-10-07
 
@@ -21,6 +21,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fixed vulnerabilities in external NuGet packages by updating to latest version
+
+## [v0.1.435](https://github.com/tschroedter/idasen-desk/compare/v0.1.420...v0.1.435) - 2026-05-22
+
+🚀 Features
+
+- Configurable global hotkeys (UI-based)
+- Enable/disable hotkeys (UI-based)
 
 ## [v0.1.420](https://github.com/tschroedter/idasen-desk/compare/v0.1.401...v0.1.420) - 2026-05-17
 
