@@ -43,6 +43,9 @@ A special thank you to all the amazing people who test this application and prov
 
 ## What's New
 
+### Version 0.1.435
+- 🐛 Fixed mouse wheel scrolling detection for ComboBox dropdowns in Settings.
+
 ### Version 0.1.401
 - 🔗 Fixed the donation link.
 
@@ -134,7 +137,7 @@ Short description: This patch release focuses on stability and quality-of-life i
 
 Download the latest self-contained executable (no .NET runtime installation required):
 
-**[Download Latest](https://github.com/tschroedter/idasen-desk/releases/download/v0.1.401/Idasen-SystemTray-0.1.401-win-x64.exe)**
+**[Download Latest](https://github.com/tschroedter/idasen-desk/releases/download/v0.1.435/Idasen-SystemTray-0.1.435-win-x64.exe)**
 
 1. Download the executable from the link above
 2. Run the executable
