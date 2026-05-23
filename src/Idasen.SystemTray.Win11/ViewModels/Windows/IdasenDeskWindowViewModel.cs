@@ -661,9 +661,11 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
         var heightSettings = _settingsManager.CurrentSettings.HeightSettings ;
 
+        _menuItemStand.Header = heightSettings.StandingName ;
         _menuItemStand.Visibility = heightSettings.StandingIsVisibleInContextMenu
                                         ? Visibility.Visible
                                         : Visibility.Collapsed ;
+        _menuItemSit.Header = heightSettings.SeatingName ;
         _menuItemSit.Visibility = heightSettings.SeatingIsVisibleInContextMenu
                                       ? Visibility.Visible
                                       : Visibility.Collapsed ;
@@ -677,6 +679,10 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
                                           : Visibility.Collapsed ;
 
         // Update navigation view items with custom names
+        if ( _standViewItem != null )
+            _standViewItem.Content = heightSettings.StandingName ;
+        if ( _sitViewItem != null )
+            _sitViewItem.Content = heightSettings.SeatingName ;
         if ( _custom1ViewItem != null )
             _custom1ViewItem.Content = heightSettings.Custom1Name ;
         if ( _custom2ViewItem != null )
