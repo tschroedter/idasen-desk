@@ -283,7 +283,7 @@
                             <controls:HotkeyDefinitionControl
                                 HorizontalAlignment="Stretch"
                                 Symbol="{x:Static ui:SymbolRegular.ArrowCircleUp24}"
-                                HotkeyName=""
+                                HotkeyName="Standing"
                                 IsEditable="True"
                                 EditableName="{Binding ViewModel.StandingName, Mode=TwoWay}"
                                 HotkeyTooltip="The global hot key to move the desk to the standing height. Click to edit the name."
@@ -299,7 +299,7 @@
                                 Margin="0,5,0,0"
                                 HorizontalAlignment="Stretch"
                                 Symbol="{x:Static ui:SymbolRegular.ArrowCircleDown24}"
-                                HotkeyName=""
+                                HotkeyName="Seating"
                                 IsEditable="True"
                                 EditableName="{Binding ViewModel.SeatingName, Mode=TwoWay}"
                                 HotkeyTooltip="The global hot key to move the desk to the seating height. Click to edit the name."
