@@ -97,7 +97,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
         _sitViewItem = new NavigationViewItem
         {
-            Content        = "Sit" ,
+            Content        = _settingsManager.CurrentSettings.HeightSettings.SeatingName ,
             Icon           = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleDown24 } ,
             TargetPageType = typeof ( SettingsPage ) ,
             ToolTip        = "Double-Click to move the desk to the sitting position."
@@ -106,7 +106,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
         _standViewItem = new NavigationViewItem
         {
-            Content        = "Stand" ,
+            Content        = _settingsManager.CurrentSettings.HeightSettings.StandingName ,
             Icon           = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleUp24 } ,
             TargetPageType = typeof ( SettingsPage ) ,
             ToolTip        = "Double-Click to move the desk to the standing position."
@@ -115,7 +115,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
         _custom1ViewItem = new NavigationViewItem
         {
-            Content        = Constants.DefaultCustom1Name ,
+            Content        = _settingsManager.CurrentSettings.HeightSettings.Custom1Name ,
             Icon           = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleLeft24 } ,
             TargetPageType = typeof ( SettingsPage ) ,
             ToolTip        = "Double-Click to move the desk to the Custom 1 position."
@@ -124,7 +124,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
         _custom2ViewItem = new NavigationViewItem
         {
-            Content        = Constants.DefaultCustom2Name ,
+            Content        = _settingsManager.CurrentSettings.HeightSettings.Custom2Name ,
             Icon           = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleRight24 } ,
             TargetPageType = typeof ( SettingsPage ) ,
             ToolTip        = "Double-Click to move the desk to the Custom 2 position."
@@ -247,22 +247,22 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
         _menuItemStand = new MenuItem
         {
-            Header = "Stand" , Command = standingCommand ,
+            Header = _settingsManager.CurrentSettings.HeightSettings.StandingName , Command = standingCommand ,
             Icon   = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleUp24 }
         } ;
         _menuItemSit = new MenuItem
         {
-            Header = "Sit" , Command = seatingCommand ,
+            Header = _settingsManager.CurrentSettings.HeightSettings.SeatingName , Command = seatingCommand ,
             Icon   = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleDown24 }
         } ;
         _menuItemCustom1 = new MenuItem
         {
-            Header = Constants.DefaultCustom1Name , Command = custom1Command ,
+            Header = _settingsManager.CurrentSettings.HeightSettings.Custom1Name , Command = custom1Command ,
             Icon   = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleLeft24 }
         } ;
         _menuItemCustom2 = new MenuItem
         {
-            Header = Constants.DefaultCustom2Name , Command = custom2Command ,
+            Header = _settingsManager.CurrentSettings.HeightSettings.Custom2Name , Command = custom2Command ,
             Icon   = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleRight24 }
         } ;
         _menuItemStop = new MenuItem
