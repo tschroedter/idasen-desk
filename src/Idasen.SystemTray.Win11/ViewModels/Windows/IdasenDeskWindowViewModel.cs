@@ -115,7 +115,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
         _custom1ViewItem = new NavigationViewItem
         {
-            Content        = "Custom 1" ,
+            Content        = Constants.DefaultCustom1Name ,
             Icon           = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleLeft24 } ,
             TargetPageType = typeof ( SettingsPage ) ,
             ToolTip        = "Double-Click to move the desk to the Custom 1 position."
@@ -124,7 +124,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
         _custom2ViewItem = new NavigationViewItem
         {
-            Content        = "Custom 2" ,
+            Content        = Constants.DefaultCustom2Name ,
             Icon           = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleRight24 } ,
             TargetPageType = typeof ( SettingsPage ) ,
             ToolTip        = "Double-Click to move the desk to the Custom 2 position."
@@ -257,12 +257,12 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         } ;
         _menuItemCustom1 = new MenuItem
         {
-            Header = "Custom 1" , Command = custom1Command ,
+            Header = Constants.DefaultCustom1Name , Command = custom1Command ,
             Icon   = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleLeft24 }
         } ;
         _menuItemCustom2 = new MenuItem
         {
-            Header = "Custom 2" , Command = custom2Command ,
+            Header = Constants.DefaultCustom2Name , Command = custom2Command ,
             Icon   = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleRight24 }
         } ;
         _menuItemStop = new MenuItem
@@ -667,12 +667,20 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         _menuItemSit.Visibility = heightSettings.SeatingIsVisibleInContextMenu
                                       ? Visibility.Visible
                                       : Visibility.Collapsed ;
+        _menuItemCustom1.Header = heightSettings.Custom1Name ;
         _menuItemCustom1.Visibility = heightSettings.Custom1IsVisibleInContextMenu
                                           ? Visibility.Visible
                                           : Visibility.Collapsed ;
+        _menuItemCustom2.Header = heightSettings.Custom2Name ;
         _menuItemCustom2.Visibility = heightSettings.Custom2IsVisibleInContextMenu
                                           ? Visibility.Visible
                                           : Visibility.Collapsed ;
+
+        // Update navigation view items with custom names
+        if ( _custom1ViewItem != null )
+            _custom1ViewItem.Content = heightSettings.Custom1Name ;
+        if ( _custom2ViewItem != null )
+            _custom2ViewItem.Content = heightSettings.Custom2Name ;
 
         _menuItemStop.Visibility = _settingsManager.CurrentSettings.DeviceSettings.StopIsVisibleInContextMenu
                                        ? Visibility.Visible

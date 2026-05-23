@@ -86,9 +86,13 @@ public class SettingsSynchronizer (
         model.MinHeight = current.HeightSettings.DeskMinHeightInCm ;
         model.MaxHeight = current.HeightSettings.DeskMaxHeightInCm ;
         model.Standing  = current.HeightSettings.StandingHeightInCm ;
+        model.StandingName = current.HeightSettings.StandingName ;
         model.Seating   = current.HeightSettings.SeatingHeightInCm ;
+        model.SeatingName = current.HeightSettings.SeatingName ;
         model.Custom1   = current.HeightSettings.Custom1HeightInCm ;
+        model.Custom1Name = current.HeightSettings.Custom1Name ;
         model.Custom2   = current.HeightSettings.Custom2HeightInCm ;
+        model.Custom2Name = current.HeightSettings.Custom2Name ;
 
         model.StandingIsVisibleInContextMenu = current.HeightSettings.StandingIsVisibleInContextMenu ;
         model.SeatingIsVisibleInContextMenu  = current.HeightSettings.SeatingIsVisibleInContextMenu ;
@@ -161,17 +165,21 @@ public class SettingsSynchronizer (
         var newNotificationsEnabled = model.Notifications ;
 
         settings.HeightSettings.StandingHeightInCm = toUIntConverter.ConvertToUInt ( model.Standing ,
-                                                                                     Constants
-                                                                                        .DefaultHeightStandingInCm ) ;
+                                                                                      Constants
+                                                                                         .DefaultHeightStandingInCm ) ;
+        settings.HeightSettings.StandingName = string.IsNullOrWhiteSpace ( model.StandingName ) ? Constants.DefaultStandingName : model.StandingName ;
         settings.HeightSettings.SeatingHeightInCm = toUIntConverter.ConvertToUInt ( model.Seating ,
                                                                                     Constants
                                                                                        .DefaultHeightSeatingInCm ) ;
+        settings.HeightSettings.SeatingName = string.IsNullOrWhiteSpace ( model.SeatingName ) ? Constants.DefaultSeatingName : model.SeatingName ;
         settings.HeightSettings.Custom1HeightInCm = toUIntConverter.ConvertToUInt ( model.Custom1 ,
-                                                                                    Constants
-                                                                                       .DefaultHeightStandingInCm ) ;
+                                                                                     Constants
+                                                                                        .DefaultHeightStandingInCm ) ;
+        settings.HeightSettings.Custom1Name = string.IsNullOrWhiteSpace ( model.Custom1Name ) ? Constants.DefaultCustom1Name : model.Custom1Name ;
         settings.HeightSettings.Custom2HeightInCm = toUIntConverter.ConvertToUInt ( model.Custom2 ,
-                                                                                    Constants
-                                                                                       .DefaultHeightSeatingInCm ) ;
+                                                                                     Constants
+                                                                                        .DefaultHeightSeatingInCm ) ;
+        settings.HeightSettings.Custom2Name = string.IsNullOrWhiteSpace ( model.Custom2Name ) ? Constants.DefaultCustom2Name : model.Custom2Name ;
         settings.HeightSettings.LastKnownDeskHeight = model.LastKnownDeskHeight ;
 
         settings.HeightSettings.StandingIsVisibleInContextMenu = model.StandingIsVisibleInContextMenu ;
@@ -273,7 +281,9 @@ public class SettingsSynchronizer (
             current.HeightSettings.StandingHeightInCm  != newStanding     ||
             current.HeightSettings.SeatingHeightInCm   != newSeating      ||
             current.HeightSettings.Custom1HeightInCm   != newCustom1      ||
+            current.HeightSettings.Custom1Name         != model.Custom1Name ||
             current.HeightSettings.Custom2HeightInCm   != newCustom2      ||
+            current.HeightSettings.Custom2Name         != model.Custom2Name ||
             current.HeightSettings.LastKnownDeskHeight != model.LastKnownDeskHeight ;
 
         var visibilityChanged =

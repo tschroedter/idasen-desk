@@ -22,5 +22,10 @@ public static class Constants
     public const string DefaultCustom1Key           = "Left" ;
     public const string DefaultCustom2Key           = "Right" ;
 
+    public const string DefaultStandingName         = "Stand" ;
+    public const string DefaultSeatingName          = "Sit" ;
+    public const string DefaultCustom1Name          = "Custom 1" ;
+    public const string DefaultCustom2Name          = "Custom 2" ;
+
     public static readonly bool NotificationsEnabled = true ;
 }
