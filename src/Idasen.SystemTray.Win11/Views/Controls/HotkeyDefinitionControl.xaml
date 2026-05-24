@@ -39,7 +39,6 @@
                 </Label.Style>
             </Label>
 
-            <!-- Editable TextBox (for custom presets) -->
             <ui:TextBox HorizontalAlignment="Stretch"
                         Text="{Binding EditableName, ElementName=Root, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         ToolTip="{Binding HotkeyTooltip, ElementName=Root}"
