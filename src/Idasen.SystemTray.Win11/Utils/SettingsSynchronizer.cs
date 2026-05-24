@@ -307,12 +307,16 @@ public class SettingsSynchronizer (
 
         var hotkeyChanged =
             current.HotkeySettings.GlobalHotkeysEnabled != model.GlobalHotkeysEnabled ||
+            current.HeightSettings.StandingName         != model.StandingName         ||
             current.HotkeySettings.StandingKey          != model.StandingKey          ||
             current.HotkeySettings.StandingModifiers    != model.StandingModifiers    ||
+            current.HeightSettings.SeatingName          != model.SeatingName          ||
             current.HotkeySettings.SeatingKey           != model.SeatingKey           ||
             current.HotkeySettings.SeatingModifiers     != model.SeatingModifiers     ||
+            current.HeightSettings.Custom1Name          != model.Custom1Name          ||
             current.HotkeySettings.Custom1Key           != model.Custom1Key           ||
             current.HotkeySettings.Custom1Modifiers     != model.Custom1Modifiers     ||
+            current.HeightSettings.Custom2Name          != model.Custom2Name          ||
             current.HotkeySettings.Custom2Key           != model.Custom2Key           ||
             current.HotkeySettings.Custom2Modifiers     != model.Custom2Modifiers ;
 

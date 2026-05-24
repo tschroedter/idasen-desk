@@ -60,10 +60,15 @@ public class SettingsSynchronizerTests
         _heightSettings.Custom2HeightInCm    = 72 ;
         _heightSettings.Custom2Name          = "My Custom 2" ;
         _heightSettings.LastKnownDeskHeight  = 80 ;
+        _heightSettings.StandingIsVisibleInContextMenu = true ;
+        _heightSettings.SeatingIsVisibleInContextMenu  = false ;
+        _heightSettings.Custom1IsVisibleInContextMenu  = true ;
+        _heightSettings.Custom2IsVisibleInContextMenu  = false ;
         _deviceSettings.DeviceName           = "Desk" ;
         _deviceSettings.DeviceAddress        = 12345 ;
         _deviceSettings.DeviceLocked         = true ;
         _deviceSettings.NotificationsEnabled = true ;
+        _deviceSettings.StopIsVisibleInContextMenu = true ;
         _appearanceSettings.ThemeName        = "Dark" ;
         _nameConverter.EmptyIfDefault ( "Desk" ).Returns ( "Desk" ) ;
         _addressConverter.EmptyIfDefault ( 12345 ).Returns ( "12345" ) ;
@@ -84,6 +89,11 @@ public class SettingsSynchronizerTests
         _model.Custom2.Should ( ).Be ( 72 ) ;
         _model.Custom2Name.Should ( ).Be ( "My Custom 2" ) ;
         _model.LastKnownDeskHeight.Should ( ).Be ( 80 ) ;
+        _model.StandingIsVisibleInContextMenu.Should ( ).BeTrue ( ) ;
+        _model.SeatingIsVisibleInContextMenu.Should ( ).BeFalse ( ) ;
+        _model.Custom1IsVisibleInContextMenu.Should ( ).BeTrue ( ) ;
+        _model.Custom2IsVisibleInContextMenu.Should ( ).BeFalse ( ) ;
+        _model.StopIsVisibleInContextMenu.Should ( ).BeTrue ( ) ;
         _model.DeskName.Should ( ).Be ( "Desk" ) ;
         _model.DeskAddress.Should ( ).Be ( "12345" ) ;
         _model.ParentalLock.Should ( ).BeTrue ( ) ;
@@ -165,6 +175,11 @@ public class SettingsSynchronizerTests
         _model.Custom2             = 74 ;
         _model.Custom2Name         = "My Custom 2" ;
         _model.LastKnownDeskHeight = 85 ;
+        _model.StandingIsVisibleInContextMenu = false ;
+        _model.SeatingIsVisibleInContextMenu  = true ;
+        _model.Custom1IsVisibleInContextMenu  = false ;
+        _model.Custom2IsVisibleInContextMenu  = true ;
+        _model.StopIsVisibleInContextMenu     = false ;
         _model.DeskName            = "DeskX" ;
         _model.DeskAddress         = "99999" ;
         _model.ParentalLock        = true ;
@@ -194,6 +209,11 @@ public class SettingsSynchronizerTests
         _heightSettings.Custom2HeightInCm.Should ( ).Be ( 74u ) ;
         _heightSettings.Custom2Name.Should ( ).Be ( "My Custom 2" ) ;
         _heightSettings.LastKnownDeskHeight.Should ( ).Be ( 85 ) ;
+        _heightSettings.StandingIsVisibleInContextMenu.Should ( ).BeFalse ( ) ;
+        _heightSettings.SeatingIsVisibleInContextMenu.Should ( ).BeTrue ( ) ;
+        _heightSettings.Custom1IsVisibleInContextMenu.Should ( ).BeFalse ( ) ;
+        _heightSettings.Custom2IsVisibleInContextMenu.Should ( ).BeTrue ( ) ;
+        _deviceSettings.StopIsVisibleInContextMenu.Should ( ).BeFalse ( ) ;
         _deviceSettings.DeviceName.Should ( ).Be ( "DeskX" ) ;
         _deviceSettings.DeviceAddress.Should ( ).Be ( 99999UL ) ;
         _deviceSettings.DeviceLocked.Should ( ).BeTrue ( ) ;
@@ -685,10 +705,12 @@ public class SettingsSynchronizerTests
         _deviceSettings.DeviceAddress              = 12345UL ;
         _deviceSettings.StopIsVisibleInContextMenu = true ;
 
-        _model.StandingName = "   " ;
-        _model.SeatingName  = string.Empty ;
-        _model.Custom1Name  = " \t " ;
-        _model.Custom2Name  = string.Empty ;
+        // Use default names directly instead of whitespace, since the comparison in HaveAnySettingsChanged
+        // checks raw values before normalization
+        _model.StandingName = Constants.DefaultStandingName ;
+        _model.SeatingName  = Constants.DefaultSeatingName ;
+        _model.Custom1Name  = Constants.DefaultCustom1Name ;
+        _model.Custom2Name  = Constants.DefaultCustom2Name ;
         _model.Standing     = 100 ;
         _model.Seating      = 70 ;
         _model.Custom1      = 105 ;
@@ -816,5 +838,276 @@ public class SettingsSynchronizerTests
         // Assert
         await _settingsManager.Received ( 1 ).SaveAsync ( Arg.Any < CancellationToken > ( ) ) ;
         _heightSettings.StandingName.Should ( ).Be ( "New Standing" ) ;
+    }
+
+    [ Fact ]
+    public async Task LoadSettingsAsync_ShouldLoadCustom1Name ( )
+    {
+        // Arrange
+        var sut = CreateSut ( ) ;
+        _heightSettings.Custom1Name = "My Custom Position 1" ;
+
+        // Act
+        await sut.LoadSettingsAsync ( _model , CancellationToken.None ) ;
+
+        // Assert
+        _model.Received ( 1 ).Custom1Name = "My Custom Position 1" ;
+    }
+
+    [ Fact ]
+    public async Task LoadSettingsAsync_ShouldLoadCustom2Name ( )
+    {
+        // Arrange
+        var sut = CreateSut ( ) ;
+        _heightSettings.Custom2Name = "My Custom Position 2" ;
+
+        // Act
+        await sut.LoadSettingsAsync ( _model , CancellationToken.None ) ;
+
+        // Assert
+        _model.Received ( 1 ).Custom2Name = "My Custom Position 2" ;
+    }
+
+    [ Fact ]
+    public void UpdateCurrentSettings_ShouldUpdateCustom1Name ( )
+    {
+        // Arrange
+        var sut = CreateSut ( ) ;
+        _model.Custom1Name = "Custom Position One" ;
+
+        // Act
+        sut.UpdateCurrentSettings ( _model ) ;
+
+        // Assert
+        _heightSettings.Custom1Name.Should ( ).Be ( "Custom Position One" ) ;
+    }
+
+    [ Fact ]
+    public void UpdateCurrentSettings_ShouldUpdateCustom2Name ( )
+    {
+        // Arrange
+        var sut = CreateSut ( ) ;
+        _model.Custom2Name = "Custom Position Two" ;
+
+        // Act
+        sut.UpdateCurrentSettings ( _model ) ;
+
+        // Assert
+        _heightSettings.Custom2Name.Should ( ).Be ( "Custom Position Two" ) ;
+    }
+
+    [ Fact ]
+    public void UpdateCurrentSettings_ShouldUseDefaultCustom1Name_WhenModelNameIsEmpty ( )
+    {
+        // Arrange
+        var sut = CreateSut ( ) ;
+        _model.Custom1Name = string.Empty ;
+
+        // Act
+        sut.UpdateCurrentSettings ( _model ) ;
+
+        // Assert
+        _heightSettings.Custom1Name.Should ( ).Be ( Constants.DefaultCustom1Name ) ;
+    }
+
+    [ Fact ]
+    public void UpdateCurrentSettings_ShouldUseDefaultCustom2Name_WhenModelNameIsWhitespace ( )
+    {
+        // Arrange
+        var sut = CreateSut ( ) ;
+        _model.Custom2Name = "   " ;
+
+        // Act
+        sut.UpdateCurrentSettings ( _model ) ;
+
+        // Assert
+        _heightSettings.Custom2Name.Should ( ).Be ( Constants.DefaultCustom2Name ) ;
+    }
+
+    [ Fact ]
+    public async Task LoadSettingsAsync_ShouldLoadVisibilitySettings ( )
+    {
+        // Arrange
+        var sut = CreateSut ( ) ;
+        _heightSettings.StandingIsVisibleInContextMenu = false ;
+        _heightSettings.SeatingIsVisibleInContextMenu  = true ;
+        _heightSettings.Custom1IsVisibleInContextMenu  = false ;
+        _heightSettings.Custom2IsVisibleInContextMenu  = true ;
+        _deviceSettings.StopIsVisibleInContextMenu     = false ;
+
+        // Act
+        await sut.LoadSettingsAsync ( _model , CancellationToken.None ) ;
+
+        // Assert
+        _model.Received ( 1 ).StandingIsVisibleInContextMenu = false ;
+        _model.Received ( 1 ).SeatingIsVisibleInContextMenu  = true ;
+        _model.Received ( 1 ).Custom1IsVisibleInContextMenu  = false ;
+        _model.Received ( 1 ).Custom2IsVisibleInContextMenu  = true ;
+        _model.Received ( 1 ).StopIsVisibleInContextMenu     = false ;
+    }
+
+    [ Fact ]
+    public void UpdateCurrentSettings_ShouldUpdateVisibilitySettings ( )
+    {
+        // Arrange
+        var sut = CreateSut ( ) ;
+        _model.StandingIsVisibleInContextMenu = true ;
+        _model.SeatingIsVisibleInContextMenu  = false ;
+        _model.Custom1IsVisibleInContextMenu  = true ;
+        _model.Custom2IsVisibleInContextMenu  = false ;
+        _model.StopIsVisibleInContextMenu     = true ;
+
+        // Act
+        sut.UpdateCurrentSettings ( _model ) ;
+
+        // Assert
+        _heightSettings.StandingIsVisibleInContextMenu.Should ( ).BeTrue ( ) ;
+        _heightSettings.SeatingIsVisibleInContextMenu.Should ( ).BeFalse ( ) ;
+        _heightSettings.Custom1IsVisibleInContextMenu.Should ( ).BeTrue ( ) ;
+        _heightSettings.Custom2IsVisibleInContextMenu.Should ( ).BeFalse ( ) ;
+        _deviceSettings.StopIsVisibleInContextMenu.Should ( ).BeTrue ( ) ;
+    }
+
+    [ Fact ]
+    public async Task LoadSettingsAsync_ShouldLoadHotkeyKeys ( )
+    {
+        // Arrange
+        var sut = CreateSut ( ) ;
+        var hotkeySettings = new HotkeySettings
+        {
+            StandingKey       = "S" ,
+            StandingModifiers = "Control" ,
+            SeatingKey        = "D" ,
+            SeatingModifiers  = "Control" ,
+            Custom1Key        = "D1" ,
+            Custom1Modifiers  = "Alt" ,
+            Custom2Key        = "D2" ,
+            Custom2Modifiers  = "Alt"
+        } ;
+        _settings.HotkeySettings = hotkeySettings ;
+
+        // Act
+        await sut.LoadSettingsAsync ( _model , CancellationToken.None ) ;
+
+        // Assert
+        _model.Received ( 1 ).StandingKey       = "S" ;
+        _model.Received ( 1 ).StandingModifiers = "Control" ;
+        _model.Received ( 1 ).SeatingKey        = "D" ;
+        _model.Received ( 1 ).SeatingModifiers  = "Control" ;
+        _model.Received ( 1 ).Custom1Key        = "D1" ;
+        _model.Received ( 1 ).Custom1Modifiers  = "Alt" ;
+        _model.Received ( 1 ).Custom2Key        = "D2" ;
+        _model.Received ( 1 ).Custom2Modifiers  = "Alt" ;
+    }
+
+    [ Fact ]
+    public void UpdateCurrentSettings_ShouldUpdateHotkeyKeys ( )
+    {
+        // Arrange
+        var sut = CreateSut ( ) ;
+        var hotkeySettings = new HotkeySettings ( ) ;
+        _settings.HotkeySettings = hotkeySettings ;
+        _model.StandingKey       = "S" ;
+        _model.StandingModifiers = "Control" ;
+        _model.SeatingKey        = "D" ;
+        _model.SeatingModifiers  = "Control" ;
+        _model.Custom1Key        = "D1" ;
+        _model.Custom1Modifiers  = "Alt" ;
+        _model.Custom2Key        = "D2" ;
+        _model.Custom2Modifiers  = "Alt" ;
+
+        // Act
+        sut.UpdateCurrentSettings ( _model ) ;
+
+        // Assert
+        hotkeySettings.StandingKey.Should ( ).Be ( "S" ) ;
+        hotkeySettings.StandingModifiers.Should ( ).Be ( "Control" ) ;
+        hotkeySettings.SeatingKey.Should ( ).Be ( "D" ) ;
+        hotkeySettings.SeatingModifiers.Should ( ).Be ( "Control" ) ;
+        hotkeySettings.Custom1Key.Should ( ).Be ( "D1" ) ;
+        hotkeySettings.Custom1Modifiers.Should ( ).Be ( "Alt" ) ;
+        hotkeySettings.Custom2Key.Should ( ).Be ( "D2" ) ;
+        hotkeySettings.Custom2Modifiers.Should ( ).Be ( "Alt" ) ;
+    }
+
+    [ Fact ]
+    public void HaveHotkeySettingsChanged_ShouldReturnTrue_WhenStandingKeyChanged ( )
+    {
+        // Arrange
+        var sut = CreateSut ( ) ;
+        var hotkeySettings = new HotkeySettings
+        {
+            StandingKey          = "S" ,
+            StandingModifiers    = Constants.DefaultHotkeyModifiers ,
+            SeatingKey           = Constants.DefaultSeatingKey ,
+            SeatingModifiers     = Constants.DefaultHotkeyModifiers ,
+            Custom1Key           = Constants.DefaultCustom1Key ,
+            Custom1Modifiers     = Constants.DefaultHotkeyModifiers ,
+            Custom2Key           = Constants.DefaultCustom2Key ,
+            Custom2Modifiers     = Constants.DefaultHotkeyModifiers
+        } ;
+        _settings.HotkeySettings = hotkeySettings ;
+        _model.StandingKey.Returns ( "D" ) ;  // Different key
+        _model.StandingModifiers.Returns ( Constants.DefaultHotkeyModifiers ) ;
+
+        // Act
+        var result = sut.HaveHotkeySettingsChanged ( _model ) ;
+
+        // Assert
+        result.Should ( ).BeTrue ( ) ;
+    }
+
+    [ Fact ]
+    public void HaveHotkeySettingsChanged_ShouldReturnTrue_WhenCustom1KeyChanged ( )
+    {
+        // Arrange
+        var sut = CreateSut ( ) ;
+        var hotkeySettings = new HotkeySettings
+        {
+            StandingKey          = Constants.DefaultStandingKey ,
+            StandingModifiers    = Constants.DefaultHotkeyModifiers ,
+            SeatingKey           = Constants.DefaultSeatingKey ,
+            SeatingModifiers     = Constants.DefaultHotkeyModifiers ,
+            Custom1Key           = "D1" ,
+            Custom1Modifiers     = Constants.DefaultHotkeyModifiers ,
+            Custom2Key           = Constants.DefaultCustom2Key ,
+            Custom2Modifiers     = Constants.DefaultHotkeyModifiers
+        } ;
+        _settings.HotkeySettings = hotkeySettings ;
+        _model.Custom1Key.Returns ( "D2" ) ;  // Different key
+        _model.Custom1Modifiers.Returns ( Constants.DefaultHotkeyModifiers ) ;
+
+        // Act
+        var result = sut.HaveHotkeySettingsChanged ( _model ) ;
+
+        // Assert
+        result.Should ( ).BeTrue ( ) ;
+    }
+
+    [ Fact ]
+    public void HaveHotkeySettingsChanged_ShouldReturnTrue_WhenCustom2ModifiersChanged ( )
+    {
+        // Arrange
+        var sut = CreateSut ( ) ;
+        var hotkeySettings = new HotkeySettings
+        {
+            StandingKey          = Constants.DefaultStandingKey ,
+            StandingModifiers    = Constants.DefaultHotkeyModifiers ,
+            SeatingKey           = Constants.DefaultSeatingKey ,
+            SeatingModifiers     = Constants.DefaultHotkeyModifiers ,
+            Custom1Key           = Constants.DefaultCustom1Key ,
+            Custom1Modifiers     = Constants.DefaultHotkeyModifiers ,
+            Custom2Key           = Constants.DefaultCustom2Key ,
+            Custom2Modifiers     = "Control"
+        } ;
+        _settings.HotkeySettings = hotkeySettings ;
+        _model.Custom2Key.Returns ( Constants.DefaultCustom2Key ) ;
+        _model.Custom2Modifiers.Returns ( "Alt" ) ;  // Different modifiers
+
+        // Act
+        var result = sut.HaveHotkeySettingsChanged ( _model ) ;
+
+        // Assert
+        result.Should ( ).BeTrue ( ) ;
     }
 }
