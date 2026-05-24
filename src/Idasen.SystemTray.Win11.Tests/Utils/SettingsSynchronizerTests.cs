@@ -50,7 +50,7 @@ public class SettingsSynchronizerTests
         // Arrange
         var sut = CreateSut ( ) ;
         _heightSettings.StandingHeightInCm   = 100 ;
-        _hotkeySettings.StandingName         = "My Stand" ;
+        _heightSettings.StandingName         = "My Stand" ;
         _heightSettings.DeskMinHeightInCm    = 60 ;
         _heightSettings.DeskMaxHeightInCm    = 120 ;
         _heightSettings.SeatingHeightInCm    = 70 ;
@@ -201,7 +201,7 @@ public class SettingsSynchronizerTests
 
         // Assert
         _heightSettings.StandingHeightInCm.Should ( ).Be ( 110 ) ;
-        _hotkeySettings.StandingName.Should ( ).Be ( "My Standing" ) ;
+        _heightSettings.StandingName.Should ( ).Be ( "My Standing" ) ;
         _heightSettings.SeatingHeightInCm.Should ( ).Be ( 75 ) ;
         _heightSettings.SeatingName.Should ( ).Be ( "My Seating" ) ;
         _heightSettings.Custom1HeightInCm.Should ( ).Be ( 112 ) ;
@@ -464,7 +464,7 @@ public class SettingsSynchronizerTests
     {
         // Arrange
         var sut = CreateSut ( ) ;
-        _hotkeySettings.StandingName = "My Standing Position" ;
+        _heightSettings.StandingName = "My Standing Position" ;
 
         // Act
         await sut.LoadSettingsAsync ( _model , CancellationToken.None ) ;
@@ -498,7 +498,7 @@ public class SettingsSynchronizerTests
         sut.UpdateCurrentSettings ( _model ) ;
 
         // Assert
-        _hotkeySettings.StandingName.Should ( ).Be ( "Custom Standing" ) ;
+        _heightSettings.StandingName.Should ( ).Be ( "Custom Standing" ) ;
     }
 
     [ Fact ]
@@ -526,7 +526,7 @@ public class SettingsSynchronizerTests
         sut.UpdateCurrentSettings ( _model ) ;
 
         // Assert
-        _hotkeySettings.StandingName.Should ( ).Be ( Constants.DefaultStandingName ) ;
+        _heightSettings.StandingName.Should ( ).Be ( Constants.DefaultStandingName ) ;
     }
 
     [ Fact ]
@@ -548,7 +548,7 @@ public class SettingsSynchronizerTests
     {
         // Arrange
         var sut = CreateSut ( ) ;
-        _hotkeySettings.StandingName = "Old Standing" ;
+        _heightSettings.StandingName = "Old Standing" ;
         _model.StandingName = "New Standing" ;
         _settingsManager.SaveAsync ( Arg.Any < CancellationToken > ( ) ).Returns ( Task.CompletedTask ) ;
 
@@ -557,7 +557,7 @@ public class SettingsSynchronizerTests
 
         // Assert
         await _settingsManager.Received ( 1 ).SaveAsync ( Arg.Any < CancellationToken > ( ) ) ;
-        _hotkeySettings.StandingName.Should ( ).Be ( "New Standing" ) ;
+        _heightSettings.StandingName.Should ( ).Be ( "New Standing" ) ;
     }
 
     [ Fact ]
@@ -593,7 +593,7 @@ public class SettingsSynchronizerTests
         _heightSettings.LastKnownDeskHeight       = 80 ;
 
         // Set up names
-        _hotkeySettings.StandingName              = "Same Standing" ;
+        _heightSettings.StandingName              = "Same Standing" ;
         _heightSettings.SeatingName               = "Same Sitting" ;
         _heightSettings.Custom1Name               = "Same Custom1" ;
         _heightSettings.Custom2Name               = "Same Custom2" ;
@@ -649,7 +649,6 @@ public class SettingsSynchronizerTests
         var hotkeySettings = new HotkeySettings
         {
             GlobalHotkeysEnabled = true ,
-            StandingName         = "Same Standing" ,
             StandingKey          = Constants.DefaultStandingKey ,
             StandingModifiers    = Constants.DefaultHotkeyModifiers ,
             SeatingKey           = Constants.DefaultSeatingKey ,
@@ -690,7 +689,7 @@ public class SettingsSynchronizerTests
         _heightSettings.DeskMinHeightInCm    = 60 ;
         _heightSettings.DeskMaxHeightInCm    = 120 ;
         _heightSettings.LastKnownDeskHeight  = 80 ;
-        _hotkeySettings.StandingName         = Constants.DefaultStandingName ;
+        _heightSettings.StandingName         = Constants.DefaultStandingName ;
         _heightSettings.SeatingName          = Constants.DefaultSeatingName ;
         _heightSettings.Custom1Name          = Constants.DefaultCustom1Name ;
         _heightSettings.Custom2Name          = Constants.DefaultCustom2Name ;
@@ -774,7 +773,7 @@ public class SettingsSynchronizerTests
     {
         // Arrange
         var sut = CreateSut ( ) ;
-        _hotkeySettings.StandingName              = "Old Standing" ;
+        _heightSettings.StandingName              = "Old Standing" ;
         _heightSettings.SeatingName               = "Same Sitting" ;
         _heightSettings.Custom1Name               = "Same Custom1" ;
         _heightSettings.Custom2Name               = "Same Custom2" ;
@@ -813,7 +812,6 @@ public class SettingsSynchronizerTests
         var hotkeySettings = new HotkeySettings
         {
             GlobalHotkeysEnabled = true ,
-            StandingName         = "Old Standing" ,
             StandingKey          = Constants.DefaultStandingKey ,
             StandingModifiers    = Constants.DefaultHotkeyModifiers ,
             SeatingKey           = Constants.DefaultSeatingKey ,
@@ -839,7 +837,7 @@ public class SettingsSynchronizerTests
 
         // Assert
         await _settingsManager.Received ( 1 ).SaveAsync ( Arg.Any < CancellationToken > ( ) ) ;
-        hotkeySettings.StandingName.Should ( ).Be ( "New Standing" ) ;
+        _heightSettings.StandingName.Should ( ).Be ( "New Standing" ) ;
     }
 
     [ Fact ]

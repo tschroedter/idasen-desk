@@ -11,11 +11,6 @@ public class HotkeySettings
     public bool GlobalHotkeysEnabled { get ; set ; } = Constants.DefaultGlobalHotkeysEnabled ;
 
     /// <summary>
-    ///     The custom name for standing position (default: "Stand").
-    /// </summary>
-    public string StandingName { get ; set ; } = Constants.DefaultStandingName ;
-
-    /// <summary>
     ///     The key for the Standing hotkey (e.g., "Up").
     /// </summary>
     public string StandingKey { get ; set ; } = Constants.DefaultStandingKey ;

@@ -73,8 +73,6 @@ public partial class SettingsViewModel (
 
     [ ObservableProperty ] private bool _seatingIsVisibleInContextMenu = true ;
 
-    [ ObservableProperty ] private string _seatingName = Constants.DefaultSeatingName ;
-
     [ ObservableProperty ] private string _settingsFileFullPath = string.Empty ;
 
     private IDisposable ? _settingsSaved ;
@@ -83,13 +81,13 @@ public partial class SettingsViewModel (
 
     [ ObservableProperty ] private bool _standingIsVisibleInContextMenu = true ;
 
-    [ ObservableProperty ] private string _standingName = Constants.DefaultStandingName ;
-
     [ ObservableProperty ] private bool _stopIsVisibleInContextMenu = true ;
     [ ObservableProperty ] private bool _globalHotkeysEnabled       = true ;
 
+    [ ObservableProperty ] private string _standingName      = Constants.DefaultStandingName ;
     [ ObservableProperty ] private string _standingKey       = Constants.DefaultStandingKey ;
     [ ObservableProperty ] private string _standingModifiers = Constants.DefaultHotkeyModifiers ;
+    [ ObservableProperty ] private string _seatingName       = Constants.DefaultSeatingName ;
     [ ObservableProperty ] private string _seatingKey        = Constants.DefaultSeatingKey ;
     [ ObservableProperty ] private string _seatingModifiers  = Constants.DefaultHotkeyModifiers ;
     [ ObservableProperty ] private string _custom1Key        = Constants.DefaultCustom1Key ;

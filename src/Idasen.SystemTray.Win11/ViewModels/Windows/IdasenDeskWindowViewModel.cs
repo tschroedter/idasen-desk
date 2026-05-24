@@ -1,13 +1,14 @@
-﻿using System.Collections.ObjectModel ;
+﻿using Idasen.SystemTray.Win11.Interfaces ;
+using Idasen.SystemTray.Win11.TraySettings;
+using Idasen.SystemTray.Win11.Utils ;
+using Idasen.SystemTray.Win11.ViewModels.Pages ;
+using Idasen.SystemTray.Win11.Views.Pages ;
+using System.Collections.ObjectModel ;
 using System.Diagnostics.CodeAnalysis ;
 using System.Reactive.Concurrency ;
 using System.Reactive.Linq ;
 using System.Windows.Controls ;
 using System.Windows.Input ;
-using Idasen.SystemTray.Win11.Interfaces ;
-using Idasen.SystemTray.Win11.Utils ;
-using Idasen.SystemTray.Win11.ViewModels.Pages ;
-using Idasen.SystemTray.Win11.Views.Pages ;
 using Wpf.Ui.Controls ;
 using ILogger = Serilog.ILogger ;
 using MenuItem = Wpf.Ui.Controls.MenuItem ;
@@ -106,7 +107,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
         _standViewItem = new NavigationViewItem
         {
-            Content        = _settingsManager.CurrentSettings.HotkeySettings.StandingName ,
+            Content        = _settingsManager.CurrentSettings.HeightSettings.StandingName ,
             Icon           = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleUp24 } ,
             TargetPageType = typeof ( SettingsPage ) ,
             ToolTip        = "Double-Click to move the desk to the standing position."
@@ -247,7 +248,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
         _menuItemStand = new MenuItem
         {
-            Header = _settingsManager.CurrentSettings.HotkeySettings.StandingName , Command = standingCommand ,
+            Header = _settingsManager.CurrentSettings.HeightSettings.StandingName , Command = standingCommand ,
             Icon   = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleUp24 }
         } ;
         _menuItemSit = new MenuItem
@@ -545,9 +546,9 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
     private void OnClickSitViewItem ( object sender , RoutedEventArgs e )
     {
         ConfirmAndExecute ( "Sit ?" ,
-                            "Do you want to move the desk into the sitting position?" ,
-                            "Sit" ,
-                            ( ) => _uiDeskManager.SitAsync ( ) ) ;
+                           "Do you want to move the desk into the sitting position?" ,
+                           "Sit" ,
+                           ( ) => _uiDeskManager.SitAsync ( ) ) ;
     }
 
     private void OnClickStandViewItem ( object sender , RoutedEventArgs e )
@@ -660,9 +661,8 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         }
 
         var heightSettings = _settingsManager.CurrentSettings.HeightSettings ;
-        var hotkeySettings = _settingsManager.CurrentSettings.HotkeySettings ;
 
-        _menuItemStand.Header = hotkeySettings.StandingName ;
+        _menuItemStand.Header = heightSettings.StandingName ;
         _menuItemStand.Visibility = heightSettings.StandingIsVisibleInContextMenu
                                         ? Visibility.Visible
                                         : Visibility.Collapsed ;
@@ -681,7 +681,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
         // Update navigation view items with custom names
         if ( _standViewItem != null )
-            _standViewItem.Content = hotkeySettings.StandingName ;
+            _standViewItem.Content = heightSettings.StandingName ;
         if ( _sitViewItem != null )
             _sitViewItem.Content = heightSettings.SeatingName ;
         if ( _custom1ViewItem != null )

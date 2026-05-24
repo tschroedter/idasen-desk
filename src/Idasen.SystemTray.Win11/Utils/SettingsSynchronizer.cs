@@ -86,7 +86,7 @@ public class SettingsSynchronizer (
         model.MinHeight    = current.HeightSettings.DeskMinHeightInCm ;
         model.MaxHeight    = current.HeightSettings.DeskMaxHeightInCm ;
         model.Standing     = current.HeightSettings.StandingHeightInCm ;
-        model.StandingName = current.HotkeySettings.StandingName ;
+        model.StandingName = current.HeightSettings.StandingName ;
         model.Seating      = current.HeightSettings.SeatingHeightInCm ;
         model.SeatingName  = current.HeightSettings.SeatingName ;
         model.Custom1      = current.HeightSettings.Custom1HeightInCm ;
@@ -166,7 +166,7 @@ public class SettingsSynchronizer (
 
         settings.HeightSettings.StandingHeightInCm = toUIntConverter.ConvertToUInt ( model.Standing ,
                                                                                      Constants.DefaultHeightStandingInCm ) ;
-        settings.HotkeySettings.StandingName = string.IsNullOrWhiteSpace ( model.StandingName ) ? Constants.DefaultStandingName : model.StandingName ;
+        settings.HeightSettings.StandingName = string.IsNullOrWhiteSpace ( model.StandingName ) ? Constants.DefaultStandingName : model.StandingName ;
         settings.HeightSettings.SeatingHeightInCm = toUIntConverter.ConvertToUInt ( model.Seating ,
                                                                                     Constants.DefaultHeightSeatingInCm ) ;
         settings.HeightSettings.SeatingName = string.IsNullOrWhiteSpace ( model.SeatingName ) ? Constants.DefaultSeatingName : model.SeatingName ;
@@ -279,7 +279,7 @@ public class SettingsSynchronizer (
             current.HeightSettings.DeskMinHeightInCm   != model.MinHeight ||
             current.HeightSettings.DeskMaxHeightInCm   != model.MaxHeight ||
             current.HeightSettings.StandingHeightInCm  != newStanding     ||
-            current.HotkeySettings.StandingName        != newStandingName ||
+            current.HeightSettings.StandingName        != newStandingName ||
             current.HeightSettings.SeatingHeightInCm   != newSeating      ||
             current.HeightSettings.SeatingName         != newSeatingName ||
             current.HeightSettings.Custom1HeightInCm   != newCustom1      ||
@@ -307,7 +307,7 @@ public class SettingsSynchronizer (
 
         var hotkeyChanged =
             current.HotkeySettings.GlobalHotkeysEnabled != model.GlobalHotkeysEnabled ||
-            current.HotkeySettings.StandingName         != model.StandingName         ||
+            current.HeightSettings.StandingName         != model.StandingName         ||
             current.HotkeySettings.StandingKey          != model.StandingKey          ||
             current.HotkeySettings.StandingModifiers    != model.StandingModifiers    ||
             current.HeightSettings.SeatingName          != model.SeatingName          ||

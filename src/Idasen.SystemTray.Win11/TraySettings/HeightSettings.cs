@@ -10,6 +10,11 @@ public class HeightSettings
     public uint StandingHeightInCm { get ; set ; } = Constants.DefaultHeightStandingInCm ;
 
     /// <summary>
+    ///     The custom name for standing position (default: "Stand").
+    /// </summary>
+    public string StandingName { get ; set ; } = Constants.DefaultStandingName ;
+
+    /// <summary>
     ///     The seating height of the desk in centimeters.
     /// </summary>
     public uint SeatingHeightInCm { get ; set ; } = Constants.DefaultHeightSeatingInCm ;
