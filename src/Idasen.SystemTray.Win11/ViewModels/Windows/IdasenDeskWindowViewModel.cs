@@ -106,7 +106,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
         _standViewItem = new NavigationViewItem
         {
-            Content        = _settingsManager.CurrentSettings.HeightSettings.StandingName ,
+            Content        = _settingsManager.CurrentSettings.HotkeySettings.StandingName ,
             Icon           = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleUp24 } ,
             TargetPageType = typeof ( SettingsPage ) ,
             ToolTip        = "Double-Click to move the desk to the standing position."
@@ -247,7 +247,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
         _menuItemStand = new MenuItem
         {
-            Header = _settingsManager.CurrentSettings.HeightSettings.StandingName , Command = standingCommand ,
+            Header = _settingsManager.CurrentSettings.HotkeySettings.StandingName , Command = standingCommand ,
             Icon   = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleUp24 }
         } ;
         _menuItemSit = new MenuItem
@@ -660,8 +660,9 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         }
 
         var heightSettings = _settingsManager.CurrentSettings.HeightSettings ;
+        var hotkeySettings = _settingsManager.CurrentSettings.HotkeySettings ;
 
-        _menuItemStand.Header = heightSettings.StandingName ;
+        _menuItemStand.Header = hotkeySettings.StandingName ;
         _menuItemStand.Visibility = heightSettings.StandingIsVisibleInContextMenu
                                         ? Visibility.Visible
                                         : Visibility.Collapsed ;
@@ -680,7 +681,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
         // Update navigation view items with custom names
         if ( _standViewItem != null )
-            _standViewItem.Content = heightSettings.StandingName ;
+            _standViewItem.Content = hotkeySettings.StandingName ;
         if ( _sitViewItem != null )
             _sitViewItem.Content = heightSettings.SeatingName ;
         if ( _custom1ViewItem != null )
