@@ -545,33 +545,41 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
     private void OnClickSitViewItem ( object sender , RoutedEventArgs e )
     {
-        ConfirmAndExecute ( "Sit ?" ,
-                           "Do you want to move the desk into the sitting position?" ,
-                           "Sit" ,
-                           ( ) => _uiDeskManager.SitAsync ( ) ) ;
+        var positionName = _settingsManager.CurrentSettings.HeightSettings.SeatingName ;
+
+        ConfirmAndExecute ( positionName                             + " ?" ,
+                            "Do you want to move the desk into the " + positionName + " position?" ,
+                            positionName ,
+                            ( ) => _uiDeskManager.SitAsync ( ) ) ;
     }
 
     private void OnClickStandViewItem ( object sender , RoutedEventArgs e )
     {
-        ConfirmAndExecute ( "Stand ?" ,
-                            "Do you want to move the desk into the standing position?" ,
-                            "Stand" ,
+        var positionName = _settingsManager.CurrentSettings.HeightSettings.StandingName ;
+
+        ConfirmAndExecute ( positionName                             + " ?" ,
+                            "Do you want to move the desk into the " + positionName + " position?" ,
+                            positionName ,
                             ( ) => _uiDeskManager.StandAsync ( ) ) ;
     }
 
     private void OnClickCustom1ViewItem ( object sender , RoutedEventArgs e )
     {
-        ConfirmAndExecute ( "Custom 1 ?" ,
-                            "Do you want to move the desk into the Custom 1 position?" ,
-                            "Move" ,
+        var positionName = _settingsManager.CurrentSettings.HeightSettings.Custom1Name ;
+
+        ConfirmAndExecute ( positionName                             + " ?" ,
+                            "Do you want to move the desk into the " + positionName + " position?" ,
+                            positionName ,
                             ( ) => _uiDeskManager.Custom1Async ( ) ) ;
     }
 
     private void OnClickCustom2ViewItem ( object sender , RoutedEventArgs e )
     {
-        ConfirmAndExecute ( "Custom 2 ?" ,
-                            "Do you want to move the desk into the custom 2 position?" ,
-                            "Move" ,
+        var positionName = _settingsManager.CurrentSettings.HeightSettings.Custom2Name ;
+
+        ConfirmAndExecute ( positionName                             + " ?" ,
+                            "Do you want to move the desk into the " + positionName + " position?" ,
+                            positionName ,
                             ( ) => _uiDeskManager.Custom2Async ( ) ) ;
     }
 
