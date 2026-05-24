@@ -60,6 +60,8 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
     [ ObservableProperty ] private ObservableCollection < object > _footerMenuItems = [] ;
 
+    private IDisposable ? _hotkeySubscription ;
+
     private bool _isActionInProgress ;
 
     private bool          _isInitialized ;
@@ -380,6 +382,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         await CastAndDispose ( _uiDeskManager ) ;
         await CastAndDispose ( _advancedSubscription ) ;
         await CastAndDispose ( _lockSubscription ) ;
+        await CastAndDispose ( _hotkeySubscription ) ;
 
         _statusBarInfoViewModel.Dispose ( ) ;
 
@@ -644,6 +647,10 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         _lockSubscription = _settingsChanges.LockSettingsChanged
                                             .ObserveOn ( _scheduler )
                                             .Subscribe ( async isLocked => await OnLockSettingsChanged ( isLocked ) ) ;
+
+        _hotkeySubscription = _settingsChanges.HeightSettingsChanged
+                                              .ObserveOn ( _scheduler )
+                                              .Subscribe ( _ => UpdateNavigationViewItemNames ( ) ) ;
         // ReSharper restore AsyncVoidLambda
 
         return this ;
@@ -719,6 +726,43 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
                         itemsSnapshot ) ;
 
         CommandManager.InvalidateRequerySuggested ( ) ;
+    }
+
+    private void UpdateNavigationViewItemNames ( )
+    {
+        _logger.Debug ( "Updating navigation view item names." ) ;
+
+        var heightSettings = _settingsManager.CurrentSettings.HeightSettings ;
+
+        if ( _standViewItem != null )
+        {
+            _standViewItem.Content = heightSettings.StandingName ;
+            _standViewItem.ToolTip = "Double-Click to move the desk to the " + heightSettings.StandingName + " position." ;
+        }
+
+        if ( _sitViewItem != null )
+        {
+            _sitViewItem.Content = heightSettings.SeatingName ;
+            _sitViewItem.ToolTip = "Double-Click to move the desk to the " + heightSettings.SeatingName + " position." ;
+        }
+
+        if ( _custom1ViewItem != null )
+        {
+            _custom1ViewItem.Content = heightSettings.Custom1Name ;
+            _custom1ViewItem.ToolTip = "Double-Click to move the desk to the " + heightSettings.Custom1Name + " position." ;
+        }
+
+        if ( _custom2ViewItem != null )
+        {
+            _custom2ViewItem.Content = heightSettings.Custom2Name ;
+            _custom2ViewItem.ToolTip = "Double-Click to move the desk to the " + heightSettings.Custom2Name + " position." ;
+        }
+
+        _logger.Debug ( "Navigation view item names updated: Stand={StandingName}, Sit={SeatingName}, Custom1={Custom1Name}, Custom2={Custom2Name}" ,
+                        heightSettings.StandingName ,
+                        heightSettings.SeatingName ,
+                        heightSettings.Custom1Name ,
+                        heightSettings.Custom2Name ) ;
     }
 
     private async Task OnAdvancedSettingsChanged ( bool hasChanged )

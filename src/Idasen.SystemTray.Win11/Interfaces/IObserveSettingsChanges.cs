@@ -5,4 +5,5 @@ public interface IObserveSettingsChanges
     IObservable < bool > AdvancedSettingsChanged { get ; }
     IObservable < bool > LockSettingsChanged     { get ; }
     IObservable < bool > HotkeySettingsChanged   { get ; }
+    IObservable < bool > HeightSettingsChanged   { get ; }
 }
