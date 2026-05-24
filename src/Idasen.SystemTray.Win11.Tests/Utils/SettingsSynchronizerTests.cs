@@ -657,6 +657,96 @@ public class SettingsSynchronizerTests
     }
 
     [ Fact ]
+    public async Task StoreSettingsAsync_ShouldNotSaveSettings_WhenPresetNamesAreWhitespaceButResolveToDefaults ( )
+    {
+        // Arrange
+        var sut = CreateSut ( ) ;
+
+        _heightSettings.StandingHeightInCm   = 100 ;
+        _heightSettings.SeatingHeightInCm    = 70 ;
+        _heightSettings.Custom1HeightInCm    = 105 ;
+        _heightSettings.Custom2HeightInCm    = 72 ;
+        _heightSettings.DeskMinHeightInCm    = 60 ;
+        _heightSettings.DeskMaxHeightInCm    = 120 ;
+        _heightSettings.LastKnownDeskHeight  = 80 ;
+        _heightSettings.StandingName         = Constants.DefaultStandingName ;
+        _heightSettings.SeatingName          = Constants.DefaultSeatingName ;
+        _heightSettings.Custom1Name          = Constants.DefaultCustom1Name ;
+        _heightSettings.Custom2Name          = Constants.DefaultCustom2Name ;
+        _heightSettings.StandingIsVisibleInContextMenu = true ;
+        _heightSettings.SeatingIsVisibleInContextMenu  = true ;
+        _heightSettings.Custom1IsVisibleInContextMenu  = true ;
+        _heightSettings.Custom2IsVisibleInContextMenu  = true ;
+
+        _deviceSettings.NotificationsEnabled       = true ;
+        _deviceSettings.DeviceLocked               = false ;
+        _deviceSettings.MaxSpeedToStopMovement     = 100 ;
+        _deviceSettings.DeviceName                 = "TestDesk" ;
+        _deviceSettings.DeviceAddress              = 12345UL ;
+        _deviceSettings.StopIsVisibleInContextMenu = true ;
+
+        _model.StandingName = "   " ;
+        _model.SeatingName  = string.Empty ;
+        _model.Custom1Name  = " \t " ;
+        _model.Custom2Name  = string.Empty ;
+        _model.Standing     = 100 ;
+        _model.Seating      = 70 ;
+        _model.Custom1      = 105 ;
+        _model.Custom2      = 72 ;
+        _model.MinHeight    = 60 ;
+        _model.MaxHeight    = 120 ;
+        _model.LastKnownDeskHeight            = 80 ;
+        _model.StandingIsVisibleInContextMenu = true ;
+        _model.SeatingIsVisibleInContextMenu  = true ;
+        _model.Custom1IsVisibleInContextMenu  = true ;
+        _model.Custom2IsVisibleInContextMenu  = true ;
+        _model.StopIsVisibleInContextMenu     = true ;
+        _model.Notifications                  = true ;
+        _model.ParentalLock                   = false ;
+        _model.MaxSpeedToStopMovement         = 100 ;
+        _model.DeskName                       = "TestDesk" ;
+        _model.DeskAddress                    = "12345" ;
+
+        _toUIntConverter.ConvertToUInt ( 100 , Arg.Any < uint > ( ) ).Returns ( 100u ) ;
+        _toUIntConverter.ConvertToUInt ( 70 , Arg.Any < uint > ( ) ).Returns ( 70u ) ;
+        _toUIntConverter.ConvertToUInt ( 105 , Arg.Any < uint > ( ) ).Returns ( 105u ) ;
+        _toUIntConverter.ConvertToUInt ( 72 , Arg.Any < uint > ( ) ).Returns ( 72u ) ;
+        _nameConverter.DefaultIfEmpty ( "TestDesk" ).Returns ( "TestDesk" ) ;
+        _addressConverter.DefaultIfEmpty ( "12345" ).Returns ( 12345UL ) ;
+        _themeSwitcher.CurrentThemeName.Returns ( _appearanceSettings.ThemeName ) ;
+
+        var hotkeySettings = new HotkeySettings
+        {
+            GlobalHotkeysEnabled = true ,
+            StandingKey          = Constants.DefaultStandingKey ,
+            StandingModifiers    = Constants.DefaultHotkeyModifiers ,
+            SeatingKey           = Constants.DefaultSeatingKey ,
+            SeatingModifiers     = Constants.DefaultHotkeyModifiers ,
+            Custom1Key           = Constants.DefaultCustom1Key ,
+            Custom1Modifiers     = Constants.DefaultHotkeyModifiers ,
+            Custom2Key           = Constants.DefaultCustom2Key ,
+            Custom2Modifiers     = Constants.DefaultHotkeyModifiers
+        } ;
+        _settings.HotkeySettings = hotkeySettings ;
+        _model.GlobalHotkeysEnabled.Returns ( true ) ;
+        _model.StandingKey.Returns ( Constants.DefaultStandingKey ) ;
+        _model.StandingModifiers.Returns ( Constants.DefaultHotkeyModifiers ) ;
+        _model.SeatingKey.Returns ( Constants.DefaultSeatingKey ) ;
+        _model.SeatingModifiers.Returns ( Constants.DefaultHotkeyModifiers ) ;
+        _model.Custom1Key.Returns ( Constants.DefaultCustom1Key ) ;
+        _model.Custom1Modifiers.Returns ( Constants.DefaultHotkeyModifiers ) ;
+        _model.Custom2Key.Returns ( Constants.DefaultCustom2Key ) ;
+        _model.Custom2Modifiers.Returns ( Constants.DefaultHotkeyModifiers ) ;
+
+        // Act
+        await sut.StoreSettingsAsync ( _model ,
+                                       CancellationToken.None ) ;
+
+        // Assert
+        await _settingsManager.DidNotReceive ( ).SaveAsync ( Arg.Any < CancellationToken > ( ) ) ;
+    }
+
+    [ Fact ]
     public async Task StoreSettingsAsync_ShouldSaveSettings_WhenOnlyStandingNameChanged ( )
     {
         // Arrange

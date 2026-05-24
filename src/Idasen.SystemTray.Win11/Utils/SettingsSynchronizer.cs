@@ -270,18 +270,22 @@ public class SettingsSynchronizer (
                                                          Constants.DefaultHeightStandingInCm ) ;
         var newCustom2 = toUIntConverter.ConvertToUInt ( model.Custom2 ,
                                                          Constants.DefaultHeightSeatingInCm ) ;
+        var newStandingName = string.IsNullOrWhiteSpace ( model.StandingName ) ? Constants.DefaultStandingName : model.StandingName ;
+        var newSeatingName  = string.IsNullOrWhiteSpace ( model.SeatingName ) ? Constants.DefaultSeatingName : model.SeatingName ;
+        var newCustom1Name  = string.IsNullOrWhiteSpace ( model.Custom1Name ) ? Constants.DefaultCustom1Name : model.Custom1Name ;
+        var newCustom2Name  = string.IsNullOrWhiteSpace ( model.Custom2Name ) ? Constants.DefaultCustom2Name : model.Custom2Name ;
 
         var heightChanged =
             current.HeightSettings.DeskMinHeightInCm   != model.MinHeight ||
             current.HeightSettings.DeskMaxHeightInCm   != model.MaxHeight ||
             current.HeightSettings.StandingHeightInCm  != newStanding     ||
-            current.HeightSettings.StandingName        != model.StandingName ||
+            current.HeightSettings.StandingName        != newStandingName ||
             current.HeightSettings.SeatingHeightInCm   != newSeating      ||
-            current.HeightSettings.SeatingName         != model.SeatingName ||
+            current.HeightSettings.SeatingName         != newSeatingName ||
             current.HeightSettings.Custom1HeightInCm   != newCustom1      ||
-            current.HeightSettings.Custom1Name         != model.Custom1Name ||
+            current.HeightSettings.Custom1Name         != newCustom1Name ||
             current.HeightSettings.Custom2HeightInCm   != newCustom2      ||
-            current.HeightSettings.Custom2Name         != model.Custom2Name ||
+            current.HeightSettings.Custom2Name         != newCustom2Name ||
             current.HeightSettings.LastKnownDeskHeight != model.LastKnownDeskHeight ;
 
         var visibilityChanged =
