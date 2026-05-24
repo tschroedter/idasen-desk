@@ -1,5 +1,4 @@
 ﻿using Idasen.SystemTray.Win11.Interfaces ;
-using Idasen.SystemTray.Win11.TraySettings;
 using Idasen.SystemTray.Win11.Utils ;
 using Idasen.SystemTray.Win11.ViewModels.Pages ;
 using Idasen.SystemTray.Win11.Views.Pages ;
@@ -96,39 +95,47 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
             TargetPageType = typeof ( HomePage )
         } ;
 
+        var positionSitName = _settingsManager.CurrentSettings.HeightSettings.SeatingName;
+
         _sitViewItem = new NavigationViewItem
         {
-            Content        = _settingsManager.CurrentSettings.HeightSettings.SeatingName ,
+            Content        = positionSitName ,
             Icon           = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleDown24 } ,
             TargetPageType = typeof ( SettingsPage ) ,
-            ToolTip        = "Double-Click to move the desk to the sitting position."
+            ToolTip        = "Double-Click to move the desk to the " + positionSitName + " position."
         } ;
         _sitViewItem.MouseDoubleClick += OnClickSitViewItem ;
 
+        var positionStandName = _settingsManager.CurrentSettings.HeightSettings.StandingName;
+
         _standViewItem = new NavigationViewItem
         {
-            Content        = _settingsManager.CurrentSettings.HeightSettings.StandingName ,
+            Content        = positionStandName ,
             Icon           = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleUp24 } ,
             TargetPageType = typeof ( SettingsPage ) ,
-            ToolTip        = "Double-Click to move the desk to the standing position."
+            ToolTip        = "Double-Click to move the desk to the " + positionStandName + " position."
         } ;
         _standViewItem.MouseDoubleClick += OnClickStandViewItem ;
 
+        var positionCustom1Name = _settingsManager.CurrentSettings.HeightSettings.Custom1Name;
+
         _custom1ViewItem = new NavigationViewItem
         {
-            Content        = _settingsManager.CurrentSettings.HeightSettings.Custom1Name ,
+            Content        = positionCustom1Name ,
             Icon           = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleLeft24 } ,
             TargetPageType = typeof ( SettingsPage ) ,
-            ToolTip        = "Double-Click to move the desk to the Custom 1 position."
+            ToolTip        = "Double-Click to move the desk to the " + positionCustom1Name + " position."
         } ;
         _custom1ViewItem.MouseDoubleClick += OnClickCustom1ViewItem ;
 
+        var positionCustom2Name = _settingsManager.CurrentSettings.HeightSettings.Custom2Name;
+
         _custom2ViewItem = new NavigationViewItem
         {
-            Content        = _settingsManager.CurrentSettings.HeightSettings.Custom2Name ,
+            Content        = positionCustom2Name ,
             Icon           = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleRight24 } ,
             TargetPageType = typeof ( SettingsPage ) ,
-            ToolTip        = "Double-Click to move the desk to the Custom 2 position."
+            ToolTip        = "Double-Click to move the desk to the " + positionCustom2Name + " position."
         } ;
         _custom2ViewItem.MouseDoubleClick += OnClickCustom2ViewItem ;
 
