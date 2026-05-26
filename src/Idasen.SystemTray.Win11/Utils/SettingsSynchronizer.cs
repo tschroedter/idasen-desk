@@ -286,7 +286,7 @@ public class SettingsSynchronizer (
                        settings.HotkeySettings.GlobalHotkeysEnabled ) ;
     }
 
-    private void HeightChanged ( ISettings settings )
+    private void HeightChanged ( ISettings _ )
     {
         logger.Information ( "Height settings have changed." ) ;
 

@@ -653,6 +653,9 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
                                               .Subscribe ( _ => UpdateNavigationViewItemNames ( ) ) ;
         // ReSharper restore AsyncVoidLambda
 
+        // Initialize navigation view items with current settings
+        UpdateNavigationViewItemNames ( ) ;
+
         return this ;
     }
 
