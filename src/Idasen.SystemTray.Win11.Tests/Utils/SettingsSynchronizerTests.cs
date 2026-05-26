@@ -299,6 +299,40 @@ public class SettingsSynchronizerTests
     }
 
     [ Fact ]
+    public async Task LoadSettingsAsync_ShouldNotifyHeightSettingsChanged_WhenSettingsAreLoaded ( )
+    {
+        // Arrange
+        var sut = CreateSut ( ) ;
+        _heightSettings.StandingHeightInCm = 100 ;
+        _heightSettings.StandingName       = "My Stand" ;
+        _heightSettings.SeatingHeightInCm  = 70 ;
+        _heightSettings.SeatingName        = "My Sit" ;
+
+        // Act
+        await sut.LoadSettingsAsync ( _model ,
+                                      CancellationToken.None ) ;
+
+        // Assert
+        _settingsChanges.HeightSettingsChanged.Received ( 1 ).OnNext ( true ) ;
+    }
+
+    [ Fact ]
+    public async Task LoadSettingsAsync_ShouldNotifyHeightSettingsChanged_WhenLoadFailsAndSettingsAreReset ( )
+    {
+        // Arrange
+        var sut           = CreateSut ( ) ;
+        var testException = new ArgumentException ( "load failed" ) ;
+        _settingsManager.LoadAsync ( Arg.Any < CancellationToken > ( ) ).Throws ( testException ) ;
+
+        // Act
+        await sut.LoadSettingsAsync ( _model ,
+                                      CancellationToken.None ) ;
+
+        // Assert
+        _settingsChanges.HeightSettingsChanged.Received ( 1 ).OnNext ( true ) ;
+    }
+
+    [ Fact ]
     public async Task StoreSettingsAsync_ShouldLogErrorAndThrowInvalidOperationException_WhenSaveFails ( )
     {
         // Arrange

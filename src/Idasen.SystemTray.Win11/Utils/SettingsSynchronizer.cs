@@ -31,6 +31,9 @@ public class SettingsSynchronizer (
             // Theme application moved to the UI layer (SettingsViewModel) to ensure it runs on the UI thread.
 
             StoppingHeightCalculatorSettings.MaxSpeedToStopMovement = model.MaxSpeedToStopMovement ;
+
+            // Notify subscribers that height settings have been loaded
+            HeightChanged ( settingsManager.CurrentSettings ) ;
         }
         catch ( Exception ex )
         {
@@ -41,6 +44,9 @@ public class SettingsSynchronizer (
 
             ApplySettingsToModel ( model ,
                                    settingsManager.CurrentSettings ) ;
+
+            // Notify subscribers that height settings have been loaded
+            HeightChanged ( settingsManager.CurrentSettings ) ;
         }
     }
 
@@ -286,7 +292,7 @@ public class SettingsSynchronizer (
                        settings.HotkeySettings.GlobalHotkeysEnabled ) ;
     }
 
-    private void HeightChanged ( ISettings _ )
+    private void HeightChanged ( ISettings settings )
     {
         logger.Information ( "Height settings have changed." ) ;
 
