@@ -732,6 +732,15 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
     {
         _logger.Debug ( "Updating navigation view item names." ) ;
 
+        // Ensure we're on the UI thread
+        if ( Application.Current?.Dispatcher != null &&
+             ! Application.Current.Dispatcher.CheckAccess ( ) )
+        {
+            Application.Current.Dispatcher.Invoke ( ( ) => UpdateNavigationViewItemNames ( ) ) ;
+
+            return ;
+        }
+
         var heightSettings = _settingsManager.CurrentSettings.HeightSettings ;
 
         if ( _standViewItem != null )
