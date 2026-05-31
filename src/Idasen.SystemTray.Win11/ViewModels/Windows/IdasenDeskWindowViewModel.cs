@@ -20,9 +20,13 @@ namespace Idasen.SystemTray.Win11.ViewModels.Windows ;
 [ ExcludeFromCodeCoverage ]
 public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDisposable
 {
-    private const string DisconnectLiteral             = "Disconnect" ;
-    private const string DoubleClickToMoveTheDeskToThe = "Double-Click to move the desk to the ";
-    private const string Position                      = " position." ;
+    private const string DisconnectLiteral                   = "Disconnect" ;
+    private const string DoYouWantToMoveTheDeskIntoPosition = "Do you want to move the desk into the {0} position?" ;
+    private const string DoubleClickToMoveTheDeskToThe       = "Double-Click to move the desk to the ";
+    private const string Position                            = " position." ;
+
+    private static readonly System.Text.CompositeFormat DoYouWantToMoveTheDeskIntoPositionFormat = 
+        System.Text.CompositeFormat.Parse ( DoYouWantToMoveTheDeskIntoPosition ) ;
 
     private readonly NavigationViewItem ? _closeWindowViewItem ;
     private readonly NavigationViewItem ? _connectViewItem ;
@@ -559,8 +563,8 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
     {
         var positionName = _settingsManager.CurrentSettings.HeightSettings.SeatingName ;
 
-        ConfirmAndExecute ( positionName                             + " ?" ,
-                            "Do you want to move the desk into the " + positionName + " position?" ,
+        ConfirmAndExecute ( positionName + " ?" ,
+                            string.Format ( System.Globalization.CultureInfo.InvariantCulture , DoYouWantToMoveTheDeskIntoPositionFormat , positionName ) ,
                             positionName ,
                             ( ) => _uiDeskManager.SitAsync ( ) ) ;
     }
@@ -569,8 +573,8 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
     {
         var positionName = _settingsManager.CurrentSettings.HeightSettings.StandingName ;
 
-        ConfirmAndExecute ( positionName                             + " ?" ,
-                            "Do you want to move the desk into the " + positionName + " position?" ,
+        ConfirmAndExecute ( positionName + " ?" ,
+                            string.Format ( System.Globalization.CultureInfo.InvariantCulture , DoYouWantToMoveTheDeskIntoPositionFormat , positionName ) ,
                             positionName ,
                             ( ) => _uiDeskManager.StandAsync ( ) ) ;
     }
@@ -579,8 +583,8 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
     {
         var positionName = _settingsManager.CurrentSettings.HeightSettings.Custom1Name ;
 
-        ConfirmAndExecute ( positionName                             + " ?" ,
-                            "Do you want to move the desk into the " + positionName + " position?" ,
+        ConfirmAndExecute ( positionName + " ?" ,
+                            string.Format ( System.Globalization.CultureInfo.InvariantCulture , DoYouWantToMoveTheDeskIntoPositionFormat , positionName ) ,
                             positionName ,
                             ( ) => _uiDeskManager.Custom1Async ( ) ) ;
     }
@@ -589,8 +593,8 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
     {
         var positionName = _settingsManager.CurrentSettings.HeightSettings.Custom2Name ;
 
-        ConfirmAndExecute ( positionName                             + " ?" ,
-                            "Do you want to move the desk into the " + positionName + " position?" ,
+        ConfirmAndExecute ( positionName + " ?" ,
+                            string.Format ( System.Globalization.CultureInfo.InvariantCulture , DoYouWantToMoveTheDeskIntoPositionFormat , positionName ) ,
                             positionName ,
                             ( ) => _uiDeskManager.Custom2Async ( ) ) ;
     }
