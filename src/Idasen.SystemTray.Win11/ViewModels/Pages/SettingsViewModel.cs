@@ -3,7 +3,6 @@ using System.Diagnostics.CodeAnalysis ;
 using System.Reactive.Concurrency ;
 using System.Reactive.Linq ;
 using System.Reflection ;
-using Idasen.BluetoothLE.Linak.Control ;
 using Idasen.Launcher ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.Utils ;
@@ -27,73 +26,72 @@ public partial class SettingsViewModel (
     IAvailableKeysProvider   availableKeysProvider )
     : ObservableObject , INavigationAware , ISettingsViewModel
 {
-    [ ObservableProperty ] private string _appVersion = string.Empty ;
+    private IDisposable? _autoSaveSubscription;
 
-    private IDisposable ? _autoSaveSubscription ;
+    [ObservableProperty ] public partial string AppVersion { get; set; } = string.Empty;
 
-    [ ObservableProperty ] private ApplicationTheme _currentTheme = ApplicationTheme.Unknown ;
+    [ ObservableProperty ] public partial ApplicationTheme CurrentTheme { get; set; }
 
-    [ ObservableProperty ] private uint _custom1 = 100 ;
+    [ ObservableProperty ] public partial uint Custom1 { get; set; }
 
-    [ ObservableProperty ] private bool _custom1IsVisibleInContextMenu = true ;
+    [ ObservableProperty ] public partial bool Custom1IsVisibleInContextMenu { get; set; }
 
-    [ ObservableProperty ] private string _custom1Name = Constants.DefaultCustom1Name ;
+    [ ObservableProperty ] public partial string Custom1Name { get; set; } = Constants.DefaultCustom1Name;
 
-    [ ObservableProperty ] private uint _custom2 = 90 ;
+    [ ObservableProperty ] public partial uint Custom2 { get; set; }
 
-    [ ObservableProperty ] private bool _custom2IsVisibleInContextMenu = true ;
+    [ ObservableProperty ] public partial bool Custom2IsVisibleInContextMenu { get; set; }
 
-    [ ObservableProperty ] private string _custom2Name = Constants.DefaultCustom2Name ;
+    [ ObservableProperty ] public partial string Custom2Name { get; set; } = Constants.DefaultCustom2Name;
 
-    [ ObservableProperty ] private string _deskAddress = string.Empty ;
+    [ ObservableProperty ] public partial string DeskAddress { get; set; } = string.Empty;
 
-    [ ObservableProperty ] private string _deskName = string.Empty ;
+    [ ObservableProperty ] public partial string DeskName { get; set; } = string.Empty;
 
     private bool _disposed ;
 
     private bool _isInitialized ;
     private bool _isLoadingSettings ;
 
-    [ ObservableProperty ] private uint _lastKnownDeskHeight = Constants.DefaultDeskMinHeightInCm ;
+    [ ObservableProperty ] public partial uint LastKnownDeskHeight { get; set; }
 
-    [ ObservableProperty ] private string _logFolderPath = string.Empty ;
+    [ ObservableProperty ] public partial string LogFolderPath { get; set; } = string.Empty;
 
-    [ ObservableProperty ] private uint _maxHeight = 90 ;
+    [ ObservableProperty ] public partial uint MaxHeight { get; set; }
 
-    [ ObservableProperty ]
-    private uint _maxSpeedToStopMovement = StoppingHeightCalculatorSettings.MaxSpeedToStopMovement ;
+    [ ObservableProperty ] public partial uint MaxSpeedToStopMovement { get; set; }
 
-    [ ObservableProperty ] private uint _minHeight = 90 ;
+    [ ObservableProperty ] public partial uint MinHeight { get; set; }
 
-    [ ObservableProperty ] private bool _notifications = true ;
+    [ ObservableProperty ] public partial bool Notifications { get; set; }
 
-    [ ObservableProperty ] private bool _parentalLock ;
+    [ ObservableProperty ] public partial bool ParentalLock { get; set; }
 
-    [ ObservableProperty ] private uint _seating = 90 ;
+    [ ObservableProperty ] public partial uint Seating { get; set; }
 
-    [ ObservableProperty ] private bool _seatingIsVisibleInContextMenu = true ;
+    [ ObservableProperty ] public partial bool SeatingIsVisibleInContextMenu { get; set; }
 
-    [ ObservableProperty ] private string _settingsFileFullPath = string.Empty ;
+    [ ObservableProperty ] public partial string SettingsFileFullPath { get; set; } = string.Empty;
 
     private IDisposable ? _settingsSaved ;
 
-    [ ObservableProperty ] private uint _standing = 100 ;
+    [ ObservableProperty ] public partial uint Standing { get; set; }
 
-    [ ObservableProperty ] private bool _standingIsVisibleInContextMenu = true ;
+    [ ObservableProperty ] public partial bool StandingIsVisibleInContextMenu { get; set; }
 
-    [ ObservableProperty ] private bool _stopIsVisibleInContextMenu = true ;
-    [ ObservableProperty ] private bool _globalHotkeysEnabled       = true ;
+    [ ObservableProperty ] public partial bool StopIsVisibleInContextMenu { get; set; }
+    [ ObservableProperty ] public partial bool GlobalHotkeysEnabled { get; set; }
 
-    [ ObservableProperty ] private string _standingName      = Constants.DefaultStandingName ;
-    [ ObservableProperty ] private string _standingKey       = Constants.DefaultStandingKey ;
-    [ ObservableProperty ] private string _standingModifiers = Constants.DefaultHotkeyModifiers ;
-    [ ObservableProperty ] private string _seatingName       = Constants.DefaultSeatingName ;
-    [ ObservableProperty ] private string _seatingKey        = Constants.DefaultSeatingKey ;
-    [ ObservableProperty ] private string _seatingModifiers  = Constants.DefaultHotkeyModifiers ;
-    [ ObservableProperty ] private string _custom1Key        = Constants.DefaultCustom1Key ;
-    [ ObservableProperty ] private string _custom1Modifiers  = Constants.DefaultHotkeyModifiers ;
-    [ ObservableProperty ] private string _custom2Key        = Constants.DefaultCustom2Key ;
-    [ ObservableProperty ] private string _custom2Modifiers  = Constants.DefaultHotkeyModifiers ;
+    [ ObservableProperty ] public partial string StandingName { get; set; } = Constants.DefaultStandingName;
+    [ ObservableProperty ] public partial string StandingKey { get; set; } = string.Empty;
+    [ ObservableProperty ] public partial string StandingModifiers { get; set; } = string.Empty;
+    [ ObservableProperty ] public partial string SeatingName { get; set; } = Constants.DefaultSeatingName;
+    [ ObservableProperty ] public partial string SeatingKey { get; set; } = string.Empty;
+    [ ObservableProperty ] public partial string SeatingModifiers { get; set; } = string.Empty;
+    [ ObservableProperty ] public partial string Custom1Key { get; set; } = string.Empty;
+    [ ObservableProperty ] public partial string Custom1Modifiers { get; set; } = string.Empty;
+    [ ObservableProperty ] public partial string Custom2Key { get; set; } = string.Empty;
+    [ ObservableProperty ] public partial string Custom2Modifiers { get; set; } = string.Empty;
 
     private bool _isUpdatingModifiers ;
     private static readonly char [ ] ModifierSeparators = [ ',' , ' ' ] ;
