@@ -298,7 +298,8 @@ public class SettingsSynchronizer (
 
         settingsChanges.HeightSettingsChanged.OnNext ( true ) ;
 
-        logger.Debug ( "Published HeightSettingsChanged notification." ) ;
+        logger.Debug ("Published HeightSettingsChanged notification. Settings = {Settings}",
+                      settings) ;
     }
 
     private void AdvancedSettingsChanged ( bool advancedChanged )

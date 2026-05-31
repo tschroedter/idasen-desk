@@ -127,7 +127,7 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
         LastKnownDeskHeight               = Constants.DefaultDeskMinHeightInCm ;
         LogFolderPath                     = string.Empty ;
         MaxHeight                         = 90 ;
-        MaxSpeedToStopMovement            = Idasen.BluetoothLE.Linak.Control.StoppingHeightCalculatorSettings.MaxSpeedToStopMovement ;
+        MaxSpeedToStopMovement            = BluetoothLE.Linak.Control.StoppingHeightCalculatorSettings.MaxSpeedToStopMovement ;
         MinHeight                         = 90 ;
         Notifications                     = true ;
         ParentalLock                      = false ;
@@ -302,6 +302,7 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
               .ToList ( ) ;
     }
 
+    [SuppressMessage("Minor Code Smell", "S1192:String literals should not be duplicated", Justification = "Log message template")]
     partial void OnStandingModifiersChanged ( string value )
     {
         if ( _isUpdatingModifiers )
@@ -316,6 +317,7 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
         OnPropertyChanged ( nameof ( StandingShift ) ) ;
     }
 
+    [SuppressMessage("Minor Code Smell", "S1192:String literals should not be duplicated", Justification = "Log message template")]
     partial void OnSeatingModifiersChanged ( string value )
     {
         if (_isUpdatingModifiers)
@@ -330,6 +332,7 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
         OnPropertyChanged(nameof(SeatingShift));
     }
 
+    [SuppressMessage("Minor Code Smell", "S1192:String literals should not be duplicated", Justification = "Log message template")]
     partial void OnCustom1ModifiersChanged ( string value )
     {
         if (_isUpdatingModifiers)
@@ -344,6 +347,7 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
         OnPropertyChanged(nameof(Custom1Shift));
     }
 
+    [SuppressMessage("Minor Code Smell", "S1192:String literals should not be duplicated", Justification = "Log message template")]
     partial void OnCustom2ModifiersChanged ( string value )
     {
         if (_isUpdatingModifiers)
