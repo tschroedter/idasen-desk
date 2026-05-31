@@ -1,4 +1,4 @@
-﻿using System.ComponentModel ;
+using System.ComponentModel ;
 using System.Diagnostics.CodeAnalysis ;
 using System.Reactive.Concurrency ;
 using System.Reactive.Linq ;
@@ -16,19 +16,19 @@ using UiMessageBoxResult = Wpf.Ui.Controls.MessageBoxResult ;
 namespace Idasen.SystemTray.Win11.ViewModels.Pages ;
 
 [ ExcludeFromCodeCoverage ]
-public partial class SettingsViewModel (
-    ILogger                  logger ,
-    ILoggingSettingsManager  settingsManager ,
-    IScheduler               scheduler ,
-    ISettingsSynchronizer    synchronizer ,
-    IApplicationThemeManager themeManager ,
-    IMainWindow              mainWindow ,
-    IAvailableKeysProvider   availableKeysProvider )
-    : ObservableObject , INavigationAware , ISettingsViewModel
+public partial class SettingsViewModel : ObservableObject , INavigationAware , ISettingsViewModel
 {
+    private readonly ILogger                  _logger ;
+    private readonly ILoggingSettingsManager  _settingsManager ;
+    private readonly IScheduler               _scheduler ;
+    private readonly ISettingsSynchronizer    _synchronizer ;
+    private readonly IApplicationThemeManager _themeManager ;
+    private readonly IMainWindow              _mainWindow ;
+    private readonly IAvailableKeysProvider   _availableKeysProvider ;
+
     private IDisposable? _autoSaveSubscription;
 
-    [ObservableProperty ] public partial string AppVersion { get; set; } = string.Empty;
+    [ ObservableProperty ] public partial string AppVersion { get; set; }
 
     [ ObservableProperty ] public partial ApplicationTheme CurrentTheme { get; set; }
 
@@ -36,17 +36,17 @@ public partial class SettingsViewModel (
 
     [ ObservableProperty ] public partial bool Custom1IsVisibleInContextMenu { get; set; }
 
-    [ ObservableProperty ] public partial string Custom1Name { get; set; } = Constants.DefaultCustom1Name;
+    [ ObservableProperty ] public partial string Custom1Name { get; set; }
 
     [ ObservableProperty ] public partial uint Custom2 { get; set; }
 
     [ ObservableProperty ] public partial bool Custom2IsVisibleInContextMenu { get; set; }
 
-    [ ObservableProperty ] public partial string Custom2Name { get; set; } = Constants.DefaultCustom2Name;
+    [ ObservableProperty ] public partial string Custom2Name { get; set; }
 
-    [ ObservableProperty ] public partial string DeskAddress { get; set; } = string.Empty;
+    [ ObservableProperty ] public partial string DeskAddress { get; set; }
 
-    [ ObservableProperty ] public partial string DeskName { get; set; } = string.Empty;
+    [ ObservableProperty ] public partial string DeskName { get; set; }
 
     private bool _disposed ;
 
@@ -55,7 +55,7 @@ public partial class SettingsViewModel (
 
     [ ObservableProperty ] public partial uint LastKnownDeskHeight { get; set; }
 
-    [ ObservableProperty ] public partial string LogFolderPath { get; set; } = string.Empty;
+    [ ObservableProperty ] public partial string LogFolderPath { get; set; }
 
     [ ObservableProperty ] public partial uint MaxHeight { get; set; }
 
@@ -71,7 +71,7 @@ public partial class SettingsViewModel (
 
     [ ObservableProperty ] public partial bool SeatingIsVisibleInContextMenu { get; set; }
 
-    [ ObservableProperty ] public partial string SettingsFileFullPath { get; set; } = string.Empty;
+    [ ObservableProperty ] public partial string SettingsFileFullPath { get; set; }
 
     private IDisposable ? _settingsSaved ;
 
@@ -82,24 +82,78 @@ public partial class SettingsViewModel (
     [ ObservableProperty ] public partial bool StopIsVisibleInContextMenu { get; set; }
     [ ObservableProperty ] public partial bool GlobalHotkeysEnabled { get; set; }
 
-    [ ObservableProperty ] public partial string StandingName { get; set; } = Constants.DefaultStandingName;
-    [ ObservableProperty ] public partial string StandingKey { get; set; } = string.Empty;
-    [ ObservableProperty ] public partial string StandingModifiers { get; set; } = string.Empty;
-    [ ObservableProperty ] public partial string SeatingName { get; set; } = Constants.DefaultSeatingName;
-    [ ObservableProperty ] public partial string SeatingKey { get; set; } = string.Empty;
-    [ ObservableProperty ] public partial string SeatingModifiers { get; set; } = string.Empty;
-    [ ObservableProperty ] public partial string Custom1Key { get; set; } = string.Empty;
-    [ ObservableProperty ] public partial string Custom1Modifiers { get; set; } = string.Empty;
-    [ ObservableProperty ] public partial string Custom2Key { get; set; } = string.Empty;
-    [ ObservableProperty ] public partial string Custom2Modifiers { get; set; } = string.Empty;
+    [ ObservableProperty ] public partial string StandingName { get; set; }
+    [ ObservableProperty ] public partial string StandingKey { get; set; }
+    [ ObservableProperty ] public partial string StandingModifiers { get; set; }
+    [ ObservableProperty ] public partial string SeatingName { get; set; }
+    [ ObservableProperty ] public partial string SeatingKey { get; set; }
+    [ ObservableProperty ] public partial string SeatingModifiers { get; set; }
+    [ ObservableProperty ] public partial string Custom1Key { get; set; }
+    [ ObservableProperty ] public partial string Custom1Modifiers { get; set; }
+    [ ObservableProperty ] public partial string Custom2Key { get; set; }
+    [ ObservableProperty ] public partial string Custom2Modifiers { get; set; }
 
     private bool _isUpdatingModifiers ;
     private static readonly char [ ] ModifierSeparators = [ ',' , ' ' ] ;
 
+    public SettingsViewModel (
+        ILogger                  logger ,
+        ILoggingSettingsManager  settingsManager ,
+        IScheduler               scheduler ,
+        ISettingsSynchronizer    synchronizer ,
+        IApplicationThemeManager themeManager ,
+        IMainWindow              mainWindow ,
+        IAvailableKeysProvider   availableKeysProvider )
+    {
+        _logger                 = logger ;
+        _settingsManager        = settingsManager ;
+        _scheduler              = scheduler ;
+        _synchronizer           = synchronizer ;
+        _themeManager           = themeManager ;
+        _mainWindow             = mainWindow ;
+        _availableKeysProvider  = availableKeysProvider ;
+
+        // Initialize properties with default values
+        AppVersion                        = string.Empty ;
+        CurrentTheme                      = ApplicationTheme.Unknown ;
+        Custom1                           = 100 ;
+        Custom1IsVisibleInContextMenu     = true ;
+        Custom1Name                       = Constants.DefaultCustom1Name ;
+        Custom2                           = 90 ;
+        Custom2IsVisibleInContextMenu     = true ;
+        Custom2Name                       = Constants.DefaultCustom2Name ;
+        DeskAddress                       = string.Empty ;
+        DeskName                          = string.Empty ;
+        LastKnownDeskHeight               = Constants.DefaultDeskMinHeightInCm ;
+        LogFolderPath                     = string.Empty ;
+        MaxHeight                         = 90 ;
+        MaxSpeedToStopMovement            = Idasen.BluetoothLE.Linak.Control.StoppingHeightCalculatorSettings.MaxSpeedToStopMovement ;
+        MinHeight                         = 90 ;
+        Notifications                     = true ;
+        ParentalLock                      = false ;
+        Seating                           = 90 ;
+        SeatingIsVisibleInContextMenu     = true ;
+        SettingsFileFullPath              = string.Empty ;
+        Standing                          = 100 ;
+        StandingIsVisibleInContextMenu    = true ;
+        StopIsVisibleInContextMenu        = true ;
+        GlobalHotkeysEnabled              = Constants.DefaultGlobalHotkeysEnabled ;
+        StandingName                      = Constants.DefaultStandingName ;
+        StandingKey                       = Constants.DefaultStandingKey ;
+        StandingModifiers                 = Constants.DefaultHotkeyModifiers ;
+        SeatingName                       = Constants.DefaultSeatingName ;
+        SeatingKey                        = Constants.DefaultSeatingKey ;
+        SeatingModifiers                  = Constants.DefaultHotkeyModifiers ;
+        Custom1Key                        = Constants.DefaultCustom1Key ;
+        Custom1Modifiers                  = Constants.DefaultHotkeyModifiers ;
+        Custom2Key                        = Constants.DefaultCustom2Key ;
+        Custom2Modifiers                  = Constants.DefaultHotkeyModifiers ;
+    }
+
     /// <summary>
     ///     Gets the available keys for hotkey configuration.
     /// </summary>
-    public IReadOnlyList < string > AvailableKeys => availableKeysProvider.AvailableKeys ;
+    public IReadOnlyList < string > AvailableKeys => _availableKeysProvider.AvailableKeys ;
 
     public bool StandingControl
     {
@@ -255,7 +309,7 @@ public partial class SettingsViewModel (
             return ;
         }
 
-        logger.Debug ( "value = {Value}", value );
+        _logger.Debug ( "value = {Value}", value );
 
         OnPropertyChanged ( nameof ( StandingControl ) ) ;
         OnPropertyChanged ( nameof ( StandingAlt ) ) ;
@@ -269,7 +323,7 @@ public partial class SettingsViewModel (
             return;
         }
 
-        logger.Debug("value = {Value}", value);
+        _logger.Debug("value = {Value}", value);
 
         OnPropertyChanged(nameof(SeatingControl));
         OnPropertyChanged(nameof(SeatingAlt));
@@ -283,7 +337,7 @@ public partial class SettingsViewModel (
             return;
         }
 
-        logger.Debug("value = {Value}", value);
+        _logger.Debug("value = {Value}", value);
 
         OnPropertyChanged(nameof(Custom1Control));
         OnPropertyChanged(nameof(Custom1Alt));
@@ -297,7 +351,7 @@ public partial class SettingsViewModel (
             return;
         }
 
-        logger.Debug("value = {Value}", value);
+        _logger.Debug("value = {Value}", value);
 
         OnPropertyChanged(nameof(Custom2Control));
         OnPropertyChanged(nameof(Custom2Alt));
@@ -317,7 +371,7 @@ public partial class SettingsViewModel (
 
     public async Task OnNavigatedFromAsync ( )
     {
-        await synchronizer.StoreSettingsAsync ( this ,
+        await _synchronizer.StoreSettingsAsync ( this ,
                                                 CancellationToken.None ).ConfigureAwait ( false ) ;
     }
 
@@ -359,11 +413,11 @@ public partial class SettingsViewModel (
 
         await LoadAndApplySettings ( token ) ;
 
-        SettingsFileFullPath = settingsManager.SettingsFileName ;
+        SettingsFileFullPath = _settingsManager.SettingsFileName ;
         LogFolderPath        = LoggingFile.Path ;
 
-        _settingsSaved = settingsManager.SettingsSaved
-                                        .ObserveOn ( scheduler )
+        _settingsSaved = _settingsManager.SettingsSaved
+                                        .ObserveOn ( _scheduler )
                                         .Subscribe ( OnSettingsSaved ) ;
 
         // Start auto-save after load
@@ -377,10 +431,10 @@ public partial class SettingsViewModel (
 
     private async Task LoadAndApplySettings ( CancellationToken token )
     {
-        await synchronizer.LoadSettingsAsync ( this ,
+        await _synchronizer.LoadSettingsAsync ( this ,
                                                token ) ;
 
-        await themeManager.ApplyAsync(CurrentTheme);
+        await _themeManager.ApplyAsync(CurrentTheme);
     }
 
     private void SetupAutoSave ( )
@@ -396,13 +450,13 @@ public partial class SettingsViewModel (
                                                                      .PropertyChanged -= h )
                                .Where ( _ => ! _isLoadingSettings )
                                .Throttle ( TimeSpan.FromMilliseconds ( 300 ) ,
-                                           scheduler )
+                                           _scheduler )
                                .Select ( _ => Observable.FromAsync ( cancellationToken =>
-                                                                         synchronizer.StoreSettingsAsync ( this ,
+                                                                         _synchronizer.StoreSettingsAsync ( this ,
                                                                                                            cancellationToken ) ) )
                                .Switch ( )
                                .Subscribe ( _ => { } ,
-                                            ex => logger.Error ( ex ,
+                                            ex => _logger.Error ( ex ,
                                                                  "Failed to auto-save settings" ) ) ;
     }
 
@@ -414,7 +468,7 @@ public partial class SettingsViewModel (
         if ( appDispatcher != null &&
              ! appDispatcher.CheckAccess ( ) )
         {
-            logger.Debug ( "Dispatching call on UI thread" ) ;
+            _logger.Debug ( "Dispatching call on UI thread" ) ;
 
             appDispatcher.BeginInvoke ( new Action ( ( ) => OnSettingsSaved ( settings ) ) ) ;
 
@@ -441,7 +495,7 @@ public partial class SettingsViewModel (
     [ RelayCommand ]
     internal void OnChangeTheme ( string parameter )
     {
-        synchronizer.ChangeTheme ( parameter ) ;
+        _synchronizer.ChangeTheme ( parameter ) ;
     }
 
     [ RelayCommand ]
@@ -481,13 +535,13 @@ public partial class SettingsViewModel (
 
             _isLoadingSettings = true ;
 
-            await settingsManager.ResetSettingsAsync ( CancellationToken.None ) ;
+            await _settingsManager.ResetSettingsAsync ( CancellationToken.None ) ;
 
             await LoadAndApplySettings ( CancellationToken.None ) ;
         }
         catch ( Exception ex )
         {
-            logger.Error ( ex ,
+            _logger.Error ( ex ,
                            "Failed to reset settings" ) ;
         }
         finally
@@ -502,24 +556,24 @@ public partial class SettingsViewModel (
     {
         if ( _visibilitySubscription != null )
         {
-            logger.Warning ( "Visibility subscription already exists. Skipping duplicate subscription." ) ;
+            _logger.Warning ( "Visibility subscription already exists. Skipping duplicate subscription." ) ;
             return ;
         }
 
         // Subscribe to VisibilityChanged
-        _visibilitySubscription = mainWindow.VisibilityChanged
+        _visibilitySubscription = _mainWindow.VisibilityChanged
                                             .Where ( visibility => visibility != Visibility.Visible )
                                             .Subscribe ( async void ( _ ) =>
                                                          {
                                                              try
                                                              {
-                                                                 await synchronizer.StoreSettingsAsync ( this ,
+                                                                 await _synchronizer.StoreSettingsAsync ( this ,
                                                                                                          CancellationToken
                                                                                                             .None ) ;
                                                              }
                                                              catch ( Exception ex )
                                                              {
-                                                                 logger.Error ( ex ,
+                                                                 _logger.Error ( ex ,
                                                                                 "Failed to save settings when visibility changed." ) ;
                                                              }
                                                          } ) ;
