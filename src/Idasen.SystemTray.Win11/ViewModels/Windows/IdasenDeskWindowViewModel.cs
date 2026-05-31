@@ -20,7 +20,8 @@ namespace Idasen.SystemTray.Win11.ViewModels.Windows ;
 [ ExcludeFromCodeCoverage ]
 public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDisposable
 {
-    private const string DisconnectLiteral = "Disconnect" ;
+    private const string DisconnectLiteral             = "Disconnect" ;
+    private const string DoubleClickToMoveTheDeskToThe = "Double-Click to move the desk to the ";
 
     private readonly NavigationViewItem ? _closeWindowViewItem ;
     private readonly NavigationViewItem ? _connectViewItem ;
@@ -104,7 +105,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
             Content        = positionSitName ,
             Icon           = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleDown24 } ,
             TargetPageType = typeof ( SettingsPage ) ,
-            ToolTip        = "Double-Click to move the desk to the " + positionSitName + " position."
+            ToolTip        = DoubleClickToMoveTheDeskToThe + positionSitName + " position."
         } ;
         _sitViewItem.MouseDoubleClick += OnClickSitViewItem ;
 
@@ -115,7 +116,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
             Content        = positionStandName ,
             Icon           = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleUp24 } ,
             TargetPageType = typeof ( SettingsPage ) ,
-            ToolTip        = "Double-Click to move the desk to the " + positionStandName + " position."
+            ToolTip        = DoubleClickToMoveTheDeskToThe + positionStandName + " position."
         } ;
         _standViewItem.MouseDoubleClick += OnClickStandViewItem ;
 
@@ -126,7 +127,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
             Content        = positionCustom1Name ,
             Icon           = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleLeft24 } ,
             TargetPageType = typeof ( SettingsPage ) ,
-            ToolTip        = "Double-Click to move the desk to the " + positionCustom1Name + " position."
+            ToolTip        = DoubleClickToMoveTheDeskToThe + positionCustom1Name + " position."
         } ;
         _custom1ViewItem.MouseDoubleClick += OnClickCustom1ViewItem ;
 
@@ -137,7 +138,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
             Content        = positionCustom2Name ,
             Icon           = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleRight24 } ,
             TargetPageType = typeof ( SettingsPage ) ,
-            ToolTip        = "Double-Click to move the desk to the " + positionCustom2Name + " position."
+            ToolTip        = DoubleClickToMoveTheDeskToThe + positionCustom2Name + " position."
         } ;
         _custom2ViewItem.MouseDoubleClick += OnClickCustom2ViewItem ;
 
@@ -749,25 +750,25 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         if ( _standViewItem != null )
         {
             _standViewItem.Content = heightSettings.StandingName ;
-            _standViewItem.ToolTip = "Double-Click to move the desk to the " + heightSettings.StandingName + " position." ;
+            _standViewItem.ToolTip = DoubleClickToMoveTheDeskToThe + heightSettings.StandingName + " position." ;
         }
 
         if ( _sitViewItem != null )
         {
             _sitViewItem.Content = heightSettings.SeatingName ;
-            _sitViewItem.ToolTip = "Double-Click to move the desk to the " + heightSettings.SeatingName + " position." ;
+            _sitViewItem.ToolTip = DoubleClickToMoveTheDeskToThe + heightSettings.SeatingName + " position." ;
         }
 
         if ( _custom1ViewItem != null )
         {
             _custom1ViewItem.Content = heightSettings.Custom1Name ;
-            _custom1ViewItem.ToolTip = "Double-Click to move the desk to the " + heightSettings.Custom1Name + " position." ;
+            _custom1ViewItem.ToolTip = DoubleClickToMoveTheDeskToThe + heightSettings.Custom1Name + " position." ;
         }
 
         if ( _custom2ViewItem != null )
         {
             _custom2ViewItem.Content = heightSettings.Custom2Name ;
-            _custom2ViewItem.ToolTip = "Double-Click to move the desk to the " + heightSettings.Custom2Name + " position." ;
+            _custom2ViewItem.ToolTip = DoubleClickToMoveTheDeskToThe + heightSettings.Custom2Name + " position." ;
         }
 
         _logger.Debug ( "Navigation view item names updated: Stand={StandingName}, Sit={SeatingName}, Custom1={Custom1Name}, Custom2={Custom2Name}" ,
