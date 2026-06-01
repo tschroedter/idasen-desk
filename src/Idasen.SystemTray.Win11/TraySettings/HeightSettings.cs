@@ -10,9 +10,19 @@ public class HeightSettings
     public uint StandingHeightInCm { get ; set ; } = Constants.DefaultHeightStandingInCm ;
 
     /// <summary>
+    ///     The custom name for standing position (default: "Stand").
+    /// </summary>
+    public string StandingName { get ; set ; } = Constants.DefaultStandingName ;
+
+    /// <summary>
     ///     The seating height of the desk in centimeters.
     /// </summary>
     public uint SeatingHeightInCm { get ; set ; } = Constants.DefaultHeightSeatingInCm ;
+
+    /// <summary>
+    ///     The custom name for seating position (default: "Sit").
+    /// </summary>
+    public string SeatingName { get ; set ; } = Constants.DefaultSeatingName ;
 
     /// <summary>
     ///     The custom position 1 height of the desk in centimeters.
@@ -23,6 +33,16 @@ public class HeightSettings
     ///     The custom position 2 height of the desk in centimeters.
     /// </summary>
     public uint Custom2HeightInCm { get ; set ; } = Constants.DefaultHeightSeatingInCm ;
+
+    /// <summary>
+    ///     The custom name for position 1 (default: "Custom 1").
+    /// </summary>
+    public string Custom1Name { get ; set ; } = Constants.DefaultCustom1Name ;
+
+    /// <summary>
+    ///     The custom name for position 2 (default: "Custom 2").
+    /// </summary>
+    public string Custom2Name { get ; set ; } = Constants.DefaultCustom2Name ;
 
     /// <summary>
     ///     The minimum height the desk can move to.

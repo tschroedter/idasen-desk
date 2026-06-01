@@ -746,6 +746,228 @@ public sealed class SettingsViewModelTests
                                                  Arg.Any < CancellationToken > ( ) ) ;
     }
 
+    [ Fact ]
+    public void StandingName_DefaultValue_ShouldBeSet ( )
+    {
+        // Arrange & Act
+        var vm = CreateSut ( ) ;
+
+        // Assert
+        vm.StandingName.Should ( ).Be ( Constants.DefaultStandingName ) ;
+    }
+
+    [ Fact ]
+    public void SeatingName_DefaultValue_ShouldBeSet ( )
+    {
+        // Arrange & Act
+        var vm = CreateSut ( ) ;
+
+        // Assert
+        vm.SeatingName.Should ( ).Be ( Constants.DefaultSeatingName ) ;
+    }
+
+    [ Fact ]
+    public void StandingName_CanBeChanged ( )
+    {
+        // Arrange
+        var vm = CreateSut ( ) ;
+
+        // Act
+        vm.StandingName = "Standing Position" ;
+
+        // Assert
+        vm.StandingName.Should ( ).Be ( "Standing Position" ) ;
+    }
+
+    [ Fact ]
+    public void SeatingName_CanBeChanged ( )
+    {
+        // Arrange
+        var vm = CreateSut ( ) ;
+
+        // Act
+        vm.SeatingName = "Sitting Position" ;
+
+        // Assert
+        vm.SeatingName.Should ( ).Be ( "Sitting Position" ) ;
+    }
+
+    [ Fact ]
+    public async Task StandingName_Change_ShouldTriggerAutoSave ( )
+    {
+        // Arrange
+        var vm = CreateSut ( ) ;
+        await vm.InitializeAsync ( CancellationToken.None ) ;
+
+        // Act
+        vm.StandingName = "My Standing Desk" ;
+        _scheduler.AdvanceBy ( TimeSpan.FromMilliseconds ( 400 ).Ticks ) ;
+
+        // Assert
+        await _synchronizer.Received ( 1 )
+                           .StoreSettingsAsync ( vm ,
+                                                 Arg.Any < CancellationToken > ( ) ) ;
+    }
+
+    [ Fact ]
+    public async Task SeatingName_Change_ShouldTriggerAutoSave ( )
+    {
+        // Arrange
+        var vm = CreateSut ( ) ;
+        await vm.InitializeAsync ( CancellationToken.None ) ;
+
+        // Act
+        vm.SeatingName = "My Sitting Desk" ;
+        _scheduler.AdvanceBy ( TimeSpan.FromMilliseconds ( 400 ).Ticks ) ;
+
+        // Assert
+        await _synchronizer.Received ( 1 )
+                           .StoreSettingsAsync ( vm ,
+                                                 Arg.Any < CancellationToken > ( ) ) ;
+    }
+
+    [ Fact ]
+    public void StandingName_ImplementsISettingsViewModel ( )
+    {
+        // Arrange
+        var vm = CreateSut ( ) ;
+
+        // Act & Assert - Verify the property works through the interface
+        ( ( ISettingsViewModel )vm ).StandingName = "Custom Standing" ;
+
+        vm.StandingName.Should ( ).Be ( "Custom Standing" ) ;
+    }
+
+    [ Fact ]
+    public void SeatingName_ImplementsISettingsViewModel ( )
+    {
+        // Arrange
+        var vm = CreateSut ( ) ;
+
+        // Act & Assert - Verify the property works through the interface
+        ( ( ISettingsViewModel )vm ).SeatingName = "Custom Sitting" ;
+
+        vm.SeatingName.Should ( ).Be ( "Custom Sitting" ) ;
+    }
+
+    [ Fact ]
+    public void Custom1Name_DefaultValue_ShouldBeSet ( )
+    {
+        // Arrange & Act
+        var vm = CreateSut ( ) ;
+
+        // Assert
+        vm.Custom1Name.Should ( ).Be ( Constants.DefaultCustom1Name ) ;
+    }
+
+    [ Fact ]
+    public void Custom2Name_DefaultValue_ShouldBeSet ( )
+    {
+        // Arrange & Act
+        var vm = CreateSut ( ) ;
+
+        // Assert
+        vm.Custom2Name.Should ( ).Be ( Constants.DefaultCustom2Name ) ;
+    }
+
+    [ Fact ]
+    public void Custom1Name_CanBeChanged ( )
+    {
+        // Arrange
+        var vm = CreateSut ( ) ;
+
+        // Act
+        vm.Custom1Name = "Custom Position 1" ;
+
+        // Assert
+        vm.Custom1Name.Should ( ).Be ( "Custom Position 1" ) ;
+    }
+
+    [ Fact ]
+    public void Custom2Name_CanBeChanged ( )
+    {
+        // Arrange
+        var vm = CreateSut ( ) ;
+
+        // Act
+        vm.Custom2Name = "Custom Position 2" ;
+
+        // Assert
+        vm.Custom2Name.Should ( ).Be ( "Custom Position 2" ) ;
+    }
+
+    [ Fact ]
+    public async Task Custom1Name_Change_ShouldTriggerAutoSave ( )
+    {
+        // Arrange
+        var vm = CreateSut ( ) ;
+        await vm.InitializeAsync ( CancellationToken.None ) ;
+
+        // Act
+        vm.Custom1Name = "My Custom 1" ;
+        _scheduler.AdvanceBy ( TimeSpan.FromMilliseconds ( 400 ).Ticks ) ;
+
+        // Assert
+        await _synchronizer.Received ( 1 )
+                           .StoreSettingsAsync ( vm ,
+                                                 Arg.Any < CancellationToken > ( ) ) ;
+    }
+
+    [ Fact ]
+    public async Task Custom2Name_Change_ShouldTriggerAutoSave ( )
+    {
+        // Arrange
+        var vm = CreateSut ( ) ;
+        await vm.InitializeAsync ( CancellationToken.None ) ;
+
+        // Act
+        vm.Custom2Name = "My Custom 2" ;
+        _scheduler.AdvanceBy ( TimeSpan.FromMilliseconds ( 400 ).Ticks ) ;
+
+        // Assert
+        await _synchronizer.Received ( 1 )
+                           .StoreSettingsAsync ( vm ,
+                                                 Arg.Any < CancellationToken > ( ) ) ;
+    }
+
+    [ Fact ]
+    public async Task PresetNames_MultipleChanges_ShouldCoalesceAutoSave ( )
+    {
+        // Arrange
+        var vm = CreateSut ( ) ;
+        await vm.InitializeAsync ( CancellationToken.None ) ;
+
+        // Act - Change multiple preset names rapidly
+        vm.StandingName = "New Standing" ;
+        _scheduler.AdvanceBy ( TimeSpan.FromMilliseconds ( 100 ).Ticks ) ;
+        vm.SeatingName = "New Sitting" ;
+        _scheduler.AdvanceBy ( TimeSpan.FromMilliseconds ( 100 ).Ticks ) ;
+        vm.Custom1Name = "New Custom 1" ;
+
+        // Advance past debounce window from last change
+        _scheduler.AdvanceBy ( TimeSpan.FromMilliseconds ( 350 ).Ticks ) ;
+
+        // Assert - Should only save once due to debouncing
+        await _synchronizer.Received ( 1 )
+                           .StoreSettingsAsync ( vm ,
+                                                 Arg.Any < CancellationToken > ( ) ) ;
+    }
+
+    [ Fact ]
+    public void PresetNames_EmptyOrWhiteSpace_ShouldBeAllowed ( )
+    {
+        // Arrange
+        var vm = CreateSut ( ) ;
+
+        // Act
+        vm.StandingName = string.Empty ;
+        vm.SeatingName = "   " ;
+
+        // Assert - Empty/whitespace should be allowed, synchronizer will handle defaults
+        vm.StandingName.Should ( ).BeEmpty ( ) ;
+        vm.SeatingName.Should ( ).Be ( "   " ) ;
+    }
+
     private SettingsViewModel CreateSut ( )
     {
         return new SettingsViewModel ( _logger ,
