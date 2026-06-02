@@ -7,6 +7,8 @@ using NSubstitute ;
 using NSubstitute.ExceptionExtensions ;
 using Serilog ;
 
+#pragma warning disable CA2012 // Use ValueTasks correctly - disabled for test mocking
+
 namespace Idasen.SystemTray.Win11.Tests.TraySettings ;
 
 public class SettingsManagerTests : IDisposable

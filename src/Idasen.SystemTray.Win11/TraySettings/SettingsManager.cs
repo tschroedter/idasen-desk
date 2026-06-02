@@ -31,7 +31,7 @@ public partial class SettingsManager (
 
     public string SettingsFileName { get ; } = commonApplicationData.ToFullPath ( Constants.SettingsFileName ) ;
 
-    public async Task SaveAsync ( CancellationToken token )
+    public async ValueTask SaveAsync ( CancellationToken token )
     {
         await settingsStorage.SaveSettingsAsync ( SettingsFileName ,
                                                   _current ,
@@ -40,7 +40,7 @@ public partial class SettingsManager (
         _settingsSaved.OnNext ( _current ) ;
     }
 
-    public async Task < bool > UpgradeSettingsAsync ( CancellationToken token )
+    public async ValueTask < bool > UpgradeSettingsAsync ( CancellationToken token )
     {
         try
         {
@@ -63,20 +63,20 @@ public partial class SettingsManager (
         }
     }
 
-    public async Task SetLastKnownDeskHeight ( uint heightInCm , CancellationToken token )
+    public async ValueTask SetLastKnownDeskHeight ( uint heightInCm , CancellationToken token )
     {
         CurrentSettings.HeightSettings.LastKnownDeskHeight = heightInCm ;
 
         await SaveAsync ( token ).ConfigureAwait ( false ) ;
     }
 
-    public async Task LoadAsync ( CancellationToken token )
+    public async ValueTask LoadAsync ( CancellationToken token )
     {
         _current = await settingsStorage.LoadSettingsAsync ( SettingsFileName ,
                                                              token ).ConfigureAwait ( false ) ;
     }
 
-    public async Task ResetSettingsAsync ( CancellationToken token )
+    public async ValueTask ResetSettingsAsync ( CancellationToken token )
     {
         try
         {
@@ -105,7 +105,7 @@ public partial class SettingsManager (
                                          StringComparison.Ordinal ) ;
     }
 
-    private async Task AddMissingSettingsNotificationsEnabled ( CancellationToken token )
+    private async ValueTask AddMissingSettingsNotificationsEnabled ( CancellationToken token )
     {
         logger.Debug ( "Adding missing setting NotificationsEnabled to settings file {SettingsFileName}" ,
                        SettingsFileName ) ;

@@ -27,8 +27,8 @@ public class SettingsStorage ( IFileSystem fileSystem ) : ISettingsStorage
     private static readonly SemaphoreSlim IoLock = new(1 ,
                                                        1) ;
 
-    public async Task < Settings > LoadSettingsAsync ( string            settingsFileName ,
-                                                       CancellationToken token )
+    public async ValueTask < Settings > LoadSettingsAsync ( string            settingsFileName ,
+                                                            CancellationToken token )
     {
         await IoLock.WaitAsync ( token ).ConfigureAwait ( false ) ;
 
@@ -71,9 +71,9 @@ public class SettingsStorage ( IFileSystem fileSystem ) : ISettingsStorage
         }
     }
 
-    public async Task SaveSettingsAsync ( string            settingsFileName ,
-                                          Settings          settings ,
-                                          CancellationToken token )
+    public async ValueTask SaveSettingsAsync ( string            settingsFileName ,
+                                               Settings          settings ,
+                                               CancellationToken token )
     {
         await IoLock.WaitAsync ( token ).ConfigureAwait ( false ) ;
 

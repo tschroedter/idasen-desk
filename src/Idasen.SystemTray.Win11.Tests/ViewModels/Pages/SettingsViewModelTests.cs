@@ -12,6 +12,8 @@ using NSubstitute ;
 using Serilog ;
 using Wpf.Ui.Appearance ;
 
+#pragma warning disable CA2012 // Use ValueTasks correctly - disabled for test mocking
+
 namespace Idasen.SystemTray.Win11.Tests.ViewModels.Pages ;
 
 public sealed class SettingsViewModelTests
@@ -183,7 +185,7 @@ public sealed class SettingsViewModelTests
     {
         // Arrange
         var vm = CreateSut ( ) ;
-        _settingsManager.ResetSettingsAsync ( Arg.Any < CancellationToken > ( ) ).Returns ( Task.CompletedTask ) ;
+        _settingsManager.ResetSettingsAsync ( Arg.Any < CancellationToken > ( ) ).Returns ( new ValueTask ( ) ) ;
         _synchronizer.LoadSettingsAsync ( vm ,
                                           Arg.Any < CancellationToken > ( ) ).Returns ( Task.CompletedTask ) ;
 
