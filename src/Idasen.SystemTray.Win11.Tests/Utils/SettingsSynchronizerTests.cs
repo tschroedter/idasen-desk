@@ -3,6 +3,7 @@ using Idasen.BluetoothLE.Linak.Control ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.TraySettings ;
 using Idasen.SystemTray.Win11.Utils ;
+using Idasen.SystemTray.Win11.Utils.Validation ;
 using NSubstitute ;
 using NSubstitute.ExceptionExtensions ;
 using Serilog ;
@@ -27,6 +28,7 @@ public class SettingsSynchronizerTests
     private readonly ILoggingSettingsManager _settingsManager    = Substitute.For < ILoggingSettingsManager > ( ) ;
     private readonly IThemeSwitcher          _themeSwitcher      = Substitute.For < IThemeSwitcher > ( ) ;
     private readonly IDoubleToUIntConverter  _toUIntConverter    = Substitute.For < IDoubleToUIntConverter > ( ) ;
+    private readonly IHeightSettingsValidator _heightValidator   = new HeightSettingsValidator ( ) ;
 
     private SettingsSynchronizer CreateSut ( )
     {
@@ -41,7 +43,8 @@ public class SettingsSynchronizerTests
                                           _nameConverter ,
                                           _addressConverter ,
                                           _settingsChanges ,
-                                          _themeSwitcher ) ;
+                                          _themeSwitcher ,
+                                          _heightValidator ) ;
     }
 
     [ Fact ]

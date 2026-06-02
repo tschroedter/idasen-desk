@@ -176,6 +176,9 @@ public partial class App
                                                                               .AddTransient < ISettingsSynchronizer ,
                                                                                    SettingsSynchronizer > ( ) ;
                                                                            services
+                                                                              .AddSingleton < IHeightSettingsValidator ,
+                                                                                   Utils.Validation.HeightSettingsValidator > ( ) ;
+                                                                           services
                                                                               .AddSingleton < IApplicationThemeManager ,
                                                                                    MyApplicationThemeManager > ( ) ;
                                                                            // Power events wrapper used by resume theme restore

@@ -18,13 +18,14 @@ namespace Idasen.SystemTray.Win11.ViewModels.Pages ;
 [ ExcludeFromCodeCoverage ]
 public partial class SettingsViewModel : ObservableObject , INavigationAware , ISettingsViewModel
 {
-    private readonly ILogger                  _logger ;
-    private readonly ILoggingSettingsManager  _settingsManager ;
-    private readonly IScheduler               _scheduler ;
-    private readonly ISettingsSynchronizer    _synchronizer ;
-    private readonly IApplicationThemeManager _themeManager ;
-    private readonly IMainWindow              _mainWindow ;
-    private readonly IAvailableKeysProvider   _availableKeysProvider ;
+    private readonly ILogger                    _logger ;
+    private readonly ILoggingSettingsManager    _settingsManager ;
+    private readonly IScheduler                 _scheduler ;
+    private readonly ISettingsSynchronizer      _synchronizer ;
+    private readonly IApplicationThemeManager   _themeManager ;
+    private readonly IMainWindow                _mainWindow ;
+    private readonly IAvailableKeysProvider     _availableKeysProvider ;
+    private readonly IHeightSettingsValidator   _heightValidator ;
 
     private IDisposable? _autoSaveSubscription;
 
@@ -97,13 +98,14 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
     private static readonly char [ ] ModifierSeparators = [ ',' , ' ' ] ;
 
     public SettingsViewModel (
-        ILogger                  logger ,
-        ILoggingSettingsManager  settingsManager ,
-        IScheduler               scheduler ,
-        ISettingsSynchronizer    synchronizer ,
-        IApplicationThemeManager themeManager ,
-        IMainWindow              mainWindow ,
-        IAvailableKeysProvider   availableKeysProvider )
+        ILogger                   logger ,
+        ILoggingSettingsManager   settingsManager ,
+        IScheduler                scheduler ,
+        ISettingsSynchronizer     synchronizer ,
+        IApplicationThemeManager  themeManager ,
+        IMainWindow               mainWindow ,
+        IAvailableKeysProvider    availableKeysProvider ,
+        IHeightSettingsValidator  heightValidator )
     {
         _logger                 = logger ;
         _settingsManager        = settingsManager ;
@@ -112,6 +114,7 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
         _themeManager           = themeManager ;
         _mainWindow             = mainWindow ;
         _availableKeysProvider  = availableKeysProvider ;
+        _heightValidator        = heightValidator ;
 
         // Initialize properties with default values
         AppVersion                        = string.Empty ;
@@ -578,8 +581,134 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
                                                              catch ( Exception ex )
                                                              {
                                                                  _logger.Error ( ex ,
-                                                                                "Failed to save settings when visibility changed." ) ;
-                                                             }
-                                                         } ) ;
-    }
-}
+                                                                                                                                                             "Failed to save settings when visibility changed." ) ;
+                                                                                                                                          }
+                                                                                                                                      } ) ;
+                                                                                }
+
+                                                                                // Validation hooks - called automatically when properties change
+                                                                                partial void OnMinHeightChanged ( uint value )
+                                                                                {
+                                                                                    if ( _isLoadingSettings ) return ;
+
+                                                                                    var result = _heightValidator.ValidateMinMaxConstraints ( value , MaxHeight ) ;
+                                                                                    if ( ! result.IsValid )
+                                                                                    {
+                                                                                        _logger.Warning ( "Invalid min/max constraints: {Errors}" , string.Join ( ", " , result.Errors ) ) ;
+                                                                                        // Note: We log but don't block - allows temporary invalid states during editing
+                                                                                    }
+                                                                                }
+
+                                                                                partial void OnMaxHeightChanged ( uint value )
+                                                                                {
+                                                                                    if ( _isLoadingSettings ) return ;
+
+                                                                                    var result = _heightValidator.ValidateMinMaxConstraints ( MinHeight , value ) ;
+                                                                                    if ( ! result.IsValid )
+                                                                                    {
+                                                                                        _logger.Warning ( "Invalid min/max constraints: {Errors}" , string.Join ( ", " , result.Errors ) ) ;
+                                                                                    }
+                                                                                }
+
+                                                                                partial void OnStandingChanged ( uint value )
+                                                                                {
+                                                                                    if ( _isLoadingSettings ) return ;
+
+                                                                                    var result = _heightValidator.ValidateHeight ( value , MinHeight , MaxHeight ) ;
+                                                                                    if ( ! result.IsValid )
+                                                                                    {
+                                                                                        _logger.Warning ( "Invalid standing height: {Errors}" , string.Join ( ", " , result.Errors ) ) ;
+                                                                                    }
+                                                                                }
+
+                                                                                partial void OnSeatingChanged ( uint value )
+                                                                                {
+                                                                                    if ( _isLoadingSettings ) return ;
+
+                                                                                    var result = _heightValidator.ValidateHeight ( value , MinHeight , MaxHeight ) ;
+                                                                                    if ( ! result.IsValid )
+                                                                                    {
+                                                                                        _logger.Warning ( "Invalid seating height: {Errors}" , string.Join ( ", " , result.Errors ) ) ;
+                                                                                    }
+                                                                                }
+
+                                                                                partial void OnCustom1Changed ( uint value )
+                                                                                {
+                                                                                    if ( _isLoadingSettings ) return ;
+
+                                                                                    var result = _heightValidator.ValidateHeight ( value , MinHeight , MaxHeight ) ;
+                                                                                    if ( ! result.IsValid )
+                                                                                    {
+                                                                                        _logger.Warning ( "Invalid custom 1 height: {Errors}" , string.Join ( ", " , result.Errors ) ) ;
+                                                                                    }
+                                                                                }
+
+                                                                                partial void OnCustom2Changed ( uint value )
+                                                                                {
+                                                                                    if ( _isLoadingSettings ) return ;
+
+                                                                                    var result = _heightValidator.ValidateHeight ( value , MinHeight , MaxHeight ) ;
+                                                                                    if ( ! result.IsValid )
+                                                                                    {
+                                                                                        _logger.Warning ( "Invalid custom 2 height: {Errors}" , string.Join ( ", " , result.Errors ) ) ;
+                                                                                    }
+                                                                                }
+
+                                                                                partial void OnStandingNameChanged ( string value )
+                                                                                {
+                                                                                    if ( _isLoadingSettings ) return ;
+
+                                                                                    var result = _heightValidator.ValidatePresetName ( value ) ;
+                                                                                    if ( ! result.IsValid )
+                                                                                    {
+                                                                                        _logger.Warning ( "Invalid standing preset name: {Errors}" , string.Join ( ", " , result.Errors ) ) ;
+                                                                                    }
+                                                                                }
+
+                                                                                partial void OnSeatingNameChanged ( string value )
+                                                                                {
+                                                                                    if ( _isLoadingSettings ) return ;
+
+                                                                                    var result = _heightValidator.ValidatePresetName ( value ) ;
+                                                                                    if ( ! result.IsValid )
+                                                                                    {
+                                                                                        _logger.Warning ( "Invalid seating preset name: {Errors}" , string.Join ( ", " , result.Errors ) ) ;
+                                                                                    }
+                                                                                }
+
+                                                                                partial void OnCustom1NameChanged ( string value )
+                                                                                {
+                                                                                    if ( _isLoadingSettings ) return ;
+
+                                                                                    var result = _heightValidator.ValidatePresetName ( value ) ;
+                                                                                    if ( ! result.IsValid )
+                                                                                    {
+                                                                                        _logger.Warning ( "Invalid custom 1 preset name: {Errors}" , string.Join ( ", " , result.Errors ) ) ;
+                                                                                    }
+                                                                                }
+
+                                                                                partial void OnCustom2NameChanged ( string value )
+                                                                                {
+                                                                                    if ( _isLoadingSettings ) return ;
+
+                                                                                    var result = _heightValidator.ValidatePresetName ( value ) ;
+                                                                                    if ( ! result.IsValid )
+                                                                                    {
+                                                                                        _logger.Warning ( "Invalid custom 2 preset name: {Errors}" , string.Join ( ", " , result.Errors ) ) ;
+                                                                                    }
+                                                                                }
+
+                                                                                    /// <summary>
+                                                                                    ///     Validates all settings before saving to ensure consistency.
+                                                                                    /// </summary>
+                                                                                    /// <returns>Validation result with any errors.</returns>
+                                                                                    public ValidationResult ValidateAllSettings ( )
+                                                                                    {
+                                                                                        return _heightValidator.ValidateAllHeights ( Standing ,
+                                                                                                                                     Seating ,
+                                                                                                                                     Custom1 ,
+                                                                                                                                     Custom2 ,
+                                                                                                                                     MinHeight ,
+                                                                                                                                     MaxHeight ) ;
+                                                                                    }
+                                                                                }

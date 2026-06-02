@@ -12,7 +12,8 @@ public class SettingsSynchronizer (
     IDeviceNameConverter           nameConverter ,
     IDeviceAddressToULongConverter addressConverter ,
     INotifySettingsChanges         settingsChanges ,
-    IThemeSwitcher                 themeSwitcher ) : ISettingsSynchronizer
+    IThemeSwitcher                 themeSwitcher ,
+    IHeightSettingsValidator       heightValidator ) : ISettingsSynchronizer
 {
     public async Task LoadSettingsAsync ( ISettingsViewModel model ,
                                           CancellationToken  token )
@@ -73,6 +74,30 @@ public class SettingsSynchronizer (
             logger.Debug ( "No settings changes detected. Skipping save and notifications." ) ;
 
             return ;
+        }
+
+        // Validate all height settings before saving
+        var validationResult = heightValidator.ValidateAllHeights (
+            model.Standing ,
+            model.Seating ,
+            model.Custom1 ,
+            model.Custom2 ,
+            model.MinHeight ,
+            model.MaxHeight ) ;
+
+        if ( ! validationResult.IsValid )
+        {
+            logger.Error ( "Settings validation failed. Errors: {Errors}" ,
+                           string.Join ( ", " , validationResult.Errors ) ) ;
+
+            // Don't throw - allow temporary invalid states during editing
+            // but log the errors prominently
+            foreach ( var error in validationResult.Errors )
+            {
+                logger.Warning ( "Validation error: {Error}" , error ) ;
+            }
+
+            // Still proceed with save to avoid data loss, but log the validation issues
         }
 
         UpdateCurrentSettings ( model ) ;

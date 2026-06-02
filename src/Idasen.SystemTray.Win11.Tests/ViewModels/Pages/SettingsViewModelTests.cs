@@ -5,6 +5,7 @@ using FluentAssertions ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.TraySettings ;
 using Idasen.SystemTray.Win11.Utils ;
+using Idasen.SystemTray.Win11.Utils.Validation ;
 using Idasen.SystemTray.Win11.ViewModels.Pages ;
 using Microsoft.Reactive.Testing ;
 using NSubstitute ;
@@ -16,10 +17,11 @@ namespace Idasen.SystemTray.Win11.Tests.ViewModels.Pages ;
 public sealed class SettingsViewModelTests
     : IDisposable
 {
-    private readonly ILogger                 _logger          = Substitute.For < ILogger > ( ) ;
-    private readonly IMainWindow             _mainWindow      = Substitute.For < IMainWindow > ( ) ;
-    private readonly TestScheduler           _scheduler       = new( ) ;
-    private readonly ILoggingSettingsManager _settingsManager = Substitute.For < ILoggingSettingsManager > ( ) ;
+    private readonly ILogger                   _logger               = Substitute.For < ILogger > ( ) ;
+    private readonly IMainWindow               _mainWindow           = Substitute.For < IMainWindow > ( ) ;
+    private readonly TestScheduler             _scheduler            = new( ) ;
+    private readonly ILoggingSettingsManager   _settingsManager      = Substitute.For < ILoggingSettingsManager > ( ) ;
+    private readonly IHeightSettingsValidator  _heightValidator      = new HeightSettingsValidator ( ) ;
 
     private readonly Subject < ISettings >     _settingsSaved        = new( ) ;
     private readonly ISettingsSynchronizer     _synchronizer         = Substitute.For < ISettingsSynchronizer > ( ) ;
@@ -976,6 +978,7 @@ public sealed class SettingsViewModelTests
                                        _synchronizer ,
                                        _themeManager ,
                                        _mainWindow ,
-                                       _availableKeysProvider ) ;
+                                       _availableKeysProvider ,
+                                       _heightValidator ) ;
     }
 }
