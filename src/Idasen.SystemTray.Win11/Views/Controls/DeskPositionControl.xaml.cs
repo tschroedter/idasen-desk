@@ -72,6 +72,20 @@ public partial class DeskPositionControl
                                       typeof ( DeskPositionControl ) ,
                                       new PropertyMetadata ( Visibility.Visible ) ) ;
 
+    public static readonly DependencyProperty IsEditableProperty =
+        DependencyProperty.Register ( nameof ( IsEditable ) ,
+                                      typeof ( bool ) ,
+                                      typeof ( DeskPositionControl ) ,
+                                      new PropertyMetadata ( false ) ) ;
+
+    public static readonly DependencyProperty EditableNameProperty =
+        DependencyProperty.Register ( nameof ( EditableName ) ,
+                                      typeof ( string ) ,
+                                      typeof ( DeskPositionControl ) ,
+                                      new FrameworkPropertyMetadata ( string.Empty ,
+                                                                      FrameworkPropertyMetadataOptions
+                                                                         .BindsTwoWayByDefault ) ) ;
+
     public DeskPositionControl ( )
     {
         InitializeComponent ( ) ;
@@ -144,6 +158,20 @@ public partial class DeskPositionControl
     {
         get => ( Visibility )GetValue ( IsShowInTrayVisibleProperty ) ;
         set => SetValue ( IsShowInTrayVisibleProperty ,
+                          value ) ;
+    }
+
+    public bool IsEditable
+    {
+        get => ( bool )GetValue ( IsEditableProperty ) ;
+        set => SetValue ( IsEditableProperty ,
+                          value ) ;
+    }
+
+    public string EditableName
+    {
+        get => ( string )GetValue ( EditableNameProperty ) ;
+        set => SetValue ( EditableNameProperty ,
                           value ) ;
     }
 
