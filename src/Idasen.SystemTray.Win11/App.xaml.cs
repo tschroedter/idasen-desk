@@ -179,6 +179,9 @@ public partial class App
                                                                               .AddSingleton < IHeightSettingsValidator ,
                                                                                    Utils.Validation.HeightSettingsValidator > ( ) ;
                                                                            services
+                                                                              .AddSingleton < IBluetoothReconnectStrategy ,
+                                                                                   Utils.Bluetooth.ExponentialBackoffReconnectStrategy > ( ) ;
+                                                                           services
                                                                               .AddSingleton < IApplicationThemeManager ,
                                                                                    MyApplicationThemeManager > ( ) ;
                                                                            // Power events wrapper used by resume theme restore

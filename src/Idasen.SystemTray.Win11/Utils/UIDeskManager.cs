@@ -45,15 +45,16 @@ public sealed partial class UiDeskManager : IUiDeskManager
 
     private static readonly char [ ] ModifierSeparators = [ ',' , ' ' ] ;
 
-    private readonly IErrorManager             _errorManager ;
-    private readonly ITaskbarIconProvider      _iconProvider ;
-    private readonly ILogger                   _logger ;
-    private readonly ISettingsManager          _manager ;
-    private readonly INotifications            _notifications ;
-    private readonly Func < IDeskProvider > ?  _providerFactory ;
-    private readonly IScheduler                _scheduler ;
-    private readonly IObserveSettingsChanges   _settingsChanges ;
-    private readonly Subject < StatusBarInfo > _statusBarInfoSubject ;
+    private readonly IErrorManager                 _errorManager ;
+    private readonly ITaskbarIconProvider          _iconProvider ;
+    private readonly ILogger                       _logger ;
+    private readonly ISettingsManager              _manager ;
+    private readonly INotifications                _notifications ;
+    private readonly Func < IDeskProvider > ?      _providerFactory ;
+    private readonly IScheduler                    _scheduler ;
+    private readonly IObserveSettingsChanges       _settingsChanges ;
+    private readonly Subject < StatusBarInfo >     _statusBarInfoSubject ;
+    private readonly IBluetoothReconnectStrategy   _reconnectStrategy ;
 
     private IDesk ?         _desk ;
     private IDeskProvider ? _deskProvider ;
@@ -69,14 +70,15 @@ public sealed partial class UiDeskManager : IUiDeskManager
     private CancellationTokenSource ? _tokenSource ;
 
     public UiDeskManager (
-        ILogger                  logger ,
-        ISettingsManager         manager ,
-        ITaskbarIconProvider     iconProvider ,
-        INotifications           notifications ,
-        IScheduler               scheduler ,
-        Func < IDeskProvider >   deskProviderFactory ,
-        IErrorManager            errorManager ,
-        IObserveSettingsChanges  settingsChanges )
+        ILogger                       logger ,
+        ISettingsManager              manager ,
+        ITaskbarIconProvider          iconProvider ,
+        INotifications                notifications ,
+        IScheduler                    scheduler ,
+        Func < IDeskProvider >        deskProviderFactory ,
+        IErrorManager                 errorManager ,
+        IObserveSettingsChanges       settingsChanges ,
+        IBluetoothReconnectStrategy   reconnectStrategy )
     {
         Guard.ArgumentNotNull ( logger ,
                                 nameof ( logger ) ) ;
@@ -94,6 +96,8 @@ public sealed partial class UiDeskManager : IUiDeskManager
                                 nameof ( errorManager ) ) ;
         Guard.ArgumentNotNull ( settingsChanges ,
                                 nameof ( settingsChanges ) ) ;
+        Guard.ArgumentNotNull ( reconnectStrategy ,
+                                nameof ( reconnectStrategy ) ) ;
 
         _logger               = logger ;
         _manager              = manager ;
@@ -103,6 +107,7 @@ public sealed partial class UiDeskManager : IUiDeskManager
         _providerFactory      = deskProviderFactory ;
         _errorManager         = errorManager ;
         _settingsChanges      = settingsChanges ;
+        _reconnectStrategy    = reconnectStrategy ;
         _statusBarInfoSubject = new Subject < StatusBarInfo > ( ) ;
     }
 
@@ -888,33 +893,59 @@ public sealed partial class UiDeskManager : IUiDeskManager
     {
         try
         {
-            _logger.Debug ( "Trying to initialize provider..." ) ;
+            _logger.Debug ( "Initiating Bluetooth connection with automatic retry..." ) ;
 
-            _deskProvider?.Dispose ( ) ;
-            _deskProvider = _providerFactory! ( ) ;
-            _deskProvider.Initialize ( _manager.CurrentSettings.DeviceSettings.DeviceName ,
-                                       _manager.CurrentSettings.DeviceSettings.DeviceAddress ,
-                                       _manager.CurrentSettings.DeviceSettings.DeviceMonitoringTimeout ) ;
+            // Use reconnect strategy for automatic retry with exponential backoff
+            var success = await _reconnectStrategy.ConnectWithRetryAsync (
+                async token =>
+                {
+                    try
+                    {
+                        _logger.Debug ( "Attempting connection to desk..." ) ;
 
-            var deviceName = _manager.CurrentSettings.DeviceSettings.DeviceName ;
-            _logger.Debug ( "[{DeviceName}] Trying to connect to Idasen Desk..." ,
-                            deviceName ) ;
+                        _deskProvider?.Dispose ( ) ;
+                        _deskProvider = _providerFactory! ( ) ;
+                        _deskProvider.Initialize ( _manager.CurrentSettings.DeviceSettings.DeviceName ,
+                                                   _manager.CurrentSettings.DeviceSettings.DeviceAddress ,
+                                                   _manager.CurrentSettings.DeviceSettings.DeviceMonitoringTimeout ) ;
 
-            var token = GetTokenOrThrow ( ) ;
+                        var deviceName = _manager.CurrentSettings.DeviceSettings.DeviceName ;
+                        _logger.Debug ( "[{DeviceName}] Trying to connect to Idasen Desk..." ,
+                                       deviceName ) ;
 
-            var (isSuccess , desk) = await _deskProvider.TryGetDesk ( token ).ConfigureAwait ( false ) ;
+                        var (isSuccess , desk) = await _deskProvider.TryGetDesk ( token ).ConfigureAwait ( false ) ;
 
-            if ( isSuccess )
-                ConnectSuccessful ( desk! ) ;
-            else
+                        if ( isSuccess && desk != null )
+                        {
+                            ConnectSuccessful ( desk ) ;
+                            return true ;
+                        }
+
+                        _logger.Warning ( "Connection attempt failed - desk not found or unavailable" ) ;
+                        return false ;
+                    }
+                    catch ( Exception e )
+                    {
+                        var deviceName = _desk?.DeviceName ?? _manager.CurrentSettings.DeviceSettings.DeviceName ;
+                        _logger.Warning ( e ,
+                                         "[{DeviceName}] Connection attempt failed with exception" ,
+                                         deviceName ) ;
+                        return false ;
+                    }
+                } ,
+                GetTokenOrThrow ( ) ).ConfigureAwait ( false ) ;
+
+            if ( ! success )
+            {
                 ConnectFailed ( ) ;
+            }
         }
         catch ( Exception e )
         {
             var deviceName = _desk?.DeviceName ?? "Unknown" ;
             _logger.Error ( e ,
-                            "[{DeviceName}] Failed to connect" ,
-                            deviceName ) ;
+                           "[{DeviceName}] Fatal error during connection sequence" ,
+                           deviceName ) ;
             ConnectFailed ( ) ;
         }
     }
