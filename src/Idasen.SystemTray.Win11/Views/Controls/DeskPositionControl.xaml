@@ -18,10 +18,47 @@
                        Symbol="{Binding Symbol, ElementName=Root}"
                        HorizontalAlignment="Center" VerticalAlignment="Center"
                        Visibility="{Binding IsSymbolVisible, ElementName=Root, Mode=TwoWay}" />
-        <Label Grid.Column="1" Content="{Binding PositionName, ElementName=Root}" VerticalAlignment="Center"
-               MinWidth="80"
-               Padding="5,0,5,0"
-               Visibility="{Binding IsPositionNameVisible, ElementName=Root, Mode=TwoWay}" />
+
+        <!-- Position Name Label/TextBox Grid -->
+        <Grid Grid.Column="1" MinWidth="120" Margin="0,0,5,0"
+              Visibility="{Binding IsPositionNameVisible, ElementName=Root, Mode=TwoWay}">
+            <!-- Non-editable label (default) -->
+            <Label HorizontalAlignment="Stretch"
+                   Content="{Binding PositionName, ElementName=Root}"
+                   VerticalAlignment="Center" 
+                   Padding="5,0,5,0">
+                <Label.Style>
+                    <Style TargetType="Label">
+                        <Setter Property="Visibility" Value="Visible" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsEditable, ElementName=Root}" Value="True">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Label.Style>
+            </Label>
+
+            <!-- Editable text box -->
+            <ui:TextBox HorizontalAlignment="Stretch"
+                        Text="{Binding EditableName, ElementName=Root, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        VerticalAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        MaxLength="50"
+                        ClearButtonEnabled="False">
+                <ui:TextBox.Style>
+                    <Style TargetType="ui:TextBox" BasedOn="{StaticResource {x:Type ui:TextBox}}">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsEditable, ElementName=Root}" Value="True">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ui:TextBox.Style>
+            </ui:TextBox>
+        </Grid>
+
         <Slider Grid.Column="2" Minimum="{Binding Minimum, ElementName=Root}"
                 Maximum="{Binding Maximum, ElementName=Root}"
                 Value="{Binding PositionValue, ElementName=Root, Mode=TwoWay}" TickPlacement="Both"
