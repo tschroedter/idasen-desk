@@ -68,20 +68,6 @@ public partial class HotkeyDefinitionControl
                                                                       FrameworkPropertyMetadataOptions
                                                                          .BindsTwoWayByDefault ) ) ;
 
-    public static readonly DependencyProperty IsEditableProperty =
-        DependencyProperty.Register ( nameof ( IsEditable ) ,
-                                      typeof ( bool ) ,
-                                      typeof ( HotkeyDefinitionControl ) ,
-                                      new PropertyMetadata ( false ) ) ;
-
-    public static readonly DependencyProperty EditableNameProperty =
-        DependencyProperty.Register ( nameof ( EditableName ) ,
-                                      typeof ( string ) ,
-                                      typeof ( HotkeyDefinitionControl ) ,
-                                      new FrameworkPropertyMetadata ( string.Empty ,
-                                                                      FrameworkPropertyMetadataOptions
-                                                                         .BindsTwoWayByDefault ) ) ;
-
     public HotkeyDefinitionControl ( )
     {
         InitializeComponent ( ) ;
@@ -147,20 +133,6 @@ public partial class HotkeyDefinitionControl
     {
         get => ( bool )GetValue ( IsShiftCheckedProperty ) ;
         set => SetValue ( IsShiftCheckedProperty ,
-                          value ) ;
-    }
-
-    public bool IsEditable
-    {
-        get => ( bool )GetValue ( IsEditableProperty ) ;
-        set => SetValue ( IsEditableProperty ,
-                          value ) ;
-    }
-
-    public string EditableName
-    {
-        get => ( string )GetValue ( EditableNameProperty ) ;
-        set => SetValue ( EditableNameProperty ,
                           value ) ;
     }
 }
