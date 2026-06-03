@@ -85,9 +85,14 @@ public class HeightSettingsValidator : IHeightSettingsValidator
         }
 
         // Check that the range is reasonable
-        if ( maxHeight > minHeight && ( maxHeight - minHeight ) < MinHeightRange )
+        if ( maxHeight > minHeight )
         {
-            errors.Add ( $"Height range ({maxHeight - minHeight} cm) is too small. Minimum range is {MinHeightRange} cm." ) ;
+            var heightRange = maxHeight - minHeight;
+
+            if ( heightRange < MinHeightRange )
+            {
+                errors.Add ( $"Height range ({heightRange} cm) is too small. Minimum range is {MinHeightRange} cm." ) ;
+            }
         }
 
         return errors.Count == 0
