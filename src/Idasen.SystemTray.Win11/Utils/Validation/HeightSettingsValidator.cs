@@ -87,7 +87,7 @@ public class HeightSettingsValidator : IHeightSettingsValidator
         // Check that the range is reasonable
         if ( maxHeight > minHeight )
         {
-            var heightRange = maxHeight - minHeight;
+            int heightRange = (int)maxHeight - (int)minHeight;
 
             if ( heightRange < MinHeightRange )
             {
