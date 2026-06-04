@@ -12,8 +12,6 @@ namespace Idasen.SystemTray.Win11.Utils ;
 
 public sealed class DeskReadyManager : IDeskReadyManager
 {
-    private const uint DeskHeightFactor = 100 ;
-
     private readonly ILogger                       _logger ;
     private readonly ISettingsManager              _settingsManager ;
     private readonly ITaskbarIconProvider          _iconProvider ;
@@ -89,7 +87,7 @@ public sealed class DeskReadyManager : IDeskReadyManager
 
         _heightChanged = desk.HeightChanged
                               .ObserveOn ( Scheduler.Default )
-                              .Throttle ( TimeSpan.FromSeconds ( 1 ) )
+                              .Throttle ( TimeSpan.FromSeconds ( Constants.HeightChangeThrottleSeconds ) )
                               .Subscribe ( async height => await OnHeightChanged ( height ).ConfigureAwait ( false ) ) ;
 
         _iconProvider.Initialize ( _logger ,
@@ -139,7 +137,7 @@ public sealed class DeskReadyManager : IDeskReadyManager
     private static uint MmToCm ( uint height )
     {
         // Use double division and specify midpoint rounding to avoid ambiguous overloads and banker's rounding
-        return ( uint )Math.Round ( height / ( double )DeskHeightFactor ,
+        return ( uint )Math.Round ( height / ( double )Constants.DeskHeightFactor ,
                                     MidpointRounding.AwayFromZero ) ;
     }
 }

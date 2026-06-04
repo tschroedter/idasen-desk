@@ -83,7 +83,7 @@ public partial class TaskbarIconProvider : ITaskbarIconProvider
                 // HeightSpeedDetails expects height in millimeters
                 OnHeightAndSpeedChanged ( new HeightSpeedDetails (
                                                                   DateTimeOffset.Now ,
-                                                                  heightInCm * 100 ,
+                                                                  heightInCm * Constants.DeskHeightFactor ,
                                                                   0 ) ) ;
 
             _isInitialized = true ;
@@ -137,7 +137,7 @@ public partial class TaskbarIconProvider : ITaskbarIconProvider
             return ;
         }
 
-        var heightInCm = ( int )Math.Round ( details.Height / 100.0 ) ;
+        var heightInCm = ( int )Math.Round ( details.Height / ( double )Constants.DeskHeightFactor ) ;
 
         _creator.Update ( notifyIcon ,
                           heightInCm ) ;

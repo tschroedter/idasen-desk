@@ -6,8 +6,6 @@ namespace Idasen.SystemTray.Win11.Utils ;
 
 public sealed class DeskMovementManager : IDeskMovementManager
 {
-    private const uint DeskHeightFactor = 100 ;
-
     private readonly ILogger             _logger ;
     private readonly ISettingsManager    _settingsManager ;
     private Func < IDesk ? > ?           _deskAccessor ;
@@ -61,6 +59,6 @@ public sealed class DeskMovementManager : IDeskMovementManager
 
     private static uint HeightToDeskHeight ( uint heightInCm )
     {
-        return heightInCm * DeskHeightFactor ;
+        return heightInCm * Constants.DeskHeightFactor ;
     }
 }

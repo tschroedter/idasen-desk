@@ -28,4 +28,16 @@ public static class Constants
     public const string DefaultCustom2Name          = "Custom 2" ;
 
     public static readonly bool NotificationsEnabled = true ;
+
+    /// <summary>
+    ///     Conversion factor between desk height in millimeters and centimeters.
+    ///     Desk hardware reports height in millimeters, UI displays in centimeters.
+    /// </summary>
+    public const uint DeskHeightFactor = 100 ;
+
+    /// <summary>
+    ///     Throttle duration in seconds for desk height change notifications.
+    ///     Prevents excessive updates during continuous desk movement.
+    /// </summary>
+    public const int HeightChangeThrottleSeconds = 1 ;
 }
