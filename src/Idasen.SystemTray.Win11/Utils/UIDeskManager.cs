@@ -414,7 +414,7 @@ public sealed partial class UiDeskManager : IUiDeskManager
         {
             _logger.Error ( e ,
                             "Failed to auto connect to desk" ) ;
-            _errorManager.PublishForMessage ( "Failed to connect" ) ;
+            // Note: Error is already published by DeskConnectionManager.HandleConnectionFailed
         }
     }
 
