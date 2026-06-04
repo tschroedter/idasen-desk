@@ -36,30 +36,36 @@ public partial class Notifications : INotifications
     {
         _logger.Debug ( "Notifications initializing..." ) ;
 
-        _ = Task.Run ( async ( ) =>
-                       {
-                           try
-                           {
-                               await _manager.LoadAsync ( token ).ConfigureAwait ( false ) ;
-
-                               Show ( $"Idasen System Tray {_version.GetVersion ( )}" ,
-                                      "Running..." ,
-                                      InfoBarSeverity.Informational ) ;
-                           }
-                           catch ( OperationCanceledException ex )
-                           {
-                               _logger.Warning ( ex ,
-                                                 "Notifications initialization canceled" ) ;
-                           }
-                           catch ( Exception ex )
-                           {
-                               _logger.Error ( ex ,
-                                               "Failed to initialize notifications" ) ;
-                           }
-                       } ,
-                       token ) ;
+        // Start background initialization with proper error handling
+        StartBackgroundInitialization ( token ) ;
 
         return this ;
+    }
+
+    private void StartBackgroundInitialization ( CancellationToken token )
+    {
+        Task.Run ( async ( ) =>
+                   {
+                       try
+                       {
+                           await _manager.LoadAsync ( token ).ConfigureAwait ( false ) ;
+
+                           Show ( $"Idasen System Tray {_version.GetVersion ( )}" ,
+                                  "Running..." ,
+                                  InfoBarSeverity.Informational ) ;
+                       }
+                       catch ( OperationCanceledException ex )
+                       {
+                           _logger.Warning ( ex ,
+                                             "Notifications initialization canceled" ) ;
+                       }
+                       catch ( Exception ex )
+                       {
+                           _logger.Error ( ex ,
+                                           "Failed to initialize notifications" ) ;
+                       }
+                   } ,
+                   token ) ;
     }
 
     public void Dispose ( )

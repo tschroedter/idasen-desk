@@ -278,9 +278,26 @@ public sealed partial class UiDeskManager : IUiDeskManager
         _notificationManager.Initialize ( notifyIcon ,
                                           _token ) ;
 
-        _ = AutoConnectAsync ( ) ;
+        // Start auto-connect in background (fire-and-forget with error handling)
+        StartAutoConnectInBackground ( ) ;
 
         return this ;
+    }
+
+    private void StartAutoConnectInBackground ( )
+    {
+        Task.Run ( async ( ) =>
+        {
+            try
+            {
+                await AutoConnectAsync ( ) ;
+            }
+            catch ( Exception e )
+            {
+                _logger.Error ( e ,
+                                "Unhandled exception in background auto-connect task" ) ;
+            }
+        } ) ;
     }
 
     private void RegisterGlobalHotkeys ( )
@@ -469,28 +486,28 @@ public sealed partial class UiDeskManager : IUiDeskManager
                                                 InfoBarSeverity.Success ) ;
     }
 
-    private void OnStandingHotkeyPressed ( object ? sender , EventArgs e )
+    private async void OnStandingHotkeyPressed ( object ? sender , EventArgs e )
     {
-        _ = ExecuteWithErrorHandlingAsync ( nameof ( StandAsync ) ,
-                                            StandAsync ) ;
+        await ExecuteWithErrorHandlingAsync ( nameof ( StandAsync ) ,
+                                              StandAsync ) ;
     }
 
-    private void OnSeatingHotkeyPressed ( object ? sender , EventArgs e )
+    private async void OnSeatingHotkeyPressed ( object ? sender , EventArgs e )
     {
-        _ = ExecuteWithErrorHandlingAsync ( nameof ( SitAsync ) ,
-                                            SitAsync ) ;
+        await ExecuteWithErrorHandlingAsync ( nameof ( SitAsync ) ,
+                                              SitAsync ) ;
     }
 
-    private void OnCustom1HotkeyPressed ( object ? sender , EventArgs e )
+    private async void OnCustom1HotkeyPressed ( object ? sender , EventArgs e )
     {
-        _ = ExecuteWithErrorHandlingAsync ( nameof ( Custom1Async ) ,
-                                            Custom1Async ) ;
+        await ExecuteWithErrorHandlingAsync ( nameof ( Custom1Async ) ,
+                                              Custom1Async ) ;
     }
 
-    private void OnCustom2HotkeyPressed ( object ? sender , EventArgs e )
+    private async void OnCustom2HotkeyPressed ( object ? sender , EventArgs e )
     {
-        _ = ExecuteWithErrorHandlingAsync ( nameof ( Custom2Async ) ,
-                                            Custom2Async ) ;
+        await ExecuteWithErrorHandlingAsync ( nameof ( Custom2Async ) ,
+                                              Custom2Async ) ;
     }
 
     private void OnHotkeySettingsChanged ( bool enabled )

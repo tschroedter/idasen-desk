@@ -162,18 +162,49 @@ public sealed class DeskConnectionManager : IDeskConnectionManager
         Connected?.Invoke ( this , EventArgs.Empty ) ;
         DeskReady?.Invoke ( this , desk ) ;
 
-        // Apply device lock if configured
+        // Apply device lock if configured (fire-and-forget with logging)
         if ( _settingsManager.CurrentSettings.DeviceSettings.DeviceLocked )
         {
             _logger.Information ( "Locking desk movement" ) ;
-            _desk?.MoveLockAsync ( ) ;
+            ApplyDeviceLockInBackground ( desk ) ;
         }
+    }
+
+    private void ApplyDeviceLockInBackground ( IDesk desk )
+    {
+        Task.Run ( async ( ) =>
+        {
+            try
+            {
+                await desk.MoveLockAsync ( ) ;
+                _logger.Debug ( "Device lock applied successfully" ) ;
+            }
+            catch ( Exception e )
+            {
+                _logger.Error ( e ,
+                                "Failed to apply device lock" ) ;
+            }
+        } ) ;
     }
 
     private void HandleConnectionFailed ( )
     {
         _logger.Debug ( "Connection failed..." ) ;
-        _ = DisconnectAsync ( ) ;
+
+        // Disconnect in background with error handling
+        Task.Run ( async ( ) =>
+        {
+            try
+            {
+                await DisconnectAsync ( ) ;
+            }
+            catch ( Exception e )
+            {
+                _logger.Error ( e ,
+                                "Error during disconnect after connection failure" ) ;
+            }
+        } ) ;
+
         _errorManager.PublishForMessage ( "Failed to connect" ) ;
     }
 
