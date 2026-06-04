@@ -18,133 +18,133 @@ namespace Idasen.SystemTray.Win11.ViewModels.Pages ;
 [ ExcludeFromCodeCoverage ]
 public partial class SettingsViewModel : ObservableObject , INavigationAware , ISettingsViewModel
 {
-    private readonly ILogger                    _logger ;
-    private readonly ISettingsService           _settingsService ;
-    private readonly IScheduler                 _scheduler ;
-    private readonly IApplicationThemeManager   _themeManager ;
-    private readonly IMainWindow                _mainWindow ;
-    private readonly IAvailableKeysProvider     _availableKeysProvider ;
+    private readonly ILogger                  _logger ;
+    private readonly ISettingsService         _settingsService ;
+    private readonly IScheduler               _scheduler ;
+    private readonly IApplicationThemeManager _themeManager ;
+    private readonly IMainWindow              _mainWindow ;
+    private readonly IAvailableKeysProvider   _availableKeysProvider ;
 
-    private IDisposable? _autoSaveSubscription;
+    private IDisposable ? _autoSaveSubscription ;
 
-    [ ObservableProperty ] public partial string AppVersion { get; set; }
+    [ ObservableProperty ] public partial string AppVersion { get ; set ; }
 
-    [ ObservableProperty ] public partial ApplicationTheme CurrentTheme { get; set; }
+    [ ObservableProperty ] public partial ApplicationTheme CurrentTheme { get ; set ; }
 
-    [ ObservableProperty ] public partial uint Custom1 { get; set; }
+    [ ObservableProperty ] public partial uint Custom1 { get ; set ; }
 
-    [ ObservableProperty ] public partial bool Custom1IsVisibleInContextMenu { get; set; }
+    [ ObservableProperty ] public partial bool Custom1IsVisibleInContextMenu { get ; set ; }
 
-    [ ObservableProperty ] public partial string Custom1Name { get; set; }
+    [ ObservableProperty ] public partial string Custom1Name { get ; set ; }
 
-    [ ObservableProperty ] public partial uint Custom2 { get; set; }
+    [ ObservableProperty ] public partial uint Custom2 { get ; set ; }
 
-    [ ObservableProperty ] public partial bool Custom2IsVisibleInContextMenu { get; set; }
+    [ ObservableProperty ] public partial bool Custom2IsVisibleInContextMenu { get ; set ; }
 
-    [ ObservableProperty ] public partial string Custom2Name { get; set; }
+    [ ObservableProperty ] public partial string Custom2Name { get ; set ; }
 
-    [ ObservableProperty ] public partial string DeskAddress { get; set; }
+    [ ObservableProperty ] public partial string DeskAddress { get ; set ; }
 
-    [ ObservableProperty ] public partial string DeskName { get; set; }
+    [ ObservableProperty ] public partial string DeskName { get ; set ; }
 
     private bool _disposed ;
 
     private bool _isInitialized ;
     private bool _isLoadingSettings ;
 
-    [ ObservableProperty ] public partial uint LastKnownDeskHeight { get; set; }
+    [ ObservableProperty ] public partial uint LastKnownDeskHeight { get ; set ; }
 
-    [ ObservableProperty ] public partial string LogFolderPath { get; set; }
+    [ ObservableProperty ] public partial string LogFolderPath { get ; set ; }
 
-    [ ObservableProperty ] public partial uint MaxHeight { get; set; }
+    [ ObservableProperty ] public partial uint MaxHeight { get ; set ; }
 
-    [ ObservableProperty ] public partial uint MaxSpeedToStopMovement { get; set; }
+    [ ObservableProperty ] public partial uint MaxSpeedToStopMovement { get ; set ; }
 
-    [ ObservableProperty ] public partial uint MinHeight { get; set; }
+    [ ObservableProperty ] public partial uint MinHeight { get ; set ; }
 
-    [ ObservableProperty ] public partial bool Notifications { get; set; }
+    [ ObservableProperty ] public partial bool Notifications { get ; set ; }
 
-    [ ObservableProperty ] public partial bool ParentalLock { get; set; }
+    [ ObservableProperty ] public partial bool ParentalLock { get ; set ; }
 
-    [ ObservableProperty ] public partial uint Seating { get; set; }
+    [ ObservableProperty ] public partial uint Seating { get ; set ; }
 
-    [ ObservableProperty ] public partial bool SeatingIsVisibleInContextMenu { get; set; }
+    [ ObservableProperty ] public partial bool SeatingIsVisibleInContextMenu { get ; set ; }
 
-    [ ObservableProperty ] public partial string SettingsFileFullPath { get; set; }
+    [ ObservableProperty ] public partial string SettingsFileFullPath { get ; set ; }
 
     private IDisposable ? _settingsSaved ;
 
-    [ ObservableProperty ] public partial uint Standing { get; set; }
+    [ ObservableProperty ] public partial uint Standing { get ; set ; }
 
-    [ ObservableProperty ] public partial bool StandingIsVisibleInContextMenu { get; set; }
+    [ ObservableProperty ] public partial bool StandingIsVisibleInContextMenu { get ; set ; }
 
-    [ ObservableProperty ] public partial bool StopIsVisibleInContextMenu { get; set; }
-    [ ObservableProperty ] public partial bool GlobalHotkeysEnabled { get; set; }
+    [ ObservableProperty ] public partial bool StopIsVisibleInContextMenu { get ; set ; }
+    [ ObservableProperty ] public partial bool GlobalHotkeysEnabled       { get ; set ; }
 
-    [ ObservableProperty ] public partial string StandingName { get; set; }
-    [ ObservableProperty ] public partial string StandingKey { get; set; }
-    [ ObservableProperty ] public partial string StandingModifiers { get; set; }
-    [ ObservableProperty ] public partial string SeatingName { get; set; }
-    [ ObservableProperty ] public partial string SeatingKey { get; set; }
-    [ ObservableProperty ] public partial string SeatingModifiers { get; set; }
-    [ ObservableProperty ] public partial string Custom1Key { get; set; }
-    [ ObservableProperty ] public partial string Custom1Modifiers { get; set; }
-    [ ObservableProperty ] public partial string Custom2Key { get; set; }
-    [ ObservableProperty ] public partial string Custom2Modifiers { get; set; }
+    [ ObservableProperty ] public partial string StandingName      { get ; set ; }
+    [ ObservableProperty ] public partial string StandingKey       { get ; set ; }
+    [ ObservableProperty ] public partial string StandingModifiers { get ; set ; }
+    [ ObservableProperty ] public partial string SeatingName       { get ; set ; }
+    [ ObservableProperty ] public partial string SeatingKey        { get ; set ; }
+    [ ObservableProperty ] public partial string SeatingModifiers  { get ; set ; }
+    [ ObservableProperty ] public partial string Custom1Key        { get ; set ; }
+    [ ObservableProperty ] public partial string Custom1Modifiers  { get ; set ; }
+    [ ObservableProperty ] public partial string Custom2Key        { get ; set ; }
+    [ ObservableProperty ] public partial string Custom2Modifiers  { get ; set ; }
 
-    private bool _isUpdatingModifiers ;
-    private static readonly char [ ] ModifierSeparators = [ ',' , ' ' ] ;
+    private                 bool     _isUpdatingModifiers ;
+    private static readonly char [ ] ModifierSeparators = [',' , ' '] ;
 
     public SettingsViewModel (
-        ILogger                   logger ,
-        ISettingsService          settingsService ,
-        IScheduler                scheduler ,
-        IApplicationThemeManager  themeManager ,
-        IMainWindow               mainWindow ,
-        IAvailableKeysProvider    availableKeysProvider )
+        ILogger                  logger ,
+        ISettingsService         settingsService ,
+        IScheduler               scheduler ,
+        IApplicationThemeManager themeManager ,
+        IMainWindow              mainWindow ,
+        IAvailableKeysProvider   availableKeysProvider )
     {
-        _logger                 = logger ;
-        _settingsService        = settingsService ;
-        _scheduler              = scheduler ;
-        _themeManager           = themeManager ;
-        _mainWindow             = mainWindow ;
-        _availableKeysProvider  = availableKeysProvider ;
+        _logger                = logger ;
+        _settingsService       = settingsService ;
+        _scheduler             = scheduler ;
+        _themeManager          = themeManager ;
+        _mainWindow            = mainWindow ;
+        _availableKeysProvider = availableKeysProvider ;
 
         // Initialize properties with default values
-        AppVersion                        = string.Empty ;
-        CurrentTheme                      = ApplicationTheme.Unknown ;
-        Custom1                           = 100 ;
-        Custom1IsVisibleInContextMenu     = true ;
-        Custom1Name                       = Constants.DefaultCustom1Name ;
-        Custom2                           = 90 ;
-        Custom2IsVisibleInContextMenu     = true ;
-        Custom2Name                       = Constants.DefaultCustom2Name ;
-        DeskAddress                       = string.Empty ;
-        DeskName                          = string.Empty ;
-        LastKnownDeskHeight               = Constants.DefaultDeskMinHeightInCm ;
-        LogFolderPath                     = string.Empty ;
-        MaxHeight                         = 90 ;
-        MaxSpeedToStopMovement            = BluetoothLE.Linak.Control.StoppingHeightCalculatorSettings.MaxSpeedToStopMovement ;
-        MinHeight                         = 90 ;
-        Notifications                     = true ;
-        ParentalLock                      = false ;
-        Seating                           = 90 ;
-        SeatingIsVisibleInContextMenu     = true ;
-        SettingsFileFullPath              = string.Empty ;
-        Standing                          = 100 ;
-        StandingIsVisibleInContextMenu    = true ;
-        StopIsVisibleInContextMenu        = true ;
-        GlobalHotkeysEnabled              = Constants.DefaultGlobalHotkeysEnabled ;
-        StandingName                      = Constants.DefaultStandingName ;
-        StandingKey                       = Constants.DefaultStandingKey ;
-        StandingModifiers                 = Constants.DefaultHotkeyModifiers ;
-        SeatingName                       = Constants.DefaultSeatingName ;
-        SeatingKey                        = Constants.DefaultSeatingKey ;
-        SeatingModifiers                  = Constants.DefaultHotkeyModifiers ;
-        Custom1Key                        = Constants.DefaultCustom1Key ;
-        Custom1Modifiers                  = Constants.DefaultHotkeyModifiers ;
-        Custom2Key                        = Constants.DefaultCustom2Key ;
-        Custom2Modifiers                  = Constants.DefaultHotkeyModifiers ;
+        AppVersion = string.Empty ;
+        CurrentTheme = ApplicationTheme.Unknown ;
+        Custom1 = 100 ;
+        Custom1IsVisibleInContextMenu = true ;
+        Custom1Name = Constants.DefaultCustom1Name ;
+        Custom2 = 90 ;
+        Custom2IsVisibleInContextMenu = true ;
+        Custom2Name = Constants.DefaultCustom2Name ;
+        DeskAddress = string.Empty ;
+        DeskName = string.Empty ;
+        LastKnownDeskHeight = Constants.DefaultDeskMinHeightInCm ;
+        LogFolderPath = string.Empty ;
+        MaxHeight = 90 ;
+        MaxSpeedToStopMovement = BluetoothLE.Linak.Control.StoppingHeightCalculatorSettings.MaxSpeedToStopMovement ;
+        MinHeight = 90 ;
+        Notifications = true ;
+        ParentalLock = false ;
+        Seating = 90 ;
+        SeatingIsVisibleInContextMenu = true ;
+        SettingsFileFullPath = string.Empty ;
+        Standing = 100 ;
+        StandingIsVisibleInContextMenu = true ;
+        StopIsVisibleInContextMenu = true ;
+        GlobalHotkeysEnabled = Constants.DefaultGlobalHotkeysEnabled ;
+        StandingName = Constants.DefaultStandingName ;
+        StandingKey = Constants.DefaultStandingKey ;
+        StandingModifiers = Constants.DefaultHotkeyModifiers ;
+        SeatingName = Constants.DefaultSeatingName ;
+        SeatingKey = Constants.DefaultSeatingKey ;
+        SeatingModifiers = Constants.DefaultHotkeyModifiers ;
+        Custom1Key = Constants.DefaultCustom1Key ;
+        Custom1Modifiers = Constants.DefaultHotkeyModifiers ;
+        Custom2Key = Constants.DefaultCustom2Key ;
+        Custom2Modifiers = Constants.DefaultHotkeyModifiers ;
     }
 
     /// <summary>
@@ -154,74 +154,110 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
 
     public bool StandingControl
     {
-        get => ContainsModifier ( StandingModifiers , "Control" ) ;
-        set => UpdateModifier ( "Standing" , "Control" , value ) ;
+        get => ContainsModifier ( StandingModifiers ,
+                                  "Control" ) ;
+        set => UpdateModifier ( "Standing" ,
+                                "Control" ,
+                                value ) ;
     }
 
     public bool StandingAlt
     {
-        get => ContainsModifier ( StandingModifiers , "Alt" ) ;
-        set => UpdateModifier ( "Standing" , "Alt" , value ) ;
+        get => ContainsModifier ( StandingModifiers ,
+                                  "Alt" ) ;
+        set => UpdateModifier ( "Standing" ,
+                                "Alt" ,
+                                value ) ;
     }
 
     public bool StandingShift
     {
-        get => ContainsModifier ( StandingModifiers , "Shift" ) ;
-        set => UpdateModifier ( "Standing" , "Shift" , value ) ;
+        get => ContainsModifier ( StandingModifiers ,
+                                  "Shift" ) ;
+        set => UpdateModifier ( "Standing" ,
+                                "Shift" ,
+                                value ) ;
     }
 
     public bool SeatingControl
     {
-        get => ContainsModifier ( SeatingModifiers , "Control" ) ;
-        set => UpdateModifier ( "Seating" , "Control" , value ) ;
+        get => ContainsModifier ( SeatingModifiers ,
+                                  "Control" ) ;
+        set => UpdateModifier ( "Seating" ,
+                                "Control" ,
+                                value ) ;
     }
 
     public bool SeatingAlt
     {
-        get => ContainsModifier ( SeatingModifiers , "Alt" ) ;
-        set => UpdateModifier ( "Seating" , "Alt" , value ) ;
+        get => ContainsModifier ( SeatingModifiers ,
+                                  "Alt" ) ;
+        set => UpdateModifier ( "Seating" ,
+                                "Alt" ,
+                                value ) ;
     }
 
     public bool SeatingShift
     {
-        get => ContainsModifier ( SeatingModifiers , "Shift" ) ;
-        set => UpdateModifier ( "Seating" , "Shift" , value ) ;
+        get => ContainsModifier ( SeatingModifiers ,
+                                  "Shift" ) ;
+        set => UpdateModifier ( "Seating" ,
+                                "Shift" ,
+                                value ) ;
     }
 
     public bool Custom1Control
     {
-        get => ContainsModifier ( Custom1Modifiers , "Control" ) ;
-        set => UpdateModifier ( "Custom1" , "Control" , value ) ;
+        get => ContainsModifier ( Custom1Modifiers ,
+                                  "Control" ) ;
+        set => UpdateModifier ( "Custom1" ,
+                                "Control" ,
+                                value ) ;
     }
 
     public bool Custom1Alt
     {
-        get => ContainsModifier ( Custom1Modifiers , "Alt" ) ;
-        set => UpdateModifier ( "Custom1" , "Alt" , value ) ;
+        get => ContainsModifier ( Custom1Modifiers ,
+                                  "Alt" ) ;
+        set => UpdateModifier ( "Custom1" ,
+                                "Alt" ,
+                                value ) ;
     }
 
     public bool Custom1Shift
     {
-        get => ContainsModifier ( Custom1Modifiers , "Shift" ) ;
-        set => UpdateModifier ( "Custom1" , "Shift" , value ) ;
+        get => ContainsModifier ( Custom1Modifiers ,
+                                  "Shift" ) ;
+        set => UpdateModifier ( "Custom1" ,
+                                "Shift" ,
+                                value ) ;
     }
 
     public bool Custom2Control
     {
-        get => ContainsModifier ( Custom2Modifiers , "Control" ) ;
-        set => UpdateModifier ( "Custom2" , "Control" , value ) ;
+        get => ContainsModifier ( Custom2Modifiers ,
+                                  "Control" ) ;
+        set => UpdateModifier ( "Custom2" ,
+                                "Control" ,
+                                value ) ;
     }
 
     public bool Custom2Alt
     {
-        get => ContainsModifier ( Custom2Modifiers , "Alt" ) ;
-        set => UpdateModifier ( "Custom2" , "Alt" , value ) ;
+        get => ContainsModifier ( Custom2Modifiers ,
+                                  "Alt" ) ;
+        set => UpdateModifier ( "Custom2" ,
+                                "Alt" ,
+                                value ) ;
     }
 
     public bool Custom2Shift
     {
-        get => ContainsModifier ( Custom2Modifiers , "Shift" ) ;
-        set => UpdateModifier ( "Custom2" , "Shift" , value ) ;
+        get => ContainsModifier ( Custom2Modifiers ,
+                                  "Shift" ) ;
+        set => UpdateModifier ( "Custom2" ,
+                                "Shift" ,
+                                value ) ;
     }
 
     private void UpdateModifier ( string hotkeyName , string modifier , bool add )
@@ -234,13 +270,13 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
         try
         {
             var currentModifiers = hotkeyName switch
-            {
-                "Standing" => StandingModifiers ,
-                "Seating"  => SeatingModifiers ,
-                "Custom1"  => Custom1Modifiers ,
-                "Custom2"  => Custom2Modifiers ,
-                _          => string.Empty
-            } ;
+                                   {
+                                       "Standing" => StandingModifiers ,
+                                       "Seating"  => SeatingModifiers ,
+                                       "Custom1"  => Custom1Modifiers ,
+                                       "Custom2"  => Custom2Modifiers ,
+                                       _          => string.Empty
+                                   } ;
 
             var modifiers = ParseModifiers ( currentModifiers ) ;
 
@@ -254,20 +290,21 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
                 modifiers.Remove ( modifier ) ;
             }
 
-            var newValue = string.Join ( ", " , modifiers ) ;
+            var newValue = string.Join ( ", " ,
+                                         modifiers ) ;
 
             switch ( hotkeyName )
             {
-                case "Standing":
+                case "Standing" :
                     StandingModifiers = newValue ;
                     break ;
-                case "Seating":
+                case "Seating" :
                     SeatingModifiers = newValue ;
                     break ;
-                case "Custom1":
+                case "Custom1" :
                     Custom1Modifiers = newValue ;
                     break ;
-                case "Custom2":
+                case "Custom2" :
                     Custom2Modifiers = newValue ;
                     break ;
             }
@@ -284,22 +321,27 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
             return false ;
 
         return ParseModifiers ( modifierString )
-              .Any ( parsedModifier => string.Equals ( parsedModifier , modifier , StringComparison.OrdinalIgnoreCase ) ) ;
+           .Any ( parsedModifier => string.Equals ( parsedModifier ,
+                                                    modifier ,
+                                                    StringComparison.OrdinalIgnoreCase ) ) ;
     }
 
     private static List < string > ParseModifiers ( string modifierString )
     {
         if ( string.IsNullOrWhiteSpace ( modifierString ) )
-            return new List < string > ( ) ;
+            return [] ;
 
         return modifierString
-              .Split ( ModifierSeparators , StringSplitOptions.RemoveEmptyEntries )
+              .Split ( ModifierSeparators ,
+                       StringSplitOptions.RemoveEmptyEntries )
               .Select ( s => s.Trim ( ) )
               .Where ( s => ! string.IsNullOrEmpty ( s ) )
               .ToList ( ) ;
     }
 
-    [SuppressMessage("Minor Code Smell", "S1192:String literals should not be duplicated", Justification = "Log message template")]
+    [ SuppressMessage ( "Minor Code Smell" ,
+                        "S1192:String literals should not be duplicated" ,
+                        Justification = "Log message template" ) ]
     partial void OnStandingModifiersChanged ( string value )
     {
         if ( _isUpdatingModifiers )
@@ -307,56 +349,66 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
             return ;
         }
 
-        _logger.Debug ( "value = {Value}", value );
+        _logger.Debug ( "value = {Value}" ,
+                        value ) ;
 
         OnPropertyChanged ( nameof ( StandingControl ) ) ;
         OnPropertyChanged ( nameof ( StandingAlt ) ) ;
         OnPropertyChanged ( nameof ( StandingShift ) ) ;
     }
 
-    [SuppressMessage("Minor Code Smell", "S1192:String literals should not be duplicated", Justification = "Log message template")]
+    [ SuppressMessage ( "Minor Code Smell" ,
+                        "S1192:String literals should not be duplicated" ,
+                        Justification = "Log message template" ) ]
     partial void OnSeatingModifiersChanged ( string value )
     {
-        if (_isUpdatingModifiers)
+        if ( _isUpdatingModifiers )
         {
-            return;
+            return ;
         }
 
-        _logger.Debug("value = {Value}", value);
+        _logger.Debug ( "value = {Value}" ,
+                        value ) ;
 
-        OnPropertyChanged(nameof(SeatingControl));
-        OnPropertyChanged(nameof(SeatingAlt));
-        OnPropertyChanged(nameof(SeatingShift));
+        OnPropertyChanged ( nameof ( SeatingControl ) ) ;
+        OnPropertyChanged ( nameof ( SeatingAlt ) ) ;
+        OnPropertyChanged ( nameof ( SeatingShift ) ) ;
     }
 
-    [SuppressMessage("Minor Code Smell", "S1192:String literals should not be duplicated", Justification = "Log message template")]
+    [ SuppressMessage ( "Minor Code Smell" ,
+                        "S1192:String literals should not be duplicated" ,
+                        Justification = "Log message template" ) ]
     partial void OnCustom1ModifiersChanged ( string value )
     {
-        if (_isUpdatingModifiers)
+        if ( _isUpdatingModifiers )
         {
-            return;
+            return ;
         }
 
-        _logger.Debug("value = {Value}", value);
+        _logger.Debug ( "value = {Value}" ,
+                        value ) ;
 
-        OnPropertyChanged(nameof(Custom1Control));
-        OnPropertyChanged(nameof(Custom1Alt));
-        OnPropertyChanged(nameof(Custom1Shift));
+        OnPropertyChanged ( nameof ( Custom1Control ) ) ;
+        OnPropertyChanged ( nameof ( Custom1Alt ) ) ;
+        OnPropertyChanged ( nameof ( Custom1Shift ) ) ;
     }
 
-    [SuppressMessage("Minor Code Smell", "S1192:String literals should not be duplicated", Justification = "Log message template")]
+    [ SuppressMessage ( "Minor Code Smell" ,
+                        "S1192:String literals should not be duplicated" ,
+                        Justification = "Log message template" ) ]
     partial void OnCustom2ModifiersChanged ( string value )
     {
-        if (_isUpdatingModifiers)
+        if ( _isUpdatingModifiers )
         {
-            return;
+            return ;
         }
 
-        _logger.Debug("value = {Value}", value);
+        _logger.Debug ( "value = {Value}" ,
+                        value ) ;
 
-        OnPropertyChanged(nameof(Custom2Control));
-        OnPropertyChanged(nameof(Custom2Alt));
-        OnPropertyChanged(nameof(Custom2Shift));
+        OnPropertyChanged ( nameof ( Custom2Control ) ) ;
+        OnPropertyChanged ( nameof ( Custom2Alt ) ) ;
+        OnPropertyChanged ( nameof ( Custom2Shift ) ) ;
     }
 
     private IDisposable ? _visibilitySubscription ;
@@ -373,7 +425,7 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
     public async Task OnNavigatedFromAsync ( )
     {
         await _settingsService.Synchronizer.StoreSettingsAsync ( this ,
-                                                CancellationToken.None ).ConfigureAwait ( false ) ;
+                                                                 CancellationToken.None ).ConfigureAwait ( false ) ;
     }
 
     public void Dispose ( )
@@ -418,8 +470,8 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
         LogFolderPath        = LoggingFile.Path ;
 
         _settingsSaved = _settingsService.SettingsManager.SettingsSaved
-                                        .ObserveOn ( _scheduler )
-                                        .Subscribe ( OnSettingsSaved ) ;
+                                         .ObserveOn ( _scheduler )
+                                         .Subscribe ( OnSettingsSaved ) ;
 
         // Start auto-save after load
         SetupAutoSave ( ) ;
@@ -433,9 +485,9 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
     private async Task LoadAndApplySettings ( CancellationToken token )
     {
         await _settingsService.Synchronizer.LoadSettingsAsync ( this ,
-                                               token ) ;
+                                                                token ) ;
 
-        await _themeManager.ApplyAsync(CurrentTheme);
+        await _themeManager.ApplyAsync ( CurrentTheme ) ;
     }
 
     private void SetupAutoSave ( )
@@ -453,12 +505,13 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
                                .Throttle ( TimeSpan.FromMilliseconds ( 300 ) ,
                                            _scheduler )
                                .Select ( _ => Observable.FromAsync ( cancellationToken =>
-                                                                         _settingsService.Synchronizer.StoreSettingsAsync ( this ,
-                                                                                                           cancellationToken ) ) )
+                                                                         _settingsService.Synchronizer
+                                                                                         .StoreSettingsAsync ( this ,
+                                                                                                               cancellationToken ) ) )
                                .Switch ( )
                                .Subscribe ( _ => { } ,
                                             ex => _logger.Error ( ex ,
-                                                                 "Failed to auto-save settings" ) ) ;
+                                                                  "Failed to auto-save settings" ) ) ;
     }
 
     private void OnSettingsSaved ( ISettings settings )
@@ -543,7 +596,7 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
         catch ( Exception ex )
         {
             _logger.Error ( ex ,
-                           "Failed to reset settings" ) ;
+                            "Failed to reset settings" ) ;
         }
         finally
         {
@@ -563,146 +616,177 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
 
         // Subscribe to VisibilityChanged
         _visibilitySubscription = _mainWindow.VisibilityChanged
-                                            .Where ( visibility => visibility != Visibility.Visible )
-                                            .Subscribe ( async void ( _ ) =>
-                                                         {
-                                                             try
-                                                             {
-                                                                 await _settingsService.Synchronizer.StoreSettingsAsync ( this ,
-                                                                                                         CancellationToken
-                                                                                                            .None ) ;
-                                                             }
-                                                             catch ( Exception ex )
-                                                             {
-                                                                 _logger.Error ( ex ,
-                                                                                                                                                             "Failed to save settings when visibility changed." ) ;
-                                                                                                                                          }
-                                                                                                                                      } ) ;
-                                                                                }
+                                             .Where ( visibility => visibility != Visibility.Visible )
+                                             .Subscribe ( async void ( _ ) =>
+                                                          {
+                                                              try
+                                                              {
+                                                                  await _settingsService.Synchronizer
+                                                                                        .StoreSettingsAsync ( this ,
+                                                                                                              CancellationToken
+                                                                                                                 .None ) ;
+                                                              }
+                                                              catch ( Exception ex )
+                                                              {
+                                                                  _logger.Error ( ex ,
+                                                                                  "Failed to save settings when visibility changed." ) ;
+                                                              }
+                                                          } ) ;
+    }
 
-                                                                                // Validation hooks - called automatically when properties change
-                                                                                partial void OnMinHeightChanged ( uint value )
-                                                                                {
-                                                                                    if ( _isLoadingSettings ) return ;
+    // Validation hooks - called automatically when properties change
+    partial void OnMinHeightChanged ( uint value )
+    {
+        if ( _isLoadingSettings ) return ;
 
-                                                                                    var result = _settingsService.HeightValidator.ValidateMinMaxConstraints ( value , MaxHeight ) ;
-                                                                                    if ( ! result.IsValid )
-                                                                                    {
-                                                                                        _logger.Warning ( "Invalid min/max constraints: {Errors}" , string.Join ( ", " , result.Errors ) ) ;
-                                                                                        // Note: We log but don't block - allows temporary invalid states during editing
-                                                                                    }
-                                                                                }
+        var result = _settingsService.HeightValidator.ValidateMinMaxConstraints ( value ,
+                                                                                  MaxHeight ) ;
+        if ( ! result.IsValid )
+        {
+            _logger.Warning ( "Invalid min/max constraints: {Errors}" ,
+                              string.Join ( ", " ,
+                                            result.Errors ) ) ;
+            // Note: We log but don't block - allows temporary invalid states during editing
+        }
+    }
 
-                                                                                partial void OnMaxHeightChanged ( uint value )
-                                                                                {
-                                                                                    if ( _isLoadingSettings ) return ;
+    partial void OnMaxHeightChanged ( uint value )
+    {
+        if ( _isLoadingSettings ) return ;
 
-                                                                                    var result = _settingsService.HeightValidator.ValidateMinMaxConstraints ( MinHeight , value ) ;
-                                                                                    if ( ! result.IsValid )
-                                                                                    {
-                                                                                        _logger.Warning ( "Invalid min/max constraints: {Errors}" , string.Join ( ", " , result.Errors ) ) ;
-                                                                                    }
-                                                                                }
+        var result = _settingsService.HeightValidator.ValidateMinMaxConstraints ( MinHeight ,
+                                                                                  value ) ;
+        if ( ! result.IsValid )
+        {
+            _logger.Warning ( "Invalid min/max constraints: {Errors}" ,
+                              string.Join ( ", " ,
+                                            result.Errors ) ) ;
+        }
+    }
 
-                                                                                partial void OnStandingChanged ( uint value )
-                                                                                {
-                                                                                    if ( _isLoadingSettings ) return ;
+    partial void OnStandingChanged ( uint value )
+    {
+        if ( _isLoadingSettings ) return ;
 
-                                                                                    var result = _settingsService.HeightValidator.ValidateHeight ( value , MinHeight , MaxHeight ) ;
-                                                                                    if ( ! result.IsValid )
-                                                                                    {
-                                                                                        _logger.Warning ( "Invalid standing height: {Errors}" , string.Join ( ", " , result.Errors ) ) ;
-                                                                                    }
-                                                                                }
+        var result = _settingsService.HeightValidator.ValidateHeight ( value ,
+                                                                       MinHeight ,
+                                                                       MaxHeight ) ;
+        if ( ! result.IsValid )
+        {
+            _logger.Warning ( "Invalid standing height: {Errors}" ,
+                              string.Join ( ", " ,
+                                            result.Errors ) ) ;
+        }
+    }
 
-                                                                                partial void OnSeatingChanged ( uint value )
-                                                                                {
-                                                                                    if ( _isLoadingSettings ) return ;
+    partial void OnSeatingChanged ( uint value )
+    {
+        if ( _isLoadingSettings ) return ;
 
-                                                                                    var result = _settingsService.HeightValidator.ValidateHeight ( value , MinHeight , MaxHeight ) ;
-                                                                                    if ( ! result.IsValid )
-                                                                                    {
-                                                                                        _logger.Warning ( "Invalid seating height: {Errors}" , string.Join ( ", " , result.Errors ) ) ;
-                                                                                    }
-                                                                                }
+        var result = _settingsService.HeightValidator.ValidateHeight ( value ,
+                                                                       MinHeight ,
+                                                                       MaxHeight ) ;
+        if ( ! result.IsValid )
+        {
+            _logger.Warning ( "Invalid seating height: {Errors}" ,
+                              string.Join ( ", " ,
+                                            result.Errors ) ) ;
+        }
+    }
 
-                                                                                partial void OnCustom1Changed ( uint value )
-                                                                                {
-                                                                                    if ( _isLoadingSettings ) return ;
+    partial void OnCustom1Changed ( uint value )
+    {
+        if ( _isLoadingSettings ) return ;
 
-                                                                                    var result = _settingsService.HeightValidator.ValidateHeight ( value , MinHeight , MaxHeight ) ;
-                                                                                    if ( ! result.IsValid )
-                                                                                    {
-                                                                                        _logger.Warning ( "Invalid custom 1 height: {Errors}" , string.Join ( ", " , result.Errors ) ) ;
-                                                                                    }
-                                                                                }
+        var result = _settingsService.HeightValidator.ValidateHeight ( value ,
+                                                                       MinHeight ,
+                                                                       MaxHeight ) ;
+        if ( ! result.IsValid )
+        {
+            _logger.Warning ( "Invalid custom 1 height: {Errors}" ,
+                              string.Join ( ", " ,
+                                            result.Errors ) ) ;
+        }
+    }
 
-                                                                                partial void OnCustom2Changed ( uint value )
-                                                                                {
-                                                                                    if ( _isLoadingSettings ) return ;
+    partial void OnCustom2Changed ( uint value )
+    {
+        if ( _isLoadingSettings ) return ;
 
-                                                                                    var result = _settingsService.HeightValidator.ValidateHeight ( value , MinHeight , MaxHeight ) ;
-                                                                                    if ( ! result.IsValid )
-                                                                                    {
-                                                                                        _logger.Warning ( "Invalid custom 2 height: {Errors}" , string.Join ( ", " , result.Errors ) ) ;
-                                                                                    }
-                                                                                }
+        var result = _settingsService.HeightValidator.ValidateHeight ( value ,
+                                                                       MinHeight ,
+                                                                       MaxHeight ) ;
+        if ( ! result.IsValid )
+        {
+            _logger.Warning ( "Invalid custom 2 height: {Errors}" ,
+                              string.Join ( ", " ,
+                                            result.Errors ) ) ;
+        }
+    }
 
-                                                                                partial void OnStandingNameChanged ( string value )
-                                                                                {
-                                                                                    if ( _isLoadingSettings ) return ;
+    partial void OnStandingNameChanged ( string value )
+    {
+        if ( _isLoadingSettings ) return ;
 
-                                                                                    var result = _settingsService.HeightValidator.ValidatePresetName ( value ) ;
-                                                                                    if ( ! result.IsValid )
-                                                                                    {
-                                                                                        _logger.Warning ( "Invalid standing preset name: {Errors}" , string.Join ( ", " , result.Errors ) ) ;
-                                                                                    }
-                                                                                }
+        var result = _settingsService.HeightValidator.ValidatePresetName ( value ) ;
+        if ( ! result.IsValid )
+        {
+            _logger.Warning ( "Invalid standing preset name: {Errors}" ,
+                              string.Join ( ", " ,
+                                            result.Errors ) ) ;
+        }
+    }
 
-                                                                                partial void OnSeatingNameChanged ( string value )
-                                                                                {
-                                                                                    if ( _isLoadingSettings ) return ;
+    partial void OnSeatingNameChanged ( string value )
+    {
+        if ( _isLoadingSettings ) return ;
 
-                                                                                    var result = _settingsService.HeightValidator.ValidatePresetName ( value ) ;
-                                                                                    if ( ! result.IsValid )
-                                                                                    {
-                                                                                        _logger.Warning ( "Invalid seating preset name: {Errors}" , string.Join ( ", " , result.Errors ) ) ;
-                                                                                    }
-                                                                                }
+        var result = _settingsService.HeightValidator.ValidatePresetName ( value ) ;
+        if ( ! result.IsValid )
+        {
+            _logger.Warning ( "Invalid seating preset name: {Errors}" ,
+                              string.Join ( ", " ,
+                                            result.Errors ) ) ;
+        }
+    }
 
-                                                                                partial void OnCustom1NameChanged ( string value )
-                                                                                {
-                                                                                    if ( _isLoadingSettings ) return ;
+    partial void OnCustom1NameChanged ( string value )
+    {
+        if ( _isLoadingSettings ) return ;
 
-                                                                                    var result = _settingsService.HeightValidator.ValidatePresetName ( value ) ;
-                                                                                    if ( ! result.IsValid )
-                                                                                    {
-                                                                                        _logger.Warning ( "Invalid custom 1 preset name: {Errors}" , string.Join ( ", " , result.Errors ) ) ;
-                                                                                    }
-                                                                                }
+        var result = _settingsService.HeightValidator.ValidatePresetName ( value ) ;
+        if ( ! result.IsValid )
+        {
+            _logger.Warning ( "Invalid custom 1 preset name: {Errors}" ,
+                              string.Join ( ", " ,
+                                            result.Errors ) ) ;
+        }
+    }
 
-                                                                                partial void OnCustom2NameChanged ( string value )
-                                                                                {
-                                                                                    if ( _isLoadingSettings ) return ;
+    partial void OnCustom2NameChanged ( string value )
+    {
+        if ( _isLoadingSettings ) return ;
 
-                                                                                    var result = _settingsService.HeightValidator.ValidatePresetName ( value ) ;
-                                                                                    if ( ! result.IsValid )
-                                                                                    {
-                                                                                        _logger.Warning ( "Invalid custom 2 preset name: {Errors}" , string.Join ( ", " , result.Errors ) ) ;
-                                                                                    }
-                                                                                }
+        var result = _settingsService.HeightValidator.ValidatePresetName ( value ) ;
+        if ( ! result.IsValid )
+        {
+            _logger.Warning ( "Invalid custom 2 preset name: {Errors}" ,
+                              string.Join ( ", " ,
+                                            result.Errors ) ) ;
+        }
+    }
 
-                                                                                    /// <summary>
-                                                                                    ///     Validates all settings before saving to ensure consistency.
-                                                                                    /// </summary>
-                                                                                    /// <returns>Validation result with any errors.</returns>
-                                                                                    public ValidationResult ValidateAllSettings ( )
-                                                                                    {
-                                                                                        return _settingsService.HeightValidator.ValidateAllHeights ( Standing ,
-                                                                                                                                     Seating ,
-                                                                                                                                     Custom1 ,
-                                                                                                                                     Custom2 ,
-                                                                                                                                     MinHeight ,
-                                                                                                                                     MaxHeight ) ;
-                                                                                    }
-                                                                                }
+    /// <summary>
+    ///     Validates all settings before saving to ensure consistency.
+    /// </summary>
+    /// <returns>Validation result with any errors.</returns>
+    public ValidationResult ValidateAllSettings ( )
+    {
+        return _settingsService.HeightValidator.ValidateAllHeights ( Standing ,
+                                                                     Seating ,
+                                                                     Custom1 ,
+                                                                     Custom2 ,
+                                                                     MinHeight ,
+                                                                     MaxHeight ) ;
+    }
+}

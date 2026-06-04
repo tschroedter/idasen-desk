@@ -184,7 +184,7 @@ public partial class SettingsPage : INavigableView < SettingsViewModel >
         if ( FindParentOfType < ComboBoxItem > ( element ) is not null ) return true ;
 
         // Check if we're inside a Popup that belongs to a ComboBox
-        // ComboBox dropdowns are rendered in a Popup (separate visual tree)
+        // dropdowns are rendered in a Popup (separate visual tree)
         var popup = FindAssociatedPopup ( element ) ;
         if ( popup is not null )
         {
