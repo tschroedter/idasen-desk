@@ -6,6 +6,7 @@ using Idasen.BluetoothLE.Linak.Interfaces ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.TraySettings ;
 using Idasen.SystemTray.Win11.Utils ;
+using Idasen.SystemTray.Win11.Utils.Bluetooth ;
 using NSubstitute ;
 using Serilog ;
 
@@ -27,6 +28,7 @@ public class UiDeskManagerTests
         var providerFactory = new Func < IDeskProvider > ( ( ) => dp ) ;
         var errorManager    = Substitute.For < IErrorManager > ( ) ;
         var settingsChanges = Substitute.For < IObserveSettingsChanges > ( ) ;
+        var reconnectStrategy = new ExponentialBackoffReconnectStrategy ( logger ) ;
 
         deskProvider = dp ;
 
@@ -41,7 +43,8 @@ public class UiDeskManagerTests
                                      scheduler ,
                                      providerFactory ,
                                      errorManager ,
-                                     settingsChanges ) ;
+                                     settingsChanges ,
+                                     reconnectStrategy ) ;
 
         desk = Substitute.For < IDesk > ( ) ;
         typeof ( UiDeskManager )

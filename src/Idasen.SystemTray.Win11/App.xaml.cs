@@ -186,6 +186,9 @@ public partial class App
                                                                               .AddSingleton < ISettingsService ,
                                                                                    SettingsService > ( ) ;
                                                                            services
+                                                                              .AddSingleton < IBluetoothReconnectStrategy ,
+                                                                                   Utils.Bluetooth.ExponentialBackoffReconnectStrategy > ( ) ;
+                                                                           services
                                                                               .AddSingleton < IApplicationThemeManager ,
                                                                                    MyApplicationThemeManager > ( ) ;
                                                                            // Power events wrapper used by resume theme restore
