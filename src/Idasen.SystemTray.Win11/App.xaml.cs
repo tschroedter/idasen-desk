@@ -142,6 +142,9 @@ public partial class App
                                                                               .AddSingleton < IHotkeyManager ,
                                                                                    HotkeyManager > ( ) ;
                                                                            services
+                                                                              .AddSingleton < IStatusBarManager ,
+                                                                                   StatusBarManager > ( ) ;
+                                                                           services
                                                                               .AddSingleton < IUiDeskManager ,
                                                                                    UiDeskManager > ( ) ;
                                                                            services

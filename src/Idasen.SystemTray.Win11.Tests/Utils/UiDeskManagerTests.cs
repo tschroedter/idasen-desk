@@ -32,6 +32,7 @@ public class UiDeskManagerTests
         var settingsChanges = Substitute.For < IObserveSettingsChanges > ( ) ;
         var reconnectStrategy = new ExponentialBackoffReconnectStrategy ( logger ) ;
         var hotkeyManager   = Substitute.For < IHotkeyManager > ( ) ;
+        var statusBarManager = Substitute.For < IStatusBarManager > ( ) ;
 
         deskProvider = dp ;
 
@@ -48,7 +49,8 @@ public class UiDeskManagerTests
                                      errorManager ,
                                      settingsChanges ,
                                      reconnectStrategy ,
-                                     hotkeyManager ) ;
+                                     hotkeyManager ,
+                                     statusBarManager ) ;
 
         desk = Substitute.For < IDesk > ( ) ;
         typeof ( UiDeskManager )

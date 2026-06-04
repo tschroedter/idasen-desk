@@ -30,9 +30,9 @@ public sealed partial class UiDeskManager : IUiDeskManager
     private readonly Func < IDeskProvider > ?      _providerFactory ;
     private readonly IScheduler                    _scheduler ;
     private readonly IObserveSettingsChanges       _settingsChanges ;
-    private readonly Subject < StatusBarInfo >     _statusBarInfoSubject ;
     private readonly IBluetoothReconnectStrategy   _reconnectStrategy ;
     private readonly IHotkeyManager                _hotkeyManager ;
+    private readonly IStatusBarManager             _statusBarManager ;
 
     private IDesk ?         _desk ;
     private IDeskProvider ? _deskProvider ;
@@ -57,7 +57,8 @@ public sealed partial class UiDeskManager : IUiDeskManager
         IErrorManager                 errorManager ,
         IObserveSettingsChanges       settingsChanges ,
         IBluetoothReconnectStrategy   reconnectStrategy ,
-        IHotkeyManager                hotkeyManager )
+        IHotkeyManager                hotkeyManager ,
+        IStatusBarManager             statusBarManager )
     {
         Guard.ArgumentNotNull ( logger ,
                                 nameof ( logger ) ) ;
@@ -79,21 +80,23 @@ public sealed partial class UiDeskManager : IUiDeskManager
                                 nameof ( reconnectStrategy ) ) ;
         Guard.ArgumentNotNull ( hotkeyManager ,
                                 nameof ( hotkeyManager ) ) ;
+        Guard.ArgumentNotNull ( statusBarManager ,
+                                nameof ( statusBarManager ) ) ;
 
-        _logger               = logger ;
-        _manager              = manager ;
-        _iconProvider         = iconProvider ;
-        _notifications        = notifications ;
-        _scheduler            = scheduler ;
-        _providerFactory      = deskProviderFactory ;
-        _errorManager         = errorManager ;
-        _settingsChanges      = settingsChanges ;
-        _reconnectStrategy    = reconnectStrategy ;
-        _hotkeyManager        = hotkeyManager ;
-        _statusBarInfoSubject = new Subject < StatusBarInfo > ( ) ;
+        _logger           = logger ;
+        _manager          = manager ;
+        _iconProvider     = iconProvider ;
+        _notifications    = notifications ;
+        _scheduler        = scheduler ;
+        _providerFactory  = deskProviderFactory ;
+        _errorManager     = errorManager ;
+        _settingsChanges  = settingsChanges ;
+        _reconnectStrategy = reconnectStrategy ;
+        _hotkeyManager    = hotkeyManager ;
+        _statusBarManager = statusBarManager ;
     }
 
-    public IObservable < StatusBarInfo > StatusBarInfoChanged => _statusBarInfoSubject ;
+    public IObservable < StatusBarInfo > StatusBarInfoChanged => _statusBarManager.StatusBarInfoChanged ;
 
     public bool IsInitialize => _notifyIcon is not null ;
 
@@ -168,12 +171,11 @@ public sealed partial class UiDeskManager : IUiDeskManager
 
             try
             {
-                _statusBarInfoSubject.OnCompleted ( ) ;
-                _statusBarInfoSubject.Dispose ( ) ;
+                ( _statusBarManager as IDisposable )?.Dispose ( ) ;
             }
             catch
             {
-                // ignore subject disposal errors
+                // ignore cleanup errors
             }
 
             // Dispose desk and provider
@@ -633,7 +635,7 @@ public sealed partial class UiDeskManager : IUiDeskManager
                                        severity ) ;
 
         // Publish to observers outside the lock to avoid "used inside a lock" warnings and potential deadlocks
-        _statusBarInfoSubject.OnNext ( info ) ;
+        _statusBarManager.UpdateStatus ( info ) ;
 
         _notifications.Show ( title ,
                               message ,
