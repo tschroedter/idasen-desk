@@ -459,16 +459,19 @@ public sealed partial class UiDeskManager : IUiDeskManager
     {
         try
         {
-            _logger.Debug ( "{MethodName}" ,
+            _logger.Debug ( "Standing hotkey pressed, executing {MethodName}" ,
                             nameof ( StandAsync ) ) ;
             await StandAsync ( ).ConfigureAwait ( false ) ;
+        }
+        catch ( OperationCanceledException )
+        {
+            _logger.Information ( "Standing operation was cancelled" ) ;
         }
         catch ( Exception ex )
         {
             _logger.Error ( ex ,
-                            "Failed to call {MethodName}" ,
-                            nameof ( StandAsync ) ) ;
-            _errorManager.PublishForMessage ( $"Failed to call {nameof ( StandAsync )}" ) ;
+                            "Failed to execute standing hotkey command" ) ;
+            _errorManager.PublishForMessage ( $"Failed to move desk to standing position: {ex.Message}" ) ;
         }
     }
 
@@ -476,16 +479,19 @@ public sealed partial class UiDeskManager : IUiDeskManager
     {
         try
         {
-            _logger.Debug ( "{MethodName}" ,
+            _logger.Debug ( "Seating hotkey pressed, executing {MethodName}" ,
                             nameof ( SitAsync ) ) ;
             await SitAsync ( ).ConfigureAwait ( false ) ;
+        }
+        catch ( OperationCanceledException )
+        {
+            _logger.Information ( "Seating operation was cancelled" ) ;
         }
         catch ( Exception ex )
         {
             _logger.Error ( ex ,
-                            "Failed to call {MethodName}" ,
-                            nameof ( SitAsync ) ) ;
-            _errorManager.PublishForMessage ( $"Failed to call {nameof ( SitAsync )}" ) ;
+                            "Failed to execute seating hotkey command" ) ;
+            _errorManager.PublishForMessage ( $"Failed to move desk to seating position: {ex.Message}" ) ;
         }
     }
 
@@ -493,16 +499,19 @@ public sealed partial class UiDeskManager : IUiDeskManager
     {
         try
         {
-            _logger.Debug ( "{MethodName}" ,
+            _logger.Debug ( "Custom1 hotkey pressed, executing {MethodName}" ,
                             nameof ( Custom1Async ) ) ;
             await Custom1Async ( ).ConfigureAwait ( false ) ;
+        }
+        catch ( OperationCanceledException )
+        {
+            _logger.Information ( "Custom1 operation was cancelled" ) ;
         }
         catch ( Exception ex )
         {
             _logger.Error ( ex ,
-                            "Failed to call {MethodName}" ,
-                            nameof ( Custom1Async ) ) ;
-            _errorManager.PublishForMessage ( $"Failed to call {nameof ( Custom1Async )}" ) ;
+                            "Failed to execute Custom1 hotkey command" ) ;
+            _errorManager.PublishForMessage ( $"Failed to move desk to Custom 1 position: {ex.Message}" ) ;
         }
     }
 
@@ -510,16 +519,19 @@ public sealed partial class UiDeskManager : IUiDeskManager
     {
         try
         {
-            _logger.Debug ( "{MethodName}" ,
+            _logger.Debug ( "Custom2 hotkey pressed, executing {MethodName}" ,
                             nameof ( Custom2Async ) ) ;
             await Custom2Async ( ).ConfigureAwait ( false ) ;
+        }
+        catch ( OperationCanceledException )
+        {
+            _logger.Information ( "Custom2 operation was cancelled" ) ;
         }
         catch ( Exception ex )
         {
             _logger.Error ( ex ,
-                            "Failed to call {MethodName}" ,
-                            nameof ( Custom2Async ) ) ;
-            _errorManager.PublishForMessage ( $"Failed to call {nameof ( Custom2Async )}" ) ;
+                            "Failed to execute Custom2 hotkey command" ) ;
+            _errorManager.PublishForMessage ( $"Failed to move desk to Custom 2 position: {ex.Message}" ) ;
         }
     }
 

@@ -328,6 +328,15 @@ public partial class App
         {
             _logger.Error ( ex ,
                             "Failed to start application" ) ;
+
+            // Show critical error to user and exit
+            MessageBox.Show ( $"Failed to start application: {ex.Message}\n\nPlease check the logs for more details." ,
+                             "Startup Error" ,
+                             MessageBoxButton.OK ,
+                             MessageBoxImage.Error ) ;
+
+            // Exit the application since startup failed
+            Shutdown ( 1 ) ;
         }
     }
 

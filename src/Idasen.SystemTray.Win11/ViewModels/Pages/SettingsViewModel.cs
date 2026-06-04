@@ -630,15 +630,25 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
                                                           {
                                                               try
                                                               {
+                                                                  _logger.Debug ( "Window hidden, storing settings automatically" ) ;
                                                                   await _settingsService.Synchronizer
                                                                                         .StoreSettingsAsync ( this ,
                                                                                                               CancellationToken
                                                                                                                  .None ) ;
                                                               }
+                                                              catch ( OperationCanceledException )
+                                                              {
+                                                                  _logger.Information ( "Settings save operation was cancelled during visibility change" ) ;
+                                                              }
+                                                              catch ( InvalidOperationException ex )
+                                                              {
+                                                                  _logger.Error ( ex ,
+                                                                                  "Invalid operation while saving settings on visibility change" ) ;
+                                                              }
                                                               catch ( Exception ex )
                                                               {
                                                                   _logger.Error ( ex ,
-                                                                                  "Failed to save settings when visibility changed." ) ;
+                                                                                  "Failed to save settings when visibility changed" ) ;
                                                               }
                                                           } ) ;
     }
