@@ -1,8 +1,11 @@
+using System.Diagnostics.CodeAnalysis ;
+
 namespace Idasen.SystemTray.Win11.Utils ;
 
 /// <summary>
 ///     Composite implementation of settings service that aggregates settings-related dependencies.
 /// </summary>
+[ExcludeFromCodeCoverage]
 public class SettingsService ( Interfaces.ILoggingSettingsManager  settingsManager ,
                                ISettingsSynchronizer               synchronizer ,
                                Interfaces.IHeightSettingsValidator heightValidator )
