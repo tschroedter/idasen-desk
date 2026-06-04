@@ -161,6 +161,9 @@ public partial class App
                                                                               .AddTransient <
                                                                                    IDeviceAddressToULongConverter ,
                                                                                    DeviceAddressToULongConverter > ( ) ;
+                                                                           services
+                                                                              .AddTransient < IConverters ,
+                                                                                   Converters > ( ) ;
                                                                            services.AddSingleton ( provider =>
                                                                                                        new Func <
                                                                                                            IDeskProvider > ( provider
@@ -175,6 +178,13 @@ public partial class App
                                                                            services
                                                                               .AddTransient < ISettingsSynchronizer ,
                                                                                    SettingsSynchronizer > ( ) ;
+                                                                           services
+                                                                              .AddSingleton < IHeightSettingsValidator ,
+                                                                                   Utils.Validation.HeightSettingsValidator > ( ) ;
+                                                                           // Composite settings service that combines settings-related dependencies
+                                                                           services
+                                                                              .AddSingleton < ISettingsService ,
+                                                                                   SettingsService > ( ) ;
                                                                            services
                                                                               .AddSingleton < IApplicationThemeManager ,
                                                                                    MyApplicationThemeManager > ( ) ;

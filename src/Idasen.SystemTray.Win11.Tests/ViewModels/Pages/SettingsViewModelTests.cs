@@ -5,6 +5,7 @@ using FluentAssertions ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.TraySettings ;
 using Idasen.SystemTray.Win11.Utils ;
+using Idasen.SystemTray.Win11.Utils.Validation ;
 using Idasen.SystemTray.Win11.ViewModels.Pages ;
 using Microsoft.Reactive.Testing ;
 using NSubstitute ;
@@ -16,16 +17,18 @@ namespace Idasen.SystemTray.Win11.Tests.ViewModels.Pages ;
 public sealed class SettingsViewModelTests
     : IDisposable
 {
-    private readonly ILogger                 _logger          = Substitute.For < ILogger > ( ) ;
-    private readonly IMainWindow             _mainWindow      = Substitute.For < IMainWindow > ( ) ;
-    private readonly TestScheduler           _scheduler       = new( ) ;
-    private readonly ILoggingSettingsManager _settingsManager = Substitute.For < ILoggingSettingsManager > ( ) ;
+    private readonly ILogger                   _logger               = Substitute.For < ILogger > ( ) ;
+    private readonly IMainWindow               _mainWindow           = Substitute.For < IMainWindow > ( ) ;
+    private readonly TestScheduler             _scheduler            = new( ) ;
+    private readonly ILoggingSettingsManager   _settingsManager      = Substitute.For < ILoggingSettingsManager > ( ) ;
+    private readonly IHeightSettingsValidator  _heightValidator      = new HeightSettingsValidator ( ) ;
 
     private readonly Subject < ISettings >     _settingsSaved        = new( ) ;
     private readonly ISettingsSynchronizer     _synchronizer         = Substitute.For < ISettingsSynchronizer > ( ) ;
     private readonly IApplicationThemeManager  _themeManager         = Substitute.For < IApplicationThemeManager > ( ) ;
     private readonly IAvailableKeysProvider    _availableKeysProvider = Substitute.For < IAvailableKeysProvider > ( ) ;
     private readonly Subject < Visibility >    _visibilityChanges    = new( ) ;
+    private readonly ISettingsService          _settingsService      = Substitute.For < ISettingsService > ( ) ;
 
     private bool _disposed ;
 
@@ -33,6 +36,11 @@ public sealed class SettingsViewModelTests
     {
         _settingsManager.SettingsFileName.Returns ( "TestSettings.json" ) ;
         _settingsManager.SettingsSaved.Returns ( _settingsSaved ) ;
+
+        // Setup the settings service mock
+        _settingsService.SettingsManager.Returns ( _settingsManager ) ;
+        _settingsService.Synchronizer.Returns ( _synchronizer ) ;
+        _settingsService.HeightValidator.Returns ( _heightValidator ) ;
 
         // Visibility stream for the main window
         _mainWindow.VisibilityChanged.Returns ( _visibilityChanges ) ;
@@ -971,9 +979,8 @@ public sealed class SettingsViewModelTests
     private SettingsViewModel CreateSut ( )
     {
         return new SettingsViewModel ( _logger ,
-                                       _settingsManager ,
+                                       _settingsService ,
                                        _scheduler ,
-                                       _synchronizer ,
                                        _themeManager ,
                                        _mainWindow ,
                                        _availableKeysProvider ) ;

@@ -3,6 +3,7 @@ using Idasen.BluetoothLE.Linak.Control ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.TraySettings ;
 using Idasen.SystemTray.Win11.Utils ;
+using Idasen.SystemTray.Win11.Utils.Validation ;
 using NSubstitute ;
 using NSubstitute.ExceptionExtensions ;
 using Serilog ;
@@ -27,6 +28,8 @@ public class SettingsSynchronizerTests
     private readonly ILoggingSettingsManager _settingsManager    = Substitute.For < ILoggingSettingsManager > ( ) ;
     private readonly IThemeSwitcher          _themeSwitcher      = Substitute.For < IThemeSwitcher > ( ) ;
     private readonly IDoubleToUIntConverter  _toUIntConverter    = Substitute.For < IDoubleToUIntConverter > ( ) ;
+    private readonly IHeightSettingsValidator _heightValidator   = new HeightSettingsValidator ( ) ;
+    private readonly IConverters             _converters         = Substitute.For < IConverters > ( ) ;
 
     private SettingsSynchronizer CreateSut ( )
     {
@@ -35,13 +38,17 @@ public class SettingsSynchronizerTests
         _settings.HeightSettings     = _heightSettings ;
         _settings.AppearanceSettings = _appearanceSettings ;
         _settings.HotkeySettings     = _hotkeySettings ;
+
+        _converters.DoubleToUIntConverter.Returns ( _toUIntConverter ) ;
+        _converters.DeviceNameConverter.Returns ( _nameConverter ) ;
+        _converters.DeviceAddressToULongConverter.Returns ( _addressConverter ) ;
+
         return new SettingsSynchronizer ( _logger ,
                                           _settingsManager ,
-                                          _toUIntConverter ,
-                                          _nameConverter ,
-                                          _addressConverter ,
+                                          _converters ,
                                           _settingsChanges ,
-                                          _themeSwitcher ) ;
+                                          _themeSwitcher ,
+                                          _heightValidator ) ;
     }
 
     [ Fact ]
