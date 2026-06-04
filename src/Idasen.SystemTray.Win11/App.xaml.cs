@@ -181,6 +181,10 @@ public partial class App
                                                                            services
                                                                               .AddSingleton < IHeightSettingsValidator ,
                                                                                    Utils.Validation.HeightSettingsValidator > ( ) ;
+                                                                           // Composite settings service that combines settings-related dependencies
+                                                                           services
+                                                                              .AddSingleton < ISettingsService ,
+                                                                                   SettingsService > ( ) ;
                                                                            services
                                                                               .AddSingleton < IApplicationThemeManager ,
                                                                                    MyApplicationThemeManager > ( ) ;

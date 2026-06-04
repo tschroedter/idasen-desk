@@ -28,6 +28,7 @@ public sealed class SettingsViewModelTests
     private readonly IApplicationThemeManager  _themeManager         = Substitute.For < IApplicationThemeManager > ( ) ;
     private readonly IAvailableKeysProvider    _availableKeysProvider = Substitute.For < IAvailableKeysProvider > ( ) ;
     private readonly Subject < Visibility >    _visibilityChanges    = new( ) ;
+    private readonly ISettingsService          _settingsService      = Substitute.For < ISettingsService > ( ) ;
 
     private bool _disposed ;
 
@@ -35,6 +36,11 @@ public sealed class SettingsViewModelTests
     {
         _settingsManager.SettingsFileName.Returns ( "TestSettings.json" ) ;
         _settingsManager.SettingsSaved.Returns ( _settingsSaved ) ;
+
+        // Setup the settings service mock
+        _settingsService.SettingsManager.Returns ( _settingsManager ) ;
+        _settingsService.Synchronizer.Returns ( _synchronizer ) ;
+        _settingsService.HeightValidator.Returns ( _heightValidator ) ;
 
         // Visibility stream for the main window
         _mainWindow.VisibilityChanged.Returns ( _visibilityChanges ) ;
@@ -973,12 +979,10 @@ public sealed class SettingsViewModelTests
     private SettingsViewModel CreateSut ( )
     {
         return new SettingsViewModel ( _logger ,
-                                       _settingsManager ,
+                                       _settingsService ,
                                        _scheduler ,
-                                       _synchronizer ,
                                        _themeManager ,
                                        _mainWindow ,
-                                       _availableKeysProvider ,
-                                       _heightValidator ) ;
+                                       _availableKeysProvider ) ;
     }
 }
