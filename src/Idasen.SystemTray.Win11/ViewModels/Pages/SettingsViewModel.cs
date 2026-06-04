@@ -19,13 +19,11 @@ namespace Idasen.SystemTray.Win11.ViewModels.Pages ;
 public partial class SettingsViewModel : ObservableObject , INavigationAware , ISettingsViewModel
 {
     private readonly ILogger                    _logger ;
-    private readonly ILoggingSettingsManager    _settingsManager ;
+    private readonly ISettingsService           _settingsService ;
     private readonly IScheduler                 _scheduler ;
-    private readonly ISettingsSynchronizer      _synchronizer ;
     private readonly IApplicationThemeManager   _themeManager ;
     private readonly IMainWindow                _mainWindow ;
     private readonly IAvailableKeysProvider     _availableKeysProvider ;
-    private readonly IHeightSettingsValidator   _heightValidator ;
 
     private IDisposable? _autoSaveSubscription;
 
@@ -99,22 +97,18 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
 
     public SettingsViewModel (
         ILogger                   logger ,
-        ILoggingSettingsManager   settingsManager ,
+        ISettingsService          settingsService ,
         IScheduler                scheduler ,
-        ISettingsSynchronizer     synchronizer ,
         IApplicationThemeManager  themeManager ,
         IMainWindow               mainWindow ,
-        IAvailableKeysProvider    availableKeysProvider ,
-        IHeightSettingsValidator  heightValidator )
+        IAvailableKeysProvider    availableKeysProvider )
     {
         _logger                 = logger ;
-        _settingsManager        = settingsManager ;
+        _settingsService        = settingsService ;
         _scheduler              = scheduler ;
-        _synchronizer           = synchronizer ;
         _themeManager           = themeManager ;
         _mainWindow             = mainWindow ;
         _availableKeysProvider  = availableKeysProvider ;
-        _heightValidator        = heightValidator ;
 
         // Initialize properties with default values
         AppVersion                        = string.Empty ;
@@ -378,7 +372,7 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
 
     public async Task OnNavigatedFromAsync ( )
     {
-        await _synchronizer.StoreSettingsAsync ( this ,
+        await _settingsService.Synchronizer.StoreSettingsAsync ( this ,
                                                 CancellationToken.None ).ConfigureAwait ( false ) ;
     }
 
@@ -420,10 +414,10 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
 
         await LoadAndApplySettings ( token ) ;
 
-        SettingsFileFullPath = _settingsManager.SettingsFileName ;
+        SettingsFileFullPath = _settingsService.SettingsManager.SettingsFileName ;
         LogFolderPath        = LoggingFile.Path ;
 
-        _settingsSaved = _settingsManager.SettingsSaved
+        _settingsSaved = _settingsService.SettingsManager.SettingsSaved
                                         .ObserveOn ( _scheduler )
                                         .Subscribe ( OnSettingsSaved ) ;
 
@@ -438,7 +432,7 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
 
     private async Task LoadAndApplySettings ( CancellationToken token )
     {
-        await _synchronizer.LoadSettingsAsync ( this ,
+        await _settingsService.Synchronizer.LoadSettingsAsync ( this ,
                                                token ) ;
 
         await _themeManager.ApplyAsync(CurrentTheme);
@@ -459,7 +453,7 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
                                .Throttle ( TimeSpan.FromMilliseconds ( 300 ) ,
                                            _scheduler )
                                .Select ( _ => Observable.FromAsync ( cancellationToken =>
-                                                                         _synchronizer.StoreSettingsAsync ( this ,
+                                                                         _settingsService.Synchronizer.StoreSettingsAsync ( this ,
                                                                                                            cancellationToken ) ) )
                                .Switch ( )
                                .Subscribe ( _ => { } ,
@@ -502,7 +496,7 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
     [ RelayCommand ]
     internal void OnChangeTheme ( string parameter )
     {
-        _synchronizer.ChangeTheme ( parameter ) ;
+        _settingsService.Synchronizer.ChangeTheme ( parameter ) ;
     }
 
     [ RelayCommand ]
@@ -542,7 +536,7 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
 
             _isLoadingSettings = true ;
 
-            await _settingsManager.ResetSettingsAsync ( CancellationToken.None ) ;
+            await _settingsService.SettingsManager.ResetSettingsAsync ( CancellationToken.None ) ;
 
             await LoadAndApplySettings ( CancellationToken.None ) ;
         }
@@ -574,7 +568,7 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
                                                          {
                                                              try
                                                              {
-                                                                 await _synchronizer.StoreSettingsAsync ( this ,
+                                                                 await _settingsService.Synchronizer.StoreSettingsAsync ( this ,
                                                                                                          CancellationToken
                                                                                                             .None ) ;
                                                              }
@@ -591,7 +585,7 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
                                                                                 {
                                                                                     if ( _isLoadingSettings ) return ;
 
-                                                                                    var result = _heightValidator.ValidateMinMaxConstraints ( value , MaxHeight ) ;
+                                                                                    var result = _settingsService.HeightValidator.ValidateMinMaxConstraints ( value , MaxHeight ) ;
                                                                                     if ( ! result.IsValid )
                                                                                     {
                                                                                         _logger.Warning ( "Invalid min/max constraints: {Errors}" , string.Join ( ", " , result.Errors ) ) ;
@@ -603,7 +597,7 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
                                                                                 {
                                                                                     if ( _isLoadingSettings ) return ;
 
-                                                                                    var result = _heightValidator.ValidateMinMaxConstraints ( MinHeight , value ) ;
+                                                                                    var result = _settingsService.HeightValidator.ValidateMinMaxConstraints ( MinHeight , value ) ;
                                                                                     if ( ! result.IsValid )
                                                                                     {
                                                                                         _logger.Warning ( "Invalid min/max constraints: {Errors}" , string.Join ( ", " , result.Errors ) ) ;
@@ -614,7 +608,7 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
                                                                                 {
                                                                                     if ( _isLoadingSettings ) return ;
 
-                                                                                    var result = _heightValidator.ValidateHeight ( value , MinHeight , MaxHeight ) ;
+                                                                                    var result = _settingsService.HeightValidator.ValidateHeight ( value , MinHeight , MaxHeight ) ;
                                                                                     if ( ! result.IsValid )
                                                                                     {
                                                                                         _logger.Warning ( "Invalid standing height: {Errors}" , string.Join ( ", " , result.Errors ) ) ;
@@ -625,7 +619,7 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
                                                                                 {
                                                                                     if ( _isLoadingSettings ) return ;
 
-                                                                                    var result = _heightValidator.ValidateHeight ( value , MinHeight , MaxHeight ) ;
+                                                                                    var result = _settingsService.HeightValidator.ValidateHeight ( value , MinHeight , MaxHeight ) ;
                                                                                     if ( ! result.IsValid )
                                                                                     {
                                                                                         _logger.Warning ( "Invalid seating height: {Errors}" , string.Join ( ", " , result.Errors ) ) ;
@@ -636,7 +630,7 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
                                                                                 {
                                                                                     if ( _isLoadingSettings ) return ;
 
-                                                                                    var result = _heightValidator.ValidateHeight ( value , MinHeight , MaxHeight ) ;
+                                                                                    var result = _settingsService.HeightValidator.ValidateHeight ( value , MinHeight , MaxHeight ) ;
                                                                                     if ( ! result.IsValid )
                                                                                     {
                                                                                         _logger.Warning ( "Invalid custom 1 height: {Errors}" , string.Join ( ", " , result.Errors ) ) ;
@@ -647,7 +641,7 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
                                                                                 {
                                                                                     if ( _isLoadingSettings ) return ;
 
-                                                                                    var result = _heightValidator.ValidateHeight ( value , MinHeight , MaxHeight ) ;
+                                                                                    var result = _settingsService.HeightValidator.ValidateHeight ( value , MinHeight , MaxHeight ) ;
                                                                                     if ( ! result.IsValid )
                                                                                     {
                                                                                         _logger.Warning ( "Invalid custom 2 height: {Errors}" , string.Join ( ", " , result.Errors ) ) ;
@@ -658,7 +652,7 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
                                                                                 {
                                                                                     if ( _isLoadingSettings ) return ;
 
-                                                                                    var result = _heightValidator.ValidatePresetName ( value ) ;
+                                                                                    var result = _settingsService.HeightValidator.ValidatePresetName ( value ) ;
                                                                                     if ( ! result.IsValid )
                                                                                     {
                                                                                         _logger.Warning ( "Invalid standing preset name: {Errors}" , string.Join ( ", " , result.Errors ) ) ;
@@ -669,7 +663,7 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
                                                                                 {
                                                                                     if ( _isLoadingSettings ) return ;
 
-                                                                                    var result = _heightValidator.ValidatePresetName ( value ) ;
+                                                                                    var result = _settingsService.HeightValidator.ValidatePresetName ( value ) ;
                                                                                     if ( ! result.IsValid )
                                                                                     {
                                                                                         _logger.Warning ( "Invalid seating preset name: {Errors}" , string.Join ( ", " , result.Errors ) ) ;
@@ -680,7 +674,7 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
                                                                                 {
                                                                                     if ( _isLoadingSettings ) return ;
 
-                                                                                    var result = _heightValidator.ValidatePresetName ( value ) ;
+                                                                                    var result = _settingsService.HeightValidator.ValidatePresetName ( value ) ;
                                                                                     if ( ! result.IsValid )
                                                                                     {
                                                                                         _logger.Warning ( "Invalid custom 1 preset name: {Errors}" , string.Join ( ", " , result.Errors ) ) ;
@@ -691,7 +685,7 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
                                                                                 {
                                                                                     if ( _isLoadingSettings ) return ;
 
-                                                                                    var result = _heightValidator.ValidatePresetName ( value ) ;
+                                                                                    var result = _settingsService.HeightValidator.ValidatePresetName ( value ) ;
                                                                                     if ( ! result.IsValid )
                                                                                     {
                                                                                         _logger.Warning ( "Invalid custom 2 preset name: {Errors}" , string.Join ( ", " , result.Errors ) ) ;
@@ -704,7 +698,7 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
                                                                                     /// <returns>Validation result with any errors.</returns>
                                                                                     public ValidationResult ValidateAllSettings ( )
                                                                                     {
-                                                                                        return _heightValidator.ValidateAllHeights ( Standing ,
+                                                                                        return _settingsService.HeightValidator.ValidateAllHeights ( Standing ,
                                                                                                                                      Seating ,
                                                                                                                                      Custom1 ,
                                                                                                                                      Custom2 ,
