@@ -43,7 +43,7 @@ A special thank you to all the amazing people who test this application and prov
 
 ## What's New
 
-### Version 0.1.435
+### Version 0.1.443
 - ⌨️ **Configurable Global Hotkeys**:
   - Enable/disable all global hotkeys from the Settings → Hot Keys page
   - Select individual keys (e.g. F-keys, arrow keys, numpad) and modifier combinations (Ctrl, Alt, Shift, Win) per position
@@ -142,7 +142,7 @@ Short description: This patch release focuses on stability and quality-of-life i
 
 Download the latest self-contained executable (no .NET runtime installation required):
 
-**[Download Latest](https://github.com/tschroedter/idasen-desk/releases/download/v0.1.435/Idasen-SystemTray-0.1.435-win-x64.exe)**
+**[Download Latest](https://github.com/tschroedter/idasen-desk/releases/download/v0.1.443/Idasen-SystemTray-0.1.443-win-x64.exe)**
 
 1. Download the executable from the link above
 2. Run the executable

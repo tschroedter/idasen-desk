@@ -6,14 +6,12 @@ using Wpf.Ui.Appearance ;
 namespace Idasen.SystemTray.Win11.Utils ;
 
 public class SettingsSynchronizer (
-    ILogger                        logger ,
-    ILoggingSettingsManager        settingsManager ,
-    IDoubleToUIntConverter         toUIntConverter ,
-    IDeviceNameConverter           nameConverter ,
-    IDeviceAddressToULongConverter addressConverter ,
-    INotifySettingsChanges         settingsChanges ,
-    IThemeSwitcher                 themeSwitcher ,
-    IHeightSettingsValidator       heightValidator ) : ISettingsSynchronizer
+    ILogger                  logger ,
+    ILoggingSettingsManager  settingsManager ,
+    IConverters              converters ,
+    INotifySettingsChanges   settingsChanges ,
+    IThemeSwitcher           themeSwitcher ,
+    IHeightSettingsValidator heightValidator ) : ISettingsSynchronizer
 {
     public async Task LoadSettingsAsync ( ISettingsViewModel model ,
                                           CancellationToken  token )
@@ -135,8 +133,8 @@ public class SettingsSynchronizer (
         model.StopIsVisibleInContextMenu     = current.DeviceSettings.StopIsVisibleInContextMenu ;
 
         model.LastKnownDeskHeight = current.HeightSettings.LastKnownDeskHeight ;
-        model.DeskName            = nameConverter.EmptyIfDefault ( current.DeviceSettings.DeviceName ) ;
-        model.DeskAddress         = addressConverter.EmptyIfDefault ( current.DeviceSettings.DeviceAddress ) ;
+        model.DeskName            = converters.DeviceNameConverter.EmptyIfDefault ( current.DeviceSettings.DeviceName ) ;
+        model.DeskAddress         = converters.DeviceAddressToULongConverter.EmptyIfDefault ( current.DeviceSettings.DeviceAddress ) ;
         model.ParentalLock        = current.DeviceSettings.DeviceLocked ;
         model.Notifications       = current.DeviceSettings.NotificationsEnabled ;
         model.MaxSpeedToStopMovement = current.DeviceSettings.MaxSpeedToStopMovement > 0
@@ -194,10 +192,10 @@ public class SettingsSynchronizer (
     {
         var settings = settingsManager.CurrentSettings ;
 
-        var newStanding     = toUIntConverter.ConvertToUInt ( model.Standing , Constants.DefaultHeightStandingInCm ) ;
-        var newSeating      = toUIntConverter.ConvertToUInt ( model.Seating , Constants.DefaultHeightSeatingInCm ) ;
-        var newCustom1      = toUIntConverter.ConvertToUInt ( model.Custom1 , Constants.DefaultHeightStandingInCm ) ;
-        var newCustom2      = toUIntConverter.ConvertToUInt ( model.Custom2 , Constants.DefaultHeightSeatingInCm ) ;
+        var newStanding     = converters.DoubleToUIntConverter.ConvertToUInt ( model.Standing , Constants.DefaultHeightStandingInCm ) ;
+        var newSeating      = converters.DoubleToUIntConverter.ConvertToUInt ( model.Seating , Constants.DefaultHeightSeatingInCm ) ;
+        var newCustom1      = converters.DoubleToUIntConverter.ConvertToUInt ( model.Custom1 , Constants.DefaultHeightStandingInCm ) ;
+        var newCustom2      = converters.DoubleToUIntConverter.ConvertToUInt ( model.Custom2 , Constants.DefaultHeightSeatingInCm ) ;
         var newStandingName = string.IsNullOrWhiteSpace ( model.StandingName ) ? Constants.DefaultStandingName : model.StandingName ;
         var newSeatingName  = string.IsNullOrWhiteSpace ( model.SeatingName ) ? Constants.DefaultSeatingName : model.SeatingName ;
         var newCustom1Name  = string.IsNullOrWhiteSpace ( model.Custom1Name ) ? Constants.DefaultCustom1Name : model.Custom1Name ;
@@ -228,16 +226,16 @@ public class SettingsSynchronizer (
         var newDeviceLocked         = model.ParentalLock ;
         var newNotificationsEnabled = model.Notifications ;
 
-        settings.HeightSettings.StandingHeightInCm = toUIntConverter.ConvertToUInt ( model.Standing ,
+        settings.HeightSettings.StandingHeightInCm = converters.DoubleToUIntConverter.ConvertToUInt ( model.Standing ,
                                                                                      Constants.DefaultHeightStandingInCm ) ;
         settings.HeightSettings.StandingName = string.IsNullOrWhiteSpace ( model.StandingName ) ? Constants.DefaultStandingName : model.StandingName ;
-        settings.HeightSettings.SeatingHeightInCm = toUIntConverter.ConvertToUInt ( model.Seating ,
+        settings.HeightSettings.SeatingHeightInCm = converters.DoubleToUIntConverter.ConvertToUInt ( model.Seating ,
                                                                                     Constants.DefaultHeightSeatingInCm ) ;
         settings.HeightSettings.SeatingName = string.IsNullOrWhiteSpace ( model.SeatingName ) ? Constants.DefaultSeatingName : model.SeatingName ;
-        settings.HeightSettings.Custom1HeightInCm = toUIntConverter.ConvertToUInt ( model.Custom1 ,
+        settings.HeightSettings.Custom1HeightInCm = converters.DoubleToUIntConverter.ConvertToUInt ( model.Custom1 ,
                                                                                     Constants.DefaultHeightStandingInCm ) ;
         settings.HeightSettings.Custom1Name = string.IsNullOrWhiteSpace ( model.Custom1Name ) ? Constants.DefaultCustom1Name : model.Custom1Name ;
-        settings.HeightSettings.Custom2HeightInCm = toUIntConverter.ConvertToUInt ( model.Custom2 ,
+        settings.HeightSettings.Custom2HeightInCm = converters.DoubleToUIntConverter.ConvertToUInt ( model.Custom2 ,
                                                                                     Constants.DefaultHeightSeatingInCm ) ;
         settings.HeightSettings.Custom2Name = string.IsNullOrWhiteSpace ( model.Custom2Name ) ? Constants.DefaultCustom2Name : model.Custom2Name ;
         settings.HeightSettings.LastKnownDeskHeight = model.LastKnownDeskHeight ;
@@ -339,13 +337,13 @@ public class SettingsSynchronizer (
         var current = settingsManager.CurrentSettings ;
 
         // cache conversions
-        var newStanding = toUIntConverter.ConvertToUInt ( model.Standing ,
+        var newStanding = converters.DoubleToUIntConverter.ConvertToUInt ( model.Standing ,
                                                           Constants.DefaultHeightStandingInCm ) ;
-        var newSeating = toUIntConverter.ConvertToUInt ( model.Seating ,
+        var newSeating = converters.DoubleToUIntConverter.ConvertToUInt ( model.Seating ,
                                                          Constants.DefaultHeightSeatingInCm ) ;
-        var newCustom1 = toUIntConverter.ConvertToUInt ( model.Custom1 ,
+        var newCustom1 = converters.DoubleToUIntConverter.ConvertToUInt ( model.Custom1 ,
                                                          Constants.DefaultHeightStandingInCm ) ;
-        var newCustom2 = toUIntConverter.ConvertToUInt ( model.Custom2 ,
+        var newCustom2 = converters.DoubleToUIntConverter.ConvertToUInt ( model.Custom2 ,
                                                          Constants.DefaultHeightSeatingInCm ) ;
         var newStandingName = string.IsNullOrWhiteSpace ( model.StandingName ) ? Constants.DefaultStandingName : model.StandingName ;
         var newSeatingName  = string.IsNullOrWhiteSpace ( model.SeatingName ) ? Constants.DefaultSeatingName : model.SeatingName ;
@@ -407,7 +405,7 @@ public class SettingsSynchronizer (
 
     private ( string Name , ulong Address ) GetNormalizedDevice ( ISettingsViewModel model )
     {
-        return ( nameConverter.DefaultIfEmpty ( model.DeskName ) ,
-                 addressConverter.DefaultIfEmpty ( model.DeskAddress ) ) ;
+        return ( converters.DeviceNameConverter.DefaultIfEmpty ( model.DeskName ) ,
+                 converters.DeviceAddressToULongConverter.DefaultIfEmpty ( model.DeskAddress ) ) ;
     }
 }
