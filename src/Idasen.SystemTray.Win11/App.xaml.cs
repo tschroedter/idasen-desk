@@ -147,6 +147,8 @@ public partial class App
                                                                            services
                                                                               .AddSingleton < IDeskMovementManager , DeskMovementManager > ( ) ;
                                                                            services
+                                                                              .AddSingleton < IDeskConnectionManager , DeskConnectionManager > ( ) ;
+                                                                           services
                                                                               .AddSingleton < IUiDeskManager ,
                                                                                    UiDeskManager > ( ) ;
                                                                            services

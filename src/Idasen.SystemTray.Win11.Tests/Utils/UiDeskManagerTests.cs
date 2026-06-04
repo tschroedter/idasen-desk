@@ -20,7 +20,8 @@ public class UiDeskManagerTests
         out IDesk            desk ,
         out ISettingsManager settingsManager ,
         out IDeskProvider    deskProvider ,
-        out IDeskMovementManager deskMovementManager )
+        out IDeskMovementManager deskMovementManager ,
+        out IDeskConnectionManager deskConnectionManager )
     {
         var logger = Substitute.For < ILogger > ( ) ;
         settingsManager = Substitute.For < ISettingsManager > ( ) ;
@@ -28,20 +29,22 @@ public class UiDeskManagerTests
         var notifications   = Substitute.For < INotifications > ( ) ;
         var scheduler       = Scheduler.Immediate ;
         var dp              = Substitute.For < IDeskProvider > ( ) ;
-        var providerFactory = new Func < IDeskProvider > ( ( ) => dp ) ;
         var errorManager    = Substitute.For < IErrorManager > ( ) ;
         var settingsChanges = Substitute.For < IObserveSettingsChanges > ( ) ;
-        var reconnectStrategy = new ExponentialBackoffReconnectStrategy ( logger ) ;
         var hotkeyManager   = Substitute.For < IHotkeyManager > ( ) ;
         var statusBarManager = Substitute.For < IStatusBarManager > ( ) ;
         deskMovementManager = Substitute.For < IDeskMovementManager > ( ) ;
+        deskConnectionManager = Substitute.For < IDeskConnectionManager > ( ) ;
 
         deskProvider = dp ;
+        desk = Substitute.For < IDesk > ( ) ;
 
         var settings = new Settings { HeightSettings = new HeightSettings ( ) } ;
         settingsManager.CurrentSettings.Returns ( settings ) ;
 
         deskMovementManager.IsDeskAvailable ( ).Returns ( true ) ;
+        deskConnectionManager.IsConnected.Returns ( true ) ;
+        deskConnectionManager.CurrentDesk.Returns ( desk ) ;
 
         var sut = new UiDeskManager (
                                      logger ,
@@ -49,20 +52,12 @@ public class UiDeskManagerTests
                                      iconProvider ,
                                      notifications ,
                                      scheduler ,
-                                     providerFactory ,
                                      errorManager ,
                                      settingsChanges ,
-                                     reconnectStrategy ,
                                      hotkeyManager ,
                                      statusBarManager ,
-                                     deskMovementManager ) ;
-
-        desk = Substitute.For < IDesk > ( ) ;
-        typeof ( UiDeskManager )
-           .GetField ( "_desk" ,
-                       BindingFlags.Instance | BindingFlags.NonPublic )!
-           .SetValue ( sut ,
-                       desk ) ;
+                                     deskMovementManager ,
+                                     deskConnectionManager ) ;
 
         return sut ;
     }
@@ -73,7 +68,8 @@ public class UiDeskManagerTests
         var sut = CreateSut ( out _ ,
                               out var settingsManager ,
                               out _ ,
-                              out var deskMovementManager ) ;
+                              out var deskMovementManager ,
+                              out _ ) ;
         var settings = ( Settings )settingsManager.CurrentSettings ;
         settings.HeightSettings.StandingHeightInCm = 120 ;
 
@@ -88,7 +84,8 @@ public class UiDeskManagerTests
         var sut = CreateSut ( out _ ,
                               out var settingsManager ,
                               out _ ,
-                              out var deskMovementManager ) ;
+                              out var deskMovementManager ,
+                              out _ ) ;
         var settings = ( Settings )settingsManager.CurrentSettings ;
         settings.HeightSettings.SeatingHeightInCm = 70 ;
 
@@ -101,6 +98,7 @@ public class UiDeskManagerTests
     public async Task StopAsync_WhenConnected_CallsMoveStop ( )
     {
         var sut = CreateSut ( out var desk ,
+                              out _ ,
                               out _ ,
                               out _ ,
                               out _ ) ;
@@ -116,12 +114,9 @@ public class UiDeskManagerTests
         var sut = CreateSut ( out var desk ,
                               out _ ,
                               out _ ,
-                              out _ ) ;
-        typeof ( UiDeskManager )
-           .GetField ( "_desk" ,
-                       BindingFlags.Instance | BindingFlags.NonPublic )!
-           .SetValue ( sut ,
-                       null ) ;
+                              out _ ,
+                              out var deskConnectionManager ) ;
+        deskConnectionManager.IsConnected.Returns ( false ) ;
 
         await sut.StopAsync ( ) ;
 
@@ -138,6 +133,7 @@ public class UiDeskManagerTests
         var sut = CreateSut ( out var desk ,
                               out _ ,
                               out _ ,
+                              out _ ,
                               out _ ) ;
 
         await sut.MoveLockAsync ( ) ;
@@ -151,6 +147,7 @@ public class UiDeskManagerTests
         var sut = CreateSut ( out var desk ,
                               out _ ,
                               out _ ,
+                              out _ ,
                               out _ ) ;
 
         await sut.MoveUnlockAsync ( ) ;
@@ -161,30 +158,15 @@ public class UiDeskManagerTests
     [ Fact ]
     public async Task DisconnectAsync_WhenConnected_DisposesAndClearsDeskAndProvider ( )
     {
-        var sut = CreateSut ( out var desk ,
+        var sut = CreateSut ( out _ ,
                               out _ ,
-                              out var provider ,
-                              out _ ) ;
-        // Assign provider field
-        typeof ( UiDeskManager )
-           .GetField ( "_deskProvider" ,
-                       BindingFlags.Instance | BindingFlags.NonPublic )!
-           .SetValue ( sut ,
-                       provider ) ;
+                              out _ ,
+                              out _ ,
+                              out var deskConnectionManager ) ;
 
         await sut.DisconnectAsync ( ) ;
 
-        // desk and provider should be disposed
-        desk.Received ( 1 ).Dispose ( ) ;
-        provider.Received ( 1 ).Dispose ( ) ;
-
-        // and cleared from fields
-        var deskField = typeof ( UiDeskManager ).GetField ( "_desk" ,
-                                                            BindingFlags.Instance | BindingFlags.NonPublic )! ;
-        var providerField = typeof ( UiDeskManager ).GetField ( "_deskProvider" ,
-                                                                BindingFlags.Instance | BindingFlags.NonPublic )! ;
-        deskField.GetValue ( sut ).Should ( ).BeNull ( ) ;
-        providerField.GetValue ( sut ).Should ( ).BeNull ( ) ;
+        await deskConnectionManager.Received ( 1 ).DisconnectAsync ( ) ;
     }
 
     [ Fact ]
@@ -193,7 +175,8 @@ public class UiDeskManagerTests
         var sut = CreateSut ( out _ ,
                               out var settingsManager ,
                               out _ ,
-                              out var deskMovementManager ) ;
+                              out var deskMovementManager ,
+                              out _ ) ;
         var settings = ( Settings )settingsManager.CurrentSettings ;
         settings.HeightSettings.Custom1HeightInCm = 111 ;
 
@@ -208,7 +191,8 @@ public class UiDeskManagerTests
         var sut = CreateSut ( out _ ,
                               out var settingsManager ,
                               out _ ,
-                              out var deskMovementManager ) ;
+                              out var deskMovementManager ,
+                              out _ ) ;
         var settings = ( Settings )settingsManager.CurrentSettings ;
         settings.HeightSettings.Custom2HeightInCm = 66 ;
 

@@ -27,16 +27,13 @@ public sealed partial class UiDeskManager : IUiDeskManager
     private readonly ILogger                       _logger ;
     private readonly ISettingsManager              _manager ;
     private readonly INotifications                _notifications ;
-    private readonly Func < IDeskProvider > ?      _providerFactory ;
     private readonly IScheduler                    _scheduler ;
     private readonly IObserveSettingsChanges       _settingsChanges ;
-    private readonly IBluetoothReconnectStrategy   _reconnectStrategy ;
     private readonly IHotkeyManager                _hotkeyManager ;
     private readonly IStatusBarManager             _statusBarManager ;
     private readonly IDeskMovementManager          _deskMovementManager ;
+    private readonly IDeskConnectionManager        _deskConnectionManager ;
 
-    private IDesk ?         _desk ;
-    private IDeskProvider ? _deskProvider ;
     private bool            _disposed ;
     private IDisposable ?   _finished ;
     private IDisposable ?   _heightChanged ;
@@ -54,13 +51,12 @@ public sealed partial class UiDeskManager : IUiDeskManager
         ITaskbarIconProvider          iconProvider ,
         INotifications                notifications ,
         IScheduler                    scheduler ,
-        Func < IDeskProvider >        deskProviderFactory ,
         IErrorManager                 errorManager ,
         IObserveSettingsChanges       settingsChanges ,
-        IBluetoothReconnectStrategy   reconnectStrategy ,
         IHotkeyManager                hotkeyManager ,
         IStatusBarManager             statusBarManager ,
-        IDeskMovementManager          deskMovementManager )
+        IDeskMovementManager          deskMovementManager ,
+        IDeskConnectionManager        deskConnectionManager )
     {
         Guard.ArgumentNotNull ( logger ,
                                 nameof ( logger ) ) ;
@@ -72,33 +68,30 @@ public sealed partial class UiDeskManager : IUiDeskManager
                                 nameof ( notifications ) ) ;
         Guard.ArgumentNotNull ( scheduler ,
                                 nameof ( scheduler ) ) ;
-        Guard.ArgumentNotNull ( deskProviderFactory ,
-                                nameof ( deskProviderFactory ) ) ;
         Guard.ArgumentNotNull ( errorManager ,
                                 nameof ( errorManager ) ) ;
         Guard.ArgumentNotNull ( settingsChanges ,
                                 nameof ( settingsChanges ) ) ;
-        Guard.ArgumentNotNull ( reconnectStrategy ,
-                                nameof ( reconnectStrategy ) ) ;
         Guard.ArgumentNotNull ( hotkeyManager ,
                                 nameof ( hotkeyManager ) ) ;
         Guard.ArgumentNotNull ( statusBarManager ,
                                 nameof ( statusBarManager ) ) ;
         Guard.ArgumentNotNull ( deskMovementManager ,
                                 nameof ( deskMovementManager ) ) ;
+        Guard.ArgumentNotNull ( deskConnectionManager ,
+                                nameof ( deskConnectionManager ) ) ;
 
-        _logger              = logger ;
-        _manager             = manager ;
-        _iconProvider        = iconProvider ;
-        _notifications       = notifications ;
-        _scheduler           = scheduler ;
-        _providerFactory     = deskProviderFactory ;
-        _errorManager        = errorManager ;
-        _settingsChanges     = settingsChanges ;
-        _reconnectStrategy   = reconnectStrategy ;
-        _hotkeyManager       = hotkeyManager ;
-        _statusBarManager    = statusBarManager ;
-        _deskMovementManager = deskMovementManager ;
+        _logger                = logger ;
+        _manager               = manager ;
+        _iconProvider          = iconProvider ;
+        _notifications         = notifications ;
+        _scheduler             = scheduler ;
+        _errorManager          = errorManager ;
+        _settingsChanges       = settingsChanges ;
+        _hotkeyManager         = hotkeyManager ;
+        _statusBarManager      = statusBarManager ;
+        _deskMovementManager   = deskMovementManager ;
+        _deskConnectionManager = deskConnectionManager ;
     }
 
     public IObservable < StatusBarInfo > StatusBarInfoChanged => _statusBarManager.StatusBarInfoChanged ;
@@ -183,14 +176,13 @@ public sealed partial class UiDeskManager : IUiDeskManager
                 // ignore cleanup errors
             }
 
-            // Dispose desk and provider
             try
             {
-                DisposeDesk ( ) ;
+                _deskConnectionManager?.Dispose ( ) ;
             }
             catch
             {
-                // ignore desk disposal errors
+                // ignore cleanup errors
             }
 
             // Dispose token source
@@ -207,8 +199,6 @@ public sealed partial class UiDeskManager : IUiDeskManager
             _onHotkeySettingsChanged = null ;
             _heightChanged  = null ;
             _finished       = null ;
-            _deskProvider   = null ;
-            _desk           = null ;
             _tokenSource    = null ;
             _token          = CancellationToken.None ;
             _notifyIcon     = null ;
@@ -216,30 +206,28 @@ public sealed partial class UiDeskManager : IUiDeskManager
         }
     }
 
-    public bool IsConnected => _desk is not null ;
+    public bool IsConnected => _deskConnectionManager.IsConnected ;
 
-    internal IDesk ? GetDesk ( ) => _desk ;
+    internal IDesk ? GetDesk ( ) => _deskConnectionManager.CurrentDesk ;
 
     public Task DisconnectAsync ( )
     {
-        if ( IsDeskConnected ( ) ) DoDisconnectAsync ( ) ;
-
-        return Task.CompletedTask ;
+        return _deskConnectionManager.DisconnectAsync ( ) ;
     }
 
     public Task StopAsync ( )
     {
-        return ExecuteIfConnected ( ( ) => _desk?.MoveStopAsync ( ) ) ;
+        return ExecuteIfConnected ( ( ) => _deskConnectionManager.CurrentDesk?.MoveStopAsync ( ) ) ;
     }
 
     public Task MoveLockAsync ( )
     {
-        return ExecuteIfConnected ( ( ) => _desk?.MoveLockAsync ( ) ) ;
+        return ExecuteIfConnected ( ( ) => _deskConnectionManager.CurrentDesk?.MoveLockAsync ( ) ) ;
     }
 
     public Task MoveUnlockAsync ( )
     {
-        return ExecuteIfConnected ( ( ) => _desk?.MoveUnlockAsync ( ) ) ;
+        return ExecuteIfConnected ( ( ) => _deskConnectionManager.CurrentDesk?.MoveUnlockAsync ( ) ) ;
     }
 
     public Task HideAsync ( )
@@ -280,8 +268,11 @@ public sealed partial class UiDeskManager : IUiDeskManager
         // Configure desk accessor for movement manager
         if ( _deskMovementManager is DeskMovementManager movementManager )
         {
-            movementManager.SetDeskAccessor ( ( ) => _desk ) ;
+            movementManager.SetDeskAccessor ( ( ) => _deskConnectionManager.CurrentDesk ) ;
         }
+
+        // Subscribe to connection manager events
+        _deskConnectionManager.DeskReady += OnDeskReady ;
 
         _onErrorChanged = _errorManager.ErrorChanged
                                        .ObserveOn ( _scheduler )
@@ -415,7 +406,7 @@ public sealed partial class UiDeskManager : IUiDeskManager
                                   "Trying to auto connect to Idasen Desk..." ,
                                   InfoBarSeverity.Informational ) ;
 
-            await Connect ( ).ConfigureAwait ( false ) ;
+            await _deskConnectionManager.ConnectAsync ( _token ).ConfigureAwait ( false ) ;
         }
         catch ( TaskCanceledException e )
         {
@@ -426,14 +417,14 @@ public sealed partial class UiDeskManager : IUiDeskManager
         {
             _logger.Error ( e ,
                             "Failed to auto connect to desk" ) ;
-            ConnectFailed ( ) ;
+            _errorManager.PublishForMessage ( "Failed to connect" ) ;
         }
     }
 
     // Helper to run an action only when connected
     private Task ExecuteIfConnected ( Action action )
     {
-        if ( ! IsDeskConnected ( ) )
+        if ( ! _deskConnectionManager.IsConnected )
             return Task.CompletedTask ;
 
         try
@@ -447,11 +438,6 @@ public sealed partial class UiDeskManager : IUiDeskManager
         }
 
         return Task.CompletedTask ;
-    }
-
-    private CancellationToken GetTokenOrThrow ( )
-    {
-        return _token ;
     }
 
     private async Task ExecuteWithErrorHandlingAsync ( string methodName , Func < Task > action )
@@ -478,29 +464,34 @@ public sealed partial class UiDeskManager : IUiDeskManager
                                     MidpointRounding.AwayFromZero ) ;
     }
 
-    private void DoDisconnectAsync ( )
+    private void OnDeskReady ( object ? sender , IDesk desk )
     {
-        try
-        {
-            _logger.Debug ( "[{DeviceName}] Trying to disconnect from Idasen Desk..." ,
-                            _desk?.DeviceName ) ;
+        _logger.Debug ( "Desk ready event received, setting up subscriptions..." ) ;
 
-            DisposeDesk ( ) ;
+        _finished = desk.FinishedChanged
+                        .ObserveOn ( Scheduler.Default )
+                        .SubscribeAsync ( OnFinishedChanged ) ;
 
-            _logger.Debug ( "[{DeviceName}] ...disconnected from Idasen Desk" ,
-                            _desk?.DeviceName ) ;
-        }
-        catch ( Exception e )
-        {
-            _logger.Error ( e ,
-                            "Failed to disconnect" ) ;
-            ConnectFailed ( ) ;
-        }
+        _heightChanged = desk.HeightChanged
+                              .ObserveOn ( Scheduler.Default )
+                              .Throttle ( TimeSpan.FromSeconds ( 1 ) )
+                              .SubscribeAsync ( OnHeightChanged ) ;
+
+        _iconProvider.Initialize ( _logger ,
+                                   desk ,
+                                   _notifyIcon ) ;
+
+        var message = $"Connected successfully to '{desk.DeviceName}'." ;
+
+        OnStatusChanged ( 0 ,
+                          "Connected" ,
+                          message ,
+                          InfoBarSeverity.Success ) ;
     }
 
     private void OnErrorChanged ( IErrorDetails details )
     {
-        var deviceName = _desk?.DeviceName ?? "Unknown" ;
+        var deviceName = _deskConnectionManager.CurrentDesk?.DeviceName ?? "Unknown" ;
         var msg        = $"[{deviceName}] {details.Message}" ;
 
         _logger.Error ( "Desk error: {Message}" ,
@@ -631,145 +622,9 @@ public sealed partial class UiDeskManager : IUiDeskManager
                               severity ) ;
     }
 
-    private bool IsDeskConnected ( )
-    {
-        if ( _desk is not null )
-            return true ;
-
-        const string message = "Failed to connect to desk!" ;
-
-        _logger.Error ( message ) ;
-
-        OnStatusChanged ( 0 ,
-                          "Not Connected" ,
-                          message ,
-                          InfoBarSeverity.Error ) ;
-
-        return false ;
-    }
-
-    private async Task Connect ( )
-    {
-        try
-        {
-            _logger.Debug ( "Initiating Bluetooth connection with automatic retry..." ) ;
-
-            // Use reconnect strategy for automatic retry with exponential backoff
-            var success = await _reconnectStrategy.ConnectWithRetryAsync (
-                async token =>
-                {
-                    try
-                    {
-                        _logger.Debug ( "Attempting connection to desk..." ) ;
-
-                        _deskProvider?.Dispose ( ) ;
-                        _deskProvider = _providerFactory! ( ) ;
-                        _deskProvider.Initialize ( _manager.CurrentSettings.DeviceSettings.DeviceName ,
-                                                   _manager.CurrentSettings.DeviceSettings.DeviceAddress ,
-                                                   _manager.CurrentSettings.DeviceSettings.DeviceMonitoringTimeout ) ;
-
-                        var deviceName = _manager.CurrentSettings.DeviceSettings.DeviceName ;
-                        _logger.Debug ( "[{DeviceName}] Trying to connect to Idasen Desk..." ,
-                                       deviceName ) ;
-
-                        var (isSuccess , desk) = await _deskProvider.TryGetDesk ( token ).ConfigureAwait ( false ) ;
-
-                        if ( isSuccess && desk != null )
-                        {
-                            ConnectSuccessful ( desk ) ;
-                            return true ;
-                        }
-
-                        _logger.Warning ( "Connection attempt failed - desk not found or unavailable" ) ;
-                        return false ;
-                    }
-                    catch ( Exception e )
-                    {
-                        var deviceName = _desk?.DeviceName ?? _manager.CurrentSettings.DeviceSettings.DeviceName ;
-                        _logger.Warning ( e ,
-                                         "[{DeviceName}] Connection attempt failed with exception" ,
-                                         deviceName ) ;
-                        return false ;
-                    }
-                } ,
-                GetTokenOrThrow ( ) ).ConfigureAwait ( false ) ;
-
-            if ( ! success )
-            {
-                ConnectFailed ( ) ;
-            }
-        }
-        catch ( Exception e )
-        {
-            var deviceName = _desk?.DeviceName ?? "Unknown" ;
-            _logger.Error ( e ,
-                           "[{DeviceName}] Fatal error during connection sequence" ,
-                           deviceName ) ;
-            ConnectFailed ( ) ;
-        }
-    }
-
     private void CheckIfInitialized ( )
     {
         if ( ! IsInitialize )
             throw new InvalidOperationException ( "Initialize needs to be called first!" ) ;
-    }
-
-    private void ConnectFailed ( )
-    {
-        _logger.Debug ( "Connection failed..." ) ;
-        _ = DisconnectAsync ( ) ;
-        _errorManager.PublishForMessage ( "Failed to connect" ) ;
-    }
-
-    private void DisposeDesk ( )
-    {
-        _logger.Debug ( "[{DeskName}] Disposing desk" ,
-                        _desk?.Name ) ;
-
-        _finished?.Dispose ( ) ;
-        _desk?.Dispose ( ) ;
-        _deskProvider?.Dispose ( ) ;
-
-        _finished     = null ;
-        _desk         = null ;
-        _deskProvider = null ;
-    }
-
-    private void ConnectSuccessful ( IDesk desk )
-    {
-        _logger.Information ( "[{DeviceName}] Connected with address {BluetoothAddress} (MacAddress {MacAddress})" ,
-                              desk.DeviceName ,
-                              desk.BluetoothAddress.MaskAddress ( ) ,
-                              desk.BluetoothAddress.ToMacAddress ( ).MaskMacAddress ( ) ) ;
-
-        _desk = desk ;
-
-        _finished = _desk.FinishedChanged
-                         .ObserveOn ( Scheduler.Default )
-                         .SubscribeAsync ( OnFinishedChanged ) ;
-
-        _heightChanged = _desk.HeightChanged
-                              .ObserveOn ( Scheduler.Default )
-                              .Throttle ( TimeSpan.FromSeconds ( 1 ) )
-                              .SubscribeAsync ( OnHeightChanged ) ;
-
-        _iconProvider.Initialize ( _logger ,
-                                   _desk ,
-                                   _notifyIcon ) ;
-
-        var message = $"Connected successfully to '{_desk.DeviceName}'." ;
-
-        OnStatusChanged ( 0 ,
-                          "Connected" ,
-                          message ,
-                          InfoBarSeverity.Success ) ;
-
-        if ( ! _manager.CurrentSettings.DeviceSettings.DeviceLocked )
-            return ;
-
-        _logger.Information ( "Locking desk movement" ) ;
-
-        _desk?.MoveLockAsync ( ) ;
     }
 }
