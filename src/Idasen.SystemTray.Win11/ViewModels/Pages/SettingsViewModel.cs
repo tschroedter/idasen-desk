@@ -18,6 +18,15 @@ namespace Idasen.SystemTray.Win11.ViewModels.Pages ;
 [ ExcludeFromCodeCoverage ]
 public partial class SettingsViewModel : ObservableObject , INavigationAware , ISettingsViewModel
 {
+    private const string KeyNameShift   = "Shift";
+    private const string KeyNameAlt     = "Alt";
+    private const string KeyNameControl = "Control";
+
+    private const string KeyNameStanding = "Standing";
+    private const string KeyNameSeating  = "Seating";
+    private const string KeyNameCustom1  = "Custom1";
+    private const string KeyNameCustom2  = "Custom2";
+
     private readonly ILogger                  _logger ;
     private readonly ISettingsService         _settingsService ;
     private readonly IScheduler               _scheduler ;
@@ -155,108 +164,108 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
     public bool StandingControl
     {
         get => ContainsModifier ( StandingModifiers ,
-                                  "Control" ) ;
-        set => UpdateModifier ( "Standing" ,
-                                "Control" ,
+                                  KeyNameControl ) ;
+        set => UpdateModifier ( KeyNameStanding ,
+                                KeyNameControl ,
                                 value ) ;
     }
 
     public bool StandingAlt
     {
         get => ContainsModifier ( StandingModifiers ,
-                                  "Alt" ) ;
-        set => UpdateModifier ( "Standing" ,
-                                "Alt" ,
+                                  KeyNameAlt ) ;
+        set => UpdateModifier ( KeyNameStanding ,
+                                KeyNameAlt ,
                                 value ) ;
     }
 
     public bool StandingShift
     {
         get => ContainsModifier ( StandingModifiers ,
-                                  "Shift" ) ;
-        set => UpdateModifier ( "Standing" ,
-                                "Shift" ,
+                                  KeyNameShift ) ;
+        set => UpdateModifier ( KeyNameStanding ,
+                                KeyNameShift ,
                                 value ) ;
     }
 
     public bool SeatingControl
     {
         get => ContainsModifier ( SeatingModifiers ,
-                                  "Control" ) ;
-        set => UpdateModifier ( "Seating" ,
-                                "Control" ,
+                                  KeyNameControl ) ;
+        set => UpdateModifier ( KeyNameSeating ,
+                                KeyNameControl ,
                                 value ) ;
     }
 
     public bool SeatingAlt
     {
         get => ContainsModifier ( SeatingModifiers ,
-                                  "Alt" ) ;
-        set => UpdateModifier ( "Seating" ,
-                                "Alt" ,
+                                  KeyNameAlt ) ;
+        set => UpdateModifier ( KeyNameSeating ,
+                                KeyNameAlt ,
                                 value ) ;
     }
 
     public bool SeatingShift
     {
         get => ContainsModifier ( SeatingModifiers ,
-                                  "Shift" ) ;
-        set => UpdateModifier ( "Seating" ,
-                                "Shift" ,
+                                  KeyNameShift ) ;
+        set => UpdateModifier ( KeyNameSeating ,
+                                KeyNameShift ,
                                 value ) ;
     }
 
     public bool Custom1Control
     {
         get => ContainsModifier ( Custom1Modifiers ,
-                                  "Control" ) ;
-        set => UpdateModifier ( "Custom1" ,
-                                "Control" ,
+                                  KeyNameControl ) ;
+        set => UpdateModifier ( KeyNameCustom1 ,
+                                KeyNameControl ,
                                 value ) ;
     }
 
     public bool Custom1Alt
     {
         get => ContainsModifier ( Custom1Modifiers ,
-                                  "Alt" ) ;
-        set => UpdateModifier ( "Custom1" ,
-                                "Alt" ,
+                                  KeyNameAlt ) ;
+        set => UpdateModifier ( KeyNameCustom1 ,
+                                KeyNameAlt ,
                                 value ) ;
     }
 
     public bool Custom1Shift
     {
         get => ContainsModifier ( Custom1Modifiers ,
-                                  "Shift" ) ;
-        set => UpdateModifier ( "Custom1" ,
-                                "Shift" ,
+                                  KeyNameShift ) ;
+        set => UpdateModifier ( KeyNameCustom1 ,
+                                KeyNameShift ,
                                 value ) ;
     }
 
     public bool Custom2Control
     {
         get => ContainsModifier ( Custom2Modifiers ,
-                                  "Control" ) ;
-        set => UpdateModifier ( "Custom2" ,
-                                "Control" ,
+                                  KeyNameControl ) ;
+        set => UpdateModifier ( KeyNameCustom2 ,
+                                KeyNameControl ,
                                 value ) ;
     }
 
     public bool Custom2Alt
     {
         get => ContainsModifier ( Custom2Modifiers ,
-                                  "Alt" ) ;
-        set => UpdateModifier ( "Custom2" ,
-                                "Alt" ,
+                                  KeyNameAlt ) ;
+        set => UpdateModifier ( KeyNameCustom2 ,
+                                KeyNameAlt ,
                                 value ) ;
     }
 
     public bool Custom2Shift
     {
         get => ContainsModifier ( Custom2Modifiers ,
-                                  "Shift" ) ;
-        set => UpdateModifier ( "Custom2" ,
-                                "Shift" ,
+                                  KeyNameShift ) ;
+        set => UpdateModifier ( KeyNameCustom2 ,
+                                KeyNameShift ,
                                 value ) ;
     }
 
