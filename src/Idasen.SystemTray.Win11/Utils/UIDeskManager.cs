@@ -493,6 +493,10 @@ public sealed partial class UiDeskManager : IUiDeskManager
     {
         _logger.Debug ( "Desk ready event received, setting up subscriptions..." ) ;
 
+        // Dispose existing subscriptions before creating new ones to prevent leaks on reconnect
+        _finished?.Dispose ( ) ;
+        _heightChanged?.Dispose ( ) ;
+
         _finished = desk.FinishedChanged
                         .ObserveOn ( Scheduler.Default )
                         .SubscribeAsync ( OnFinishedChanged ) ;
