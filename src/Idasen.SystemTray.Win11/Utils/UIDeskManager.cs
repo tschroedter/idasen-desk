@@ -465,23 +465,6 @@ public sealed partial class UiDeskManager : IUiDeskManager
         return Task.CompletedTask ;
     }
 
-    private async Task ExecuteWithErrorHandlingAsync ( string methodName , Func < Task > action )
-    {
-        try
-        {
-            _logger.Debug ( "{MethodName}" ,
-                            methodName ) ;
-            await action ( ).ConfigureAwait ( false ) ;
-        }
-        catch ( Exception e )
-        {
-            _logger.Error ( e ,
-                            "Failed to call {MethodName}" ,
-                            methodName ) ;
-            _errorManager.PublishForMessage ( $"Failed to call {methodName}" ) ;
-        }
-    }
-
     private static uint MmToCm ( uint height )
     {
         // Use double division and specify midpoint rounding to avoid ambiguous overloads and banker's rounding
@@ -520,26 +503,70 @@ public sealed partial class UiDeskManager : IUiDeskManager
 
     private async void OnStandingHotkeyPressed ( object ? sender , EventArgs e )
     {
-        await ExecuteWithErrorHandlingAsync ( nameof ( StandAsync ) ,
-                                              StandAsync ) ;
+        try
+        {
+            _logger.Debug ( "{MethodName}" ,
+                            nameof ( StandAsync ) ) ;
+            await StandAsync ( ).ConfigureAwait ( false ) ;
+        }
+        catch ( Exception ex )
+        {
+            _logger.Error ( ex ,
+                            "Failed to call {MethodName}" ,
+                            nameof ( StandAsync ) ) ;
+            _errorManager.PublishForMessage ( $"Failed to call {nameof ( StandAsync )}" ) ;
+        }
     }
 
     private async void OnSeatingHotkeyPressed ( object ? sender , EventArgs e )
     {
-        await ExecuteWithErrorHandlingAsync ( nameof ( SitAsync ) ,
-                                              SitAsync ) ;
+        try
+        {
+            _logger.Debug ( "{MethodName}" ,
+                            nameof ( SitAsync ) ) ;
+            await SitAsync ( ).ConfigureAwait ( false ) ;
+        }
+        catch ( Exception ex )
+        {
+            _logger.Error ( ex ,
+                            "Failed to call {MethodName}" ,
+                            nameof ( SitAsync ) ) ;
+            _errorManager.PublishForMessage ( $"Failed to call {nameof ( SitAsync )}" ) ;
+        }
     }
 
     private async void OnCustom1HotkeyPressed ( object ? sender , EventArgs e )
     {
-        await ExecuteWithErrorHandlingAsync ( nameof ( Custom1Async ) ,
-                                              Custom1Async ) ;
+        try
+        {
+            _logger.Debug ( "{MethodName}" ,
+                            nameof ( Custom1Async ) ) ;
+            await Custom1Async ( ).ConfigureAwait ( false ) ;
+        }
+        catch ( Exception ex )
+        {
+            _logger.Error ( ex ,
+                            "Failed to call {MethodName}" ,
+                            nameof ( Custom1Async ) ) ;
+            _errorManager.PublishForMessage ( $"Failed to call {nameof ( Custom1Async )}" ) ;
+        }
     }
 
     private async void OnCustom2HotkeyPressed ( object ? sender , EventArgs e )
     {
-        await ExecuteWithErrorHandlingAsync ( nameof ( Custom2Async ) ,
-                                              Custom2Async ) ;
+        try
+        {
+            _logger.Debug ( "{MethodName}" ,
+                            nameof ( Custom2Async ) ) ;
+            await Custom2Async ( ).ConfigureAwait ( false ) ;
+        }
+        catch ( Exception ex )
+        {
+            _logger.Error ( ex ,
+                            "Failed to call {MethodName}" ,
+                            nameof ( Custom2Async ) ) ;
+            _errorManager.PublishForMessage ( $"Failed to call {nameof ( Custom2Async )}" ) ;
+        }
     }
 
     private void OnHotkeySettingsChanged ( bool enabled )
