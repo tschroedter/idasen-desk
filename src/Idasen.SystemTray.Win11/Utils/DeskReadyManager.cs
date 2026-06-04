@@ -51,26 +51,28 @@ public sealed class DeskReadyManager : IDeskReadyManager
         _logger.Information ( "Disposing {TypeName}..." ,
                               nameof ( DeskReadyManager ) ) ;
 
-        try
-        {
-            _finished?.Dispose ( ) ;
-        }
-        catch
-        {
-            // ignore cleanup errors
-        }
-
-        try
-        {
-            _heightChanged?.Dispose ( ) ;
-        }
-        catch
-        {
-            // ignore cleanup errors
-        }
+        DisposeResource ( _finished , nameof ( _finished ) ) ;
+        DisposeResource ( _heightChanged , nameof ( _heightChanged ) ) ;
 
         _finished      = null ;
         _heightChanged = null ;
+    }
+
+    private void DisposeResource ( IDisposable ? resource , string resourceName )
+    {
+        if ( resource == null )
+            return ;
+
+        try
+        {
+            resource.Dispose ( ) ;
+        }
+        catch ( Exception ex )
+        {
+            _logger.Warning ( ex ,
+                             "Failed to dispose {ResourceName}" ,
+                             resourceName ) ;
+        }
     }
 
     public void OnDeskReady ( IDesk desk )

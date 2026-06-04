@@ -79,9 +79,10 @@ public sealed class HotkeyManager : IHotkeyManager
             WpfHotkeyManager.Current.Remove ( HotkeyNameCustom1 ) ;
             WpfHotkeyManager.Current.Remove ( HotkeyNameCustom2 ) ;
         }
-        catch
+        catch ( Exception ex )
         {
-            // ignore cleanup errors - hotkeys may not have been registered
+            _logger.Warning ( ex ,
+                             "Failed to unregister hotkeys during disposal (hotkeys may not have been registered)" ) ;
         }
     }
 

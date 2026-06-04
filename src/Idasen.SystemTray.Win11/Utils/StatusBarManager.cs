@@ -61,9 +61,11 @@ public sealed class StatusBarManager : IStatusBarManager , IDisposable
             _statusBarInfoSubject.OnCompleted ( ) ;
             _statusBarInfoSubject.Dispose ( ) ;
         }
-        catch
+        catch ( Exception ex )
         {
-            // Ignore disposal errors
+            _logger.Warning ( ex ,
+                             "Failed to dispose {ResourceName}" ,
+                             nameof ( _statusBarInfoSubject ) ) ;
         }
     }
 }

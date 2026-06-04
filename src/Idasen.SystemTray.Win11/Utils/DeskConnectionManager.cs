@@ -145,9 +145,11 @@ public sealed class DeskConnectionManager : IDeskConnectionManager
         {
             DisposeDesk ( ) ;
         }
-        catch
+        catch ( Exception ex )
         {
-            // Ignore disposal errors
+            _logger.Warning ( ex ,
+                             "Failed to dispose desk during {TypeName} disposal" ,
+                             nameof ( DeskConnectionManager ) ) ;
         }
     }
 

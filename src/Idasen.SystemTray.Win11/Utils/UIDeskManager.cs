@@ -99,6 +99,29 @@ public sealed partial class UiDeskManager : IUiDeskManager
                               nameof ( UiDeskManager ) ) ;
 
         // Unsubscribe from events to prevent memory leaks
+        UnsubscribeEvents ( ) ;
+
+        // Dispose managed resources
+        DisposeResource ( _hotkeyManager , nameof ( _hotkeyManager ) ) ;
+        CancelPendingOperations ( ) ;
+        DisposeResource ( _onHotkeySettingsChanged , nameof ( _onHotkeySettingsChanged ) ) ;
+        DisposeResource ( _deskReadyManager , nameof ( _deskReadyManager ) ) ;
+        DisposeResource ( _notificationManager , nameof ( _notificationManager ) ) ;
+        DisposeResource ( _deskConnectionManager , nameof ( _deskConnectionManager ) ) ;
+        DisposeResource ( _tokenSource , nameof ( _tokenSource ) ) ;
+
+        // Clear references
+        _onHotkeySettingsChanged = null ;
+        _tokenSource             = null ;
+        _token                   = CancellationToken.None ;
+        _notifyIcon              = null ;
+
+        _logger.Information ( "{TypeName} disposed successfully" ,
+                              nameof ( UiDeskManager ) ) ;
+    }
+
+    private void UnsubscribeEvents ( )
+    {
         try
         {
             if ( _hotkeyManager != null )
@@ -108,98 +131,46 @@ public sealed partial class UiDeskManager : IUiDeskManager
                 _hotkeyManager.Custom1HotkeyPressed  -= OnCustom1HotkeyPressed ;
                 _hotkeyManager.Custom2HotkeyPressed  -= OnCustom2HotkeyPressed ;
             }
-        }
-        catch
-        {
-            // ignore unsubscribe errors
-        }
 
-        try
-        {
             if ( _deskConnectionManager != null )
             {
                 _deskConnectionManager.DeskReady -= OnDeskReady ;
             }
         }
-        catch
+        catch ( Exception ex )
         {
-            // ignore unsubscribe errors
+            _logger.Warning ( ex ,
+                             "Failed to unsubscribe from events during disposal" ) ;
         }
+    }
 
-        // Always attempt to dispose hotkey manager
-        try
-        {
-            _hotkeyManager?.Dispose ( ) ;
-        }
-        catch
-        {
-            // ignore cleanup errors
-        }
-
-        // Attempt to cancel any pending operations, then clean up regardless
+    private void CancelPendingOperations ( )
+    {
         try
         {
             _tokenSource?.Cancel ( ) ;
         }
-        catch
+        catch ( Exception ex )
         {
-            // ignore cancellation errors
+            _logger.Warning ( ex ,
+                             "Failed to cancel pending operations during disposal" ) ;
         }
-        finally
+    }
+
+    private void DisposeResource ( IDisposable ? resource , string resourceName )
+    {
+        if ( resource == null )
+            return ;
+
+        try
         {
-            // Dispose managed resources safely
-            // ReSharper disable EmptyGeneralCatchClause
-            try
-            {
-                _onHotkeySettingsChanged?.Dispose ( ) ;
-            }
-            catch
-            {
-                // ignore cleanup errors
-            }
-
-            try
-            {
-                _deskReadyManager?.Dispose ( ) ;
-            }
-            catch
-            {
-                // ignore cleanup errors
-            }
-
-            try
-            {
-                _notificationManager?.Dispose ( ) ;
-            }
-            catch
-            {
-                // ignore cleanup errors
-            }
-
-            try
-            {
-                _deskConnectionManager?.Dispose ( ) ;
-            }
-            catch
-            {
-                // ignore cleanup errors
-            }
-
-            // Dispose token source
-            try
-            {
-                _tokenSource?.Dispose ( ) ;
-            }
-            catch
-            {
-                // ignore cleanup errors
-            }
-
-            _onHotkeySettingsChanged = null ;
-            _tokenSource    = null ;
-            _token          = CancellationToken.None ;
-            _notifyIcon     = null ;
-            // ReSharper restore EmptyGeneralCatchClause
+            resource.Dispose ( ) ;
+        }
+        catch ( Exception ex )
+        {
+            _logger.Warning ( ex ,
+                             "Failed to dispose {ResourceName}" ,
+                             resourceName ) ;
         }
     }
 

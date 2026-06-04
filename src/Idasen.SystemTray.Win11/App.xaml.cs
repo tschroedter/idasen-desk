@@ -480,9 +480,10 @@ public partial class App
             _singleInstanceMutex?.Dispose ( ) ;
             _singleInstanceMutex = null ;
         }
-        catch
+        catch ( Exception ex )
         {
-            // ignore mutex release errors
+            Log.Warning ( ex ,
+                         "Failed to release or dispose single instance mutex" ) ;
         }
     }
 }

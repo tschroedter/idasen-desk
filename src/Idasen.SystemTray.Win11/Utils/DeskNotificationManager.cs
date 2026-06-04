@@ -61,9 +61,11 @@ public sealed class DeskNotificationManager : IDeskNotificationManager
         {
             _errorChangedSubscription?.Dispose ( ) ;
         }
-        catch
+        catch ( Exception ex )
         {
-            // ignore cleanup errors
+            _logger.Warning ( ex ,
+                             "Failed to dispose {ResourceName}" ,
+                             nameof ( _errorChangedSubscription ) ) ;
         }
 
         _errorChangedSubscription = null ;
