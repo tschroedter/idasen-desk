@@ -29,6 +29,7 @@ public class SettingsSynchronizerTests
     private readonly IThemeSwitcher          _themeSwitcher      = Substitute.For < IThemeSwitcher > ( ) ;
     private readonly IDoubleToUIntConverter  _toUIntConverter    = Substitute.For < IDoubleToUIntConverter > ( ) ;
     private readonly IHeightSettingsValidator _heightValidator   = new HeightSettingsValidator ( ) ;
+    private readonly IConverters             _converters         = Substitute.For < IConverters > ( ) ;
 
     private SettingsSynchronizer CreateSut ( )
     {
@@ -37,11 +38,14 @@ public class SettingsSynchronizerTests
         _settings.HeightSettings     = _heightSettings ;
         _settings.AppearanceSettings = _appearanceSettings ;
         _settings.HotkeySettings     = _hotkeySettings ;
+
+        _converters.DoubleToUIntConverter.Returns ( _toUIntConverter ) ;
+        _converters.DeviceNameConverter.Returns ( _nameConverter ) ;
+        _converters.DeviceAddressToULongConverter.Returns ( _addressConverter ) ;
+
         return new SettingsSynchronizer ( _logger ,
                                           _settingsManager ,
-                                          _toUIntConverter ,
-                                          _nameConverter ,
-                                          _addressConverter ,
+                                          _converters ,
                                           _settingsChanges ,
                                           _themeSwitcher ,
                                           _heightValidator ) ;

@@ -161,6 +161,9 @@ public partial class App
                                                                               .AddTransient <
                                                                                    IDeviceAddressToULongConverter ,
                                                                                    DeviceAddressToULongConverter > ( ) ;
+                                                                           services
+                                                                              .AddTransient < IConverters ,
+                                                                                   Converters > ( ) ;
                                                                            services.AddSingleton ( provider =>
                                                                                                        new Func <
                                                                                                            IDeskProvider > ( provider
