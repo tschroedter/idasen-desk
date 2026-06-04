@@ -151,6 +151,21 @@ public partial class App
                                                                            services
                                                                               .AddSingleton < IDeskNotificationManager , DeskNotificationManager > ( ) ;
                                                                            services
+                                                                              .AddSingleton < IDeskReadyManager > ( provider =>
+                                                                              {
+                                                                                  var logger               = provider.GetRequiredService < ILogger > ( ) ;
+                                                                                  var settingsManager      = provider.GetRequiredService < ISettingsManager > ( ) ;
+                                                                                  var iconProvider         = provider.GetRequiredService < ITaskbarIconProvider > ( ) ;
+                                                                                  var notificationManager  = provider.GetRequiredService < IDeskNotificationManager > ( ) ;
+                                                                                  var notifyIcon           = provider.GetService < NotifyIcon > ( ) ;
+
+                                                                                  return new DeskReadyManager ( logger ,
+                                                                                                                settingsManager ,
+                                                                                                                iconProvider ,
+                                                                                                                notificationManager ,
+                                                                                                                notifyIcon ) ;
+                                                                              } ) ;
+                                                                           services
                                                                               .AddSingleton < IUiDeskManager ,
                                                                                    UiDeskManager > ( ) ;
                                                                            services

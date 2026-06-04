@@ -20,10 +20,7 @@ namespace Idasen.SystemTray.Win11.Utils ;
 [ ExcludeFromCodeCoverage ]
 public sealed partial class UiDeskManager : IUiDeskManager
 {
-    private const uint DeskHeightFactor = 100 ;
-
     private readonly IErrorManager                 _errorManager ;
-    private readonly ITaskbarIconProvider          _iconProvider ;
     private readonly ILogger                       _logger ;
     private readonly ISettingsManager              _manager ;
     private readonly IScheduler                    _scheduler ;
@@ -32,10 +29,9 @@ public sealed partial class UiDeskManager : IUiDeskManager
     private readonly IDeskMovementManager          _deskMovementManager ;
     private readonly IDeskConnectionManager        _deskConnectionManager ;
     private readonly IDeskNotificationManager      _notificationManager ;
+    private readonly IDeskReadyManager             _deskReadyManager ;
 
     private bool            _disposed ;
-    private IDisposable ?   _finished ;
-    private IDisposable ?   _heightChanged ;
     private NotifyIcon ?    _notifyIcon ;
 
     [ UsedImplicitly ] private IDisposable ? _onHotkeySettingsChanged ;
@@ -46,21 +42,19 @@ public sealed partial class UiDeskManager : IUiDeskManager
     public UiDeskManager (
         ILogger                       logger ,
         ISettingsManager              manager ,
-        ITaskbarIconProvider          iconProvider ,
         IScheduler                    scheduler ,
         IErrorManager                 errorManager ,
         IObserveSettingsChanges       settingsChanges ,
         IHotkeyManager                hotkeyManager ,
         IDeskMovementManager          deskMovementManager ,
         IDeskConnectionManager        deskConnectionManager ,
-        IDeskNotificationManager      notificationManager )
+        IDeskNotificationManager      notificationManager ,
+        IDeskReadyManager             deskReadyManager )
     {
         Guard.ArgumentNotNull ( logger ,
                                 nameof ( logger ) ) ;
         Guard.ArgumentNotNull ( manager ,
                                 nameof ( manager ) ) ;
-        Guard.ArgumentNotNull ( iconProvider ,
-                                nameof ( iconProvider ) ) ;
         Guard.ArgumentNotNull ( scheduler ,
                                 nameof ( scheduler ) ) ;
         Guard.ArgumentNotNull ( errorManager ,
@@ -75,10 +69,11 @@ public sealed partial class UiDeskManager : IUiDeskManager
                                 nameof ( deskConnectionManager ) ) ;
         Guard.ArgumentNotNull ( notificationManager ,
                                 nameof ( notificationManager ) ) ;
+        Guard.ArgumentNotNull ( deskReadyManager ,
+                                nameof ( deskReadyManager ) ) ;
 
         _logger                = logger ;
         _manager               = manager ;
-        _iconProvider          = iconProvider ;
         _scheduler             = scheduler ;
         _errorManager          = errorManager ;
         _settingsChanges       = settingsChanges ;
@@ -86,6 +81,7 @@ public sealed partial class UiDeskManager : IUiDeskManager
         _deskMovementManager   = deskMovementManager ;
         _deskConnectionManager = deskConnectionManager ;
         _notificationManager   = notificationManager ;
+        _deskReadyManager      = deskReadyManager ;
     }
 
     public IObservable < StatusBarInfo > StatusBarInfoChanged => _notificationManager.StatusBarInfoChanged ;
@@ -164,16 +160,7 @@ public sealed partial class UiDeskManager : IUiDeskManager
 
             try
             {
-                _heightChanged?.Dispose ( ) ;
-            }
-            catch
-            {
-                // ignore cleanup errors
-            }
-
-            try
-            {
-                _finished?.Dispose ( ) ;
+                _deskReadyManager?.Dispose ( ) ;
             }
             catch
             {
@@ -209,8 +196,6 @@ public sealed partial class UiDeskManager : IUiDeskManager
             }
 
             _onHotkeySettingsChanged = null ;
-            _heightChanged  = null ;
-            _finished       = null ;
             _tokenSource    = null ;
             _token          = CancellationToken.None ;
             _notifyIcon     = null ;
@@ -465,40 +450,9 @@ public sealed partial class UiDeskManager : IUiDeskManager
         return Task.CompletedTask ;
     }
 
-    private static uint MmToCm ( uint height )
-    {
-        // Use double division and specify midpoint rounding to avoid ambiguous overloads and banker's rounding
-        return ( uint )Math.Round ( height / ( double )DeskHeightFactor ,
-                                    MidpointRounding.AwayFromZero ) ;
-    }
-
     private void OnDeskReady ( object ? sender , IDesk desk )
     {
-        _logger.Debug ( "Desk ready event received, setting up subscriptions..." ) ;
-
-        // Dispose existing subscriptions before creating new ones to prevent leaks on reconnect
-        _finished?.Dispose ( ) ;
-        _heightChanged?.Dispose ( ) ;
-
-        _finished = desk.FinishedChanged
-                        .ObserveOn ( Scheduler.Default )
-                        .SubscribeAsync ( OnFinishedChanged ) ;
-
-        _heightChanged = desk.HeightChanged
-                              .ObserveOn ( Scheduler.Default )
-                              .Throttle ( TimeSpan.FromSeconds ( 1 ) )
-                              .SubscribeAsync ( OnHeightChanged ) ;
-
-        _iconProvider.Initialize ( _logger ,
-                                   desk ,
-                                   _notifyIcon ) ;
-
-        var message = $"Connected successfully to '{desk.DeviceName}'." ;
-
-        _notificationManager.ShowStatusUpdate ( 0 ,
-                                                "Connected" ,
-                                                message ,
-                                                InfoBarSeverity.Success ) ;
+        _deskReadyManager.OnDeskReady ( desk ) ;
     }
 
     private async void OnStandingHotkeyPressed ( object ? sender , EventArgs e )
@@ -603,38 +557,6 @@ public sealed partial class UiDeskManager : IUiDeskManager
                                 "Failed to handle hotkey settings change" ) ;
             }
         } ) ;
-    }
-
-    private static string HeightMessage ( uint heightInCm )
-    {
-        return $"Desk height is {heightInCm} cm" ;
-    }
-
-    private async Task NotifyAndPersistHeightAsync ( uint heightInCm , string title , InfoBarSeverity severity )
-    {
-        _notificationManager.ShowStatusUpdate ( heightInCm ,
-                                                title ,
-                                                HeightMessage ( heightInCm ) ,
-                                                severity ) ;
-
-        await _manager.SetLastKnownDeskHeight ( heightInCm ,
-                                                CancellationToken.None ).ConfigureAwait ( false ) ;
-    }
-
-    private async Task OnFinishedChanged ( uint height )
-    {
-        var heightInCm = MmToCm ( height ) ;
-        await NotifyAndPersistHeightAsync ( heightInCm ,
-                                            "Finished" ,
-                                            InfoBarSeverity.Success ).ConfigureAwait ( false ) ;
-    }
-
-    private async Task OnHeightChanged ( uint height )
-    {
-        var heightInCm = MmToCm ( height ) ;
-        await NotifyAndPersistHeightAsync ( heightInCm ,
-                                            "Height Changed" ,
-                                            InfoBarSeverity.Warning ).ConfigureAwait ( false ) ;
     }
 
     private void CheckIfInitialized ( )

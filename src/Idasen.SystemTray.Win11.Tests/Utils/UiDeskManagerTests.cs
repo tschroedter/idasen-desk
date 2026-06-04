@@ -25,7 +25,6 @@ public class UiDeskManagerTests
     {
         var logger = Substitute.For < ILogger > ( ) ;
         settingsManager = Substitute.For < ISettingsManager > ( ) ;
-        var iconProvider    = Substitute.For < ITaskbarIconProvider > ( ) ;
         var scheduler       = Scheduler.Immediate ;
         var dp              = Substitute.For < IDeskProvider > ( ) ;
         var errorManager    = Substitute.For < IErrorManager > ( ) ;
@@ -34,6 +33,7 @@ public class UiDeskManagerTests
         deskMovementManager = Substitute.For < IDeskMovementManager > ( ) ;
         deskConnectionManager = Substitute.For < IDeskConnectionManager > ( ) ;
         var notificationManager = Substitute.For < IDeskNotificationManager > ( ) ;
+        var deskReadyManager = Substitute.For < IDeskReadyManager > ( ) ;
 
         deskProvider = dp ;
         desk = Substitute.For < IDesk > ( ) ;
@@ -48,14 +48,14 @@ public class UiDeskManagerTests
         var sut = new UiDeskManager (
                                      logger ,
                                      settingsManager ,
-                                     iconProvider ,
                                      scheduler ,
                                      errorManager ,
                                      settingsChanges ,
                                      hotkeyManager ,
                                      deskMovementManager ,
                                      deskConnectionManager ,
-                                     notificationManager ) ;
+                                     notificationManager ,
+                                     deskReadyManager ) ;
 
         return sut ;
     }
