@@ -26,15 +26,14 @@ public class UiDeskManagerTests
         var logger = Substitute.For < ILogger > ( ) ;
         settingsManager = Substitute.For < ISettingsManager > ( ) ;
         var iconProvider    = Substitute.For < ITaskbarIconProvider > ( ) ;
-        var notifications   = Substitute.For < INotifications > ( ) ;
         var scheduler       = Scheduler.Immediate ;
         var dp              = Substitute.For < IDeskProvider > ( ) ;
         var errorManager    = Substitute.For < IErrorManager > ( ) ;
         var settingsChanges = Substitute.For < IObserveSettingsChanges > ( ) ;
         var hotkeyManager   = Substitute.For < IHotkeyManager > ( ) ;
-        var statusBarManager = Substitute.For < IStatusBarManager > ( ) ;
         deskMovementManager = Substitute.For < IDeskMovementManager > ( ) ;
         deskConnectionManager = Substitute.For < IDeskConnectionManager > ( ) ;
+        var notificationManager = Substitute.For < IDeskNotificationManager > ( ) ;
 
         deskProvider = dp ;
         desk = Substitute.For < IDesk > ( ) ;
@@ -50,14 +49,13 @@ public class UiDeskManagerTests
                                      logger ,
                                      settingsManager ,
                                      iconProvider ,
-                                     notifications ,
                                      scheduler ,
                                      errorManager ,
                                      settingsChanges ,
                                      hotkeyManager ,
-                                     statusBarManager ,
                                      deskMovementManager ,
-                                     deskConnectionManager ) ;
+                                     deskConnectionManager ,
+                                     notificationManager ) ;
 
         return sut ;
     }

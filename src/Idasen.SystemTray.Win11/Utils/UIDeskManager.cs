@@ -26,20 +26,18 @@ public sealed partial class UiDeskManager : IUiDeskManager
     private readonly ITaskbarIconProvider          _iconProvider ;
     private readonly ILogger                       _logger ;
     private readonly ISettingsManager              _manager ;
-    private readonly INotifications                _notifications ;
     private readonly IScheduler                    _scheduler ;
     private readonly IObserveSettingsChanges       _settingsChanges ;
     private readonly IHotkeyManager                _hotkeyManager ;
-    private readonly IStatusBarManager             _statusBarManager ;
     private readonly IDeskMovementManager          _deskMovementManager ;
     private readonly IDeskConnectionManager        _deskConnectionManager ;
+    private readonly IDeskNotificationManager      _notificationManager ;
 
     private bool            _disposed ;
     private IDisposable ?   _finished ;
     private IDisposable ?   _heightChanged ;
     private NotifyIcon ?    _notifyIcon ;
 
-    [ UsedImplicitly ] private IDisposable ? _onErrorChanged ;
     [ UsedImplicitly ] private IDisposable ? _onHotkeySettingsChanged ;
 
     private CancellationToken         _token ;
@@ -49,14 +47,13 @@ public sealed partial class UiDeskManager : IUiDeskManager
         ILogger                       logger ,
         ISettingsManager              manager ,
         ITaskbarIconProvider          iconProvider ,
-        INotifications                notifications ,
         IScheduler                    scheduler ,
         IErrorManager                 errorManager ,
         IObserveSettingsChanges       settingsChanges ,
         IHotkeyManager                hotkeyManager ,
-        IStatusBarManager             statusBarManager ,
         IDeskMovementManager          deskMovementManager ,
-        IDeskConnectionManager        deskConnectionManager )
+        IDeskConnectionManager        deskConnectionManager ,
+        IDeskNotificationManager      notificationManager )
     {
         Guard.ArgumentNotNull ( logger ,
                                 nameof ( logger ) ) ;
@@ -64,8 +61,6 @@ public sealed partial class UiDeskManager : IUiDeskManager
                                 nameof ( manager ) ) ;
         Guard.ArgumentNotNull ( iconProvider ,
                                 nameof ( iconProvider ) ) ;
-        Guard.ArgumentNotNull ( notifications ,
-                                nameof ( notifications ) ) ;
         Guard.ArgumentNotNull ( scheduler ,
                                 nameof ( scheduler ) ) ;
         Guard.ArgumentNotNull ( errorManager ,
@@ -74,27 +69,26 @@ public sealed partial class UiDeskManager : IUiDeskManager
                                 nameof ( settingsChanges ) ) ;
         Guard.ArgumentNotNull ( hotkeyManager ,
                                 nameof ( hotkeyManager ) ) ;
-        Guard.ArgumentNotNull ( statusBarManager ,
-                                nameof ( statusBarManager ) ) ;
         Guard.ArgumentNotNull ( deskMovementManager ,
                                 nameof ( deskMovementManager ) ) ;
         Guard.ArgumentNotNull ( deskConnectionManager ,
                                 nameof ( deskConnectionManager ) ) ;
+        Guard.ArgumentNotNull ( notificationManager ,
+                                nameof ( notificationManager ) ) ;
 
         _logger                = logger ;
         _manager               = manager ;
         _iconProvider          = iconProvider ;
-        _notifications         = notifications ;
         _scheduler             = scheduler ;
         _errorManager          = errorManager ;
         _settingsChanges       = settingsChanges ;
         _hotkeyManager         = hotkeyManager ;
-        _statusBarManager      = statusBarManager ;
         _deskMovementManager   = deskMovementManager ;
         _deskConnectionManager = deskConnectionManager ;
+        _notificationManager   = notificationManager ;
     }
 
-    public IObservable < StatusBarInfo > StatusBarInfoChanged => _statusBarManager.StatusBarInfoChanged ;
+    public IObservable < StatusBarInfo > StatusBarInfoChanged => _notificationManager.StatusBarInfoChanged ;
 
     public bool IsInitialize => _notifyIcon is not null ;
 
@@ -133,15 +127,6 @@ public sealed partial class UiDeskManager : IUiDeskManager
             // ReSharper disable EmptyGeneralCatchClause
             try
             {
-                _onErrorChanged?.Dispose ( ) ;
-            }
-            catch
-            {
-                // ignore cleanup errors
-            }
-
-            try
-            {
                 _onHotkeySettingsChanged?.Dispose ( ) ;
             }
             catch
@@ -169,7 +154,7 @@ public sealed partial class UiDeskManager : IUiDeskManager
 
             try
             {
-                ( _statusBarManager as IDisposable )?.Dispose ( ) ;
+                _notificationManager?.Dispose ( ) ;
             }
             catch
             {
@@ -195,7 +180,6 @@ public sealed partial class UiDeskManager : IUiDeskManager
                 // ignore cleanup errors
             }
 
-            _onErrorChanged = null ;
             _onHotkeySettingsChanged = null ;
             _heightChanged  = null ;
             _finished       = null ;
@@ -274,10 +258,6 @@ public sealed partial class UiDeskManager : IUiDeskManager
         // Subscribe to connection manager events
         _deskConnectionManager.DeskReady += OnDeskReady ;
 
-        _onErrorChanged = _errorManager.ErrorChanged
-                                       .ObserveOn ( _scheduler )
-                                       .Subscribe ( OnErrorChanged ) ;
-
         _onHotkeySettingsChanged = _settingsChanges.HotkeySettingsChanged
                                                    .ObserveOn ( _scheduler )
                                                    .Subscribe ( OnHotkeySettingsChanged ) ;
@@ -294,9 +274,9 @@ public sealed partial class UiDeskManager : IUiDeskManager
         // users who have disabled global hotkeys in Settings.json.
         _logger.Debug ( "Deferring global hotkey registration until persisted settings are loaded" ) ;
 
-        // Pass a cancellable token to allow clean shutdown
-        _notifications.Initialize ( notifyIcon ,
-                                    _token ) ;
+        // Initialize notification manager
+        _notificationManager.Initialize ( notifyIcon ,
+                                          _token ) ;
 
         _ = AutoConnectAsync ( ) ;
 
@@ -402,9 +382,9 @@ public sealed partial class UiDeskManager : IUiDeskManager
             await Task.Delay ( 3000 ,
                                _token ).ConfigureAwait ( false ) ;
 
-            _notifications.Show ( "Auto Connect" ,
-                                  "Trying to auto connect to Idasen Desk..." ,
-                                  InfoBarSeverity.Informational ) ;
+            _notificationManager.ShowNotification ( "Auto Connect" ,
+                                                    "Trying to auto connect to Idasen Desk..." ,
+                                                    InfoBarSeverity.Informational ) ;
 
             await _deskConnectionManager.ConnectAsync ( _token ).ConfigureAwait ( false ) ;
         }
@@ -483,24 +463,10 @@ public sealed partial class UiDeskManager : IUiDeskManager
 
         var message = $"Connected successfully to '{desk.DeviceName}'." ;
 
-        OnStatusChanged ( 0 ,
-                          "Connected" ,
-                          message ,
-                          InfoBarSeverity.Success ) ;
-    }
-
-    private void OnErrorChanged ( IErrorDetails details )
-    {
-        var deviceName = _deskConnectionManager.CurrentDesk?.DeviceName ?? "Unknown" ;
-        var msg        = $"[{deviceName}] {details.Message}" ;
-
-        _logger.Error ( "Desk error: {Message}" ,
-                        msg ) ;
-
-        OnStatusChanged ( 0 ,
-                          "Error" ,
-                          msg ,
-                          InfoBarSeverity.Error ) ;
+        _notificationManager.ShowStatusUpdate ( 0 ,
+                                                "Connected" ,
+                                                message ,
+                                                InfoBarSeverity.Success ) ;
     }
 
     private void OnStandingHotkeyPressed ( object ? sender , EventArgs e )
@@ -570,10 +536,10 @@ public sealed partial class UiDeskManager : IUiDeskManager
 
     private async Task NotifyAndPersistHeightAsync ( uint heightInCm , string title , InfoBarSeverity severity )
     {
-        OnStatusChanged ( heightInCm ,
-                          title ,
-                          HeightMessage ( heightInCm ) ,
-                          severity ) ;
+        _notificationManager.ShowStatusUpdate ( heightInCm ,
+                                                title ,
+                                                HeightMessage ( heightInCm ) ,
+                                                severity ) ;
 
         await _manager.SetLastKnownDeskHeight ( heightInCm ,
                                                 CancellationToken.None ).ConfigureAwait ( false ) ;
@@ -593,33 +559,6 @@ public sealed partial class UiDeskManager : IUiDeskManager
         await NotifyAndPersistHeightAsync ( heightInCm ,
                                             "Height Changed" ,
                                             InfoBarSeverity.Warning ).ConfigureAwait ( false ) ;
-    }
-
-    private void OnStatusChanged (
-        uint            height   = 0 ,
-        string          title    = "" ,
-        string          message  = "" ,
-        InfoBarSeverity severity = InfoBarSeverity.Informational )
-    {
-        _logger.Debug ( "Status update Height={Height} Title={Title} Message={Message} Severity={Severity}" ,
-                        height ,
-                        title ,
-                        message ,
-                        severity ) ;
-
-        if ( height == 0 ) height = _manager.CurrentSettings.HeightSettings.LastKnownDeskHeight ;
-
-        var info = new StatusBarInfo ( title ,
-                                       height ,
-                                       message ,
-                                       severity ) ;
-
-        // Publish to observers outside the lock to avoid "used inside a lock" warnings and potential deadlocks
-        _statusBarManager.UpdateStatus ( info ) ;
-
-        _notifications.Show ( title ,
-                              message ,
-                              severity ) ;
     }
 
     private void CheckIfInitialized ( )

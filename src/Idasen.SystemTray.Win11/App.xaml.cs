@@ -149,6 +149,8 @@ public partial class App
                                                                            services
                                                                               .AddSingleton < IDeskConnectionManager , DeskConnectionManager > ( ) ;
                                                                            services
+                                                                              .AddSingleton < IDeskNotificationManager , DeskNotificationManager > ( ) ;
+                                                                           services
                                                                               .AddSingleton < IUiDeskManager ,
                                                                                    UiDeskManager > ( ) ;
                                                                            services
