@@ -139,6 +139,9 @@ public partial class App
                                                                               .AddSingleton < ITaskbarIconProvider ,
                                                                                    TaskbarIconProvider > ( ) ;
                                                                            services
+                                                                              .AddSingleton < IHotkeyManager ,
+                                                                                   HotkeyManager > ( ) ;
+                                                                           services
                                                                               .AddSingleton < IUiDeskManager ,
                                                                                    UiDeskManager > ( ) ;
                                                                            services
