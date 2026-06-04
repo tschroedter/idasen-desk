@@ -102,6 +102,34 @@ public sealed partial class UiDeskManager : IUiDeskManager
         _logger.Information ( "Disposing {TypeName}..." ,
                               nameof ( UiDeskManager ) ) ;
 
+        // Unsubscribe from events to prevent memory leaks
+        try
+        {
+            if ( _hotkeyManager != null )
+            {
+                _hotkeyManager.StandingHotkeyPressed -= OnStandingHotkeyPressed ;
+                _hotkeyManager.SeatingHotkeyPressed  -= OnSeatingHotkeyPressed ;
+                _hotkeyManager.Custom1HotkeyPressed  -= OnCustom1HotkeyPressed ;
+                _hotkeyManager.Custom2HotkeyPressed  -= OnCustom2HotkeyPressed ;
+            }
+        }
+        catch
+        {
+            // ignore unsubscribe errors
+        }
+
+        try
+        {
+            if ( _deskConnectionManager != null )
+            {
+                _deskConnectionManager.DeskReady -= OnDeskReady ;
+            }
+        }
+        catch
+        {
+            // ignore unsubscribe errors
+        }
+
         // Always attempt to dispose hotkey manager
         try
         {
