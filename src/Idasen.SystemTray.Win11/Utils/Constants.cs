@@ -40,4 +40,28 @@ public static class Constants
     ///     Prevents excessive updates during continuous desk movement.
     /// </summary>
     public const int HeightChangeThrottleSeconds = 1 ;
+
+    /// <summary>
+    ///     Timeout configuration for various operations
+    /// </summary>
+    public static class Timeouts
+    {
+        /// <summary>
+        ///     Timeout for UI Desk Manager initialization and settings operations.
+        ///     Allows sufficient time for Bluetooth connection and settings load.
+        /// </summary>
+        public const int InitializationSeconds = 60 ;
+
+        /// <summary>
+        ///     Delay in seconds before clearing status bar info message.
+        ///     Gives user time to read notification messages.
+        /// </summary>
+        public const int StatusBarInfoClearDelaySeconds = 10 ;
+
+        /// <summary>
+        ///     Throttle delay in milliseconds for auto-save settings.
+        ///     Prevents excessive saves during rapid property changes.
+        /// </summary>
+        public const int SettingsAutoSaveThrottleMilliseconds = 300 ;
+    }
 }

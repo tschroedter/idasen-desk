@@ -511,7 +511,7 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
                                                                  h => ( ( INotifyPropertyChanged )this )
                                                                      .PropertyChanged -= h )
                                .Where ( _ => ! _isLoadingSettings )
-                               .Throttle ( TimeSpan.FromMilliseconds ( 300 ) ,
+                               .Throttle ( TimeSpan.FromMilliseconds ( Constants.Timeouts.SettingsAutoSaveThrottleMilliseconds ) ,
                                            _scheduler )
                                .Select ( _ => Observable.FromAsync ( cancellationToken =>
                                                                          _settingsService.Synchronizer
