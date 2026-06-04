@@ -5,6 +5,8 @@ using NSubstitute ;
 using NSubstitute.ExceptionExtensions ;
 using Serilog ;
 
+#pragma warning disable CA2012 // Use ValueTasks correctly - disabled for test mocking
+
 namespace Idasen.SystemTray.Win11.Tests.TraySettings ;
 
 public class LoggingSettingsManagerTests
@@ -155,7 +157,7 @@ public class LoggingSettingsManagerTests
     public async Task UpgradeSettingsAsync_WhenThrows_ShouldReturnFalseAndLogError()
     {
         _settingsManager.UpgradeSettingsAsync(Arg.Any<CancellationToken>())
-                         .Returns(Task.FromException<bool>(new InvalidOperationException("boom")));
+                         .Returns(ValueTask.FromException<bool>(new InvalidOperationException("boom")));
 
         var result = await _manager.UpgradeSettingsAsync(CancellationToken.None);
 
@@ -171,7 +173,7 @@ public class LoggingSettingsManagerTests
     public async Task ResetSettingsAsync_ShouldLogInformationAndCallReset()
     {
         _settingsManager.ResetSettingsAsync(Arg.Any<CancellationToken>())
-                        .Returns(Task.CompletedTask);
+                        .Returns(new ValueTask());
 
         await _manager.ResetSettingsAsync(CancellationToken.None);
 
@@ -195,7 +197,7 @@ public class LoggingSettingsManagerTests
 
         // Ensure SaveAsync succeeds
         _settingsManager.SaveAsync(Arg.Any<CancellationToken>())
-                        .Returns(Task.CompletedTask);
+                        .Returns(new ValueTask());
 
         // Act
         await _manager.SaveAsync(CancellationToken.None);

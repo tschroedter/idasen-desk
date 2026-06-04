@@ -8,8 +8,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     xmlns:controls="clr-namespace:Idasen.SystemTray.Win11.Views.Controls"
-    xmlns:sys="clr-namespace:System;assembly=mscorlib"
-    xmlns:viewModels="clr-namespace:Idasen.SystemTray.Win11.ViewModels.Pages"
     Title="SettingsPage"
     d:DataContext="{d:DesignInstance local:SettingsPage, IsDesignTimeCreatable=False}"
     d:DesignHeight="640"

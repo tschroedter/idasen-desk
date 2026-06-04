@@ -10,6 +10,8 @@ using Idasen.SystemTray.Win11.Utils.Bluetooth ;
 using NSubstitute ;
 using Serilog ;
 
+#pragma warning disable CA2012 // Use ValueTasks correctly - disabled for test mocking
+
 namespace Idasen.SystemTray.Win11.Tests.Utils ;
 
 public class UiDeskManagerTests
@@ -64,7 +66,7 @@ public class UiDeskManagerTests
                               out _ ) ;
         var settings = ( Settings )settingsManager.CurrentSettings ;
         settings.HeightSettings.StandingHeightInCm = 120 ;
-        settingsManager.LoadAsync ( Arg.Any < CancellationToken > ( ) ).Returns ( Task.CompletedTask ) ;
+        settingsManager.LoadAsync ( Arg.Any < CancellationToken > ( ) ).Returns ( new ValueTask ( ) ) ;
 
         await sut.StandAsync ( ) ;
 
@@ -80,7 +82,7 @@ public class UiDeskManagerTests
                               out _ ) ;
         var settings = ( Settings )settingsManager.CurrentSettings ;
         settings.HeightSettings.SeatingHeightInCm = 70 ;
-        settingsManager.LoadAsync ( Arg.Any < CancellationToken > ( ) ).Returns ( Task.CompletedTask ) ;
+        settingsManager.LoadAsync ( Arg.Any < CancellationToken > ( ) ).Returns ( new ValueTask ( ) ) ;
 
         await sut.SitAsync ( ) ;
 
@@ -181,7 +183,7 @@ public class UiDeskManagerTests
                               out _ ) ;
         var settings = ( Settings )settingsManager.CurrentSettings ;
         settings.HeightSettings.Custom1HeightInCm = 111 ;
-        settingsManager.LoadAsync ( Arg.Any < CancellationToken > ( ) ).Returns ( Task.CompletedTask ) ;
+        settingsManager.LoadAsync ( Arg.Any < CancellationToken > ( ) ).Returns ( new ValueTask ( ) ) ;
 
         await sut.Custom1Async ( ) ;
 
@@ -197,7 +199,7 @@ public class UiDeskManagerTests
                               out _ ) ;
         var settings = ( Settings )settingsManager.CurrentSettings ;
         settings.HeightSettings.Custom2HeightInCm = 66 ;
-        settingsManager.LoadAsync ( Arg.Any < CancellationToken > ( ) ).Returns ( Task.CompletedTask ) ;
+        settingsManager.LoadAsync ( Arg.Any < CancellationToken > ( ) ).Returns ( new ValueTask ( ) ) ;
 
         await sut.Custom2Async ( ) ;
 
@@ -380,7 +382,7 @@ public class UiDeskManagerTests
     {
         // Arrange
         var sut = CreateSut ( out _ ,
-                              out var settingsManager ,
+                              out _ ,
                               out _ ) ;
 
         var createKeyGestureMethod = typeof ( UiDeskManager ).GetMethod ( "CreateKeyGesture" ,
@@ -407,9 +409,8 @@ public class UiDeskManagerTests
     {
         // Arrange
         var sut = CreateSut ( out _ ,
-                              out var settingsManager ,
+                              out _ ,
                               out _ ) ;
-        var settings = ( Settings )settingsManager.CurrentSettings ;
 
         var createKeyGestureMethod = typeof ( UiDeskManager ).GetMethod ( "CreateKeyGesture" ,
                                                                           BindingFlags.NonPublic | BindingFlags.Instance ) ;

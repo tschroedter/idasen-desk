@@ -771,7 +771,7 @@ public sealed partial class UiDeskManager : IUiDeskManager
     {
         _logger.Information ( "Unregistering global hotkeys..." ) ;
 
-        var failedHotkeys = new System.Collections.Generic.List<string> ( ) ;
+        var failedHotkeys = new List<string> ( ) ;
         Exception? firstException = null ;
 
         var standingException = TryUnregisterGlobalHotkey ( HotkeyNameStanding ) ;

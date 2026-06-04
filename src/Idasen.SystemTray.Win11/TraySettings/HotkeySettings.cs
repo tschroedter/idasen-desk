@@ -6,7 +6,7 @@ public class HotkeySettings
 {
     /// <summary>
     ///     Indicates whether global hotkeys are enabled.
-    ///     Set to false to disable all global hotkeys.
+    ///     Set too false to disable all global hotkeys.
     /// </summary>
     public bool GlobalHotkeysEnabled { get ; set ; } = Constants.DefaultGlobalHotkeysEnabled ;
 

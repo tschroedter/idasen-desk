@@ -88,11 +88,10 @@ public class SettingsStorageTests
         var invalidFileName = string.Empty ;
 
         // Act & Assert
-        await FluentActions.Invoking ( ( ) => CreateSut ( ).SaveSettingsAsync ( invalidFileName ,
-                                                                                settings ,
-                                                                                CancellationToken.None ) )
-                           .Should ( )
-                           .ThrowAsync < IOException > ( ) ;
+        var act = async ( ) => await CreateSut ( ).SaveSettingsAsync ( invalidFileName ,
+                                                                       settings ,
+                                                                       CancellationToken.None ) ;
+        await act.Should ( ).ThrowAsync < IOException > ( ) ;
     }
 
     // New tests to increase coverage

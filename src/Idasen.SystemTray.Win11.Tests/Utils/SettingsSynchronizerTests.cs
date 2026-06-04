@@ -9,6 +9,8 @@ using NSubstitute.ExceptionExtensions ;
 using Serilog ;
 using Wpf.Ui.Appearance ;
 
+#pragma warning disable CA2012 // Use ValueTasks correctly - disabled for test mocking
+
 namespace Idasen.SystemTray.Win11.Tests.Utils ;
 
 public class SettingsSynchronizerTests
@@ -122,7 +124,7 @@ public class SettingsSynchronizerTests
         _settings.DeviceSettings.DeviceLocked  = false ;
         _settings.DeviceSettings.DeviceName    = "OldDesk" ;
         _settings.DeviceSettings.DeviceAddress = 12345UL ;
-        _settingsManager.SaveAsync ( Arg.Any < CancellationToken > ( ) ).Returns ( Task.CompletedTask ) ;
+        _settingsManager.SaveAsync ( Arg.Any < CancellationToken > ( ) ).Returns ( new ValueTask ( ) ) ;
 
         // Act
         await sut.StoreSettingsAsync ( _model ,
@@ -591,7 +593,7 @@ public class SettingsSynchronizerTests
         var sut = CreateSut ( ) ;
         _heightSettings.StandingName = "Old Standing" ;
         _model.StandingName = "New Standing" ;
-        _settingsManager.SaveAsync ( Arg.Any < CancellationToken > ( ) ).Returns ( Task.CompletedTask ) ;
+        _settingsManager.SaveAsync ( Arg.Any < CancellationToken > ( ) ).Returns ( new ValueTask ( ) ) ;
 
         // Act
         await sut.StoreSettingsAsync ( _model , CancellationToken.None ) ;
@@ -608,7 +610,7 @@ public class SettingsSynchronizerTests
         var sut = CreateSut ( ) ;
         _heightSettings.SeatingName = "Old Sitting" ;
         _model.SeatingName = "New Sitting" ;
-        _settingsManager.SaveAsync ( Arg.Any < CancellationToken > ( ) ).Returns ( Task.CompletedTask ) ;
+        _settingsManager.SaveAsync ( Arg.Any < CancellationToken > ( ) ).Returns ( new ValueTask ( ) ) ;
 
         // Act
         await sut.StoreSettingsAsync ( _model , CancellationToken.None ) ;
@@ -847,7 +849,7 @@ public class SettingsSynchronizerTests
         _toUIntConverter.ConvertToUInt ( 105 , Arg.Any < uint > ( ) ).Returns ( 105u ) ;
         _toUIntConverter.ConvertToUInt ( 72 , Arg.Any < uint > ( ) ).Returns ( 72u ) ;
         _themeSwitcher.CurrentThemeName.Returns ( _appearanceSettings.ThemeName ) ;
-        _settingsManager.SaveAsync ( Arg.Any < CancellationToken > ( ) ).Returns ( Task.CompletedTask ) ;
+        _settingsManager.SaveAsync ( Arg.Any < CancellationToken > ( ) ).Returns ( new ValueTask ( ) ) ;
 
         // Mock all hotkeySettings to be the same
         var hotkeySettings = new HotkeySettings

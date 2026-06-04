@@ -15,7 +15,7 @@ public partial class LoggingSettingsManager (
     public string                    SettingsFileName => settingsManager.SettingsFileName ;
     public IObservable < ISettings > SettingsSaved    => settingsManager.SettingsSaved ;
 
-    public async Task SaveAsync ( CancellationToken token )
+    public async ValueTask SaveAsync ( CancellationToken token )
     {
         try
         {
@@ -38,7 +38,7 @@ public partial class LoggingSettingsManager (
     }
 
 
-    public async Task LoadAsync ( CancellationToken token )
+    public async ValueTask LoadAsync ( CancellationToken token )
     {
         try
         {
@@ -61,7 +61,7 @@ public partial class LoggingSettingsManager (
         }
     }
 
-    public async Task < bool > UpgradeSettingsAsync ( CancellationToken token )
+    public async ValueTask < bool > UpgradeSettingsAsync ( CancellationToken token )
     {
         try
         {
@@ -88,7 +88,7 @@ public partial class LoggingSettingsManager (
         }
     }
 
-    public async Task SetLastKnownDeskHeight ( uint heightInCm , CancellationToken token )
+    public async ValueTask SetLastKnownDeskHeight ( uint heightInCm , CancellationToken token )
     {
         logger.Debug ( "{Component} updating last known desk height: {HeightInCm}" ,
                        nameof ( SettingsManager ) ,
@@ -98,7 +98,7 @@ public partial class LoggingSettingsManager (
                                                        token ).ConfigureAwait ( false ) ;
     }
 
-    public Task ResetSettingsAsync ( CancellationToken token )
+    public ValueTask ResetSettingsAsync ( CancellationToken token )
     {
         logger.Information ( "Resetting settings to default" ) ;
 
