@@ -145,6 +145,8 @@ public partial class App
                                                                               .AddSingleton < IStatusBarManager ,
                                                                                    StatusBarManager > ( ) ;
                                                                            services
+                                                                              .AddSingleton < IDeskMovementManager , DeskMovementManager > ( ) ;
+                                                                           services
                                                                               .AddSingleton < IUiDeskManager ,
                                                                                    UiDeskManager > ( ) ;
                                                                            services

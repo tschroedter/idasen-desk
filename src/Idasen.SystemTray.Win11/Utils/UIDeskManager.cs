@@ -33,6 +33,7 @@ public sealed partial class UiDeskManager : IUiDeskManager
     private readonly IBluetoothReconnectStrategy   _reconnectStrategy ;
     private readonly IHotkeyManager                _hotkeyManager ;
     private readonly IStatusBarManager             _statusBarManager ;
+    private readonly IDeskMovementManager          _deskMovementManager ;
 
     private IDesk ?         _desk ;
     private IDeskProvider ? _deskProvider ;
@@ -58,7 +59,8 @@ public sealed partial class UiDeskManager : IUiDeskManager
         IObserveSettingsChanges       settingsChanges ,
         IBluetoothReconnectStrategy   reconnectStrategy ,
         IHotkeyManager                hotkeyManager ,
-        IStatusBarManager             statusBarManager )
+        IStatusBarManager             statusBarManager ,
+        IDeskMovementManager          deskMovementManager )
     {
         Guard.ArgumentNotNull ( logger ,
                                 nameof ( logger ) ) ;
@@ -82,18 +84,21 @@ public sealed partial class UiDeskManager : IUiDeskManager
                                 nameof ( hotkeyManager ) ) ;
         Guard.ArgumentNotNull ( statusBarManager ,
                                 nameof ( statusBarManager ) ) ;
+        Guard.ArgumentNotNull ( deskMovementManager ,
+                                nameof ( deskMovementManager ) ) ;
 
-        _logger           = logger ;
-        _manager          = manager ;
-        _iconProvider     = iconProvider ;
-        _notifications    = notifications ;
-        _scheduler        = scheduler ;
-        _providerFactory  = deskProviderFactory ;
-        _errorManager     = errorManager ;
-        _settingsChanges  = settingsChanges ;
-        _reconnectStrategy = reconnectStrategy ;
-        _hotkeyManager    = hotkeyManager ;
-        _statusBarManager = statusBarManager ;
+        _logger              = logger ;
+        _manager             = manager ;
+        _iconProvider        = iconProvider ;
+        _notifications       = notifications ;
+        _scheduler           = scheduler ;
+        _providerFactory     = deskProviderFactory ;
+        _errorManager        = errorManager ;
+        _settingsChanges     = settingsChanges ;
+        _reconnectStrategy   = reconnectStrategy ;
+        _hotkeyManager       = hotkeyManager ;
+        _statusBarManager    = statusBarManager ;
+        _deskMovementManager = deskMovementManager ;
     }
 
     public IObservable < StatusBarInfo > StatusBarInfoChanged => _statusBarManager.StatusBarInfoChanged ;
@@ -213,6 +218,8 @@ public sealed partial class UiDeskManager : IUiDeskManager
 
     public bool IsConnected => _desk is not null ;
 
+    internal IDesk ? GetDesk ( ) => _desk ;
+
     public Task DisconnectAsync ( )
     {
         if ( IsDeskConnected ( ) ) DoDisconnectAsync ( ) ;
@@ -270,6 +277,12 @@ public sealed partial class UiDeskManager : IUiDeskManager
         _tokenSource = new CancellationTokenSource ( TimeSpan.FromSeconds ( 60 ) ) ;
         _token       = _tokenSource.Token ;
 
+        // Configure desk accessor for movement manager
+        if ( _deskMovementManager is DeskMovementManager movementManager )
+        {
+            movementManager.SetDeskAccessor ( ( ) => _desk ) ;
+        }
+
         _onErrorChanged = _errorManager.ErrorChanged
                                        .ObserveOn ( _scheduler )
                                        .Subscribe ( OnErrorChanged ) ;
@@ -306,38 +319,38 @@ public sealed partial class UiDeskManager : IUiDeskManager
 
     public async Task StandAsync ( )
     {
-        if ( ! IsDeskConnected ( ) )
+        if ( ! _deskMovementManager.IsDeskAvailable ( ) )
             return ;
 
-        await MoveToConfiguredHeightAsync ( nameof ( StandAsync ) ,
-                                            s => s.HeightSettings.StandingHeightInCm ) ;
+        var heightInCm = _manager.CurrentSettings.HeightSettings.StandingHeightInCm ;
+        await _deskMovementManager.MoveToHeightAsync ( heightInCm , nameof ( StandAsync ) ) ;
     }
 
     public async Task SitAsync ( )
     {
-        if ( ! IsDeskConnected ( ) )
+        if ( ! _deskMovementManager.IsDeskAvailable ( ) )
             return ;
 
-        await MoveToConfiguredHeightAsync ( nameof ( SitAsync ) ,
-                                            s => s.HeightSettings.SeatingHeightInCm ) ;
+        var heightInCm = _manager.CurrentSettings.HeightSettings.SeatingHeightInCm ;
+        await _deskMovementManager.MoveToHeightAsync ( heightInCm , nameof ( SitAsync ) ) ;
     }
 
     public async Task Custom1Async ( )
     {
-        if ( ! IsDeskConnected ( ) )
+        if ( ! _deskMovementManager.IsDeskAvailable ( ) )
             return ;
 
-        await MoveToConfiguredHeightAsync ( nameof ( Custom1Async ) ,
-                                            s => s.HeightSettings.Custom1HeightInCm ) ;
+        var heightInCm = _manager.CurrentSettings.HeightSettings.Custom1HeightInCm ;
+        await _deskMovementManager.MoveToHeightAsync ( heightInCm , nameof ( Custom1Async ) ) ;
     }
 
     public async Task Custom2Async ( )
     {
-        if ( ! IsDeskConnected ( ) )
+        if ( ! _deskMovementManager.IsDeskAvailable ( ) )
             return ;
 
-        await MoveToConfiguredHeightAsync ( nameof ( Custom2Async ) ,
-                                            s => s.HeightSettings.Custom2HeightInCm ) ;
+        var heightInCm = _manager.CurrentSettings.HeightSettings.Custom2HeightInCm ;
+        await _deskMovementManager.MoveToHeightAsync ( heightInCm , nameof ( Custom2Async ) ) ;
     }
 
     public async Task AutoConnectAsync ( )
@@ -441,25 +454,6 @@ public sealed partial class UiDeskManager : IUiDeskManager
         return _token ;
     }
 
-    private async Task MoveToConfiguredHeightAsync ( string                    methodName ,
-                                                     Func < ISettings , uint > pickHeightInCm )
-    {
-        _logger.Debug ( "Executing {MethodName}( pickHeightInCm = {PickHeightInCm} )..." ,
-                        methodName ,
-                        pickHeightInCm ) ;
-
-        await _manager.LoadAsync ( CancellationToken.None ).ConfigureAwait ( false ) ;
-
-        var heightInCm = pickHeightInCm ( _manager.CurrentSettings ) ;
-        var height     = HeightToDeskHeight ( heightInCm ) ;
-
-        _logger.Information ( "Executing {MethodName} which moves the desk to height {HeightInCm} cm..." ,
-                              methodName ,
-                              heightInCm ) ;
-
-        _desk?.MoveTo ( height ) ;
-    }
-
     private async Task ExecuteWithErrorHandlingAsync ( string methodName , Func < Task > action )
     {
         try
@@ -475,11 +469,6 @@ public sealed partial class UiDeskManager : IUiDeskManager
                             methodName ) ;
             _errorManager.PublishForMessage ( $"Failed to call {methodName}" ) ;
         }
-    }
-
-    private static uint HeightToDeskHeight ( uint heightInCm )
-    {
-        return heightInCm * DeskHeightFactor ;
     }
 
     private static uint MmToCm ( uint height )

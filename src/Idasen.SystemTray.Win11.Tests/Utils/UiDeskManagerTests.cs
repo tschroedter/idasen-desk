@@ -19,7 +19,8 @@ public class UiDeskManagerTests
     private static UiDeskManager CreateSut (
         out IDesk            desk ,
         out ISettingsManager settingsManager ,
-        out IDeskProvider    deskProvider )
+        out IDeskProvider    deskProvider ,
+        out IDeskMovementManager deskMovementManager )
     {
         var logger = Substitute.For < ILogger > ( ) ;
         settingsManager = Substitute.For < ISettingsManager > ( ) ;
@@ -33,11 +34,14 @@ public class UiDeskManagerTests
         var reconnectStrategy = new ExponentialBackoffReconnectStrategy ( logger ) ;
         var hotkeyManager   = Substitute.For < IHotkeyManager > ( ) ;
         var statusBarManager = Substitute.For < IStatusBarManager > ( ) ;
+        deskMovementManager = Substitute.For < IDeskMovementManager > ( ) ;
 
         deskProvider = dp ;
 
         var settings = new Settings { HeightSettings = new HeightSettings ( ) } ;
         settingsManager.CurrentSettings.Returns ( settings ) ;
+
+        deskMovementManager.IsDeskAvailable ( ).Returns ( true ) ;
 
         var sut = new UiDeskManager (
                                      logger ,
@@ -50,7 +54,8 @@ public class UiDeskManagerTests
                                      settingsChanges ,
                                      reconnectStrategy ,
                                      hotkeyManager ,
-                                     statusBarManager ) ;
+                                     statusBarManager ,
+                                     deskMovementManager ) ;
 
         desk = Substitute.For < IDesk > ( ) ;
         typeof ( UiDeskManager )
@@ -65,39 +70,38 @@ public class UiDeskManagerTests
     [ Fact ]
     public async Task StandAsync_MovesDeskToConfiguredStandingHeight ( )
     {
-        var sut = CreateSut ( out var desk ,
+        var sut = CreateSut ( out _ ,
                               out var settingsManager ,
-                              out _ ) ;
+                              out _ ,
+                              out var deskMovementManager ) ;
         var settings = ( Settings )settingsManager.CurrentSettings ;
         settings.HeightSettings.StandingHeightInCm = 120 ;
-        settingsManager.LoadAsync ( Arg.Any < CancellationToken > ( ) ).Returns ( new ValueTask ( ) ) ;
 
         await sut.StandAsync ( ) ;
 
-        await settingsManager.Received ( 1 ).LoadAsync ( Arg.Any < CancellationToken > ( ) ) ;
-        desk.Received ( 1 ).MoveTo ( 120u * 100u ) ;
+        await deskMovementManager.Received ( 1 ).MoveToHeightAsync ( 120u , nameof ( UiDeskManager.StandAsync ) ) ;
     }
 
     [ Fact ]
     public async Task SitAsync_MovesDeskToConfiguredSeatingHeight ( )
     {
-        var sut = CreateSut ( out var desk ,
+        var sut = CreateSut ( out _ ,
                               out var settingsManager ,
-                              out _ ) ;
+                              out _ ,
+                              out var deskMovementManager ) ;
         var settings = ( Settings )settingsManager.CurrentSettings ;
         settings.HeightSettings.SeatingHeightInCm = 70 ;
-        settingsManager.LoadAsync ( Arg.Any < CancellationToken > ( ) ).Returns ( new ValueTask ( ) ) ;
 
         await sut.SitAsync ( ) ;
 
-        await settingsManager.Received ( 1 ).LoadAsync ( Arg.Any < CancellationToken > ( ) ) ;
-        desk.Received ( 1 ).MoveTo ( 70u * 100u ) ;
+        await deskMovementManager.Received ( 1 ).MoveToHeightAsync ( 70u , nameof ( UiDeskManager.SitAsync ) ) ;
     }
 
     [ Fact ]
     public async Task StopAsync_WhenConnected_CallsMoveStop ( )
     {
         var sut = CreateSut ( out var desk ,
+                              out _ ,
                               out _ ,
                               out _ ) ;
 
@@ -110,6 +114,7 @@ public class UiDeskManagerTests
     public async Task StopAsync_WhenNotConnected_DoesNothing ( )
     {
         var sut = CreateSut ( out var desk ,
+                              out _ ,
                               out _ ,
                               out _ ) ;
         typeof ( UiDeskManager )
@@ -132,6 +137,7 @@ public class UiDeskManagerTests
     {
         var sut = CreateSut ( out var desk ,
                               out _ ,
+                              out _ ,
                               out _ ) ;
 
         await sut.MoveLockAsync ( ) ;
@@ -143,6 +149,7 @@ public class UiDeskManagerTests
     public async Task MoveUnlockAsync_WhenConnected_CallsMoveUnlock ( )
     {
         var sut = CreateSut ( out var desk ,
+                              out _ ,
                               out _ ,
                               out _ ) ;
 
@@ -156,7 +163,8 @@ public class UiDeskManagerTests
     {
         var sut = CreateSut ( out var desk ,
                               out _ ,
-                              out var provider ) ;
+                              out var provider ,
+                              out _ ) ;
         // Assign provider field
         typeof ( UiDeskManager )
            .GetField ( "_deskProvider" ,
@@ -182,33 +190,31 @@ public class UiDeskManagerTests
     [ Fact ]
     public async Task Custom1Async_MovesDeskToConfiguredCustom1Height ( )
     {
-        var sut = CreateSut ( out var desk ,
+        var sut = CreateSut ( out _ ,
                               out var settingsManager ,
-                              out _ ) ;
+                              out _ ,
+                              out var deskMovementManager ) ;
         var settings = ( Settings )settingsManager.CurrentSettings ;
         settings.HeightSettings.Custom1HeightInCm = 111 ;
-        settingsManager.LoadAsync ( Arg.Any < CancellationToken > ( ) ).Returns ( new ValueTask ( ) ) ;
 
         await sut.Custom1Async ( ) ;
 
-        await settingsManager.Received ( 1 ).LoadAsync ( Arg.Any < CancellationToken > ( ) ) ;
-        desk.Received ( 1 ).MoveTo ( 111u * 100u ) ;
+        await deskMovementManager.Received ( 1 ).MoveToHeightAsync ( 111u , nameof ( UiDeskManager.Custom1Async ) ) ;
     }
 
     [ Fact ]
     public async Task Custom2Async_MovesDeskToConfiguredCustom2Height ( )
     {
-        var sut = CreateSut ( out var desk ,
+        var sut = CreateSut ( out _ ,
                               out var settingsManager ,
-                              out _ ) ;
+                              out _ ,
+                              out var deskMovementManager ) ;
         var settings = ( Settings )settingsManager.CurrentSettings ;
         settings.HeightSettings.Custom2HeightInCm = 66 ;
-        settingsManager.LoadAsync ( Arg.Any < CancellationToken > ( ) ).Returns ( new ValueTask ( ) ) ;
 
         await sut.Custom2Async ( ) ;
 
-        await settingsManager.Received ( 1 ).LoadAsync ( Arg.Any < CancellationToken > ( ) ) ;
-        desk.Received ( 1 ).MoveTo ( 66u * 100u ) ;
+        await deskMovementManager.Received ( 1 ).MoveToHeightAsync ( 66u , nameof ( UiDeskManager.Custom2Async ) ) ;
     }
 
     // Hotkey Configuration Tests
