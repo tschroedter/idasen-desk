@@ -118,23 +118,17 @@ public sealed partial class UiDeskManager : IUiDeskManager
     {
         try
         {
-            if ( _hotkeyManager != null )
-            {
-                _hotkeyManager.StandingHotkeyPressed -= OnStandingHotkeyPressed ;
-                _hotkeyManager.SeatingHotkeyPressed  -= OnSeatingHotkeyPressed ;
-                _hotkeyManager.Custom1HotkeyPressed  -= OnCustom1HotkeyPressed ;
-                _hotkeyManager.Custom2HotkeyPressed  -= OnCustom2HotkeyPressed ;
-            }
+            _hotkeyManager.StandingHotkeyPressed -= OnStandingHotkeyPressed ;
+            _hotkeyManager.SeatingHotkeyPressed  -= OnSeatingHotkeyPressed ;
+            _hotkeyManager.Custom1HotkeyPressed  -= OnCustom1HotkeyPressed ;
+            _hotkeyManager.Custom2HotkeyPressed  -= OnCustom2HotkeyPressed ;
 
-            if ( _deskConnectionManager != null )
-            {
-                _deskConnectionManager.DeskReady -= OnDeskReady ;
-            }
+            _deskConnectionManager.DeskReady -= OnDeskReady ;
         }
         catch ( Exception ex )
         {
             _logger.Warning ( ex ,
-                             "Failed to unsubscribe from events during disposal" ) ;
+                              "Failed to unsubscribe from events during disposal" ) ;
         }
     }
 

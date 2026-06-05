@@ -168,6 +168,7 @@ public static class AppConfiguration
     /// <summary>
     ///     UI and display configuration
     /// </summary>
+    // ReSharper disable once InconsistentNaming
     public static class UI
     {
         /// <summary>

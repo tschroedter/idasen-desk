@@ -83,12 +83,19 @@ public sealed class DeskReadyManager : IDeskReadyManager
 
         _finished = desk.FinishedChanged
                         .ObserveOn ( Scheduler.Default )
-                        .Subscribe ( async height => await OnFinishedChanged ( height ).ConfigureAwait ( false ) ) ;
+                        .Subscribe ( height =>
+                                     {
+                                         _ = HandleFinishedChangedAsync ( height ) ;
+                                     } ) ;
 
         _heightChanged = desk.HeightChanged
-                              .ObserveOn ( Scheduler.Default )
-                              .Throttle ( TimeSpan.FromSeconds ( AppConfiguration.Timeouts.HeightChangeThrottleSeconds ) )
-                              .Subscribe ( async height => await OnHeightChanged ( height ).ConfigureAwait ( false ) ) ;
+                             .ObserveOn ( Scheduler.Default )
+                             .Throttle ( TimeSpan.FromSeconds ( AppConfiguration.Timeouts
+                                                                                .HeightChangeThrottleSeconds ) )
+                             .Subscribe ( height =>
+                                          {
+                                              _ = HandleHeightChangedAsync ( height ) ;
+                                          } ) ;
 
         _iconProvider.Initialize ( _logger ,
                                    desk ,
@@ -100,6 +107,32 @@ public sealed class DeskReadyManager : IDeskReadyManager
                                                 "Connected" ,
                                                 message ,
                                                 InfoBarSeverity.Success ) ;
+    }
+
+    private async Task HandleFinishedChangedAsync ( uint height )
+    {
+        try
+        {
+            await OnFinishedChanged ( height ).ConfigureAwait ( false ) ;
+        }
+        catch ( Exception ex )
+        {
+            _logger.Error ( ex ,
+                            "Error in HandleFinishedChangedAsync") ;
+        }
+    }
+
+    private async Task HandleHeightChangedAsync(uint height)
+    {
+        try
+        {
+            await OnHeightChanged(height).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            _logger.Error(ex,
+                          "Error in HandleHeightChangedAsync");
+        }
     }
 
     private async Task OnFinishedChanged ( uint height )
