@@ -1,4 +1,4 @@
-﻿using FluentAssertions ;
+using FluentAssertions ;
 using Idasen.BluetoothLE.Characteristics.Common ;
 using Idasen.SystemTray.Win11.Utils.Exceptions ;
 using NSubstitute ;

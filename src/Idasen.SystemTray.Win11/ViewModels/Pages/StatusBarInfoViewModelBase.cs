@@ -42,7 +42,7 @@ public partial class StatusBarInfoViewModelBase : ObservableObject , IDisposable
         _timer = timerFactory (
                                OnElapsed ,
                                null ,
-                               TimeSpan.FromSeconds ( Constants.Timeouts.StatusBarInfoClearDelaySeconds ) ,
+                               TimeSpan.FromSeconds ( AppConfiguration.Timeouts.StatusBarInfoClearDelaySeconds ) ,
                                Timeout.InfiniteTimeSpan ) ;
     }
 
@@ -93,7 +93,7 @@ public partial class StatusBarInfoViewModelBase : ObservableObject , IDisposable
 
     protected void RestartTimer ( )
     {
-        _timer.Change ( TimeSpan.FromSeconds ( Constants.Timeouts.StatusBarInfoClearDelaySeconds ) ,
+        _timer.Change ( TimeSpan.FromSeconds ( AppConfiguration.Timeouts.StatusBarInfoClearDelaySeconds ) ,
                         Timeout.InfiniteTimeSpan ) ;
     }
 

@@ -1,4 +1,4 @@
-﻿using System.IO.Abstractions ;
+using System.IO.Abstractions ;
 using FluentAssertions ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.TraySettings ;
@@ -22,7 +22,7 @@ public class SettingsManagerTests : IDisposable
 
     public SettingsManagerTests ( )
     {
-        _commonApplicationData.ToFullPath ( Constants.SettingsFileName ).Returns ( "TestSettingsFilePath" ) ;
+        _commonApplicationData.ToFullPath ( AppConfiguration.Application.SettingsFileName ).Returns ( "TestSettingsFilePath" ) ;
         _settingsManager = new SettingsManager ( _logger ,
                                                  _commonApplicationData ,
                                                  _settingsStorage ,
@@ -150,9 +150,9 @@ public class SettingsManagerTests : IDisposable
         await _settingsStorage.Received ( 1 )
                               .SaveSettingsAsync ( "TestSettingsFilePath" ,
                                                    Arg.Is < Settings > ( s => s.DeviceSettings.DeviceName ==
-                                                                              Constants.DefaultDeviceName &&
+                                                                              AppConfiguration.Defaults.DeviceName &&
                                                                               s.HeightSettings.StandingHeightInCm ==
-                                                                              Constants.DefaultHeightStandingInCm ) ,
+                                                                              AppConfiguration.Defaults.HeightStandingInCm ) ,
                                                    CancellationToken.None ) ;
         notified.Should ( ).BeTrue ( ) ;
     }

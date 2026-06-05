@@ -124,13 +124,13 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
         CurrentTheme = ApplicationTheme.Unknown ;
         Custom1 = 100 ;
         Custom1IsVisibleInContextMenu = true ;
-        Custom1Name = Constants.DefaultCustom1Name ;
+        Custom1Name = AppConfiguration.Hotkeys.Custom1Name ;
         Custom2 = 90 ;
         Custom2IsVisibleInContextMenu = true ;
-        Custom2Name = Constants.DefaultCustom2Name ;
+        Custom2Name = AppConfiguration.Hotkeys.Custom2Name ;
         DeskAddress = string.Empty ;
         DeskName = string.Empty ;
-        LastKnownDeskHeight = Constants.DefaultDeskMinHeightInCm ;
+        LastKnownDeskHeight = AppConfiguration.Defaults.DeskMinHeightInCm ;
         LogFolderPath = string.Empty ;
         MaxHeight = 90 ;
         MaxSpeedToStopMovement = BluetoothLE.Linak.Control.StoppingHeightCalculatorSettings.MaxSpeedToStopMovement ;
@@ -143,17 +143,17 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
         Standing = 100 ;
         StandingIsVisibleInContextMenu = true ;
         StopIsVisibleInContextMenu = true ;
-        GlobalHotkeysEnabled = Constants.DefaultGlobalHotkeysEnabled ;
-        StandingName = Constants.DefaultStandingName ;
-        StandingKey = Constants.DefaultStandingKey ;
-        StandingModifiers = Constants.DefaultHotkeyModifiers ;
-        SeatingName = Constants.DefaultSeatingName ;
-        SeatingKey = Constants.DefaultSeatingKey ;
-        SeatingModifiers = Constants.DefaultHotkeyModifiers ;
-        Custom1Key = Constants.DefaultCustom1Key ;
-        Custom1Modifiers = Constants.DefaultHotkeyModifiers ;
-        Custom2Key = Constants.DefaultCustom2Key ;
-        Custom2Modifiers = Constants.DefaultHotkeyModifiers ;
+        GlobalHotkeysEnabled = AppConfiguration.Defaults.GlobalHotkeysEnabled ;
+        StandingName = AppConfiguration.Hotkeys.StandingName ;
+        StandingKey = AppConfiguration.Hotkeys.StandingKey ;
+        StandingModifiers = AppConfiguration.Hotkeys.DefaultModifiers ;
+        SeatingName = AppConfiguration.Hotkeys.SeatingName ;
+        SeatingKey = AppConfiguration.Hotkeys.SeatingKey ;
+        SeatingModifiers = AppConfiguration.Hotkeys.DefaultModifiers ;
+        Custom1Key = AppConfiguration.Hotkeys.Custom1Key ;
+        Custom1Modifiers = AppConfiguration.Hotkeys.DefaultModifiers ;
+        Custom2Key = AppConfiguration.Hotkeys.Custom2Key ;
+        Custom2Modifiers = AppConfiguration.Hotkeys.DefaultModifiers ;
     }
 
     /// <summary>
@@ -511,8 +511,8 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
                                                                  h => ( ( INotifyPropertyChanged )this )
                                                                      .PropertyChanged -= h )
                                .Where ( _ => ! _isLoadingSettings )
-                               .Throttle ( TimeSpan.FromMilliseconds ( Constants.Timeouts.SettingsAutoSaveThrottleMilliseconds ) ,
-                                           _scheduler )
+                               .Throttle ( TimeSpan.FromMilliseconds ( AppConfiguration.Timeouts.SettingsAutoSaveThrottleMilliseconds ) ,
+                                                           _scheduler )
                                .Select ( _ => Observable.FromAsync ( cancellationToken =>
                                                                          _settingsService.Synchronizer
                                                                                          .StoreSettingsAsync ( this ,

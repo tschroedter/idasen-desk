@@ -7,8 +7,6 @@ namespace Idasen.SystemTray.Win11.Utils ;
 
 public sealed class StatusBarManager : IStatusBarManager , IDisposable
 {
-    private const uint DeskHeightFactor = 100 ;
-
     private readonly ILogger                   _logger ;
     private readonly Subject < StatusBarInfo > _statusBarInfoSubject ;
     private bool                               _disposed ;
@@ -35,7 +33,7 @@ public sealed class StatusBarManager : IStatusBarManager , IDisposable
 
     public void UpdateDeskHeight ( uint heightInMillimeters )
     {
-        var heightInCm = heightInMillimeters / DeskHeightFactor ;
+        var heightInCm = heightInMillimeters / AppConfiguration.UI.DeskHeightFactor ;
 
         _logger.Debug ( "Updating desk height status: {Height}cm" ,
                         heightInCm ) ;

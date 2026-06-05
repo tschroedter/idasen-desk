@@ -1,4 +1,4 @@
-﻿using System.IO.Abstractions.TestingHelpers ;
+using System.IO.Abstractions.TestingHelpers ;
 using System.Text.Json ;
 using System.Text.Json.Serialization ;
 using FluentAssertions ;

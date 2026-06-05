@@ -230,7 +230,7 @@ public sealed partial class UiDeskManager : IUiDeskManager
 
         _logger.Debug ( "UI Desk Manager Initializing..." ) ;
 
-        _tokenSource = new CancellationTokenSource ( TimeSpan.FromSeconds ( Constants.Timeouts.InitializationSeconds ) ) ;
+        _tokenSource = new CancellationTokenSource ( TimeSpan.FromSeconds ( AppConfiguration.Timeouts.InitializationSeconds ) ) ;
         _token       = _tokenSource.Token ;
 
         // Configure desk accessor for movement manager
@@ -337,7 +337,7 @@ public sealed partial class UiDeskManager : IUiDeskManager
             if ( _tokenSource == null ||
                  _tokenSource.IsCancellationRequested )
             {
-                _tokenSource = new CancellationTokenSource ( TimeSpan.FromSeconds ( Constants.Timeouts.InitializationSeconds ) ) ;
+                _tokenSource = new CancellationTokenSource ( TimeSpan.FromSeconds ( AppConfiguration.Timeouts.InitializationSeconds ) ) ;
                 _token       = _tokenSource.Token ;
             }
 

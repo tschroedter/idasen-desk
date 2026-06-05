@@ -1,4 +1,4 @@
-﻿using Idasen.SystemTray.Win11.Interfaces ;
+using Idasen.SystemTray.Win11.Interfaces ;
 
 namespace Idasen.SystemTray.Win11.Utils.Converters ;
 
@@ -8,13 +8,13 @@ public class DeviceNameConverter
     public string DefaultIfEmpty ( string deviceName )
     {
         return string.IsNullOrWhiteSpace ( deviceName )
-                   ? Constants.DefaultDeviceName
+                   ? AppConfiguration.Defaults.DeviceName
                    : deviceName ;
     }
 
     public string EmptyIfDefault ( string deviceName )
     {
-        return deviceName == Constants.DefaultDeviceName
+        return deviceName == AppConfiguration.Defaults.DeviceName
                    ? string.Empty
                    : deviceName ;
     }

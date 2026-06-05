@@ -1,4 +1,4 @@
-﻿using Idasen.SystemTray.Win11.Utils.Exceptions ;
+using Idasen.SystemTray.Win11.Utils.Exceptions ;
 using NSubstitute ;
 using Serilog ;
 

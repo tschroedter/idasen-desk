@@ -1,4 +1,4 @@
-﻿using FluentAssertions ;
+using FluentAssertions ;
 using Idasen.SystemTray.Win11.TraySettings ;
 using Idasen.SystemTray.Win11.Utils ;
 
@@ -13,7 +13,7 @@ public class CommonApplicationDataTests
         var fileName = "test.txt" ;
         var expectedPath =
             Path.Combine ( Environment.GetFolderPath ( Environment.SpecialFolder.CommonApplicationData ) ,
-                           Constants.ApplicationName ,
+                           AppConfiguration.Application.Name ,
                            fileName ) ;
 
         // Act  
@@ -30,7 +30,7 @@ public class CommonApplicationDataTests
         // Arrange  
         var expectedFolder =
             Path.Combine ( Environment.GetFolderPath ( Environment.SpecialFolder.CommonApplicationData ) ,
-                           Constants.ApplicationName ) ;
+                           AppConfiguration.Application.Name ) ;
 
         // Act  
         var result = CreateSut ( ).FolderName ( ) ;

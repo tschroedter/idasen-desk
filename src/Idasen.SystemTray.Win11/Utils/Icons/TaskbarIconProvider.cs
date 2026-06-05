@@ -79,11 +79,11 @@ public partial class TaskbarIconProvider : ITaskbarIconProvider
 
             var heightInCm = _manager.CurrentSettings.HeightSettings.LastKnownDeskHeight ;
 
-            if ( heightInCm is >= Constants.DefaultDeskMinHeightInCm and <= Constants.DefaultDeskMaxHeightInCm )
+            if ( heightInCm is >= AppConfiguration.Defaults.DeskMinHeightInCm and <= AppConfiguration.Defaults.DeskMaxHeightInCm )
                 // HeightSpeedDetails expects height in millimeters
                 OnHeightAndSpeedChanged ( new HeightSpeedDetails (
                                                                   DateTimeOffset.Now ,
-                                                                  heightInCm * Constants.DeskHeightFactor ,
+                                                                  heightInCm * AppConfiguration.UI.DeskHeightFactor ,
                                                                   0 ) ) ;
 
             _isInitialized = true ;
@@ -137,7 +137,7 @@ public partial class TaskbarIconProvider : ITaskbarIconProvider
             return ;
         }
 
-        var heightInCm = ( int )Math.Round ( details.Height / ( double )Constants.DeskHeightFactor ) ;
+        var heightInCm = ( int )Math.Round ( details.Height / ( double )AppConfiguration.UI.DeskHeightFactor ) ;
 
         _creator.Update ( notifyIcon ,
                           heightInCm ) ;

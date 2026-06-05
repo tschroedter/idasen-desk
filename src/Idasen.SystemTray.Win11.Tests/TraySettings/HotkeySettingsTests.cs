@@ -13,7 +13,7 @@ public class HotkeySettingsTests
 
         settings.GlobalHotkeysEnabled
                 .Should ( )
-                .Be ( Constants.DefaultGlobalHotkeysEnabled ) ;
+                .Be ( AppConfiguration.Defaults.GlobalHotkeysEnabled ) ;
     }
 
     [ Fact ]
@@ -23,7 +23,7 @@ public class HotkeySettingsTests
 
         settings.StandingKey
                 .Should ( )
-                .Be ( Constants.DefaultStandingKey ) ;
+                .Be ( AppConfiguration.Hotkeys.StandingKey ) ;
     }
 
     [ Fact ]
@@ -33,7 +33,7 @@ public class HotkeySettingsTests
 
         settings.StandingModifiers
                 .Should ( )
-                .Be ( Constants.DefaultHotkeyModifiers ) ;
+                .Be ( AppConfiguration.Hotkeys.DefaultModifiers ) ;
     }
 
     [ Fact ]
@@ -43,7 +43,7 @@ public class HotkeySettingsTests
 
         settings.SeatingKey
                 .Should ( )
-                .Be ( Constants.DefaultSeatingKey ) ;
+                .Be ( AppConfiguration.Hotkeys.SeatingKey ) ;
     }
 
     [ Fact ]
@@ -53,7 +53,7 @@ public class HotkeySettingsTests
 
         settings.SeatingModifiers
                 .Should ( )
-                .Be ( Constants.DefaultHotkeyModifiers ) ;
+                .Be ( AppConfiguration.Hotkeys.DefaultModifiers ) ;
     }
 
     [ Fact ]
@@ -63,7 +63,7 @@ public class HotkeySettingsTests
 
         settings.Custom1Key
                 .Should ( )
-                .Be ( Constants.DefaultCustom1Key ) ;
+                .Be ( AppConfiguration.Hotkeys.Custom1Key ) ;
     }
 
     [ Fact ]
@@ -73,7 +73,7 @@ public class HotkeySettingsTests
 
         settings.Custom1Modifiers
                 .Should ( )
-                .Be ( Constants.DefaultHotkeyModifiers ) ;
+                .Be ( AppConfiguration.Hotkeys.DefaultModifiers ) ;
     }
 
     [ Fact ]
@@ -83,7 +83,7 @@ public class HotkeySettingsTests
 
         settings.Custom2Key
                 .Should ( )
-                .Be ( Constants.DefaultCustom2Key ) ;
+                .Be ( AppConfiguration.Hotkeys.Custom2Key ) ;
     }
 
     [ Fact ]
@@ -93,7 +93,7 @@ public class HotkeySettingsTests
 
         settings.Custom2Modifiers
                 .Should ( )
-                .Be ( Constants.DefaultHotkeyModifiers ) ;
+                .Be ( AppConfiguration.Hotkeys.DefaultModifiers ) ;
     }
 
     [ Fact ]
@@ -145,7 +145,7 @@ public class HotkeySettingsTests
 
         settings.Should ( ).NotBeNull ( ) ;
         settings !.GlobalHotkeysEnabled.Should ( ).BeFalse ( ) ;
-        settings.StandingKey.Should ( ).Be ( Constants.DefaultStandingKey ) ;
-        settings.StandingModifiers.Should ( ).Be ( Constants.DefaultHotkeyModifiers ) ;
+        settings.StandingKey.Should ( ).Be ( AppConfiguration.Hotkeys.StandingKey ) ;
+        settings.StandingModifiers.Should ( ).Be ( AppConfiguration.Hotkeys.DefaultModifiers ) ;
     }
 }

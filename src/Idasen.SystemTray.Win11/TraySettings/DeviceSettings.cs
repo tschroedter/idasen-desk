@@ -8,28 +8,28 @@ public class DeviceSettings
     /// <summary>
     ///     The device's name which is used to discover a desk.
     /// </summary>
-    public string DeviceName { get ; set ; } = Constants.DefaultDeviceName ;
+    public string DeviceName { get ; set ; } = AppConfiguration.Defaults.DeviceName ;
 
     /// <summary>
     ///     The device's Bluetooth address which is used to discover a desk.
     /// </summary>
-    public ulong DeviceAddress { get ; set ; } = Constants.DefaultDeviceAddress ;
+    public ulong DeviceAddress { get ; set ; } = AppConfiguration.Defaults.DeviceAddress ;
 
     /// <summary>
     ///     Device monitoring timeout in seconds which is used to empty a
     ///     cache of monitored devices.
     /// </summary>
-    public uint DeviceMonitoringTimeout { get ; set ; } = Constants.DefaultDeviceMonitoringTimeout ;
+    public uint DeviceMonitoringTimeout { get ; set ; } = AppConfiguration.Defaults.DeviceMonitoringTimeout ;
 
     /// <summary>
     ///     Locks the device to prevent any changes using the psychical controller on the desk.
     /// </summary>
-    public bool DeviceLocked { get ; set ; } = Constants.DefaultLocked ;
+    public bool DeviceLocked { get ; set ; } = AppConfiguration.Defaults.Locked ;
 
     /// <summary>
     ///     Indicates if we should show a notifications.
     /// </summary>
-    public bool NotificationsEnabled { get ; set ; } = Constants.NotificationsEnabled ;
+    public bool NotificationsEnabled { get ; set ; } = AppConfiguration.Defaults.NotificationsEnabled ;
 
     /// <summary>
     ///     Indicates whether the stop option is visible in the context menu.

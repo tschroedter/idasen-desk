@@ -379,7 +379,7 @@ public partial class App
 
     private bool EnsureSingleInstance ( )
     {
-        var mutexName = $"Global\\{Constants.ApplicationName}_SingleInstance" ;
+        var mutexName = $"Global\\{AppConfiguration.Application.Name}_SingleInstance" ;
 
         try
         {

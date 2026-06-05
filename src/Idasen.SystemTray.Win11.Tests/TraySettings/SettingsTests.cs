@@ -1,4 +1,4 @@
-﻿using FluentAssertions ;
+using FluentAssertions ;
 using Idasen.SystemTray.Win11.TraySettings ;
 
 namespace Idasen.SystemTray.Win11.Tests.TraySettings ;

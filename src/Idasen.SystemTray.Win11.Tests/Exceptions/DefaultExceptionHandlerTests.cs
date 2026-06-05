@@ -1,4 +1,4 @@
-﻿using FluentAssertions ;
+using FluentAssertions ;
 using Idasen.SystemTray.Win11.Utils.Exceptions ;
 using NSubstitute ;
 using Serilog ;

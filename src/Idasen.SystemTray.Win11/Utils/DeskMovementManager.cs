@@ -59,6 +59,6 @@ public sealed class DeskMovementManager : IDeskMovementManager
 
     private static uint HeightToDeskHeight ( uint heightInCm )
     {
-        return heightInCm * Constants.DeskHeightFactor ;
+        return heightInCm * AppConfiguration.UI.DeskHeightFactor ;
     }
 }

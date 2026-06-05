@@ -1,4 +1,4 @@
-﻿using System.Globalization ;
+using System.Globalization ;
 using Idasen.SystemTray.Win11.Interfaces ;
 
 namespace Idasen.SystemTray.Win11.Utils.Converters ;
@@ -9,14 +9,14 @@ public class DeviceAddressToULongConverter ( IStringToUIntConverter converter )
     public ulong DefaultIfEmpty ( string deviceAddress )
     {
         return string.IsNullOrWhiteSpace ( deviceAddress )
-                   ? Constants.DefaultDeviceAddress
+                   ? AppConfiguration.Defaults.DeviceAddress
                    : converter.ConvertStringToUlongOrDefault ( deviceAddress ,
-                                                               Constants.DefaultDeviceAddress ) ;
+                                                               AppConfiguration.Defaults.DeviceAddress ) ;
     }
 
     public string EmptyIfDefault ( ulong deviceAddress )
     {
-        return deviceAddress == Constants.DefaultDeviceAddress
+        return deviceAddress == AppConfiguration.Defaults.DeviceAddress
                    ? string.Empty
                    : deviceAddress.ToString ( CultureInfo.InvariantCulture ) ;
     }
