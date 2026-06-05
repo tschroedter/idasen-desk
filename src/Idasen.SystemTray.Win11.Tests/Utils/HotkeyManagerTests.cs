@@ -9,14 +9,11 @@ namespace Idasen.SystemTray.Win11.Tests.Utils ;
 
 public class HotkeyManagerTests
 {
-    private static HotkeyManager CreateSut (
-        out ILogger           logger ,
-        out ISettingsManager  settingsManager ,
-        out INotifications    notifications )
+    private static HotkeyManager CreateSut ( )
     {
-        logger = Substitute.For < ILogger > ( ) ;
-        settingsManager = Substitute.For < ISettingsManager > ( ) ;
-        notifications = Substitute.For < INotifications > ( ) ;
+        var logger = Substitute.For < ILogger > ( ) ;
+        var settingsManager = Substitute.For < ISettingsManager > ( ) ;
+        var notifications = Substitute.For < INotifications > ( ) ;
 
         var settings = new Settings
         {
@@ -75,9 +72,7 @@ public class HotkeyManagerTests
     [ Fact ]
     public void Dispose_CalledMultipleTimes_DoesNotThrow ( )
     {
-        var sut = CreateSut ( out _ ,
-                              out _ ,
-                              out _ ) ;
+        var sut = CreateSut ( ) ;
 
         var act = ( ) =>
                   {
@@ -91,9 +86,7 @@ public class HotkeyManagerTests
     [ Fact ]
     public void Events_AreInitializedAsNull ( )
     {
-        var sut = CreateSut ( out _ ,
-                              out _ ,
-                              out _ ) ;
+        var sut = CreateSut ( ) ;
 
         // Events should be null initially (no subscribers)
         // We can't directly assert on events, but we can verify they can be subscribed to

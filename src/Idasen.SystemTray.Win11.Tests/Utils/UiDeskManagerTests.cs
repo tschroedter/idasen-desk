@@ -16,14 +16,12 @@ public class UiDeskManagerTests
     private static UiDeskManager CreateSut (
         out IDesk            desk ,
         out ISettingsManager settingsManager ,
-        out IDeskProvider    deskProvider ,
         out IDeskMovementManager deskMovementManager ,
         out IDeskConnectionManager deskConnectionManager )
     {
         var logger = Substitute.For < ILogger > ( ) ;
         settingsManager = Substitute.For < ISettingsManager > ( ) ;
         var scheduler       = Scheduler.Immediate ;
-        var dp              = Substitute.For < IDeskProvider > ( ) ;
         var errorManager    = Substitute.For < IErrorManager > ( ) ;
         var settingsChanges = Substitute.For < IObserveSettingsChanges > ( ) ;
         var hotkeyManager   = Substitute.For < IHotkeyManager > ( ) ;
@@ -32,7 +30,6 @@ public class UiDeskManagerTests
         var notificationManager = Substitute.For < IDeskNotificationManager > ( ) ;
         var deskReadyManager = Substitute.For < IDeskReadyManager > ( ) ;
 
-        deskProvider = dp ;
         desk = Substitute.For < IDesk > ( ) ;
 
         var settings = new Settings { HeightSettings = new HeightSettings ( ) } ;
@@ -62,7 +59,6 @@ public class UiDeskManagerTests
     {
         var sut = CreateSut ( out _ ,
                               out var settingsManager ,
-                              out _ ,
                               out var deskMovementManager ,
                               out _ ) ;
         var settings = ( Settings )settingsManager.CurrentSettings ;
@@ -78,7 +74,6 @@ public class UiDeskManagerTests
     {
         var sut = CreateSut ( out _ ,
                               out var settingsManager ,
-                              out _ ,
                               out var deskMovementManager ,
                               out _ ) ;
         var settings = ( Settings )settingsManager.CurrentSettings ;
@@ -95,7 +90,6 @@ public class UiDeskManagerTests
         var sut = CreateSut ( out var desk ,
                               out _ ,
                               out _ ,
-                              out _ ,
                               out _ ) ;
 
         await sut.StopAsync ( ) ;
@@ -107,7 +101,6 @@ public class UiDeskManagerTests
     public async Task StopAsync_WhenNotConnected_DoesNothing ( )
     {
         var sut = CreateSut ( out var desk ,
-                              out _ ,
                               out _ ,
                               out _ ,
                               out var deskConnectionManager ) ;
@@ -128,7 +121,6 @@ public class UiDeskManagerTests
         var sut = CreateSut ( out var desk ,
                               out _ ,
                               out _ ,
-                              out _ ,
                               out _ ) ;
 
         await sut.MoveLockAsync ( ) ;
@@ -140,7 +132,6 @@ public class UiDeskManagerTests
     public async Task MoveUnlockAsync_WhenConnected_CallsMoveUnlock ( )
     {
         var sut = CreateSut ( out var desk ,
-                              out _ ,
                               out _ ,
                               out _ ,
                               out _ ) ;
@@ -156,7 +147,6 @@ public class UiDeskManagerTests
         var sut = CreateSut ( out _ ,
                               out _ ,
                               out _ ,
-                              out _ ,
                               out var deskConnectionManager ) ;
 
         await sut.DisconnectAsync ( ) ;
@@ -169,7 +159,6 @@ public class UiDeskManagerTests
     {
         var sut = CreateSut ( out _ ,
                               out var settingsManager ,
-                              out _ ,
                               out var deskMovementManager ,
                               out _ ) ;
         var settings = ( Settings )settingsManager.CurrentSettings ;
@@ -185,7 +174,6 @@ public class UiDeskManagerTests
     {
         var sut = CreateSut ( out _ ,
                               out var settingsManager ,
-                              out _ ,
                               out var deskMovementManager ,
                               out _ ) ;
         var settings = ( Settings )settingsManager.CurrentSettings ;
