@@ -2,7 +2,6 @@ using FluentAssertions ;
 using Idasen.SystemTray.Win11.Utils.Bluetooth ;
 using NSubstitute ;
 using Serilog ;
-using Xunit ;
 
 namespace Idasen.SystemTray.Win11.Tests.Utils.Bluetooth ;
 

@@ -1,4 +1,3 @@
-using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.Utils ;
 using Wpf.Ui.Controls ;
 using Wpf.Ui.Tray.Controls ;

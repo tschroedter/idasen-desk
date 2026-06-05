@@ -1,5 +1,4 @@
 using FluentAssertions ;
-using Idasen.BluetoothLE.Core ;
 using Idasen.SystemTray.Win11.Utils ;
 using NSubstitute ;
 using Serilog ;

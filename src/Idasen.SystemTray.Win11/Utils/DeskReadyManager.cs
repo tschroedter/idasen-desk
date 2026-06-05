@@ -1,7 +1,5 @@
 using System.Reactive.Concurrency ;
 using System.Reactive.Linq ;
-using System.Reactive.Threading.Tasks ;
-using Idasen.Aop ;
 using Idasen.BluetoothLE.Linak.Interfaces ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Serilog ;

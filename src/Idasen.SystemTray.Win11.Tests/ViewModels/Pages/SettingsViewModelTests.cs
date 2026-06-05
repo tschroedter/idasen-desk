@@ -39,7 +39,7 @@ public sealed class SettingsViewModelTests
         _settingsManager.SettingsFileName.Returns ( "TestSettings.json" ) ;
         _settingsManager.SettingsSaved.Returns ( _settingsSaved ) ;
 
-        // Setup the settings service mock
+        // Set up the settings service mock
         _settingsService.SettingsManager.Returns ( _settingsManager ) ;
         _settingsService.Synchronizer.Returns ( _synchronizer ) ;
         _settingsService.HeightValidator.Returns ( _heightValidator ) ;

@@ -1,7 +1,6 @@
 using System.Windows.Input ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using NHotkey ;
-using NHotkey.Wpf ;
 using Serilog ;
 using Wpf.Ui.Controls ;
 using WpfHotkeyManager = NHotkey.Wpf.HotkeyManager ;

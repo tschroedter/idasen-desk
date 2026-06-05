@@ -1,16 +1,10 @@
 ﻿using System.Diagnostics.CodeAnalysis ;
 using System.Reactive.Concurrency ;
 using System.Reactive.Linq ;
-using System.Reactive.Subjects ;
-using System.Windows.Input ;
-using Idasen.Aop ;
 using Idasen.BluetoothLE.Core ;
-using Idasen.BluetoothLE.Linak ;
 using Idasen.BluetoothLE.Linak.Interfaces ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using JetBrains.Annotations ;
-using NHotkey ;
-using NHotkey.Wpf ;
 using Serilog ;
 using Wpf.Ui.Controls ;
 using Wpf.Ui.Tray.Controls ;
@@ -271,17 +265,18 @@ public sealed partial class UiDeskManager : IUiDeskManager
     private void StartAutoConnectInBackground ( )
     {
         Task.Run ( async ( ) =>
-        {
-            try
-            {
-                await AutoConnectAsync ( ) ;
-            }
-            catch ( Exception e )
-            {
-                _logger.Error ( e ,
-                                "Unhandled exception in background auto-connect task" ) ;
-            }
-        } ) ;
+                   {
+                       try
+                       {
+                           await AutoConnectAsync ( ) ;
+                       }
+                       catch ( Exception e )
+                       {
+                           _logger.Error ( e ,
+                                           "Unhandled exception in background auto-connect task" ) ;
+                       }
+                   } ,
+                   _token ) ;
     }
 
     private void RegisterGlobalHotkeys ( )

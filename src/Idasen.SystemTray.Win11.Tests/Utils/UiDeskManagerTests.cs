@@ -1,12 +1,9 @@
 using System.Reactive.Concurrency ;
-using System.Reflection ;
-using System.Windows.Input ;
 using FluentAssertions ;
 using Idasen.BluetoothLE.Linak.Interfaces ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.TraySettings ;
 using Idasen.SystemTray.Win11.Utils ;
-using Idasen.SystemTray.Win11.Utils.Bluetooth ;
 using NSubstitute ;
 using Serilog ;
 

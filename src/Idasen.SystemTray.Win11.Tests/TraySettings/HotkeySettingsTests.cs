@@ -127,7 +127,7 @@ public class HotkeySettingsTests
         var settings = System.Text.Json.JsonSerializer.Deserialize < HotkeySettings > ( json ) ;
 
         settings.Should ( ).NotBeNull ( ) ;
-        settings !.GlobalHotkeysEnabled.Should ( ).BeFalse ( ) ;
+        settings.GlobalHotkeysEnabled.Should ( ).BeFalse ( ) ;
         settings.StandingKey.Should ( ).Be ( "F1" ) ;
         settings.StandingModifiers.Should ( ).Be ( "Control, Shift" ) ;
     }
@@ -144,7 +144,7 @@ public class HotkeySettingsTests
         var settings = System.Text.Json.JsonSerializer.Deserialize < HotkeySettings > ( json ) ;
 
         settings.Should ( ).NotBeNull ( ) ;
-        settings !.GlobalHotkeysEnabled.Should ( ).BeFalse ( ) ;
+        settings.GlobalHotkeysEnabled.Should ( ).BeFalse ( ) ;
         settings.StandingKey.Should ( ).Be ( AppConfiguration.Hotkeys.StandingKey ) ;
         settings.StandingModifiers.Should ( ).Be ( AppConfiguration.Hotkeys.DefaultModifiers ) ;
     }

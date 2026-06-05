@@ -1,5 +1,4 @@
 using System.Diagnostics ;
-using FluentAssertions ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.Services ;
 using Microsoft.Extensions.Configuration ;
