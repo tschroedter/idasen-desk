@@ -1,4 +1,4 @@
-﻿namespace Idasen.SystemTray.Win11.Utils ;
+namespace Idasen.SystemTray.Win11.Utils ;
 
 /// <summary>
 ///     Application configuration organized by concern.
@@ -163,6 +163,13 @@ public static class AppConfiguration
         ///     Prevents excessive updates during continuous desk movement.
         /// </summary>
         public const int HeightChangeThrottleSeconds = 1 ;
+
+        /// <summary>
+        ///     Timeout in milliseconds for Bluetooth connection health monitoring.
+        ///     If no activity is detected within this period, the connection is considered stale
+        ///     and automatic reconnection is attempted. Default: 60000ms (60 seconds).
+        /// </summary>
+        public const int ConnectionMonitorTimeoutMilliseconds = 60000 ;
     }
 
     /// <summary>

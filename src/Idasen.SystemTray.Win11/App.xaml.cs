@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis ;
+using System.Diagnostics.CodeAnalysis ;
 using System.IO.Abstractions ;
 using System.Reactive.Concurrency ;
 using System.Windows.Media ;
@@ -158,12 +158,14 @@ public partial class App
                                                                                   var iconProvider         = provider.GetRequiredService < ITaskbarIconProvider > ( ) ;
                                                                                   var notificationManager  = provider.GetRequiredService < IDeskNotificationManager > ( ) ;
                                                                                   var notifyIcon           = provider.GetService < NotifyIcon > ( ) ;
+                                                                                  var connectionManager    = provider.GetRequiredService < IDeskConnectionManager > ( ) ;
 
                                                                                   return new DeskReadyManager ( logger ,
                                                                                                                 settingsManager ,
                                                                                                                 iconProvider ,
                                                                                                                 notificationManager ,
-                                                                                                                notifyIcon ) ;
+                                                                                                                notifyIcon ,
+                                                                                                                connectionManager ) ;
                                                                               } ) ;
                                                                            services
                                                                               .AddSingleton < IUiDeskManager ,
@@ -215,6 +217,14 @@ public partial class App
                                                                            services
                                                                               .AddSingleton < IBluetoothReconnectStrategy ,
                                                                                    Utils.Bluetooth.ExponentialBackoffReconnectStrategy > ( ) ;
+                                                                           services
+                                                                              .AddSingleton < IBluetoothConnectionMonitor > ( provider =>
+                                                                              {
+                                                                                  var logger = provider.GetRequiredService < ILogger > ( ) ;
+                                                                                  return new Utils.Bluetooth.BluetoothConnectionMonitor (
+                                                                                      logger ,
+                                                                                      AppConfiguration.Timeouts.ConnectionMonitorTimeoutMilliseconds ) ;
+                                                                              } ) ;
                                                                            services
                                                                               .AddSingleton < IApplicationThemeManager ,
                                                                                    MyApplicationThemeManager > ( ) ;

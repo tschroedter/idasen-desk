@@ -8,6 +8,8 @@ public interface IDeskConnectionManager : IDisposable
 
     IDesk ? CurrentDesk { get ; }
 
+    IBluetoothConnectionMonitor ? ConnectionMonitor { get ; }
+
     event EventHandler ? Connected ;
     event EventHandler ? Disconnected ;
     event EventHandler < IDesk > ? DeskReady ;

@@ -11,34 +11,44 @@ public sealed class DeskConnectionManager : IDeskConnectionManager
     private readonly Func < IDeskProvider >        _providerFactory ;
     private readonly IBluetoothReconnectStrategy   _reconnectStrategy ;
     private readonly IErrorManager                 _errorManager ;
+    private readonly IBluetoothConnectionMonitor   _connectionMonitor ;
 
     private IDesk ?         _desk ;
     private IDeskProvider ? _deskProvider ;
     private bool            _disposed ;
+    private bool            _isReconnecting ;
 
     public DeskConnectionManager (
         ILogger                      logger ,
         ISettingsManager             settingsManager ,
         Func < IDeskProvider >       providerFactory ,
         IBluetoothReconnectStrategy  reconnectStrategy ,
-        IErrorManager                errorManager )
+        IErrorManager                errorManager ,
+        IBluetoothConnectionMonitor  connectionMonitor )
     {
         ArgumentNullException.ThrowIfNull ( logger ) ;
         ArgumentNullException.ThrowIfNull ( settingsManager ) ;
         ArgumentNullException.ThrowIfNull ( providerFactory ) ;
         ArgumentNullException.ThrowIfNull ( reconnectStrategy ) ;
         ArgumentNullException.ThrowIfNull ( errorManager ) ;
+        ArgumentNullException.ThrowIfNull ( connectionMonitor ) ;
 
         _logger            = logger ;
         _settingsManager   = settingsManager ;
         _providerFactory   = providerFactory ;
         _reconnectStrategy = reconnectStrategy ;
         _errorManager      = errorManager ;
+        _connectionMonitor = connectionMonitor ;
+
+        // Subscribe to stale connection detection
+        _connectionMonitor.StaleConnectionDetected += OnStaleConnectionDetected ;
     }
 
     public bool IsConnected => _desk is not null ;
 
     public IDesk ? CurrentDesk => _desk ;
+
+    public IBluetoothConnectionMonitor ? ConnectionMonitor => _connectionMonitor ;
 
     public event EventHandler ? Connected ;
     public event EventHandler ? Disconnected ;
@@ -115,6 +125,9 @@ public sealed class DeskConnectionManager : IDeskConnectionManager
             _logger.Debug ( "[{DeviceName}] Trying to disconnect from Idasen Desk..." ,
                             _desk?.DeviceName ) ;
 
+            // Stop connection monitoring when intentionally disconnecting
+            _connectionMonitor.StopMonitoring ( ) ;
+
             DisposeDesk ( ) ;
 
             _logger.Debug ( "...disconnected from Idasen Desk" ) ;
@@ -143,6 +156,18 @@ public sealed class DeskConnectionManager : IDeskConnectionManager
 
         try
         {
+            // Unsubscribe from connection monitor events
+            _connectionMonitor.StaleConnectionDetected -= OnStaleConnectionDetected ;
+            _connectionMonitor.Dispose ( ) ;
+        }
+        catch ( Exception ex )
+        {
+            _logger.Warning ( ex ,
+                             "Failed to dispose connection monitor" ) ;
+        }
+
+        try
+        {
             DisposeDesk ( ) ;
         }
         catch ( Exception ex )
@@ -160,6 +185,9 @@ public sealed class DeskConnectionManager : IDeskConnectionManager
                               desk.BluetoothAddress ) ;
 
         _desk = desk ;
+
+        // Start connection monitoring after successful connection
+        _connectionMonitor.StartMonitoring ( ) ;
 
         Connected?.Invoke ( this , EventArgs.Empty ) ;
         DeskReady?.Invoke ( this , desk ) ;
@@ -220,5 +248,53 @@ public sealed class DeskConnectionManager : IDeskConnectionManager
 
         _desk         = null ;
         _deskProvider = null ;
+    }
+
+    private void OnStaleConnectionDetected ( object ? sender , EventArgs e )
+    {
+        if ( _isReconnecting )
+        {
+            _logger.Debug ( "Stale connection event ignored - reconnection already in progress" ) ;
+            return ;
+        }
+
+        _logger.Warning ( "Stale connection detected - initiating automatic reconnection..." ) ;
+
+        // Handle reconnection in background to avoid blocking
+        Task.Run ( async ( ) =>
+        {
+            try
+            {
+                _isReconnecting = true ;
+
+                // Cleanup stale connection first
+                try
+                {
+                    DisposeDesk ( ) ;
+                }
+                catch ( Exception ex )
+                {
+                    _logger.Warning ( ex ,
+                                     "Error disposing stale desk connection" ) ;
+                }
+
+                // Notify disconnection
+                Disconnected?.Invoke ( this , EventArgs.Empty ) ;
+
+                // Attempt reconnection
+                _logger.Information ( "Attempting automatic reconnection after stale connection..." ) ;
+                await ConnectAsync ( CancellationToken.None ).ConfigureAwait ( false ) ;
+            }
+            catch ( Exception ex )
+            {
+                _logger.Error ( ex ,
+                               "Failed to reconnect after stale connection detection" ) ;
+                _errorManager.PublishForMessage ( "Failed to reconnect - connection was stale" ) ;
+            }
+            finally
+            {
+                _isReconnecting = false ;
+            }
+        } ) ;
     }
 }

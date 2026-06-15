@@ -15,6 +15,7 @@ public sealed class DeskReadyManager : IDeskReadyManager
     private readonly ITaskbarIconProvider          _iconProvider ;
     private readonly IDeskNotificationManager      _notificationManager ;
     private readonly NotifyIcon ?                  _notifyIcon ;
+    private readonly IDeskConnectionManager        _connectionManager ;
 
     private bool            _disposed ;
     private IDisposable ?   _finished ;
@@ -25,18 +26,21 @@ public sealed class DeskReadyManager : IDeskReadyManager
         ISettingsManager          settingsManager ,
         ITaskbarIconProvider      iconProvider ,
         IDeskNotificationManager  notificationManager ,
-        NotifyIcon ?              notifyIcon )
+        NotifyIcon ?              notifyIcon ,
+        IDeskConnectionManager    connectionManager )
     {
         ArgumentNullException.ThrowIfNull ( logger ) ;
         ArgumentNullException.ThrowIfNull ( settingsManager ) ;
         ArgumentNullException.ThrowIfNull ( iconProvider ) ;
         ArgumentNullException.ThrowIfNull ( notificationManager ) ;
+        ArgumentNullException.ThrowIfNull ( connectionManager ) ;
 
         _logger               = logger ;
         _settingsManager      = settingsManager ;
         _iconProvider         = iconProvider ;
         _notificationManager  = notificationManager ;
         _notifyIcon           = notifyIcon ;
+        _connectionManager    = connectionManager ;
     }
 
     public void Dispose ( )
@@ -85,6 +89,7 @@ public sealed class DeskReadyManager : IDeskReadyManager
                         .ObserveOn ( Scheduler.Default )
                         .Subscribe ( height =>
                                      {
+                                         ResetConnectionMonitor ( ) ;
                                          _ = HandleFinishedChangedAsync ( height ) ;
                                      } ) ;
 
@@ -94,6 +99,7 @@ public sealed class DeskReadyManager : IDeskReadyManager
                                                                                 .HeightChangeThrottleSeconds ) )
                              .Subscribe ( height =>
                                           {
+                                              ResetConnectionMonitor ( ) ;
                                               _ = HandleHeightChangedAsync ( height ) ;
                                           } ) ;
 
@@ -172,5 +178,18 @@ public sealed class DeskReadyManager : IDeskReadyManager
         // Use double division and specify midpoint rounding to avoid ambiguous overloads and banker's rounding
         return ( uint )Math.Round ( height / ( double )AppConfiguration.UI.DeskHeightFactor ,
                                     MidpointRounding.AwayFromZero ) ;
+    }
+
+    private void ResetConnectionMonitor ( )
+    {
+        try
+        {
+            _connectionManager.ConnectionMonitor?.ResetActivityTimer ( ) ;
+        }
+        catch ( Exception ex )
+        {
+            _logger.Warning ( ex ,
+                             "Failed to reset connection monitor activity timer" ) ;
+        }
     }
 }
