@@ -9,7 +9,6 @@ using NSubstitute ;
 using Serilog ;
 using Wpf.Ui.Controls ;
 using Wpf.Ui.Tray.Controls ;
-using Xunit ;
 
 namespace Idasen.SystemTray.Win11.Tests.Utils ;
 
@@ -53,8 +52,8 @@ public sealed class DeskNotificationManagerTests : IDisposable
 
     public void Dispose ( )
     {
-        _errorChangedSubject?.Dispose ( ) ;
-        _statusBarInfoSubject?.Dispose ( ) ;
+        _errorChangedSubject.Dispose ( ) ;
+        _statusBarInfoSubject.Dispose ( ) ;
     }
 
     [ Fact ]

@@ -4,7 +4,6 @@ using Idasen.SystemTray.Win11.TraySettings ;
 using Idasen.SystemTray.Win11.Utils ;
 using NSubstitute ;
 using Serilog ;
-using Wpf.Ui.Controls ;
 
 namespace Idasen.SystemTray.Win11.Tests.Utils ;
 

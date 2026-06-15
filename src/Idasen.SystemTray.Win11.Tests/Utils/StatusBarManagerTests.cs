@@ -186,8 +186,7 @@ public class StatusBarManagerTests
         var logger = Substitute.For < ILogger > ( ) ;
         var sut    = new StatusBarManager ( logger ) ;
 
-        StatusBarInfo ? receivedInfo = null ;
-        sut.StatusBarInfoChanged.Subscribe ( info => receivedInfo = info ) ;
+        sut.StatusBarInfoChanged.Subscribe ( info => _ = info ) ;
 
         sut.Dispose ( ) ;
 

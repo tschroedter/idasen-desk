@@ -793,7 +793,6 @@ public class DeskConnectionManagerTests
     {
         // Arrange
         var reconnectCallCount = 0 ;
-        var tcs = new TaskCompletionSource < bool > ( ) ;
 
         _desk.DeviceName.Returns ( "TestDesk" ) ;
         _desk.BluetoothAddress.Returns ( 123456789UL ) ;

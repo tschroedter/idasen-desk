@@ -11,8 +11,6 @@ public sealed class DeskConnectionManager : IDeskConnectionManager
     private readonly Func < IDeskProvider >        _providerFactory ;
     private readonly IBluetoothReconnectStrategy   _reconnectStrategy ;
     private readonly IErrorManager                 _errorManager ;
-    private readonly IBluetoothConnectionMonitor   _connectionMonitor ;
-
     private IDesk ?         _desk ;
     private IDeskProvider ? _deskProvider ;
     private bool            _disposed ;
@@ -38,17 +36,17 @@ public sealed class DeskConnectionManager : IDeskConnectionManager
         _providerFactory   = providerFactory ;
         _reconnectStrategy = reconnectStrategy ;
         _errorManager      = errorManager ;
-        _connectionMonitor = connectionMonitor ;
+        ConnectionMonitor = connectionMonitor ;
 
         // Subscribe to stale connection detection
-        _connectionMonitor.StaleConnectionDetected += OnStaleConnectionDetected ;
+        ConnectionMonitor.StaleConnectionDetected += OnStaleConnectionDetected ;
     }
 
     public bool IsConnected => _desk is not null ;
 
     public IDesk ? CurrentDesk => _desk ;
 
-    public IBluetoothConnectionMonitor ? ConnectionMonitor => _connectionMonitor ;
+    public IBluetoothConnectionMonitor ConnectionMonitor { get; }
 
     public event EventHandler ? Connected ;
     public event EventHandler ? Disconnected ;
@@ -126,7 +124,7 @@ public sealed class DeskConnectionManager : IDeskConnectionManager
                             _desk?.DeviceName ) ;
 
             // Stop connection monitoring when intentionally disconnecting
-            _connectionMonitor.StopMonitoring ( ) ;
+            ConnectionMonitor.StopMonitoring ( ) ;
 
             DisposeDesk ( ) ;
 
@@ -157,8 +155,8 @@ public sealed class DeskConnectionManager : IDeskConnectionManager
         try
         {
             // Unsubscribe from connection monitor events
-            _connectionMonitor.StaleConnectionDetected -= OnStaleConnectionDetected ;
-            _connectionMonitor.Dispose ( ) ;
+            ConnectionMonitor.StaleConnectionDetected -= OnStaleConnectionDetected ;
+            ConnectionMonitor.Dispose ( ) ;
         }
         catch ( Exception ex )
         {
@@ -187,7 +185,7 @@ public sealed class DeskConnectionManager : IDeskConnectionManager
         _desk = desk ;
 
         // Start connection monitoring after successful connection
-        _connectionMonitor.StartMonitoring ( ) ;
+        ConnectionMonitor.StartMonitoring ( ) ;
 
         Connected?.Invoke ( this , EventArgs.Empty ) ;
         DeskReady?.Invoke ( this , desk ) ;

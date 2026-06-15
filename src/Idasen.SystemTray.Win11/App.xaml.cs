@@ -222,8 +222,7 @@ public partial class App
                                                                               {
                                                                                   var logger = provider.GetRequiredService < ILogger > ( ) ;
                                                                                   return new Utils.Bluetooth.BluetoothConnectionMonitor (
-                                                                                      logger ,
-                                                                                      AppConfiguration.Timeouts.ConnectionMonitorTimeoutMilliseconds ) ;
+                                                                                      logger ) ;
                                                                               } ) ;
                                                                            services
                                                                               .AddSingleton < IApplicationThemeManager ,

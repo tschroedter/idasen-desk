@@ -2,24 +2,20 @@ using FluentAssertions ;
 using NSubstitute ;
 using Serilog ;
 using Idasen.SystemTray.Win11.Utils.Bluetooth ;
-using Xunit.Abstractions ;
 
 namespace Idasen.SystemTray.Win11.Tests.Utils.Bluetooth ;
 
 public class BluetoothConnectionMonitorTests
 {
-    private readonly ILogger _logger ;
+    private const    int     TimeoutMillisecondsLong = 70000 ;
 
-    public BluetoothConnectionMonitorTests ( )
-    {
-        _logger = Substitute.For < ILogger > ( ) ;
-    }
+    private readonly ILogger _logger             = Substitute.For < ILogger > ( ) ;
 
     [ Fact ]
     public void Constructor_ValidParameters_CreatesInstance ( )
     {
         // Arrange & Act
-        var monitor = new BluetoothConnectionMonitor ( _logger , 60000 ) ;
+        var monitor = new BluetoothConnectionMonitor ( _logger , TimeoutMillisecondsLong ) ;
 
         // Assert
         monitor.Should ( ).NotBeNull ( ) ;
@@ -30,7 +26,7 @@ public class BluetoothConnectionMonitorTests
     public void Constructor_NullLogger_ThrowsArgumentNullException ( )
     {
         // Arrange & Act
-        var act = ( ) => new BluetoothConnectionMonitor ( null! , 60000 ) ;
+        var act = ( ) => new BluetoothConnectionMonitor ( null! , TimeoutMillisecondsLong ) ;
 
         // Assert
         act.Should ( ).Throw < ArgumentNullException > ( )
@@ -63,7 +59,7 @@ public class BluetoothConnectionMonitorTests
     public void StartMonitoring_WhenNotMonitoring_StartsMonitoring ( )
     {
         // Arrange
-        var monitor = new BluetoothConnectionMonitor ( _logger , 60000 ) ;
+        var monitor = new BluetoothConnectionMonitor ( _logger , TimeoutMillisecondsLong ) ;
 
         // Act
         monitor.StartMonitoring ( ) ;
@@ -76,7 +72,7 @@ public class BluetoothConnectionMonitorTests
     public void StartMonitoring_WhenAlreadyMonitoring_RemainsMonitoring ( )
     {
         // Arrange
-        var monitor = new BluetoothConnectionMonitor ( _logger , 60000 ) ;
+        var monitor = new BluetoothConnectionMonitor ( _logger , TimeoutMillisecondsLong ) ;
         monitor.StartMonitoring ( ) ;
 
         // Act
@@ -90,7 +86,7 @@ public class BluetoothConnectionMonitorTests
     public void StartMonitoring_AfterDispose_ThrowsObjectDisposedException ( )
     {
         // Arrange
-        var monitor = new BluetoothConnectionMonitor ( _logger , 60000 ) ;
+        var monitor = new BluetoothConnectionMonitor ( _logger , TimeoutMillisecondsLong ) ;
         monitor.Dispose ( ) ;
 
         // Act
@@ -104,7 +100,7 @@ public class BluetoothConnectionMonitorTests
     public void StopMonitoring_WhenMonitoring_StopsMonitoring ( )
     {
         // Arrange
-        var monitor = new BluetoothConnectionMonitor ( _logger , 60000 ) ;
+        var monitor = new BluetoothConnectionMonitor ( _logger , TimeoutMillisecondsLong ) ;
         monitor.StartMonitoring ( ) ;
 
         // Act
@@ -118,7 +114,7 @@ public class BluetoothConnectionMonitorTests
     public void StopMonitoring_WhenNotMonitoring_RemainsNotMonitoring ( )
     {
         // Arrange
-        var monitor = new BluetoothConnectionMonitor ( _logger , 60000 ) ;
+        var monitor = new BluetoothConnectionMonitor ( _logger , TimeoutMillisecondsLong ) ;
 
         // Act
         monitor.StopMonitoring ( ) ;
@@ -131,7 +127,7 @@ public class BluetoothConnectionMonitorTests
     public void ResetActivityTimer_WhenNotMonitoring_DoesNothing ( )
     {
         // Arrange
-        var monitor = new BluetoothConnectionMonitor ( _logger , 60000 ) ;
+        var monitor = new BluetoothConnectionMonitor ( _logger , TimeoutMillisecondsLong ) ;
 
         // Act (should not throw)
         monitor.ResetActivityTimer ( ) ;
@@ -144,7 +140,7 @@ public class BluetoothConnectionMonitorTests
     public void ResetActivityTimer_WhenMonitoring_DoesNotThrow ( )
     {
         // Arrange
-        var monitor = new BluetoothConnectionMonitor ( _logger , 60000 ) ;
+        var monitor = new BluetoothConnectionMonitor ( _logger , TimeoutMillisecondsLong ) ;
         monitor.StartMonitoring ( ) ;
 
         // Act (should not throw)
@@ -161,7 +157,7 @@ public class BluetoothConnectionMonitorTests
         var monitor = new BluetoothConnectionMonitor ( _logger , 100 ) ; // 100ms timeout for quick test
         var eventRaised = false ;
 
-        monitor.StaleConnectionDetected += ( sender , args ) =>
+        monitor.StaleConnectionDetected += ( _ , _ ) =>
         {
             eventRaised = true ;
         } ;
@@ -182,7 +178,7 @@ public class BluetoothConnectionMonitorTests
         var monitor = new BluetoothConnectionMonitor ( _logger , 200 ) ; // 200ms timeout
         var eventRaised = false ;
 
-        monitor.StaleConnectionDetected += ( sender , args ) =>
+        monitor.StaleConnectionDetected += ( _ , _ ) =>
         {
             eventRaised = true ;
         } ;
@@ -202,7 +198,7 @@ public class BluetoothConnectionMonitorTests
     public void Dispose_WhenMonitoring_StopsMonitoring ( )
     {
         // Arrange
-        var monitor = new BluetoothConnectionMonitor ( _logger , 60000 ) ;
+        var monitor = new BluetoothConnectionMonitor ( _logger , TimeoutMillisecondsLong ) ;
         monitor.StartMonitoring ( ) ;
 
         // Act
@@ -216,7 +212,7 @@ public class BluetoothConnectionMonitorTests
     public void Dispose_MultipleTimes_DoesNotThrow ( )
     {
         // Arrange
-        var monitor = new BluetoothConnectionMonitor ( _logger , 60000 ) ;
+        var monitor = new BluetoothConnectionMonitor ( _logger , TimeoutMillisecondsLong ) ;
 
         // Act
         var act = ( ) =>
@@ -236,7 +232,7 @@ public class BluetoothConnectionMonitorTests
         var monitor = new BluetoothConnectionMonitor ( _logger , 100 ) ; // 100ms timeout
         var eventRaised = false ;
 
-        monitor.StaleConnectionDetected += ( sender , args ) =>
+        monitor.StaleConnectionDetected += ( _ , _ ) =>
         {
             eventRaised = true ;
         } ;
