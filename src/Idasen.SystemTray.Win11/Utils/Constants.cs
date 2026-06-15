@@ -1,9 +1,12 @@
+using System.Diagnostics.CodeAnalysis ;
+
 namespace Idasen.SystemTray.Win11.Utils ;
 
 /// <summary>
 ///     Application configuration organized by concern.
 ///     Provides centralized, discoverable constants for application behavior, defaults, and timeouts.
 /// </summary>
+[ExcludeFromCodeCoverage]
 public static class AppConfiguration
 {
     /// <summary>
