@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis ;
+using System.Diagnostics.CodeAnalysis ;
 using System.Reactive.Concurrency ;
 using System.Reactive.Linq ;
 using Idasen.BluetoothLE.Core ;
@@ -423,9 +423,10 @@ public sealed partial class UiDeskManager : IUiDeskManager
                             nameof ( StandAsync ) ) ;
             await StandAsync ( ).ConfigureAwait ( false ) ;
         }
-        catch ( OperationCanceledException )
+        catch ( OperationCanceledException ex )
         {
-            _logger.Information ( "Standing operation was cancelled" ) ;
+            _logger.Information ( ex ,
+                                  "Standing operation was cancelled" ) ;
         }
         catch ( Exception ex )
         {
@@ -443,9 +444,10 @@ public sealed partial class UiDeskManager : IUiDeskManager
                             nameof ( SitAsync ) ) ;
             await SitAsync ( ).ConfigureAwait ( false ) ;
         }
-        catch ( OperationCanceledException )
+        catch ( OperationCanceledException ex)
         {
-            _logger.Information ( "Seating operation was cancelled" ) ;
+            _logger.Information ( ex,
+                                  "Seating operation was cancelled" ) ;
         }
         catch ( Exception ex )
         {
@@ -463,9 +465,10 @@ public sealed partial class UiDeskManager : IUiDeskManager
                             nameof ( Custom1Async ) ) ;
             await Custom1Async ( ).ConfigureAwait ( false ) ;
         }
-        catch ( OperationCanceledException )
+        catch ( OperationCanceledException ex )
         {
-            _logger.Information ( "Custom1 operation was cancelled" ) ;
+            _logger.Information ( ex ,
+                                  "Custom1 operation was cancelled" ) ;
         }
         catch ( Exception ex )
         {
@@ -483,9 +486,10 @@ public sealed partial class UiDeskManager : IUiDeskManager
                             nameof ( Custom2Async ) ) ;
             await Custom2Async ( ).ConfigureAwait ( false ) ;
         }
-        catch ( OperationCanceledException )
+        catch ( OperationCanceledException ex )
         {
-            _logger.Information ( "Custom2 operation was cancelled" ) ;
+            _logger.Information ( ex,
+                                  "Custom2 operation was cancelled" ) ;
         }
         catch ( Exception ex )
         {

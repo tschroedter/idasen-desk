@@ -128,7 +128,7 @@ public sealed class HotkeyManager : IHotkeyManager
         if ( standingException is not null )
         {
             failedHotkeys.Add ( HotkeyNameStanding ) ;
-            firstException ??= standingException ;
+            firstException = standingException ;
         }
 
         var seatingException = TryUnregisterGlobalHotkey ( HotkeyNameSeating ) ;
