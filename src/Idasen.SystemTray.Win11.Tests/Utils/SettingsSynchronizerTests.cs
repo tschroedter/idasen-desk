@@ -1,4 +1,4 @@
-﻿using FluentAssertions ;
+using FluentAssertions ;
 using Idasen.BluetoothLE.Linak.Control ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.TraySettings ;
@@ -393,25 +393,25 @@ public class SettingsSynchronizerTests
         var hotkeySettings = new HotkeySettings
         {
             GlobalHotkeysEnabled = true ,
-            StandingKey          = Constants.DefaultStandingKey ,
-            StandingModifiers    = Constants.DefaultHotkeyModifiers ,
-            SeatingKey           = Constants.DefaultSeatingKey ,
-            SeatingModifiers     = Constants.DefaultHotkeyModifiers ,
-            Custom1Key           = Constants.DefaultCustom1Key ,
-            Custom1Modifiers     = Constants.DefaultHotkeyModifiers ,
-            Custom2Key           = Constants.DefaultCustom2Key ,
-            Custom2Modifiers     = Constants.DefaultHotkeyModifiers
+            StandingKey          = AppConfiguration.Hotkeys.StandingKey ,
+            StandingModifiers    = AppConfiguration.Hotkeys.DefaultModifiers ,
+            SeatingKey           = AppConfiguration.Hotkeys.SeatingKey ,
+            SeatingModifiers     = AppConfiguration.Hotkeys.DefaultModifiers ,
+            Custom1Key           = AppConfiguration.Hotkeys.Custom1Key ,
+            Custom1Modifiers     = AppConfiguration.Hotkeys.DefaultModifiers ,
+            Custom2Key           = AppConfiguration.Hotkeys.Custom2Key ,
+            Custom2Modifiers     = AppConfiguration.Hotkeys.DefaultModifiers
         } ;
         _settings.HotkeySettings = hotkeySettings ;
         _model.GlobalHotkeysEnabled.Returns ( true ) ;
-        _model.StandingKey.Returns ( Constants.DefaultStandingKey ) ;
-        _model.StandingModifiers.Returns ( Constants.DefaultHotkeyModifiers ) ;
-        _model.SeatingKey.Returns ( Constants.DefaultSeatingKey ) ;
-        _model.SeatingModifiers.Returns ( Constants.DefaultHotkeyModifiers ) ;
-        _model.Custom1Key.Returns ( Constants.DefaultCustom1Key ) ;
-        _model.Custom1Modifiers.Returns ( Constants.DefaultHotkeyModifiers ) ;
-        _model.Custom2Key.Returns ( Constants.DefaultCustom2Key ) ;
-        _model.Custom2Modifiers.Returns ( Constants.DefaultHotkeyModifiers ) ;
+        _model.StandingKey.Returns ( AppConfiguration.Hotkeys.StandingKey ) ;
+        _model.StandingModifiers.Returns ( AppConfiguration.Hotkeys.DefaultModifiers ) ;
+        _model.SeatingKey.Returns ( AppConfiguration.Hotkeys.SeatingKey ) ;
+        _model.SeatingModifiers.Returns ( AppConfiguration.Hotkeys.DefaultModifiers ) ;
+        _model.Custom1Key.Returns ( AppConfiguration.Hotkeys.Custom1Key ) ;
+        _model.Custom1Modifiers.Returns ( AppConfiguration.Hotkeys.DefaultModifiers ) ;
+        _model.Custom2Key.Returns ( AppConfiguration.Hotkeys.Custom2Key ) ;
+        _model.Custom2Modifiers.Returns ( AppConfiguration.Hotkeys.DefaultModifiers ) ;
 
         // Act
         var result = sut.HaveHotkeySettingsChanged ( _model ) ;
@@ -444,25 +444,25 @@ public class SettingsSynchronizerTests
         var hotkeySettings = new HotkeySettings
         {
             GlobalHotkeysEnabled = true ,
-            StandingKey          = Constants.DefaultStandingKey ,
-            StandingModifiers    = Constants.DefaultHotkeyModifiers ,
-            SeatingKey           = Constants.DefaultSeatingKey ,
-            SeatingModifiers     = Constants.DefaultHotkeyModifiers ,
-            Custom1Key           = Constants.DefaultCustom1Key ,
-            Custom1Modifiers     = Constants.DefaultHotkeyModifiers ,
-            Custom2Key           = Constants.DefaultCustom2Key ,
-            Custom2Modifiers     = Constants.DefaultHotkeyModifiers
+            StandingKey          = AppConfiguration.Hotkeys.StandingKey ,
+            StandingModifiers    = AppConfiguration.Hotkeys.DefaultModifiers ,
+            SeatingKey           = AppConfiguration.Hotkeys.SeatingKey ,
+            SeatingModifiers     = AppConfiguration.Hotkeys.DefaultModifiers ,
+            Custom1Key           = AppConfiguration.Hotkeys.Custom1Key ,
+            Custom1Modifiers     = AppConfiguration.Hotkeys.DefaultModifiers ,
+            Custom2Key           = AppConfiguration.Hotkeys.Custom2Key ,
+            Custom2Modifiers     = AppConfiguration.Hotkeys.DefaultModifiers
         } ;
         _settings.HotkeySettings = hotkeySettings ;
         _model.GlobalHotkeysEnabled.Returns ( true ) ;
-        _model.StandingKey.Returns ( Constants.DefaultStandingKey ) ;
-        _model.StandingModifiers.Returns ( Constants.DefaultHotkeyModifiers ) ;
-        _model.SeatingKey.Returns ( Constants.DefaultSeatingKey ) ;
-        _model.SeatingModifiers.Returns ( Constants.DefaultHotkeyModifiers ) ;
-        _model.Custom1Key.Returns ( Constants.DefaultCustom1Key ) ;
-        _model.Custom1Modifiers.Returns ( Constants.DefaultHotkeyModifiers ) ;
-        _model.Custom2Key.Returns ( Constants.DefaultCustom2Key ) ;
-        _model.Custom2Modifiers.Returns ( Constants.DefaultHotkeyModifiers ) ;
+        _model.StandingKey.Returns ( AppConfiguration.Hotkeys.StandingKey ) ;
+        _model.StandingModifiers.Returns ( AppConfiguration.Hotkeys.DefaultModifiers ) ;
+        _model.SeatingKey.Returns ( AppConfiguration.Hotkeys.SeatingKey ) ;
+        _model.SeatingModifiers.Returns ( AppConfiguration.Hotkeys.DefaultModifiers ) ;
+        _model.Custom1Key.Returns ( AppConfiguration.Hotkeys.Custom1Key ) ;
+        _model.Custom1Modifiers.Returns ( AppConfiguration.Hotkeys.DefaultModifiers ) ;
+        _model.Custom2Key.Returns ( AppConfiguration.Hotkeys.Custom2Key ) ;
+        _model.Custom2Modifiers.Returns ( AppConfiguration.Hotkeys.DefaultModifiers ) ;
 
         // Act
         await sut.StoreSettingsAsync ( _model , CancellationToken.None ) ;
@@ -569,7 +569,7 @@ public class SettingsSynchronizerTests
         sut.UpdateCurrentSettings ( _model ) ;
 
         // Assert
-        _heightSettings.StandingName.Should ( ).Be ( Constants.DefaultStandingName ) ;
+        _heightSettings.StandingName.Should ( ).Be ( AppConfiguration.Hotkeys.StandingName ) ;
     }
 
     [ Fact ]
@@ -583,7 +583,7 @@ public class SettingsSynchronizerTests
         sut.UpdateCurrentSettings ( _model ) ;
 
         // Assert
-        _heightSettings.SeatingName.Should ( ).Be ( Constants.DefaultSeatingName ) ;
+        _heightSettings.SeatingName.Should ( ).Be ( AppConfiguration.Hotkeys.SeatingName ) ;
     }
 
     [ Fact ]
@@ -692,25 +692,25 @@ public class SettingsSynchronizerTests
         var hotkeySettings = new HotkeySettings
         {
             GlobalHotkeysEnabled = true ,
-            StandingKey          = Constants.DefaultStandingKey ,
-            StandingModifiers    = Constants.DefaultHotkeyModifiers ,
-            SeatingKey           = Constants.DefaultSeatingKey ,
-            SeatingModifiers     = Constants.DefaultHotkeyModifiers ,
-            Custom1Key           = Constants.DefaultCustom1Key ,
-            Custom1Modifiers     = Constants.DefaultHotkeyModifiers ,
-            Custom2Key           = Constants.DefaultCustom2Key ,
-            Custom2Modifiers     = Constants.DefaultHotkeyModifiers
+            StandingKey          = AppConfiguration.Hotkeys.StandingKey ,
+            StandingModifiers    = AppConfiguration.Hotkeys.DefaultModifiers ,
+            SeatingKey           = AppConfiguration.Hotkeys.SeatingKey ,
+            SeatingModifiers     = AppConfiguration.Hotkeys.DefaultModifiers ,
+            Custom1Key           = AppConfiguration.Hotkeys.Custom1Key ,
+            Custom1Modifiers     = AppConfiguration.Hotkeys.DefaultModifiers ,
+            Custom2Key           = AppConfiguration.Hotkeys.Custom2Key ,
+            Custom2Modifiers     = AppConfiguration.Hotkeys.DefaultModifiers
         } ;
         _settings.HotkeySettings = hotkeySettings ;
         _model.GlobalHotkeysEnabled.Returns ( true ) ;
-        _model.StandingKey.Returns ( Constants.DefaultStandingKey ) ;
-        _model.StandingModifiers.Returns ( Constants.DefaultHotkeyModifiers ) ;
-        _model.SeatingKey.Returns ( Constants.DefaultSeatingKey ) ;
-        _model.SeatingModifiers.Returns ( Constants.DefaultHotkeyModifiers ) ;
-        _model.Custom1Key.Returns ( Constants.DefaultCustom1Key ) ;
-        _model.Custom1Modifiers.Returns ( Constants.DefaultHotkeyModifiers ) ;
-        _model.Custom2Key.Returns ( Constants.DefaultCustom2Key ) ;
-        _model.Custom2Modifiers.Returns ( Constants.DefaultHotkeyModifiers ) ;
+        _model.StandingKey.Returns ( AppConfiguration.Hotkeys.StandingKey ) ;
+        _model.StandingModifiers.Returns ( AppConfiguration.Hotkeys.DefaultModifiers ) ;
+        _model.SeatingKey.Returns ( AppConfiguration.Hotkeys.SeatingKey ) ;
+        _model.SeatingModifiers.Returns ( AppConfiguration.Hotkeys.DefaultModifiers ) ;
+        _model.Custom1Key.Returns ( AppConfiguration.Hotkeys.Custom1Key ) ;
+        _model.Custom1Modifiers.Returns ( AppConfiguration.Hotkeys.DefaultModifiers ) ;
+        _model.Custom2Key.Returns ( AppConfiguration.Hotkeys.Custom2Key ) ;
+        _model.Custom2Modifiers.Returns ( AppConfiguration.Hotkeys.DefaultModifiers ) ;
 
         // Act
         await sut.StoreSettingsAsync ( _model , CancellationToken.None ) ;
@@ -732,10 +732,10 @@ public class SettingsSynchronizerTests
         _heightSettings.DeskMinHeightInCm    = 60 ;
         _heightSettings.DeskMaxHeightInCm    = 120 ;
         _heightSettings.LastKnownDeskHeight  = 80 ;
-        _heightSettings.StandingName         = Constants.DefaultStandingName ;
-        _heightSettings.SeatingName          = Constants.DefaultSeatingName ;
-        _heightSettings.Custom1Name          = Constants.DefaultCustom1Name ;
-        _heightSettings.Custom2Name          = Constants.DefaultCustom2Name ;
+        _heightSettings.StandingName         = AppConfiguration.Hotkeys.StandingName ;
+        _heightSettings.SeatingName          = AppConfiguration.Hotkeys.SeatingName ;
+        _heightSettings.Custom1Name          = AppConfiguration.Hotkeys.Custom1Name ;
+        _heightSettings.Custom2Name          = AppConfiguration.Hotkeys.Custom2Name ;
         _heightSettings.StandingIsVisibleInContextMenu = true ;
         _heightSettings.SeatingIsVisibleInContextMenu  = true ;
         _heightSettings.Custom1IsVisibleInContextMenu  = true ;
@@ -750,10 +750,10 @@ public class SettingsSynchronizerTests
 
         // Use default names directly instead of whitespace, since the comparison in HaveAnySettingsChanged
         // checks raw values before normalization
-        _model.StandingName = Constants.DefaultStandingName ;
-        _model.SeatingName  = Constants.DefaultSeatingName ;
-        _model.Custom1Name  = Constants.DefaultCustom1Name ;
-        _model.Custom2Name  = Constants.DefaultCustom2Name ;
+        _model.StandingName = AppConfiguration.Hotkeys.StandingName ;
+        _model.SeatingName  = AppConfiguration.Hotkeys.SeatingName ;
+        _model.Custom1Name  = AppConfiguration.Hotkeys.Custom1Name ;
+        _model.Custom2Name  = AppConfiguration.Hotkeys.Custom2Name ;
         _model.Standing     = 100 ;
         _model.Seating      = 70 ;
         _model.Custom1      = 105 ;
@@ -783,25 +783,25 @@ public class SettingsSynchronizerTests
         var hotkeySettings = new HotkeySettings
         {
             GlobalHotkeysEnabled = true ,
-            StandingKey          = Constants.DefaultStandingKey ,
-            StandingModifiers    = Constants.DefaultHotkeyModifiers ,
-            SeatingKey           = Constants.DefaultSeatingKey ,
-            SeatingModifiers     = Constants.DefaultHotkeyModifiers ,
-            Custom1Key           = Constants.DefaultCustom1Key ,
-            Custom1Modifiers     = Constants.DefaultHotkeyModifiers ,
-            Custom2Key           = Constants.DefaultCustom2Key ,
-            Custom2Modifiers     = Constants.DefaultHotkeyModifiers
+            StandingKey          = AppConfiguration.Hotkeys.StandingKey ,
+            StandingModifiers    = AppConfiguration.Hotkeys.DefaultModifiers ,
+            SeatingKey           = AppConfiguration.Hotkeys.SeatingKey ,
+            SeatingModifiers     = AppConfiguration.Hotkeys.DefaultModifiers ,
+            Custom1Key           = AppConfiguration.Hotkeys.Custom1Key ,
+            Custom1Modifiers     = AppConfiguration.Hotkeys.DefaultModifiers ,
+            Custom2Key           = AppConfiguration.Hotkeys.Custom2Key ,
+            Custom2Modifiers     = AppConfiguration.Hotkeys.DefaultModifiers
         } ;
         _settings.HotkeySettings = hotkeySettings ;
         _model.GlobalHotkeysEnabled.Returns ( true ) ;
-        _model.StandingKey.Returns ( Constants.DefaultStandingKey ) ;
-        _model.StandingModifiers.Returns ( Constants.DefaultHotkeyModifiers ) ;
-        _model.SeatingKey.Returns ( Constants.DefaultSeatingKey ) ;
-        _model.SeatingModifiers.Returns ( Constants.DefaultHotkeyModifiers ) ;
-        _model.Custom1Key.Returns ( Constants.DefaultCustom1Key ) ;
-        _model.Custom1Modifiers.Returns ( Constants.DefaultHotkeyModifiers ) ;
-        _model.Custom2Key.Returns ( Constants.DefaultCustom2Key ) ;
-        _model.Custom2Modifiers.Returns ( Constants.DefaultHotkeyModifiers ) ;
+        _model.StandingKey.Returns ( AppConfiguration.Hotkeys.StandingKey ) ;
+        _model.StandingModifiers.Returns ( AppConfiguration.Hotkeys.DefaultModifiers ) ;
+        _model.SeatingKey.Returns ( AppConfiguration.Hotkeys.SeatingKey ) ;
+        _model.SeatingModifiers.Returns ( AppConfiguration.Hotkeys.DefaultModifiers ) ;
+        _model.Custom1Key.Returns ( AppConfiguration.Hotkeys.Custom1Key ) ;
+        _model.Custom1Modifiers.Returns ( AppConfiguration.Hotkeys.DefaultModifiers ) ;
+        _model.Custom2Key.Returns ( AppConfiguration.Hotkeys.Custom2Key ) ;
+        _model.Custom2Modifiers.Returns ( AppConfiguration.Hotkeys.DefaultModifiers ) ;
 
         // Act
         await sut.StoreSettingsAsync ( _model ,
@@ -855,25 +855,25 @@ public class SettingsSynchronizerTests
         var hotkeySettings = new HotkeySettings
         {
             GlobalHotkeysEnabled = true ,
-            StandingKey          = Constants.DefaultStandingKey ,
-            StandingModifiers    = Constants.DefaultHotkeyModifiers ,
-            SeatingKey           = Constants.DefaultSeatingKey ,
-            SeatingModifiers     = Constants.DefaultHotkeyModifiers ,
-            Custom1Key           = Constants.DefaultCustom1Key ,
-            Custom1Modifiers     = Constants.DefaultHotkeyModifiers ,
-            Custom2Key           = Constants.DefaultCustom2Key ,
-            Custom2Modifiers     = Constants.DefaultHotkeyModifiers
+            StandingKey          = AppConfiguration.Hotkeys.StandingKey ,
+            StandingModifiers    = AppConfiguration.Hotkeys.DefaultModifiers ,
+            SeatingKey           = AppConfiguration.Hotkeys.SeatingKey ,
+            SeatingModifiers     = AppConfiguration.Hotkeys.DefaultModifiers ,
+            Custom1Key           = AppConfiguration.Hotkeys.Custom1Key ,
+            Custom1Modifiers     = AppConfiguration.Hotkeys.DefaultModifiers ,
+            Custom2Key           = AppConfiguration.Hotkeys.Custom2Key ,
+            Custom2Modifiers     = AppConfiguration.Hotkeys.DefaultModifiers
         } ;
         _settings.HotkeySettings = hotkeySettings ;
         _model.GlobalHotkeysEnabled.Returns ( true ) ;
-        _model.StandingKey.Returns ( Constants.DefaultStandingKey ) ;
-        _model.StandingModifiers.Returns ( Constants.DefaultHotkeyModifiers ) ;
-        _model.SeatingKey.Returns ( Constants.DefaultSeatingKey ) ;
-        _model.SeatingModifiers.Returns ( Constants.DefaultHotkeyModifiers ) ;
-        _model.Custom1Key.Returns ( Constants.DefaultCustom1Key ) ;
-        _model.Custom1Modifiers.Returns ( Constants.DefaultHotkeyModifiers ) ;
-        _model.Custom2Key.Returns ( Constants.DefaultCustom2Key ) ;
-        _model.Custom2Modifiers.Returns ( Constants.DefaultHotkeyModifiers ) ;
+        _model.StandingKey.Returns ( AppConfiguration.Hotkeys.StandingKey ) ;
+        _model.StandingModifiers.Returns ( AppConfiguration.Hotkeys.DefaultModifiers ) ;
+        _model.SeatingKey.Returns ( AppConfiguration.Hotkeys.SeatingKey ) ;
+        _model.SeatingModifiers.Returns ( AppConfiguration.Hotkeys.DefaultModifiers ) ;
+        _model.Custom1Key.Returns ( AppConfiguration.Hotkeys.Custom1Key ) ;
+        _model.Custom1Modifiers.Returns ( AppConfiguration.Hotkeys.DefaultModifiers ) ;
+        _model.Custom2Key.Returns ( AppConfiguration.Hotkeys.Custom2Key ) ;
+        _model.Custom2Modifiers.Returns ( AppConfiguration.Hotkeys.DefaultModifiers ) ;
 
         // Act
         await sut.StoreSettingsAsync ( _model , CancellationToken.None ) ;
@@ -950,7 +950,7 @@ public class SettingsSynchronizerTests
         sut.UpdateCurrentSettings ( _model ) ;
 
         // Assert
-        _heightSettings.Custom1Name.Should ( ).Be ( Constants.DefaultCustom1Name ) ;
+        _heightSettings.Custom1Name.Should ( ).Be ( AppConfiguration.Hotkeys.Custom1Name ) ;
     }
 
     [ Fact ]
@@ -964,7 +964,7 @@ public class SettingsSynchronizerTests
         sut.UpdateCurrentSettings ( _model ) ;
 
         // Assert
-        _heightSettings.Custom2Name.Should ( ).Be ( Constants.DefaultCustom2Name ) ;
+        _heightSettings.Custom2Name.Should ( ).Be ( AppConfiguration.Hotkeys.Custom2Name ) ;
     }
 
     [ Fact ]
@@ -1081,17 +1081,17 @@ public class SettingsSynchronizerTests
         var hotkeySettings = new HotkeySettings
         {
             StandingKey          = "S" ,
-            StandingModifiers    = Constants.DefaultHotkeyModifiers ,
-            SeatingKey           = Constants.DefaultSeatingKey ,
-            SeatingModifiers     = Constants.DefaultHotkeyModifiers ,
-            Custom1Key           = Constants.DefaultCustom1Key ,
-            Custom1Modifiers     = Constants.DefaultHotkeyModifiers ,
-            Custom2Key           = Constants.DefaultCustom2Key ,
-            Custom2Modifiers     = Constants.DefaultHotkeyModifiers
+            StandingModifiers    = AppConfiguration.Hotkeys.DefaultModifiers ,
+            SeatingKey           = AppConfiguration.Hotkeys.SeatingKey ,
+            SeatingModifiers     = AppConfiguration.Hotkeys.DefaultModifiers ,
+            Custom1Key           = AppConfiguration.Hotkeys.Custom1Key ,
+            Custom1Modifiers     = AppConfiguration.Hotkeys.DefaultModifiers ,
+            Custom2Key           = AppConfiguration.Hotkeys.Custom2Key ,
+            Custom2Modifiers     = AppConfiguration.Hotkeys.DefaultModifiers
         } ;
         _settings.HotkeySettings = hotkeySettings ;
         _model.StandingKey.Returns ( "D" ) ;  // Different key
-        _model.StandingModifiers.Returns ( Constants.DefaultHotkeyModifiers ) ;
+        _model.StandingModifiers.Returns ( AppConfiguration.Hotkeys.DefaultModifiers ) ;
 
         // Act
         var result = sut.HaveHotkeySettingsChanged ( _model ) ;
@@ -1107,18 +1107,18 @@ public class SettingsSynchronizerTests
         var sut = CreateSut ( ) ;
         var hotkeySettings = new HotkeySettings
         {
-            StandingKey          = Constants.DefaultStandingKey ,
-            StandingModifiers    = Constants.DefaultHotkeyModifiers ,
-            SeatingKey           = Constants.DefaultSeatingKey ,
-            SeatingModifiers     = Constants.DefaultHotkeyModifiers ,
+            StandingKey          = AppConfiguration.Hotkeys.StandingKey ,
+            StandingModifiers    = AppConfiguration.Hotkeys.DefaultModifiers ,
+            SeatingKey           = AppConfiguration.Hotkeys.SeatingKey ,
+            SeatingModifiers     = AppConfiguration.Hotkeys.DefaultModifiers ,
             Custom1Key           = "D1" ,
-            Custom1Modifiers     = Constants.DefaultHotkeyModifiers ,
-            Custom2Key           = Constants.DefaultCustom2Key ,
-            Custom2Modifiers     = Constants.DefaultHotkeyModifiers
+            Custom1Modifiers     = AppConfiguration.Hotkeys.DefaultModifiers ,
+            Custom2Key           = AppConfiguration.Hotkeys.Custom2Key ,
+            Custom2Modifiers     = AppConfiguration.Hotkeys.DefaultModifiers
         } ;
         _settings.HotkeySettings = hotkeySettings ;
         _model.Custom1Key.Returns ( "D2" ) ;  // Different key
-        _model.Custom1Modifiers.Returns ( Constants.DefaultHotkeyModifiers ) ;
+        _model.Custom1Modifiers.Returns ( AppConfiguration.Hotkeys.DefaultModifiers ) ;
 
         // Act
         var result = sut.HaveHotkeySettingsChanged ( _model ) ;
@@ -1134,17 +1134,17 @@ public class SettingsSynchronizerTests
         var sut = CreateSut ( ) ;
         var hotkeySettings = new HotkeySettings
         {
-            StandingKey          = Constants.DefaultStandingKey ,
-            StandingModifiers    = Constants.DefaultHotkeyModifiers ,
-            SeatingKey           = Constants.DefaultSeatingKey ,
-            SeatingModifiers     = Constants.DefaultHotkeyModifiers ,
-            Custom1Key           = Constants.DefaultCustom1Key ,
-            Custom1Modifiers     = Constants.DefaultHotkeyModifiers ,
-            Custom2Key           = Constants.DefaultCustom2Key ,
+            StandingKey          = AppConfiguration.Hotkeys.StandingKey ,
+            StandingModifiers    = AppConfiguration.Hotkeys.DefaultModifiers ,
+            SeatingKey           = AppConfiguration.Hotkeys.SeatingKey ,
+            SeatingModifiers     = AppConfiguration.Hotkeys.DefaultModifiers ,
+            Custom1Key           = AppConfiguration.Hotkeys.Custom1Key ,
+            Custom1Modifiers     = AppConfiguration.Hotkeys.DefaultModifiers ,
+            Custom2Key           = AppConfiguration.Hotkeys.Custom2Key ,
             Custom2Modifiers     = "Control"
         } ;
         _settings.HotkeySettings = hotkeySettings ;
-        _model.Custom2Key.Returns ( Constants.DefaultCustom2Key ) ;
+        _model.Custom2Key.Returns ( AppConfiguration.Hotkeys.Custom2Key ) ;
         _model.Custom2Modifiers.Returns ( "Alt" ) ;  // Different modifiers
 
         // Act

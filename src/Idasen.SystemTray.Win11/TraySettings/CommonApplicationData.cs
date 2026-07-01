@@ -35,6 +35,6 @@ public class CommonApplicationData : ICommonApplicationData
         var appData = Environment.GetFolderPath ( Environment.SpecialFolder.CommonApplicationData ) ;
 
         return _fileSystem.Path.Combine ( appData ,
-                                          Constants.ApplicationName ) ;
+                                          AppConfiguration.Application.Name ) ;
     }
 }

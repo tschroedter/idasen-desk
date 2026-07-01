@@ -1,0 +1,18 @@
+root = true
+
+# All files
+[*]
+charset = utf-8
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# Code files
+[*.{cs,csx,vb,vbx}]
+indent_size = 4
+indent_style = space
+
+# Test projects - suppress false positive warning for captured variables in test lambdas
+[*.Tests/**/*.cs]
+dotnet_diagnostic.CA2008.severity = none
+# ReSharper inspection: Access to disposed closure
+resharper_access_to_disposed_closure_highlighting = none

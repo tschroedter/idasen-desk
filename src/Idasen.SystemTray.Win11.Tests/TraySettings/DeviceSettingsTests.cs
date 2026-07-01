@@ -1,4 +1,4 @@
-﻿using FluentAssertions ;
+using FluentAssertions ;
 using Idasen.SystemTray.Win11.TraySettings ;
 using Idasen.SystemTray.Win11.Utils ;
 
@@ -17,7 +17,7 @@ public class DeviceSettingsTests
 
         // Assert
         deviceName.Should ( )
-                  .Be ( Constants.DefaultDeviceName ) ;
+                  .Be ( AppConfiguration.Defaults.DeviceName ) ;
     }
 
     [ Fact ]
@@ -31,7 +31,7 @@ public class DeviceSettingsTests
 
         // Assert
         deviceAddress.Should ( )
-                     .Be ( Constants.DefaultDeviceAddress ) ;
+                     .Be ( AppConfiguration.Defaults.DeviceAddress ) ;
     }
 
     [ Fact ]
@@ -45,7 +45,7 @@ public class DeviceSettingsTests
 
         // Assert
         timeout.Should ( )
-               .Be ( Constants.DefaultDeviceMonitoringTimeout ) ;
+               .Be ( AppConfiguration.Defaults.DeviceMonitoringTimeout ) ;
     }
 
     [ Fact ]
@@ -59,7 +59,7 @@ public class DeviceSettingsTests
 
         // Assert
         locked.Should ( )
-              .Be ( Constants.DefaultLocked ) ;
+              .Be ( AppConfiguration.Defaults.Locked ) ;
     }
 
     [ Fact ]
@@ -73,6 +73,6 @@ public class DeviceSettingsTests
 
         // Assert
         notificationsEnabled.Should ( )
-                            .Be ( Constants.NotificationsEnabled ) ;
+                            .Be ( AppConfiguration.Defaults.NotificationsEnabled ) ;
     }
 }

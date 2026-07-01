@@ -1,4 +1,4 @@
-﻿using Idasen.BluetoothLE.Linak.Control ;
+using Idasen.BluetoothLE.Linak.Control ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Serilog ;
 using Wpf.Ui.Appearance ;
@@ -192,14 +192,14 @@ public class SettingsSynchronizer (
     {
         var settings = settingsManager.CurrentSettings ;
 
-        var newStanding     = converters.DoubleToUIntConverter.ConvertToUInt ( model.Standing , Constants.DefaultHeightStandingInCm ) ;
-        var newSeating      = converters.DoubleToUIntConverter.ConvertToUInt ( model.Seating , Constants.DefaultHeightSeatingInCm ) ;
-        var newCustom1      = converters.DoubleToUIntConverter.ConvertToUInt ( model.Custom1 , Constants.DefaultHeightStandingInCm ) ;
-        var newCustom2      = converters.DoubleToUIntConverter.ConvertToUInt ( model.Custom2 , Constants.DefaultHeightSeatingInCm ) ;
-        var newStandingName = string.IsNullOrWhiteSpace ( model.StandingName ) ? Constants.DefaultStandingName : model.StandingName ;
-        var newSeatingName  = string.IsNullOrWhiteSpace ( model.SeatingName ) ? Constants.DefaultSeatingName : model.SeatingName ;
-        var newCustom1Name  = string.IsNullOrWhiteSpace ( model.Custom1Name ) ? Constants.DefaultCustom1Name : model.Custom1Name ;
-        var newCustom2Name  = string.IsNullOrWhiteSpace ( model.Custom2Name ) ? Constants.DefaultCustom2Name : model.Custom2Name ;
+        var newStanding     = converters.DoubleToUIntConverter.ConvertToUInt ( model.Standing , AppConfiguration.Defaults.HeightStandingInCm ) ;
+        var newSeating      = converters.DoubleToUIntConverter.ConvertToUInt ( model.Seating , AppConfiguration.Defaults.HeightSeatingInCm ) ;
+        var newCustom1      = converters.DoubleToUIntConverter.ConvertToUInt ( model.Custom1 , AppConfiguration.Defaults.HeightStandingInCm ) ;
+        var newCustom2      = converters.DoubleToUIntConverter.ConvertToUInt ( model.Custom2 , AppConfiguration.Defaults.HeightSeatingInCm ) ;
+        var newStandingName = string.IsNullOrWhiteSpace ( model.StandingName ) ? AppConfiguration.Hotkeys.StandingName : model.StandingName ;
+        var newSeatingName  = string.IsNullOrWhiteSpace ( model.SeatingName ) ? AppConfiguration.Hotkeys.SeatingName : model.SeatingName ;
+        var newCustom1Name  = string.IsNullOrWhiteSpace ( model.Custom1Name ) ? AppConfiguration.Hotkeys.Custom1Name : model.Custom1Name ;
+        var newCustom2Name  = string.IsNullOrWhiteSpace ( model.Custom2Name ) ? AppConfiguration.Hotkeys.Custom2Name : model.Custom2Name ;
 
         return settings.HeightSettings.DeskMinHeightInCm            != model.MinHeight ||
                settings.HeightSettings.DeskMaxHeightInCm            != model.MaxHeight ||
@@ -227,17 +227,17 @@ public class SettingsSynchronizer (
         var newNotificationsEnabled = model.Notifications ;
 
         settings.HeightSettings.StandingHeightInCm = converters.DoubleToUIntConverter.ConvertToUInt ( model.Standing ,
-                                                                                     Constants.DefaultHeightStandingInCm ) ;
-        settings.HeightSettings.StandingName = string.IsNullOrWhiteSpace ( model.StandingName ) ? Constants.DefaultStandingName : model.StandingName ;
+                                                                                     AppConfiguration.Defaults.HeightStandingInCm ) ;
+        settings.HeightSettings.StandingName = string.IsNullOrWhiteSpace ( model.StandingName ) ? AppConfiguration.Hotkeys.StandingName : model.StandingName ;
         settings.HeightSettings.SeatingHeightInCm = converters.DoubleToUIntConverter.ConvertToUInt ( model.Seating ,
-                                                                                    Constants.DefaultHeightSeatingInCm ) ;
-        settings.HeightSettings.SeatingName = string.IsNullOrWhiteSpace ( model.SeatingName ) ? Constants.DefaultSeatingName : model.SeatingName ;
+                                                                                    AppConfiguration.Defaults.HeightSeatingInCm ) ;
+        settings.HeightSettings.SeatingName = string.IsNullOrWhiteSpace ( model.SeatingName ) ? AppConfiguration.Hotkeys.SeatingName : model.SeatingName ;
         settings.HeightSettings.Custom1HeightInCm = converters.DoubleToUIntConverter.ConvertToUInt ( model.Custom1 ,
-                                                                                    Constants.DefaultHeightStandingInCm ) ;
-        settings.HeightSettings.Custom1Name = string.IsNullOrWhiteSpace ( model.Custom1Name ) ? Constants.DefaultCustom1Name : model.Custom1Name ;
+                                                                                    AppConfiguration.Defaults.HeightStandingInCm ) ;
+        settings.HeightSettings.Custom1Name = string.IsNullOrWhiteSpace ( model.Custom1Name ) ? AppConfiguration.Hotkeys.Custom1Name : model.Custom1Name ;
         settings.HeightSettings.Custom2HeightInCm = converters.DoubleToUIntConverter.ConvertToUInt ( model.Custom2 ,
-                                                                                    Constants.DefaultHeightSeatingInCm ) ;
-        settings.HeightSettings.Custom2Name = string.IsNullOrWhiteSpace ( model.Custom2Name ) ? Constants.DefaultCustom2Name : model.Custom2Name ;
+                                                                                    AppConfiguration.Defaults.HeightSeatingInCm ) ;
+        settings.HeightSettings.Custom2Name = string.IsNullOrWhiteSpace ( model.Custom2Name ) ? AppConfiguration.Hotkeys.Custom2Name : model.Custom2Name ;
         settings.HeightSettings.LastKnownDeskHeight = model.LastKnownDeskHeight ;
 
         settings.HeightSettings.StandingIsVisibleInContextMenu = model.StandingIsVisibleInContextMenu ;
@@ -338,17 +338,17 @@ public class SettingsSynchronizer (
 
         // cache conversions
         var newStanding = converters.DoubleToUIntConverter.ConvertToUInt ( model.Standing ,
-                                                          Constants.DefaultHeightStandingInCm ) ;
+                                                          AppConfiguration.Defaults.HeightStandingInCm ) ;
         var newSeating = converters.DoubleToUIntConverter.ConvertToUInt ( model.Seating ,
-                                                         Constants.DefaultHeightSeatingInCm ) ;
+                                                         AppConfiguration.Defaults.HeightSeatingInCm ) ;
         var newCustom1 = converters.DoubleToUIntConverter.ConvertToUInt ( model.Custom1 ,
-                                                         Constants.DefaultHeightStandingInCm ) ;
+                                                         AppConfiguration.Defaults.HeightStandingInCm ) ;
         var newCustom2 = converters.DoubleToUIntConverter.ConvertToUInt ( model.Custom2 ,
-                                                         Constants.DefaultHeightSeatingInCm ) ;
-        var newStandingName = string.IsNullOrWhiteSpace ( model.StandingName ) ? Constants.DefaultStandingName : model.StandingName ;
-        var newSeatingName  = string.IsNullOrWhiteSpace ( model.SeatingName ) ? Constants.DefaultSeatingName : model.SeatingName ;
-        var newCustom1Name  = string.IsNullOrWhiteSpace ( model.Custom1Name ) ? Constants.DefaultCustom1Name : model.Custom1Name ;
-        var newCustom2Name  = string.IsNullOrWhiteSpace ( model.Custom2Name ) ? Constants.DefaultCustom2Name : model.Custom2Name ;
+                                                         AppConfiguration.Defaults.HeightSeatingInCm ) ;
+        var newStandingName = string.IsNullOrWhiteSpace ( model.StandingName ) ? AppConfiguration.Hotkeys.StandingName : model.StandingName ;
+        var newSeatingName  = string.IsNullOrWhiteSpace ( model.SeatingName ) ? AppConfiguration.Hotkeys.SeatingName : model.SeatingName ;
+        var newCustom1Name  = string.IsNullOrWhiteSpace ( model.Custom1Name ) ? AppConfiguration.Hotkeys.Custom1Name : model.Custom1Name ;
+        var newCustom2Name  = string.IsNullOrWhiteSpace ( model.Custom2Name ) ? AppConfiguration.Hotkeys.Custom2Name : model.Custom2Name ;
 
         var heightChanged =
             current.HeightSettings.DeskMinHeightInCm   != model.MinHeight ||

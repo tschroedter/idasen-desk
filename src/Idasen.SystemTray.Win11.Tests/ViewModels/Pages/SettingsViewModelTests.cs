@@ -39,7 +39,7 @@ public sealed class SettingsViewModelTests
         _settingsManager.SettingsFileName.Returns ( "TestSettings.json" ) ;
         _settingsManager.SettingsSaved.Returns ( _settingsSaved ) ;
 
-        // Setup the settings service mock
+        // Set up the settings service mock
         _settingsService.SettingsManager.Returns ( _settingsManager ) ;
         _settingsService.Synchronizer.Returns ( _synchronizer ) ;
         _settingsService.HeightValidator.Returns ( _heightValidator ) ;
@@ -386,10 +386,10 @@ public sealed class SettingsViewModelTests
         var vm = CreateSut ( ) ;
 
         // Assert
-        vm.StandingKey.Should ( ).Be ( Constants.DefaultStandingKey ) ;
-        vm.SeatingKey.Should ( ).Be ( Constants.DefaultSeatingKey ) ;
-        vm.Custom1Key.Should ( ).Be ( Constants.DefaultCustom1Key ) ;
-        vm.Custom2Key.Should ( ).Be ( Constants.DefaultCustom2Key ) ;
+        vm.StandingKey.Should ( ).Be ( AppConfiguration.Hotkeys.StandingKey ) ;
+        vm.SeatingKey.Should ( ).Be ( AppConfiguration.Hotkeys.SeatingKey ) ;
+        vm.Custom1Key.Should ( ).Be ( AppConfiguration.Hotkeys.Custom1Key ) ;
+        vm.Custom2Key.Should ( ).Be ( AppConfiguration.Hotkeys.Custom2Key ) ;
     }
 
     [ Fact ]
@@ -399,10 +399,10 @@ public sealed class SettingsViewModelTests
         var vm = CreateSut ( ) ;
 
         // Assert
-        vm.StandingModifiers.Should ( ).Be ( Constants.DefaultHotkeyModifiers ) ;
-        vm.SeatingModifiers.Should ( ).Be ( Constants.DefaultHotkeyModifiers ) ;
-        vm.Custom1Modifiers.Should ( ).Be ( Constants.DefaultHotkeyModifiers ) ;
-        vm.Custom2Modifiers.Should ( ).Be ( Constants.DefaultHotkeyModifiers ) ;
+        vm.StandingModifiers.Should ( ).Be ( AppConfiguration.Hotkeys.DefaultModifiers ) ;
+        vm.SeatingModifiers.Should ( ).Be ( AppConfiguration.Hotkeys.DefaultModifiers ) ;
+        vm.Custom1Modifiers.Should ( ).Be ( AppConfiguration.Hotkeys.DefaultModifiers ) ;
+        vm.Custom2Modifiers.Should ( ).Be ( AppConfiguration.Hotkeys.DefaultModifiers ) ;
     }
 
     [ Fact ]
@@ -763,7 +763,7 @@ public sealed class SettingsViewModelTests
         var vm = CreateSut ( ) ;
 
         // Assert
-        vm.StandingName.Should ( ).Be ( Constants.DefaultStandingName ) ;
+        vm.StandingName.Should ( ).Be ( AppConfiguration.Hotkeys.StandingName ) ;
     }
 
     [ Fact ]
@@ -773,7 +773,7 @@ public sealed class SettingsViewModelTests
         var vm = CreateSut ( ) ;
 
         // Assert
-        vm.SeatingName.Should ( ).Be ( Constants.DefaultSeatingName ) ;
+        vm.SeatingName.Should ( ).Be ( AppConfiguration.Hotkeys.SeatingName ) ;
     }
 
     [ Fact ]
@@ -867,7 +867,7 @@ public sealed class SettingsViewModelTests
         var vm = CreateSut ( ) ;
 
         // Assert
-        vm.Custom1Name.Should ( ).Be ( Constants.DefaultCustom1Name ) ;
+        vm.Custom1Name.Should ( ).Be ( AppConfiguration.Hotkeys.Custom1Name ) ;
     }
 
     [ Fact ]
@@ -877,7 +877,7 @@ public sealed class SettingsViewModelTests
         var vm = CreateSut ( ) ;
 
         // Assert
-        vm.Custom2Name.Should ( ).Be ( Constants.DefaultCustom2Name ) ;
+        vm.Custom2Name.Should ( ).Be ( AppConfiguration.Hotkeys.Custom2Name ) ;
     }
 
     [ Fact ]

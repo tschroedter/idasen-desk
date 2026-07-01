@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis ;
+using System.Diagnostics.CodeAnalysis ;
 using System.IO.Abstractions ;
 using System.Reactive.Concurrency ;
 using System.Windows.Media ;
@@ -139,6 +139,35 @@ public partial class App
                                                                               .AddSingleton < ITaskbarIconProvider ,
                                                                                    TaskbarIconProvider > ( ) ;
                                                                            services
+                                                                              .AddSingleton < IHotkeyManager ,
+                                                                                   HotkeyManager > ( ) ;
+                                                                           services
+                                                                              .AddSingleton < IStatusBarManager ,
+                                                                                   StatusBarManager > ( ) ;
+                                                                           services
+                                                                              .AddSingleton < IDeskMovementManager , DeskMovementManager > ( ) ;
+                                                                           services
+                                                                              .AddSingleton < IDeskConnectionManager , DeskConnectionManager > ( ) ;
+                                                                           services
+                                                                              .AddSingleton < IDeskNotificationManager , DeskNotificationManager > ( ) ;
+                                                                           services
+                                                                              .AddSingleton < IDeskReadyManager > ( provider =>
+                                                                              {
+                                                                                  var logger               = provider.GetRequiredService < ILogger > ( ) ;
+                                                                                  var settingsManager      = provider.GetRequiredService < ISettingsManager > ( ) ;
+                                                                                  var iconProvider         = provider.GetRequiredService < ITaskbarIconProvider > ( ) ;
+                                                                                  var notificationManager  = provider.GetRequiredService < IDeskNotificationManager > ( ) ;
+                                                                                  var notifyIcon           = provider.GetService < NotifyIcon > ( ) ;
+                                                                                  var connectionManager    = provider.GetRequiredService < IDeskConnectionManager > ( ) ;
+
+                                                                                  return new DeskReadyManager ( logger ,
+                                                                                                                settingsManager ,
+                                                                                                                iconProvider ,
+                                                                                                                notificationManager ,
+                                                                                                                notifyIcon ,
+                                                                                                                connectionManager ) ;
+                                                                              } ) ;
+                                                                           services
                                                                               .AddSingleton < IUiDeskManager ,
                                                                                    UiDeskManager > ( ) ;
                                                                            services
@@ -188,6 +217,13 @@ public partial class App
                                                                            services
                                                                               .AddSingleton < IBluetoothReconnectStrategy ,
                                                                                    Utils.Bluetooth.ExponentialBackoffReconnectStrategy > ( ) ;
+                                                                           services
+                                                                              .AddSingleton < IBluetoothConnectionMonitor > ( provider =>
+                                                                              {
+                                                                                  var logger = provider.GetRequiredService < ILogger > ( ) ;
+                                                                                  return new Utils.Bluetooth.BluetoothConnectionMonitor (
+                                                                                      logger ) ;
+                                                                              } ) ;
                                                                            services
                                                                               .AddSingleton < IApplicationThemeManager ,
                                                                                    MyApplicationThemeManager > ( ) ;
@@ -301,6 +337,15 @@ public partial class App
         {
             _logger.Error ( ex ,
                             "Failed to start application" ) ;
+
+            // Show critical error to user and exit
+            MessageBox.Show ( $"Failed to start application: {ex.Message}\n\nPlease check the logs for more details." ,
+                             "Startup Error" ,
+                             MessageBoxButton.OK ,
+                             MessageBoxImage.Error ) ;
+
+            // Exit the application since startup failed
+            Shutdown ( 1 ) ;
         }
     }
 
@@ -343,7 +388,7 @@ public partial class App
 
     private bool EnsureSingleInstance ( )
     {
-        var mutexName = $"Global\\{Constants.ApplicationName}_SingleInstance" ;
+        var mutexName = $"Global\\{AppConfiguration.Application.Name}_SingleInstance" ;
 
         try
         {
@@ -444,9 +489,10 @@ public partial class App
             _singleInstanceMutex?.Dispose ( ) ;
             _singleInstanceMutex = null ;
         }
-        catch
+        catch ( Exception ex )
         {
-            // ignore mutex release errors
+            Log.Warning ( ex ,
+                         "Failed to release or dispose single instance mutex" ) ;
         }
     }
 }

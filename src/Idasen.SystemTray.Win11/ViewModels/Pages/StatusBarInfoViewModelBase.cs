@@ -38,11 +38,11 @@ public partial class StatusBarInfoViewModelBase : ObservableObject , IDisposable
                                              .ObserveOn ( Scheduler )
                                              .Subscribe ( OnStatusBarInfoChangedInternal ) ;
 
-        // Create timer; fire once after 10s, no periodic interval
+        // Create timer; fire once after configured delay, no periodic interval
         _timer = timerFactory (
                                OnElapsed ,
                                null ,
-                               TimeSpan.FromSeconds ( 10 ) ,
+                               TimeSpan.FromSeconds ( AppConfiguration.Timeouts.StatusBarInfoClearDelaySeconds ) ,
                                Timeout.InfiniteTimeSpan ) ;
     }
 
@@ -93,7 +93,7 @@ public partial class StatusBarInfoViewModelBase : ObservableObject , IDisposable
 
     protected void RestartTimer ( )
     {
-        _timer.Change ( TimeSpan.FromSeconds ( 10 ) ,
+        _timer.Change ( TimeSpan.FromSeconds ( AppConfiguration.Timeouts.StatusBarInfoClearDelaySeconds ) ,
                         Timeout.InfiniteTimeSpan ) ;
     }
 

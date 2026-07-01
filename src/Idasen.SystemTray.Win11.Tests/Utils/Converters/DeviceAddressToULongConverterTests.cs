@@ -1,4 +1,4 @@
-﻿using System.Globalization ;
+using System.Globalization ;
 using FluentAssertions ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.Utils ;
@@ -23,7 +23,7 @@ public class DeviceAddressToULongConverterTests
     {
         // Arrange
         const string deviceAddress = " " ;
-        const ulong  expected      = Constants.DefaultDeviceAddress ;
+        const ulong  expected      = AppConfiguration.Defaults.DeviceAddress ;
 
         // Act
         var result = _converter.DefaultIfEmpty ( deviceAddress ) ;
@@ -38,7 +38,7 @@ public class DeviceAddressToULongConverterTests
     {
         // Arrange
         const string deviceAddress = "12345" ;
-        const ulong  defaultValue  = Constants.DefaultDeviceAddress ;
+        const ulong  defaultValue  = AppConfiguration.Defaults.DeviceAddress ;
         const ulong  expected      = 12345 ;
 
         _stringToUIntConverter.ConvertStringToUlongOrDefault ( deviceAddress ,
@@ -59,7 +59,7 @@ public class DeviceAddressToULongConverterTests
     public void EmptyIfDefault_ShouldReturnEmptyString_WhenDeviceAddressIsDefault ( )
     {
         // Arrange
-        const ulong deviceAddress = Constants.DefaultDeviceAddress ;
+        const ulong deviceAddress = AppConfiguration.Defaults.DeviceAddress ;
 
         // Act
         var result = _converter.EmptyIfDefault ( deviceAddress ) ;

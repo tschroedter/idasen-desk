@@ -1,4 +1,4 @@
-﻿using FluentAssertions ;
+using FluentAssertions ;
 using Idasen.SystemTray.Win11.Utils ;
 using Idasen.SystemTray.Win11.Utils.Converters ;
 
@@ -16,7 +16,7 @@ public class DeviceNameConverterTests
         var result = CreateSut ( ).DefaultIfEmpty ( deviceName ) ;
 
         // Assert
-        result.Should ( ).Be ( Constants.DefaultDeviceName ) ;
+        result.Should ( ).Be ( AppConfiguration.Defaults.DeviceName ) ;
     }
 
     [ Fact ]
@@ -36,7 +36,7 @@ public class DeviceNameConverterTests
     public void EmptyIfDefault_ShouldReturnEmptyString_WhenDeviceNameIsDefaultDeviceName ( )
     {
         // Arrange
-        var deviceName = Constants.DefaultDeviceName ;
+        var deviceName = AppConfiguration.Defaults.DeviceName ;
 
         // Act
         var result = CreateSut ( ).EmptyIfDefault ( deviceName ) ;

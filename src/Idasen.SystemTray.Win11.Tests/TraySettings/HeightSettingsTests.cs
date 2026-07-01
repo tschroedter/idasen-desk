@@ -1,4 +1,4 @@
-﻿using FluentAssertions ;
+using FluentAssertions ;
 using Idasen.SystemTray.Win11.TraySettings ;
 using Idasen.SystemTray.Win11.Utils ;
 
@@ -13,7 +13,7 @@ public class HeightSettingsTests
 
         settings.StandingHeightInCm
                 .Should ( )
-                .Be ( Constants.DefaultHeightStandingInCm ) ;
+                .Be ( AppConfiguration.Defaults.HeightStandingInCm ) ;
     }
 
     [ Fact ]
@@ -23,7 +23,7 @@ public class HeightSettingsTests
 
         settings.SeatingHeightInCm
                 .Should ( )
-                .Be ( Constants.DefaultHeightSeatingInCm ) ;
+                .Be ( AppConfiguration.Defaults.HeightSeatingInCm ) ;
     }
 
     [ Fact ]
@@ -33,7 +33,7 @@ public class HeightSettingsTests
 
         settings.Custom1HeightInCm
                 .Should ( )
-                .Be ( Constants.DefaultHeightStandingInCm ) ;
+                .Be ( AppConfiguration.Defaults.HeightStandingInCm ) ;
     }
 
     [ Fact ]
@@ -43,7 +43,7 @@ public class HeightSettingsTests
 
         settings.Custom2HeightInCm
                 .Should ( )
-                .Be ( Constants.DefaultHeightSeatingInCm ) ;
+                .Be ( AppConfiguration.Defaults.HeightSeatingInCm ) ;
     }
 
     [ Fact ]
@@ -53,7 +53,7 @@ public class HeightSettingsTests
 
         settings.DeskMinHeightInCm
                 .Should ( )
-                .Be ( Constants.DefaultDeskMinHeightInCm ) ;
+                .Be ( AppConfiguration.Defaults.DeskMinHeightInCm ) ;
     }
 
     [ Fact ]
@@ -63,7 +63,7 @@ public class HeightSettingsTests
 
         settings.DeskMaxHeightInCm
                 .Should ( )
-                .Be ( Constants.DefaultDeskMaxHeightInCm ) ;
+                .Be ( AppConfiguration.Defaults.DeskMaxHeightInCm ) ;
     }
 
     [ Fact ]
@@ -73,6 +73,6 @@ public class HeightSettingsTests
 
         settings.LastKnownDeskHeight
                 .Should ( )
-                .Be ( Constants.DefaultDeskMinHeightInCm ) ;
+                .Be ( AppConfiguration.Defaults.DeskMinHeightInCm ) ;
     }
 }

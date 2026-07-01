@@ -1,6 +1,5 @@
 using FluentAssertions ;
 using Idasen.SystemTray.Win11.Utils.Validation ;
-using Xunit ;
 
 namespace Idasen.SystemTray.Win11.Tests.Utils.Validation ;
 

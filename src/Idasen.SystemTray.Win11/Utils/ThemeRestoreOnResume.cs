@@ -74,6 +74,17 @@ public partial class ThemeRestoreOnResume (
 
     private void ReapplyConfiguredThemeWithDelay ( )
     {
-        _ = Task.Run ( async ( ) => { await themeRestoreWithDelay.ApplyWithDelayAsync ( CancellationToken.None ) ; } ) ;
+        Task.Run ( async ( ) =>
+        {
+            try
+            {
+                await themeRestoreWithDelay.ApplyWithDelayAsync ( CancellationToken.None ) ;
+            }
+            catch ( Exception ex )
+            {
+                // Log error but don't crash - theme restoration is non-critical
+                System.Diagnostics.Debug.WriteLine ( $"Theme restoration failed: {ex.Message}" ) ;
+            }
+        } ) ;
     }
 }

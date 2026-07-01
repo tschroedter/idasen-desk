@@ -29,7 +29,7 @@ public partial class SettingsManager (
 
     public ISettings CurrentSettings => _current ;
 
-    public string SettingsFileName { get ; } = commonApplicationData.ToFullPath ( Constants.SettingsFileName ) ;
+    public string SettingsFileName { get ; } = commonApplicationData.ToFullPath ( AppConfiguration.Application.SettingsFileName ) ;
 
     public async ValueTask SaveAsync ( CancellationToken token )
     {
@@ -112,7 +112,7 @@ public partial class SettingsManager (
 
         await LoadAsync ( token ).ConfigureAwait ( false ) ;
 
-        _current.DeviceSettings.NotificationsEnabled = Constants.NotificationsEnabled ;
+        _current.DeviceSettings.NotificationsEnabled = AppConfiguration.Defaults.NotificationsEnabled ;
 
         await SaveAsync ( token ).ConfigureAwait ( false ) ;
     }
