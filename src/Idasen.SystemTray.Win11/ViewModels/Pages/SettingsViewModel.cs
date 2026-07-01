@@ -636,9 +636,10 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
                                                                                                               CancellationToken
                                                                                                                  .None ) ;
                                                               }
-                                                              catch ( OperationCanceledException )
+                                                              catch ( OperationCanceledException ex)
                                                               {
-                                                                  _logger.Information ( "Settings save operation was cancelled during visibility change" ) ;
+                                                                  _logger.Information ( ex ,
+                                                                                        "Settings save operation was cancelled during visibility change" ) ;
                                                               }
                                                               catch ( InvalidOperationException ex )
                                                               {
