@@ -46,6 +46,7 @@ A special thank you to all the amazing people who test this application and prov
 ## What's New
 
 ### Main branch updates (latest)
+- ⚙️ Allow renaming of desk position preset
 - 📡 Improved Bluetooth reliability with stale connection detection and automatic reconnection.
 - 🛠️ Refactored desk orchestration into focused managers (`DeskConnectionManager`, `DeskMovementManager`, `DeskNotificationManager`, `DeskReadyManager`, `StatusBarManager`) with expanded test coverage.
 - 🔐 Updated CI workflow dependencies (`actions/checkout@v7`, `actions/cache@v6`) and release/changelog automation actions.
