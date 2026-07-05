@@ -27,13 +27,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="coverlet.collector" Version="10.0.0">
+        <PackageReference Include="coverlet.collector" Version="10.0.1">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="FluentAssertions" Version="8.9.0" />
-        <PackageReference Include="Idasen.Desk.Core" Version="0.1.243" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.5.1" />
+        <PackageReference Include="FluentAssertions" Version="8.10.0" />
+        <PackageReference Include="Idasen.Desk.Core" Version="0.1.249" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.7.0" />
         <PackageReference Include="Microsoft.Reactive.Testing" Version="6.1.0" />
         <PackageReference Include="NSubstitute" Version="5.3.0" />
         <PackageReference Include="System.IO.Abstractions" Version="22.1.1" />
@@ -47,6 +47,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Idasen.SystemTray.Win11\Idasen.SystemTray.Win11.csproj" />
+        <ProjectReference Include="..\Idasen.TestLogger\Idasen.TestLogger.csproj" />
     </ItemGroup>
 
     <ItemGroup>

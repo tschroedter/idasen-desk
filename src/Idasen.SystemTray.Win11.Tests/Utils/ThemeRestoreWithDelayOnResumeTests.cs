@@ -1,17 +1,37 @@
+using FluentAssertions ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.TraySettings ;
 using Idasen.SystemTray.Win11.Utils ;
+using Idasen.TestLogger ;
 using NSubstitute ;
-using Serilog ;
+using Serilog.Events ;
 using Wpf.Ui.Appearance ;
 
 namespace Idasen.SystemTray.Win11.Tests.Utils ;
 
-public class ThemeRestoreWithDelayOnResumeTests
+public class ThemeRestoreWithDelayOnResumeTests : IDisposable
 {
-    private readonly ILogger                  _logger          = Substitute.For < ILogger > ( ) ;
+    private readonly InMemoryLogger           _logger          = new( ) ;
     private readonly ISettingsManager         _settingsManager = Substitute.For < ISettingsManager > ( ) ;
     private readonly IApplicationThemeManager _themeManager    = Substitute.For < IApplicationThemeManager > ( ) ;
+    private          bool                     _disposed ;
+
+    public void Dispose()
+    {
+        Dispose(true);
+
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (_disposed)
+            return;
+
+        if (disposing) _logger.Dispose();
+
+        _disposed = true;
+    }
 
     public ThemeRestoreWithDelayOnResumeTests ( )
     {
@@ -37,7 +57,11 @@ public class ThemeRestoreWithDelayOnResumeTests
         await sut.ApplyWithDelayAsync ( CancellationToken.None ) ;
 
         // Assert
-        _logger.Received ( 1 ).Warning ( "Theme is not set!" ) ;
+        _logger.Contains ( "Theme is not set!" ,
+                           LogEventLevel.Warning )
+               .Should ( )
+               .BeTrue ( ) ;
+
         await _themeManager.DidNotReceive ( ).ApplyAsync ( Arg.Any < ApplicationTheme > ( ) ) ;
     }
 
@@ -84,7 +108,9 @@ public class ThemeRestoreWithDelayOnResumeTests
         await sut.ApplyWithDelayAsync ( CancellationToken.None ) ;
 
         // Assert - should log the caught exception at least once with the specific message
-        _logger.Received ( ).Error ( Arg.Any < Exception > ( ) ,
-                                     "Failed to reapply theme after display/user preference change" ) ;
+        _logger.Contains ( "Failed to reapply theme after display/user preference change" ,
+                           LogEventLevel.Error )
+               .Should ( )
+               .BeTrue ( ) ;
     }
 }

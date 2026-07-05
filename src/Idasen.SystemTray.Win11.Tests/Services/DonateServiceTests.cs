@@ -1,21 +1,27 @@
 using System.Diagnostics ;
+using FluentAssertions ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.Services ;
+using Idasen.TestLogger ;
 using Microsoft.Extensions.Configuration ;
 using NSubstitute ;
 using NSubstitute.ExceptionExtensions ;
-using Serilog ;
 
 namespace Idasen.SystemTray.Win11.Tests.Services ;
 
-public class DonateServiceTests
+public sealed class DonateServiceTests : IDisposable
 {
     private const string ValidConfiguredUrl = "https://configured.example.com/donate" ;
     private const string DefaultUrl         = "https://www.paypal.com/donate/?hosted_button_id=KAWJDNVJTD7SJ" ;
 
-    private readonly IConfiguration  _configuration  = Substitute.For < IConfiguration > ( ) ;
-    private readonly ILogger         _logger         = Substitute.For < ILogger > ( ) ;
+    private readonly IConfiguration   _configuration   = Substitute.For < IConfiguration > ( ) ;
+    private readonly InMemoryLogger   _logger          = new( ) ;
     private readonly IProcessLauncher _processLauncher = Substitute.For < IProcessLauncher > ( ) ;
+
+    public void Dispose()
+    {
+        _logger.Dispose();
+    }
 
     private DonateService CreateSut ( )
     {
@@ -37,7 +43,10 @@ public class DonateServiceTests
         sut.OpenDonateUrl ( ) ;
 
         // Assert
-        _logger.Received ( 1 ).Debug ( "DonateUrl is not configured. Using built-in default donate URL." ) ;
+        _logger.Contains ( "DonateUrl is not configured. Using built-in default donate URL." )
+               .Should ( )
+               .BeTrue ( ) ;
+
         _processLauncher.Received ( 1 ).TryStart (
             Arg.Is < ProcessStartInfo > ( psi => psi.FileName == DefaultUrl ) ) ;
     }
@@ -55,7 +64,10 @@ public class DonateServiceTests
         sut.OpenDonateUrl ( ) ;
 
         // Assert
-        _logger.Received ( 1 ).Debug ( "DonateUrl is not configured. Using built-in default donate URL." ) ;
+        _logger.Contains ( "DonateUrl is not configured. Using built-in default donate URL." )
+               .Should ( )
+               .BeTrue ( ) ;
+
         _processLauncher.Received ( 1 ).TryStart (
             Arg.Is < ProcessStartInfo > ( psi => psi.FileName == DefaultUrl ) ) ;
     }
@@ -73,7 +85,10 @@ public class DonateServiceTests
         sut.OpenDonateUrl ( ) ;
 
         // Assert
-        _logger.Received ( 1 ).Warning ( "DonateUrl is invalid or not an absolute HTTP/HTTPS URI, using default URL" ) ;
+        _logger.Contains ("DonateUrl is invalid or not an absolute HTTP/HTTPS URI, using default URL")
+               .Should ( )
+               .BeTrue ( ) ;
+
         _processLauncher.Received ( 1 ).TryStart (
             Arg.Is < ProcessStartInfo > ( psi => psi.FileName == DefaultUrl ) ) ;
     }
@@ -91,7 +106,11 @@ public class DonateServiceTests
         sut.OpenDonateUrl ( ) ;
 
         // Assert
-        _logger.Received ( 1 ).Warning ( "DonateUrl is invalid or not an absolute HTTP/HTTPS URI, using default URL" ) ;
+        _logger.Contains ( "DonateUrl is invalid or not an absolute HTTP/HTTPS URI, using default URL" )
+               .Should ( )
+               .BeTrue ( ) ;
+
+
         _processLauncher.Received ( 1 ).TryStart (
             Arg.Is < ProcessStartInfo > ( psi => psi.FileName == DefaultUrl ) ) ;
     }
@@ -109,8 +128,14 @@ public class DonateServiceTests
         sut.OpenDonateUrl ( ) ;
 
         // Assert
-        _logger.DidNotReceive ( ).Debug ( Arg.Any < string > ( ) ) ;
-        _logger.DidNotReceive ( ).Warning ( Arg.Any < string > ( ) ) ;
+        _logger.Contains ( "Debug" )
+               .Should ( )
+               .BeFalse ( ) ;
+
+        _logger.Contains ( "Warning" )
+               .Should ( )
+               .BeFalse( ) ;
+
         _processLauncher.Received ( 1 ).TryStart (
             Arg.Is < ProcessStartInfo > ( psi => psi.FileName == ValidConfiguredUrl ) ) ;
     }
@@ -130,7 +155,10 @@ public class DonateServiceTests
         sut.OpenDonateUrl ( ) ;
 
         // Assert
-        _logger.Received ( 1 ).Information ( "Successfully opened URL in browser" ) ;
+        _logger.Contains ( "Successfully opened URL in browser" )
+               .Should ( )
+               .BeTrue ( ) ;
+
         _processLauncher.DidNotReceive ( ).StartAndWait ( Arg.Any < ProcessStartInfo > ( ) , Arg.Any < int > ( ) ) ;
     }
 
@@ -149,7 +177,10 @@ public class DonateServiceTests
         sut.OpenDonateUrl ( ) ;
 
         // Assert
-        _logger.Received ( 1 ).Warning ( "Process.Start returned null, trying fallback method" ) ;
+        _logger.Contains ( "Process.Start returned null, trying fallback method" )
+               .Should ( )
+               .BeTrue ( ) ;
+
         _processLauncher.Received ( 1 ).StartAndWait ( Arg.Any < ProcessStartInfo > ( ) , 5000 ) ;
     }
 
@@ -169,7 +200,11 @@ public class DonateServiceTests
         sut.OpenDonateUrl ( ) ;
 
         // Assert
-        _logger.Received ( 1 ).Warning ( win32Ex , "Primary method failed with Win32Exception, trying fallback" ) ;
+        _logger.Contains ( "Primary method failed with Win32Exception, trying fallback" )
+               .Should ( )
+               .BeTrue ( ) ;
+
+
         _processLauncher.Received ( 1 ).StartAndWait ( Arg.Any < ProcessStartInfo > ( ) , 5000 ) ;
     }
 
@@ -189,7 +224,10 @@ public class DonateServiceTests
         sut.OpenDonateUrl ( ) ;
 
         // Assert
-        _logger.Received ( 1 ).Warning ( ex , "Primary method failed, trying fallback" ) ;
+        _logger.Contains ( "Primary method failed, trying fallback" )
+               .Should ( )
+               .BeTrue ( ) ;
+
         _processLauncher.Received ( 1 ).StartAndWait ( Arg.Any < ProcessStartInfo > ( ) , 5000 ) ;
     }
 
@@ -210,7 +248,9 @@ public class DonateServiceTests
         sut.OpenDonateUrl ( ) ;
 
         // Assert
-        _logger.Received ( 1 ).Error ( "Both primary and fallback methods failed to open URL" ) ;
+        _logger.Contains ( "Both primary and fallback methods failed to open URL" )
+               .Should ( )
+               .BeTrue ( ) ;
     }
 
     [ Fact ]
@@ -228,7 +268,9 @@ public class DonateServiceTests
         sut.OpenDonateUrl ( ) ;
 
         // Assert
-        _logger.Received ( 1 ).Error ( "Fallback method did not complete within the expected time" ) ;
+        _logger.Contains ( "Fallback method did not complete within the expected time" )
+               .Should ( )
+               .BeTrue ( ) ;
     }
 
     [ Fact ]
@@ -246,7 +288,9 @@ public class DonateServiceTests
         sut.OpenDonateUrl ( ) ;
 
         // Assert
-        _logger.Received ( 1 ).Information ( "Successfully opened URL using fallback method" ) ;
+        _logger.Contains ( "Successfully opened URL using fallback method" )
+               .Should ( )
+               .BeTrue ( ) ;
     }
 
     [ Fact ]
@@ -264,7 +308,9 @@ public class DonateServiceTests
         sut.OpenDonateUrl ( ) ;
 
         // Assert
-        _logger.Received ( 1 ).Error ( "Fallback method failed with exit code {ExitCode}" , ( int? ) 1 ) ;
+        _logger.Contains ( "Fallback method failed with exit code 1" )
+               .Should ( )
+               .BeTrue ( ) ;
     }
 
     [ Fact ]
@@ -282,7 +328,9 @@ public class DonateServiceTests
         sut.OpenDonateUrl ( ) ;
 
         // Assert
-        _logger.Received ( 1 ).Error ( ex , "Fallback method also failed" ) ;
+        _logger.Contains ( "Fallback method also failed" )
+               .Should ( )
+               .BeTrue ( ) ;
     }
 
     // ── Outer exception handling ──────────────────────────────────────────────
@@ -300,7 +348,9 @@ public class DonateServiceTests
         sut.OpenDonateUrl ( ) ;
 
         // Assert
-        _logger.Received ( 1 ).Error ( ex , "An error occurred while trying to open the donate URL." ) ;
+        _logger.Contains ( "An error occurred while trying to open the donate URL." )
+               .Should ( )
+               .BeTrue ( ) ;
     }
 
     // ── Fallback uses correct timeout ─────────────────────────────────────────

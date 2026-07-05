@@ -2,21 +2,22 @@ using FluentAssertions ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.TraySettings ;
 using Idasen.SystemTray.Win11.Utils ;
+using Idasen.TestLogger ;
 using NSubstitute ;
-using Serilog ;
 
 namespace Idasen.SystemTray.Win11.Tests.Utils ;
 
-public class HotkeyManagerTests
+public class HotkeyManagerTests : IDisposable
 {
-    private readonly ILogger          _logger ;
-    private readonly ISettingsManager _settingsManager ;
+    private readonly InMemoryLogger   _logger ;
     private readonly INotifications   _notifications ;
     private readonly Settings         _settings ;
+    private readonly ISettingsManager _settingsManager ;
+    private          bool             _disposed ;
 
     public HotkeyManagerTests ( )
     {
-        _logger          = Substitute.For < ILogger > ( ) ;
+        _logger          = new InMemoryLogger ( ) ;
         _settingsManager = Substitute.For < ISettingsManager > ( ) ;
         _notifications   = Substitute.For < INotifications > ( ) ;
 
@@ -35,6 +36,23 @@ public class HotkeyManagerTests
             }
         } ;
         _settingsManager.CurrentSettings.Returns ( _settings ) ;
+    }
+
+    public void Dispose ( )
+    {
+        Dispose ( true ) ;
+
+        GC.SuppressFinalize ( this ) ;
+    }
+
+    protected virtual void Dispose ( bool disposing )
+    {
+        if ( _disposed )
+            return ;
+
+        if ( disposing ) _logger.Dispose ( ) ;
+
+        _disposed = true ;
     }
 
     [ Fact ]
@@ -90,9 +108,11 @@ public class HotkeyManagerTests
 
         var act = ( ) =>
                   {
+#pragma warning disable S3966
                       manager.Dispose ( ) ;
                       manager.Dispose ( ) ;
                       manager.Dispose ( ) ;
+#pragma warning restore S3966
                   } ;
 
         act.Should ( ).NotThrow ( ) ;
@@ -106,10 +126,10 @@ public class HotkeyManagerTests
 
         // Act
         var act = ( ) =>
-        {
-            manager.RegisterGlobalHotkeys ( ) ;
-            manager.Dispose ( ) ;
-        } ;
+                  {
+                      manager.RegisterGlobalHotkeys ( ) ;
+                      manager.Dispose ( ) ;
+                  } ;
 
         // Assert
         act.Should ( ).NotThrow ( ) ;
@@ -122,14 +142,14 @@ public class HotkeyManagerTests
 
         // Events should be able to be subscribed to without throwing
         var standingCalled = false ;
-        var seatingCalled = false ;
-        var custom1Called = false ;
-        var custom2Called = false ;
+        var seatingCalled  = false ;
+        var custom1Called  = false ;
+        var custom2Called  = false ;
 
         manager.StandingHotkeyPressed += ( _ , _ ) => standingCalled = true ;
-        manager.SeatingHotkeyPressed  += ( _ , _ ) => seatingCalled = true ;
-        manager.Custom1HotkeyPressed  += ( _ , _ ) => custom1Called = true ;
-        manager.Custom2HotkeyPressed  += ( _ , _ ) => custom2Called = true ;
+        manager.SeatingHotkeyPressed  += ( _ , _ ) => seatingCalled  = true ;
+        manager.Custom1HotkeyPressed  += ( _ , _ ) => custom1Called  = true ;
+        manager.Custom2HotkeyPressed  += ( _ , _ ) => custom2Called  = true ;
 
         // Verify events can be subscribed to without throwing
         standingCalled.Should ( ).BeFalse ( ) ;
@@ -147,7 +167,7 @@ public class HotkeyManagerTests
         var manager = CreateManager ( ) ;
 
         // Act
-        var act = ( ) => manager.RegisterGlobalHotkeys ( ) ;
+        var act = manager.RegisterGlobalHotkeys ;
 
         // Assert
         act.Should ( ).NotThrow ( ) ;
@@ -167,7 +187,7 @@ public class HotkeyManagerTests
         var manager = CreateManager ( ) ;
 
         // Act
-        var act = ( ) => manager.RegisterGlobalHotkeys ( ) ;
+        var act = manager.RegisterGlobalHotkeys ;
 
         // Assert
         act.Should ( ).NotThrow ( ) ;
@@ -184,7 +204,7 @@ public class HotkeyManagerTests
         var manager = CreateManager ( ) ;
 
         // Act
-        var act = ( ) => manager.RegisterGlobalHotkeys ( ) ;
+        var act = manager.RegisterGlobalHotkeys ;
 
         // Assert - Should not throw even with invalid key (uses default)
         act.Should ( ).NotThrow ( ) ;
@@ -201,7 +221,7 @@ public class HotkeyManagerTests
         var manager = CreateManager ( ) ;
 
         // Act
-        var act = ( ) => manager.RegisterGlobalHotkeys ( ) ;
+        var act = manager.RegisterGlobalHotkeys ;
 
         // Assert
         act.Should ( ).NotThrow ( ) ;
@@ -220,7 +240,7 @@ public class HotkeyManagerTests
         var manager = CreateManager ( ) ;
 
         // Act
-        var act = ( ) => manager.RegisterGlobalHotkeys ( ) ;
+        var act = manager.RegisterGlobalHotkeys ;
 
         // Assert
         act.Should ( ).NotThrow ( ) ;
@@ -236,10 +256,10 @@ public class HotkeyManagerTests
 
         // Act
         var act = ( ) =>
-        {
-            manager.RegisterGlobalHotkeys ( ) ;
-            manager.RegisterGlobalHotkeys ( ) ; // Should replace existing
-        } ;
+                  {
+                      manager.RegisterGlobalHotkeys ( ) ;
+                      manager.RegisterGlobalHotkeys ( ) ; // Should replace existing
+                  } ;
 
         // Assert
         act.Should ( ).NotThrow ( ) ;
@@ -255,7 +275,7 @@ public class HotkeyManagerTests
         manager.RegisterGlobalHotkeys ( ) ;
 
         // Act
-        var act = ( ) => manager.UnregisterGlobalHotkeys ( ) ;
+        var act = manager.UnregisterGlobalHotkeys ;
 
         // Assert - In test environment without STA, this will throw
         act.Should ( ).Throw < InvalidOperationException > ( )
@@ -271,7 +291,7 @@ public class HotkeyManagerTests
         var manager = CreateManager ( ) ;
 
         // Act
-        var act = ( ) => manager.UnregisterGlobalHotkeys ( ) ;
+        var act = manager.UnregisterGlobalHotkeys ;
 
         // Assert
         act.Should ( ).Throw < InvalidOperationException > ( )
@@ -287,7 +307,7 @@ public class HotkeyManagerTests
         var manager = CreateManager ( ) ;
 
         // Act
-        var act = ( ) => manager.Dispose ( ) ;
+        var act = manager.Dispose ;
 
         // Assert
         act.Should ( ).NotThrow ( ) ;
@@ -297,15 +317,15 @@ public class HotkeyManagerTests
     public void RegisterGlobalHotkeys_WithVariousKeyFormats_HandlesCorrectly ( )
     {
         // Arrange - Test various key formats
-        _settings.HotkeySettings.StandingKey = "A" ; // Letter key
-        _settings.HotkeySettings.SeatingKey  = "F1" ; // Function key
+        _settings.HotkeySettings.StandingKey = "A" ;     // Letter key
+        _settings.HotkeySettings.SeatingKey  = "F1" ;    // Function key
         _settings.HotkeySettings.Custom1Key  = "Space" ; // Special key
-        _settings.HotkeySettings.Custom2Key  = "0" ; // Number key
+        _settings.HotkeySettings.Custom2Key  = "0" ;     // Number key
 
         var manager = CreateManager ( ) ;
 
         // Act
-        var act = ( ) => manager.RegisterGlobalHotkeys ( ) ;
+        var act = manager.RegisterGlobalHotkeys ;
 
         // Assert
         act.Should ( ).NotThrow ( ) ;
@@ -325,7 +345,7 @@ public class HotkeyManagerTests
         var manager = CreateManager ( ) ;
 
         // Act
-        var act = ( ) => manager.RegisterGlobalHotkeys ( ) ;
+        var act = manager.RegisterGlobalHotkeys ;
 
         // Assert
         act.Should ( ).NotThrow ( ) ;
@@ -343,8 +363,13 @@ public class HotkeyManagerTests
         manager.RegisterGlobalHotkeys ( ) ;
 
         // Assert
-        _logger.Received ( 1 ).Information ( "Registering global hotkeys..." ) ;
-        _logger.Received ( 1 ).Information ( "Global hotkeys registered successfully" ) ;
+        _logger.Contains ( "Registering global hotkeys..." )
+               .Should ( )
+               .BeTrue ( ) ;
+
+        _logger.Contains ( "Global hotkeys registered successfully" )
+               .Should ( )
+               .BeTrue ( ) ;
 
         manager.Dispose ( ) ;
     }
@@ -367,7 +392,9 @@ public class HotkeyManagerTests
         }
 
         // Assert - Even if it fails, it should log the unregistration attempt
-        _logger.Received ( 1 ).Information ( "Unregistering global hotkeys..." ) ;
+        _logger.Contains ( "Unregistering global hotkeys..." )
+               .Should ( )
+               .BeTrue ( ) ;
 
         manager.Dispose ( ) ;
     }
@@ -386,7 +413,7 @@ public class HotkeyManagerTests
         var manager = CreateManager ( ) ;
 
         // Act
-        var act = ( ) => manager.RegisterGlobalHotkeys ( ) ;
+        var act = manager.RegisterGlobalHotkeys ;
 
         // Assert - Should not throw and should map "1" to "D1", etc.
         act.Should ( ).NotThrow ( ) ;
@@ -403,7 +430,7 @@ public class HotkeyManagerTests
         var manager = CreateManager ( ) ;
 
         // Act
-        var act = ( ) => manager.RegisterGlobalHotkeys ( ) ;
+        var act = manager.RegisterGlobalHotkeys ;
 
         // Assert - Should still register but with None modifier instead of invalid one
         act.Should ( ).NotThrow ( ) ;
@@ -421,9 +448,10 @@ public class HotkeyManagerTests
         manager.Dispose ( ) ;
 
         // Assert
-        _logger.Received ( 1 ).Information (
-            "Disposing {TypeName}..." ,
-            nameof ( HotkeyManager ) ) ;
+        _logger.Contains ( $"Disposing \"{nameof ( HotkeyManager )}\"..." ,
+                           1 )
+               .Should ( )
+               .BeTrue ( ) ;
     }
 
     [ Fact ]
@@ -438,7 +466,7 @@ public class HotkeyManagerTests
         var manager = CreateManager ( ) ;
 
         // Act
-        var act = ( ) => manager.RegisterGlobalHotkeys ( ) ;
+        var act = manager.RegisterGlobalHotkeys ;
 
         // Assert
         act.Should ( ).NotThrow ( ) ;
@@ -455,7 +483,7 @@ public class HotkeyManagerTests
         var manager = CreateManager ( ) ;
 
         // Act
-        var act = ( ) => manager.RegisterGlobalHotkeys ( ) ;
+        var act = manager.RegisterGlobalHotkeys ;
 
         // Assert
         act.Should ( ).NotThrow ( ) ;
@@ -466,9 +494,8 @@ public class HotkeyManagerTests
     private HotkeyManager CreateManager ( )
     {
         return new HotkeyManager (
-            _logger ,
-            _settingsManager ,
-            _notifications ) ;
+                                  _logger ,
+                                  _settingsManager ,
+                                  _notifications ) ;
     }
 }
-

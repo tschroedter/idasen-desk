@@ -2,23 +2,42 @@ using System.Reflection ;
 using FluentAssertions ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.Utils ;
+using Idasen.TestLogger ;
 using Microsoft.Win32 ;
 using NSubstitute ;
-using Serilog ;
 
 namespace Idasen.SystemTray.Win11.Tests.Utils ;
 
-public class ThemeRestoreOnResumeTests
+public class ThemeRestoreOnResumeTests : IDisposable
 {
-    private readonly ILogger      _logger      = Substitute.For < ILogger > ( ) ;
-    private readonly IPowerEvents _powerEvents = Substitute.For < IPowerEvents > ( ) ;
+    private readonly InMemoryLogger _logger      = new( ) ;
+    private readonly IPowerEvents   _powerEvents = Substitute.For < IPowerEvents > ( ) ;
 
     private readonly IThemeRestoreWithDelayOnResume _themeRestore =
         Substitute.For < IThemeRestoreWithDelayOnResume > ( ) ;
 
+    private bool _disposed ;
+
     public ThemeRestoreOnResumeTests ( )
     {
         _themeRestore.ApplyWithDelayAsync ( Arg.Any < CancellationToken > ( ) ).Returns ( Task.CompletedTask ) ;
+    }
+
+    public void Dispose ( )
+    {
+        Dispose ( true ) ;
+
+        GC.SuppressFinalize ( this ) ;
+    }
+
+    protected virtual void Dispose ( bool disposing )
+    {
+        if ( _disposed )
+            return ;
+
+        if ( disposing ) _logger.Dispose ( ) ;
+
+        _disposed = true ;
     }
 
     [ Fact ]

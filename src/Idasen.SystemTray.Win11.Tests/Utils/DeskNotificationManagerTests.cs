@@ -5,8 +5,8 @@ using Idasen.BluetoothLE.Linak.Interfaces ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.TraySettings ;
 using Idasen.SystemTray.Win11.Utils ;
+using Idasen.TestLogger ;
 using NSubstitute ;
-using Serilog ;
 using Wpf.Ui.Controls ;
 using Wpf.Ui.Tray.Controls ;
 
@@ -14,7 +14,7 @@ namespace Idasen.SystemTray.Win11.Tests.Utils ;
 
 public sealed class DeskNotificationManagerTests : IDisposable
 {
-    private readonly ILogger                _logger ;
+    private readonly InMemoryLogger                _logger ;
     private readonly INotifications         _notifications ;
     private readonly IErrorManager          _errorManager ;
     private readonly ISettingsManager       _settingsManager ;
@@ -26,7 +26,7 @@ public sealed class DeskNotificationManagerTests : IDisposable
 
     public DeskNotificationManagerTests ( )
     {
-        _logger                = Substitute.For < ILogger > ( ) ;
+        _logger                = new () ;
         _notifications         = Substitute.For < INotifications > ( ) ;
         _errorManager          = Substitute.For < IErrorManager > ( ) ;
         _settingsManager       = Substitute.For < ISettingsManager > ( ) ;
@@ -419,10 +419,12 @@ public sealed class DeskNotificationManagerTests : IDisposable
         // Act
         var act = ( ) =>
         {
+#pragma warning disable S3966
             manager.Dispose ( ) ;
             manager.Dispose ( ) ;
             manager.Dispose ( ) ;
-        } ;
+#pragma warning restore S3966
+        };
 
         // Assert
         act.Should ( ).NotThrow ( ) ;

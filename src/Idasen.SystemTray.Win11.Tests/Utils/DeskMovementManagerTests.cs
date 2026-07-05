@@ -2,6 +2,7 @@ using FluentAssertions ;
 using Idasen.BluetoothLE.Linak.Interfaces ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.Utils ;
+using Idasen.TestLogger ;
 using NSubstitute ;
 using Serilog ;
 
@@ -109,7 +110,7 @@ public class DeskMovementManagerTests
     public async Task MoveToHeightAsync_WhenDeskNotAvailable_DoesNotMoveDesk ( )
     {
         // Arrange
-        var logger          = Substitute.For < ILogger > ( ) ;
+        var logger          = new InMemoryLogger ( ) ;
         var settingsManager = Substitute.For < ISettingsManager > ( ) ;
         var sut             = new DeskMovementManager ( logger , settingsManager ) ;
 
@@ -126,7 +127,7 @@ public class DeskMovementManagerTests
     public async Task MoveToHeightAsync_WhenDeskAvailable_MovesDeskToCorrectHeight ( )
     {
         // Arrange
-        var logger          = Substitute.For < ILogger > ( ) ;
+        var logger          = new InMemoryLogger ( ) ;
         var settingsManager = Substitute.For < ISettingsManager > ( ) ;
         var desk            = Substitute.For < IDesk > ( ) ;
         var sut             = new DeskMovementManager ( logger , settingsManager ) ;
@@ -147,7 +148,7 @@ public class DeskMovementManagerTests
     public async Task MoveToHeightAsync_ConvertsHeightCorrectly ( )
     {
         // Arrange
-        var logger          = Substitute.For < ILogger > ( ) ;
+        var logger          = new InMemoryLogger (  ) ;
         var settingsManager = Substitute.For < ISettingsManager > ( ) ;
         var desk            = Substitute.For < IDesk > ( ) ;
         var sut             = new DeskMovementManager ( logger , settingsManager ) ;

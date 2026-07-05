@@ -1,8 +1,9 @@
 using FluentAssertions ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.Utils ;
+using Idasen.TestLogger ;
 using NSubstitute ;
-using Serilog ;
+using Serilog.Events ;
 
 namespace Idasen.SystemTray.Win11.Tests.Utils ;
 
@@ -12,8 +13,8 @@ public class VersionProviderTests
     public void GetVersion_ShouldLogError_WhenAssemblyVersionIsNull ( )
     {
         // Arrange
-        var logger          = Substitute.For < ILogger > ( ) ;
-        var versionProvider = Substitute.For < IAssemblyVersionProvider > ( ) ;
+        using var logger          = new InMemoryLogger ( ) ;
+        var       versionProvider = Substitute.For < IAssemblyVersionProvider > ( ) ;
         versionProvider.GetAssemblyVersion ( ).Returns ( ( Version ? )null ) ;
         var sut = new VersionProvider ( logger ,
                                         versionProvider ) ;
@@ -23,15 +24,18 @@ public class VersionProviderTests
 
         // Assert
         result.Should ( ).Be ( "v-.-.-" ) ;
-        logger.Received ( 1 ).Error ( "Failed to get version" ) ;
+        logger.Contains ( "Failed to get version" ,
+                          LogEventLevel.Error )
+              .Should ( )
+              .BeTrue ( ) ;
     }
 
     [ Fact ]
     public void GetVersion_ShouldReturnFormattedVersion_AndCache ( )
     {
         // Arrange
-        var logger          = Substitute.For < ILogger > ( ) ;
-        var versionProvider = Substitute.For < IAssemblyVersionProvider > ( ) ;
+        using var logger          = new InMemoryLogger ( ) ;
+        var       versionProvider = Substitute.For < IAssemblyVersionProvider > ( ) ;
         versionProvider.GetAssemblyVersion ( ).Returns ( new Version ( 1 ,
                                                                        2 ,
                                                                        3 ) ) ;
@@ -46,17 +50,19 @@ public class VersionProviderTests
         first.Should ( ).Be ( "v1.2.3" ) ;
         second.Should ( ).Be ( "v1.2.3" ) ;
         versionProvider.Received ( 1 ).GetAssemblyVersion ( ) ;
-        logger.Received ( 1 ).Information ( "Version fetched successfully: {Version}" ,
-                                            "v1.2.3" ) ;
+        logger.Contains ( "Version fetched successfully: \"v1.2.3\"" ,
+                          LogEventLevel.Information )
+              .Should ( )
+              .BeTrue ( ) ;
     }
 
     [ Fact ]
     public void GetVersion_ShouldLogException_WhenVersionProviderThrows ( )
     {
         // Arrange
-        var logger          = Substitute.For < ILogger > ( ) ;
-        var versionProvider = Substitute.For < IAssemblyVersionProvider > ( ) ;
-        var ex              = new InvalidOperationException ( "boom" ) ;
+        using var logger          = new InMemoryLogger ( ) ;
+        var       versionProvider = Substitute.For < IAssemblyVersionProvider > ( ) ;
+        var       ex              = new InvalidOperationException ( "boom" ) ;
         versionProvider.GetAssemblyVersion ( ).Returns ( _ => throw ex ) ;
         var sut = new VersionProvider ( logger ,
                                         versionProvider ) ;
@@ -66,7 +72,9 @@ public class VersionProviderTests
 
         // Assert
         result.Should ( ).Be ( "v-.-.-" ) ;
-        logger.Received ( 1 ).Error ( ex ,
-                                      "Failed to get version" ) ;
+        logger.Contains ( "Failed to get version" ,
+                          LogEventLevel.Error )
+              .Should ( )
+              .BeTrue ( ) ;
     }
 }

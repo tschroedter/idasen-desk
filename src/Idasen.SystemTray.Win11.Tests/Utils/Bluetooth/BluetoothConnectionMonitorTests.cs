@@ -1,15 +1,36 @@
 using FluentAssertions ;
-using NSubstitute ;
-using Serilog ;
 using Idasen.SystemTray.Win11.Utils.Bluetooth ;
+using Idasen.TestLogger ;
 
 namespace Idasen.SystemTray.Win11.Tests.Utils.Bluetooth ;
 
-public class BluetoothConnectionMonitorTests
+public class BluetoothConnectionMonitorTests : IDisposable
 {
     private const    int     TimeoutMillisecondsLong = 70000 ;
 
-    private readonly ILogger _logger             = Substitute.For < ILogger > ( ) ;
+    private readonly InMemoryLogger _logger             = new( ) ;
+
+    private          bool           _disposed;
+
+    public void Dispose()
+    {
+        Dispose(true);
+
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (_disposed)
+            return;
+
+        if (disposing)
+        {
+            _logger.Dispose();
+        }
+
+        _disposed = true;
+    }
 
     [ Fact ]
     public void Constructor_ValidParameters_CreatesInstance ( )
@@ -217,8 +238,10 @@ public class BluetoothConnectionMonitorTests
         // Act
         var act = ( ) =>
         {
+#pragma warning disable S3966
             monitor.Dispose ( ) ;
             monitor.Dispose ( ) ;
+#pragma warning restore S3966
         } ;
 
         // Assert (should not throw)

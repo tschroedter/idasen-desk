@@ -3,8 +3,8 @@ using FluentAssertions ;
 using Idasen.BluetoothLE.Linak.Interfaces ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.Utils ;
+using Idasen.TestLogger ;
 using NSubstitute ;
-using Serilog ;
 using Wpf.Ui.Controls ;
 
 #pragma warning disable CA2012 // ValueTask verification in tests
@@ -209,7 +209,7 @@ public class DeskReadyManagerTests
                                          ConnectionManager ) ;
         }
 
-        public ILogger                   Logger              { get ; } = Substitute.For < ILogger > ( ) ;
+        public InMemoryLogger            Logger              { get ; } = new( ) ;
         public ISettingsManager          SettingsManager     { get ; } = Substitute.For < ISettingsManager > ( ) ;
         public ITaskbarIconProvider      IconProvider        { get ; } = Substitute.For < ITaskbarIconProvider > ( ) ;
         public IDeskNotificationManager  NotificationManager { get ; } = Substitute.For < IDeskNotificationManager > ( ) ;

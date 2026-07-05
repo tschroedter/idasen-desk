@@ -3,9 +3,9 @@ using FluentAssertions ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.TraySettings ;
 using Idasen.SystemTray.Win11.Utils ;
+using Idasen.TestLogger ;
 using NSubstitute ;
 using NSubstitute.ExceptionExtensions ;
-using Serilog ;
 
 #pragma warning disable CA2012 // Use ValueTasks correctly - disabled for test mocking
 
@@ -15,10 +15,10 @@ public class SettingsManagerTests : IDisposable
 {
     private readonly ICommonApplicationData _commonApplicationData = Substitute.For < ICommonApplicationData > ( ) ;
     private readonly IFileSystem            _fileSystem            = Substitute.For < IFileSystem > ( ) ;
-    private readonly ILogger                _logger                = Substitute.For < ILogger > ( ) ;
+    private readonly InMemoryLogger         _logger                = new ( ) ;
     private readonly SettingsManager        _settingsManager ;
     private readonly ISettingsStorage       _settingsStorage = Substitute.For < ISettingsStorage > ( ) ;
-    private bool _disposed;
+    private          bool                   _disposed;
 
     public SettingsManagerTests ( )
     {
@@ -42,6 +42,7 @@ public class SettingsManagerTests : IDisposable
 
         if ( disposing )
         {
+            _logger.Dispose ( ) ;
             _settingsManager.Dispose ( ) ;
         }
 
@@ -174,7 +175,8 @@ public class SettingsManagerTests : IDisposable
         // Assert
         await act.Should ( ).ThrowAsync < InvalidOperationException > ( )
                  .WithMessage ( "Failed to reset settings" ) ;
-        _logger.Received ( 1 ).Error ( testException ,
-                                       "Failed to reset settings" ) ;
+        _logger.Contains("Failed to reset settings")
+               .Should()
+               .BeTrue();
     }
 }

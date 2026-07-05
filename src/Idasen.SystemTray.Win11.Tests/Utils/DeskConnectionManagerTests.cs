@@ -3,32 +3,53 @@ using Idasen.BluetoothLE.Linak.Interfaces ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.TraySettings ;
 using Idasen.SystemTray.Win11.Utils ;
+using Idasen.TestLogger ;
 using NSubstitute ;
 using NSubstitute.ExceptionExtensions ;
-using Serilog ;
 
 namespace Idasen.SystemTray.Win11.Tests.Utils ;
 
-public class DeskConnectionManagerTests
+public class DeskConnectionManagerTests : IDisposable
 {
-    private readonly ILogger                       _logger ;
-    private readonly ISettingsManager              _settingsManager ;
-    private readonly Func < IDeskProvider >        _providerFactory ;
-    private readonly IBluetoothReconnectStrategy   _reconnectStrategy ;
-    private readonly IErrorManager                 _errorManager ;
-    private readonly IBluetoothConnectionMonitor   _connectionMonitor ;
-    private readonly IDeskProvider                 _deskProvider ;
-    private readonly IDesk                         _desk ;
+    private readonly InMemoryLogger              _logger ;
+    private readonly ISettingsManager            _settingsManager ;
+    private readonly Func < IDeskProvider >      _providerFactory ;
+    private readonly IBluetoothReconnectStrategy _reconnectStrategy ;
+    private readonly IErrorManager               _errorManager ;
+    private readonly IBluetoothConnectionMonitor _connectionMonitor ;
+    private readonly IDeskProvider               _deskProvider ;
+    private readonly IDesk                       _desk ;
+    private          bool                        _disposed ;
+
+    public void Dispose()
+    {
+        Dispose(true);
+
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (_disposed)
+            return;
+
+        if (disposing)
+        {
+            _logger.Dispose();
+        }
+
+        _disposed = true;
+    }
 
     public DeskConnectionManagerTests ( )
     {
-        _logger             = Substitute.For < ILogger > ( ) ;
-        _settingsManager    = Substitute.For < ISettingsManager > ( ) ;
-        _reconnectStrategy  = Substitute.For < IBluetoothReconnectStrategy > ( ) ;
-        _errorManager       = Substitute.For < IErrorManager > ( ) ;
-        _connectionMonitor  = Substitute.For < IBluetoothConnectionMonitor > ( ) ;
-        _deskProvider       = Substitute.For < IDeskProvider > ( ) ;
-        _desk               = Substitute.For < IDesk > ( ) ;
+        _logger            = new( ) ;
+        _settingsManager   = Substitute.For < ISettingsManager > ( ) ;
+        _reconnectStrategy = Substitute.For < IBluetoothReconnectStrategy > ( ) ;
+        _errorManager      = Substitute.For < IErrorManager > ( ) ;
+        _connectionMonitor = Substitute.For < IBluetoothConnectionMonitor > ( ) ;
+        _deskProvider      = Substitute.For < IDeskProvider > ( ) ;
+        _desk              = Substitute.For < IDesk > ( ) ;
 
         // Setup default device settings
         var settings = CreateDefaultSettings ( ) ;
@@ -643,8 +664,10 @@ public class DeskConnectionManagerTests
         // Act
         var act = ( ) =>
         {
+#pragma warning disable S3966
             manager.Dispose ( ) ;
             manager.Dispose ( ) ;
+#pragma warning restore S3966
         } ;
 
         // Assert

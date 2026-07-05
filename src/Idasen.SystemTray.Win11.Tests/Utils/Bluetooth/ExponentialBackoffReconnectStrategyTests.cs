@@ -1,13 +1,35 @@
 using FluentAssertions ;
 using Idasen.SystemTray.Win11.Utils.Bluetooth ;
+using Idasen.TestLogger ;
 using NSubstitute ;
-using Serilog ;
 
 namespace Idasen.SystemTray.Win11.Tests.Utils.Bluetooth ;
 
-public class ExponentialBackoffReconnectStrategyTests
+public class ExponentialBackoffReconnectStrategyTests : IDisposable
 {
-    private readonly ILogger _logger = Substitute.For < ILogger > ( ) ;
+    private readonly InMemoryLogger _logger = new( ) ;
+
+    private          bool           _disposed;
+
+    public void Dispose()
+    {
+        Dispose(true);
+
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (_disposed)
+            return;
+
+        if (disposing)
+        {
+            _logger.Dispose();
+        }
+
+        _disposed = true;
+    }
 
     [ Fact ]
     public async Task ConnectWithRetryAsync_SuccessOnFirstAttempt_ReturnsTrue ( )

@@ -4,34 +4,56 @@ using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.TraySettings ;
 using Idasen.SystemTray.Win11.Utils ;
 using Idasen.SystemTray.Win11.Utils.Validation ;
+using Idasen.TestLogger ;
 using NSubstitute ;
 using NSubstitute.ExceptionExtensions ;
-using Serilog ;
+using Serilog.Events ;
 using Wpf.Ui.Appearance ;
 
 #pragma warning disable CA2012 // Use ValueTasks correctly - disabled for test mocking
 
 namespace Idasen.SystemTray.Win11.Tests.Utils ;
 
-public class SettingsSynchronizerTests
+public class SettingsSynchronizerTests : IDisposable
 {
     private readonly IDeviceAddressToULongConverter _addressConverter =
         Substitute.For < IDeviceAddressToULongConverter > ( ) ;
 
-    private readonly AppearanceSettings      _appearanceSettings = new( ) ;
-    private readonly DeviceSettings          _deviceSettings     = new( ) ;
-    private readonly HeightSettings          _heightSettings     = new( ) ;
-    private readonly HotkeySettings          _hotkeySettings     = new( ) ;
-    private readonly ILogger                 _logger             = Substitute.For < ILogger > ( ) ;
-    private readonly ISettingsViewModel      _model              = Substitute.For < ISettingsViewModel > ( ) ;
-    private readonly IDeviceNameConverter    _nameConverter      = Substitute.For < IDeviceNameConverter > ( ) ;
-    private readonly ISettings               _settings           = Substitute.For < ISettings > ( ) ;
-    private readonly INotifySettingsChanges  _settingsChanges    = Substitute.For < INotifySettingsChanges > ( ) ;
-    private readonly ILoggingSettingsManager _settingsManager    = Substitute.For < ILoggingSettingsManager > ( ) ;
-    private readonly IThemeSwitcher          _themeSwitcher      = Substitute.For < IThemeSwitcher > ( ) ;
-    private readonly IDoubleToUIntConverter  _toUIntConverter    = Substitute.For < IDoubleToUIntConverter > ( ) ;
-    private readonly IHeightSettingsValidator _heightValidator   = new HeightSettingsValidator ( ) ;
-    private readonly IConverters             _converters         = Substitute.For < IConverters > ( ) ;
+    private readonly AppearanceSettings       _appearanceSettings = new( ) ;
+    private readonly DeviceSettings           _deviceSettings     = new( ) ;
+    private readonly HeightSettings           _heightSettings     = new( ) ;
+    private readonly HotkeySettings           _hotkeySettings     = new( ) ;
+    private readonly InMemoryLogger           _logger             = new( ) ;
+    private readonly ISettingsViewModel       _model              = Substitute.For < ISettingsViewModel > ( ) ;
+    private readonly IDeviceNameConverter     _nameConverter      = Substitute.For < IDeviceNameConverter > ( ) ;
+    private readonly ISettings                _settings           = Substitute.For < ISettings > ( ) ;
+    private readonly INotifySettingsChanges   _settingsChanges    = Substitute.For < INotifySettingsChanges > ( ) ;
+    private readonly ILoggingSettingsManager  _settingsManager    = Substitute.For < ILoggingSettingsManager > ( ) ;
+    private readonly IThemeSwitcher           _themeSwitcher      = Substitute.For < IThemeSwitcher > ( ) ;
+    private readonly IDoubleToUIntConverter   _toUIntConverter    = Substitute.For < IDoubleToUIntConverter > ( ) ;
+    private readonly IHeightSettingsValidator _heightValidator    = new HeightSettingsValidator ( ) ;
+    private readonly IConverters              _converters         = Substitute.For < IConverters > ( ) ;
+    private          bool                     _disposed ;
+
+    public void Dispose()
+    {
+        Dispose(true);
+
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (_disposed)
+            return;
+
+        if (disposing)
+        {
+            _logger.Dispose();
+        }
+
+        _disposed = true;
+    }
 
     private SettingsSynchronizer CreateSut ( )
     {
@@ -303,8 +325,9 @@ public class SettingsSynchronizerTests
         // Assert
         await act.Should ( ).NotThrowAsync < InvalidOperationException > ( ) ;
 
-        _logger.Received ( 1 ).Error ( testException ,
-                                       "Failed to load settings! Using default settings." ) ;
+        _logger.Contains ( "Failed to load settings! Using default settings.", LogEventLevel.Error )
+               .Should ( )
+               .BeTrue ( ) ;
     }
 
     [ Fact ]
@@ -365,8 +388,10 @@ public class SettingsSynchronizerTests
         // Assert
         await act.Should ( ).ThrowAsync < InvalidOperationException > ( )
                  .WithMessage ( "Failed to store settings" ) ;
-        _logger.Received ( 1 ).Error ( Arg.Any < Exception > ( ) ,
-                                       "Failed to store settings" ) ;
+
+        _logger.Contains ( "Failed to store settings", LogEventLevel.Error )
+               .Should ( )
+               .BeTrue ( ) ;
     }
 
     [ Fact ]

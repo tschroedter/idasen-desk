@@ -3,12 +3,13 @@ using Idasen.BluetoothLE.Characteristics.Common ;
 using Idasen.SystemTray.Win11.Utils.Exceptions ;
 using NSubstitute ;
 using Serilog ;
+using Serilog.Core ;
 
 namespace Idasen.SystemTray.Win11.Tests.Exceptions ;
 
 public class BluetoothDisabledExceptionHandlerTests
 {
-    private readonly ILogger _logger = Substitute.For < ILogger > ( ) ;
+    private readonly ILogger _logger = Logger.None ;
 
 
     [ Theory ]
