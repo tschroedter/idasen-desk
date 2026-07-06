@@ -1,7 +1,6 @@
 using FluentAssertions ;
 using Idasen.SystemTray.Win11.Utils ;
-using NSubstitute ;
-using Serilog ;
+using Idasen.TestLogger ;
 using Wpf.Ui.Controls ;
 
 namespace Idasen.SystemTray.Win11.Tests.Utils ;
@@ -23,8 +22,8 @@ public class StatusBarManagerTests
     public void StatusBarInfoChanged_ReturnsObservable ( )
     {
         // Arrange
-        var logger = Substitute.For < ILogger > ( ) ;
-        var sut    = new StatusBarManager ( logger ) ;
+        using var logger = new InMemoryLogger ( ) ;
+        var       sut    = new StatusBarManager ( logger ) ;
 
         // Act
         var observable = sut.StatusBarInfoChanged ;
@@ -37,8 +36,8 @@ public class StatusBarManagerTests
     public void UpdateStatus_WithNullInfo_ThrowsArgumentNullException ( )
     {
         // Arrange
-        var logger = Substitute.For < ILogger > ( ) ;
-        var sut    = new StatusBarManager ( logger ) ;
+        using var logger = new InMemoryLogger ( ) ;
+        var       sut    = new StatusBarManager ( logger ) ;
 
         // Act
         var act = ( ) => sut.UpdateStatus ( null! ) ;
@@ -52,8 +51,8 @@ public class StatusBarManagerTests
     public void UpdateStatus_PublishesStatusBarInfo ( )
     {
         // Arrange
-        var logger = Substitute.For < ILogger > ( ) ;
-        var sut    = new StatusBarManager ( logger ) ;
+        using var logger = new InMemoryLogger ( ) ;
+        var       sut    = new StatusBarManager ( logger ) ;
 
         StatusBarInfo ? receivedInfo = null ;
         sut.StatusBarInfoChanged.Subscribe ( info => receivedInfo = info ) ;
@@ -78,8 +77,8 @@ public class StatusBarManagerTests
     public void UpdateDeskHeight_PublishesStatusBarInfoWithHeightInCm ( )
     {
         // Arrange
-        var logger = Substitute.For < ILogger > ( ) ;
-        var sut    = new StatusBarManager ( logger ) ;
+        using var logger = new InMemoryLogger ( ) ;
+        var       sut    = new StatusBarManager ( logger ) ;
 
         StatusBarInfo ? receivedInfo = null ;
         sut.StatusBarInfoChanged.Subscribe ( info => receivedInfo = info ) ;
@@ -96,8 +95,8 @@ public class StatusBarManagerTests
     public void UpdateDeskHeight_ConvertsMillimetersToCentimeters ( )
     {
         // Arrange
-        var logger = Substitute.For < ILogger > ( ) ;
-        var sut    = new StatusBarManager ( logger ) ;
+        using var logger = new InMemoryLogger ( ) ;
+        var       sut    = new StatusBarManager ( logger ) ;
 
         StatusBarInfo ? receivedInfo = null ;
         sut.StatusBarInfoChanged.Subscribe ( info => receivedInfo = info ) ;
@@ -114,14 +113,14 @@ public class StatusBarManagerTests
     public void Dispose_CompletesObservable ( )
     {
         // Arrange
-        var logger = Substitute.For < ILogger > ( ) ;
-        var sut    = new StatusBarManager ( logger ) ;
+        using var logger = new InMemoryLogger ( ) ;
+        var       sut    = new StatusBarManager ( logger ) ;
 
         var completed = false ;
         sut.StatusBarInfoChanged.Subscribe (
-            onNext: _ => { } ,
-            onCompleted: ( ) => completed = true
-        ) ;
+                                            _ => { } ,
+                                            ( ) => completed = true
+                                           ) ;
 
         // Act
         sut.Dispose ( ) ;
@@ -134,15 +133,17 @@ public class StatusBarManagerTests
     public void Dispose_CalledMultipleTimes_DoesNotThrow ( )
     {
         // Arrange
-        var logger = Substitute.For < ILogger > ( ) ;
-        var sut    = new StatusBarManager ( logger ) ;
+        using var logger = new InMemoryLogger ( ) ;
+        var       sut    = new StatusBarManager ( logger ) ;
 
         // Act
         var act = ( ) =>
-        {
-            sut.Dispose ( ) ;
-            sut.Dispose ( ) ;
-        } ;
+                  {
+#pragma warning disable S3966
+                      sut.Dispose ( ) ;
+                      sut.Dispose ( ) ;
+#pragma warning restore S3966
+                  } ;
 
         // Assert
         act.Should ( ).NotThrow ( ) ;
@@ -152,8 +153,8 @@ public class StatusBarManagerTests
     public void StatusBarInfoChanged_MultipleSubscribers_AllReceiveUpdates ( )
     {
         // Arrange
-        var logger = Substitute.For < ILogger > ( ) ;
-        var sut    = new StatusBarManager ( logger ) ;
+        using var logger = new InMemoryLogger ( ) ;
+        var       sut    = new StatusBarManager ( logger ) ;
 
         StatusBarInfo ? receivedInfo1 = null ;
         StatusBarInfo ? receivedInfo2 = null ;
@@ -183,17 +184,17 @@ public class StatusBarManagerTests
     public void UpdateStatus_AfterDispose_DoesNotPublish ( )
     {
         // Arrange
-        var logger = Substitute.For < ILogger > ( ) ;
-        var sut    = new StatusBarManager ( logger ) ;
+        using var logger = new InMemoryLogger ( ) ;
+        var       sut    = new StatusBarManager ( logger ) ;
 
         sut.StatusBarInfoChanged.Subscribe ( info => _ = info ) ;
 
         sut.Dispose ( ) ;
 
         var testInfo = new StatusBarInfo ( "Test" ,
-                                          1000 ,
-                                          "Test Message" ,
-                                          InfoBarSeverity.Error ) ;
+                                           1000 ,
+                                           "Test Message" ,
+                                           InfoBarSeverity.Error ) ;
 
         // Act (should not throw but won't publish to disposed subject)
         var act = ( ) => sut.UpdateStatus ( testInfo ) ;
@@ -206,11 +207,11 @@ public class StatusBarManagerTests
     public void UpdateDeskHeight_WithDifferentHeights_PublishesCorrectValues ( )
     {
         // Arrange
-        var logger = Substitute.For < ILogger > ( ) ;
-        var sut    = new StatusBarManager ( logger ) ;
+        using var logger = new InMemoryLogger ( ) ;
+        var       sut    = new StatusBarManager ( logger ) ;
 
         var receivedInfos = new List < StatusBarInfo > ( ) ;
-        sut.StatusBarInfoChanged.Subscribe ( info => receivedInfos.Add ( info ) ) ;
+        sut.StatusBarInfoChanged.Subscribe ( receivedInfos.Add ) ;
 
         // Act
         sut.UpdateDeskHeight ( 6500 ) ;  // 65 cm

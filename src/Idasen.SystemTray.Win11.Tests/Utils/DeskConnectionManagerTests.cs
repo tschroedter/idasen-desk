@@ -3,32 +3,33 @@ using Idasen.BluetoothLE.Linak.Interfaces ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.TraySettings ;
 using Idasen.SystemTray.Win11.Utils ;
+using Idasen.TestLogger ;
 using NSubstitute ;
 using NSubstitute.ExceptionExtensions ;
-using Serilog ;
 
 namespace Idasen.SystemTray.Win11.Tests.Utils ;
 
-public class DeskConnectionManagerTests
+public class DeskConnectionManagerTests : IDisposable
 {
-    private readonly ILogger                       _logger ;
-    private readonly ISettingsManager              _settingsManager ;
-    private readonly Func < IDeskProvider >        _providerFactory ;
-    private readonly IBluetoothReconnectStrategy   _reconnectStrategy ;
-    private readonly IErrorManager                 _errorManager ;
-    private readonly IBluetoothConnectionMonitor   _connectionMonitor ;
-    private readonly IDeskProvider                 _deskProvider ;
-    private readonly IDesk                         _desk ;
+    private readonly IBluetoothConnectionMonitor _connectionMonitor ;
+    private readonly IDesk                       _desk ;
+    private readonly IDeskProvider               _deskProvider ;
+    private readonly IErrorManager               _errorManager ;
+    private readonly InMemoryLogger              _logger ;
+    private readonly Func < IDeskProvider >      _providerFactory ;
+    private readonly IBluetoothReconnectStrategy _reconnectStrategy ;
+    private readonly ISettingsManager            _settingsManager ;
+    private          bool                        _disposed ;
 
     public DeskConnectionManagerTests ( )
     {
-        _logger             = Substitute.For < ILogger > ( ) ;
-        _settingsManager    = Substitute.For < ISettingsManager > ( ) ;
-        _reconnectStrategy  = Substitute.For < IBluetoothReconnectStrategy > ( ) ;
-        _errorManager       = Substitute.For < IErrorManager > ( ) ;
-        _connectionMonitor  = Substitute.For < IBluetoothConnectionMonitor > ( ) ;
-        _deskProvider       = Substitute.For < IDeskProvider > ( ) ;
-        _desk               = Substitute.For < IDesk > ( ) ;
+        _logger            = new InMemoryLogger ( ) ;
+        _settingsManager   = Substitute.For < ISettingsManager > ( ) ;
+        _reconnectStrategy = Substitute.For < IBluetoothReconnectStrategy > ( ) ;
+        _errorManager      = Substitute.For < IErrorManager > ( ) ;
+        _connectionMonitor = Substitute.For < IBluetoothConnectionMonitor > ( ) ;
+        _deskProvider      = Substitute.For < IDeskProvider > ( ) ;
+        _desk              = Substitute.For < IDesk > ( ) ;
 
         // Setup default device settings
         var settings = CreateDefaultSettings ( ) ;
@@ -37,16 +38,33 @@ public class DeskConnectionManagerTests
         _providerFactory = ( ) => _deskProvider ;
     }
 
+    public void Dispose ( )
+    {
+        Dispose ( true ) ;
+
+        GC.SuppressFinalize ( this ) ;
+    }
+
+    protected virtual void Dispose ( bool disposing )
+    {
+        if ( _disposed )
+            return ;
+
+        if ( disposing ) _logger.Dispose ( ) ;
+
+        _disposed = true ;
+    }
+
     private static Settings CreateDefaultSettings ( )
     {
         return new Settings
         {
             DeviceSettings = new DeviceSettings
             {
-                DeviceName               = "TestDesk" ,
-                DeviceAddress            = 123456789 ,
-                DeviceMonitoringTimeout  = 600 ,
-                DeviceLocked             = false
+                DeviceName              = "TestDesk" ,
+                DeviceAddress           = 123456789 ,
+                DeviceMonitoringTimeout = 600 ,
+                DeviceLocked            = false
             }
         } ;
     }
@@ -56,12 +74,12 @@ public class DeskConnectionManagerTests
     {
         // Act
         var manager = new DeskConnectionManager (
-            _logger ,
-            _settingsManager ,
-            _providerFactory ,
-            _reconnectStrategy ,
-            _errorManager ,
-            _connectionMonitor ) ;
+                                                 _logger ,
+                                                 _settingsManager ,
+                                                 _providerFactory ,
+                                                 _reconnectStrategy ,
+                                                 _errorManager ,
+                                                 _connectionMonitor ) ;
 
         // Assert
         manager.Should ( ).NotBeNull ( ) ;
@@ -75,12 +93,12 @@ public class DeskConnectionManagerTests
     {
         // Act
         var act = ( ) => new DeskConnectionManager (
-            null! ,
-            _settingsManager ,
-            _providerFactory ,
-            _reconnectStrategy ,
-            _errorManager ,
-            _connectionMonitor ) ;
+                                                    null! ,
+                                                    _settingsManager ,
+                                                    _providerFactory ,
+                                                    _reconnectStrategy ,
+                                                    _errorManager ,
+                                                    _connectionMonitor ) ;
 
         // Assert
         act.Should ( ).Throw < ArgumentNullException > ( )
@@ -92,12 +110,12 @@ public class DeskConnectionManagerTests
     {
         // Act
         var act = ( ) => new DeskConnectionManager (
-            _logger ,
-            null! ,
-            _providerFactory ,
-            _reconnectStrategy ,
-            _errorManager ,
-            _connectionMonitor ) ;
+                                                    _logger ,
+                                                    null! ,
+                                                    _providerFactory ,
+                                                    _reconnectStrategy ,
+                                                    _errorManager ,
+                                                    _connectionMonitor ) ;
 
         // Assert
         act.Should ( ).Throw < ArgumentNullException > ( )
@@ -109,12 +127,12 @@ public class DeskConnectionManagerTests
     {
         // Act
         var act = ( ) => new DeskConnectionManager (
-            _logger ,
-            _settingsManager ,
-            null! ,
-            _reconnectStrategy ,
-            _errorManager ,
-            _connectionMonitor ) ;
+                                                    _logger ,
+                                                    _settingsManager ,
+                                                    null! ,
+                                                    _reconnectStrategy ,
+                                                    _errorManager ,
+                                                    _connectionMonitor ) ;
 
         // Assert
         act.Should ( ).Throw < ArgumentNullException > ( )
@@ -126,12 +144,12 @@ public class DeskConnectionManagerTests
     {
         // Act
         var act = ( ) => new DeskConnectionManager (
-            _logger ,
-            _settingsManager ,
-            _providerFactory ,
-            null! ,
-            _errorManager ,
-            _connectionMonitor ) ;
+                                                    _logger ,
+                                                    _settingsManager ,
+                                                    _providerFactory ,
+                                                    null! ,
+                                                    _errorManager ,
+                                                    _connectionMonitor ) ;
 
         // Assert
         act.Should ( ).Throw < ArgumentNullException > ( )
@@ -143,12 +161,12 @@ public class DeskConnectionManagerTests
     {
         // Act
         var act = ( ) => new DeskConnectionManager (
-            _logger ,
-            _settingsManager ,
-            _providerFactory ,
-            _reconnectStrategy ,
-            null! ,
-            _connectionMonitor ) ;
+                                                    _logger ,
+                                                    _settingsManager ,
+                                                    _providerFactory ,
+                                                    _reconnectStrategy ,
+                                                    null! ,
+                                                    _connectionMonitor ) ;
 
         // Assert
         act.Should ( ).Throw < ArgumentNullException > ( )
@@ -160,12 +178,12 @@ public class DeskConnectionManagerTests
     {
         // Act
         var act = ( ) => new DeskConnectionManager (
-            _logger ,
-            _settingsManager ,
-            _providerFactory ,
-            _reconnectStrategy ,
-            _errorManager ,
-            null! ) ;
+                                                    _logger ,
+                                                    _settingsManager ,
+                                                    _providerFactory ,
+                                                    _reconnectStrategy ,
+                                                    _errorManager ,
+                                                    null! ) ;
 
         // Assert
         act.Should ( ).Throw < ArgumentNullException > ( )
@@ -177,12 +195,12 @@ public class DeskConnectionManagerTests
     {
         // Act
         _ = new DeskConnectionManager (
-            _logger ,
-            _settingsManager ,
-            _providerFactory ,
-            _reconnectStrategy ,
-            _errorManager ,
-            _connectionMonitor ) ;
+                                       _logger ,
+                                       _settingsManager ,
+                                       _providerFactory ,
+                                       _reconnectStrategy ,
+                                       _errorManager ,
+                                       _connectionMonitor ) ;
 
         // Assert
         _connectionMonitor.Received ( 1 ).StaleConnectionDetected += Arg.Any < EventHandler > ( ) ;
@@ -198,21 +216,22 @@ public class DeskConnectionManagerTests
                      .Returns ( Task.FromResult ( ( true , ( IDesk ? )_desk ) ) ) ;
 
         _reconnectStrategy.ConnectWithRetryAsync (
-                              Arg.Any < Func < CancellationToken , Task < bool > > > ( ) ,
-                              Arg.Any < CancellationToken > ( ) )
+                                                  Arg.Any < Func < CancellationToken , Task < bool > > > ( ) ,
+                                                  Arg.Any < CancellationToken > ( ) )
                           .Returns ( callInfo =>
-                          {
-                              var connectFunc = callInfo.Arg < Func < CancellationToken , Task < bool > > > ( ) ;
-                              return connectFunc ( CancellationToken.None ) ;
-                          } ) ;
+                                     {
+                                         var connectFunc =
+                                             callInfo.Arg < Func < CancellationToken , Task < bool > > > ( ) ;
+                                         return connectFunc ( CancellationToken.None ) ;
+                                     } ) ;
 
         var manager = new DeskConnectionManager (
-            _logger ,
-            _settingsManager ,
-            _providerFactory ,
-            _reconnectStrategy ,
-            _errorManager ,
-            _connectionMonitor ) ;
+                                                 _logger ,
+                                                 _settingsManager ,
+                                                 _providerFactory ,
+                                                 _reconnectStrategy ,
+                                                 _errorManager ,
+                                                 _connectionMonitor ) ;
 
         // Act
         await manager.ConnectAsync ( CancellationToken.None ) ;
@@ -232,21 +251,22 @@ public class DeskConnectionManagerTests
                      .Returns ( Task.FromResult ( ( true , ( IDesk ? )_desk ) ) ) ;
 
         _reconnectStrategy.ConnectWithRetryAsync (
-                              Arg.Any < Func < CancellationToken , Task < bool > > > ( ) ,
-                              Arg.Any < CancellationToken > ( ) )
+                                                  Arg.Any < Func < CancellationToken , Task < bool > > > ( ) ,
+                                                  Arg.Any < CancellationToken > ( ) )
                           .Returns ( callInfo =>
-                          {
-                              var connectFunc = callInfo.Arg < Func < CancellationToken , Task < bool > > > ( ) ;
-                              return connectFunc ( CancellationToken.None ) ;
-                          } ) ;
+                                     {
+                                         var connectFunc =
+                                             callInfo.Arg < Func < CancellationToken , Task < bool > > > ( ) ;
+                                         return connectFunc ( CancellationToken.None ) ;
+                                     } ) ;
 
         var manager = new DeskConnectionManager (
-            _logger ,
-            _settingsManager ,
-            _providerFactory ,
-            _reconnectStrategy ,
-            _errorManager ,
-            _connectionMonitor ) ;
+                                                 _logger ,
+                                                 _settingsManager ,
+                                                 _providerFactory ,
+                                                 _reconnectStrategy ,
+                                                 _errorManager ,
+                                                 _connectionMonitor ) ;
 
         var connectedEventRaised = false ;
         manager.Connected += ( _ , _ ) => connectedEventRaised = true ;
@@ -268,21 +288,22 @@ public class DeskConnectionManagerTests
                      .Returns ( Task.FromResult ( ( true , ( IDesk ? )_desk ) ) ) ;
 
         _reconnectStrategy.ConnectWithRetryAsync (
-                              Arg.Any < Func < CancellationToken , Task < bool > > > ( ) ,
-                              Arg.Any < CancellationToken > ( ) )
+                                                  Arg.Any < Func < CancellationToken , Task < bool > > > ( ) ,
+                                                  Arg.Any < CancellationToken > ( ) )
                           .Returns ( callInfo =>
-                          {
-                              var connectFunc = callInfo.Arg < Func < CancellationToken , Task < bool > > > ( ) ;
-                              return connectFunc ( CancellationToken.None ) ;
-                          } ) ;
+                                     {
+                                         var connectFunc =
+                                             callInfo.Arg < Func < CancellationToken , Task < bool > > > ( ) ;
+                                         return connectFunc ( CancellationToken.None ) ;
+                                     } ) ;
 
         var manager = new DeskConnectionManager (
-            _logger ,
-            _settingsManager ,
-            _providerFactory ,
-            _reconnectStrategy ,
-            _errorManager ,
-            _connectionMonitor ) ;
+                                                 _logger ,
+                                                 _settingsManager ,
+                                                 _providerFactory ,
+                                                 _reconnectStrategy ,
+                                                 _errorManager ,
+                                                 _connectionMonitor ) ;
 
         IDesk ? deskFromEvent = null ;
         manager.DeskReady += ( _ , desk ) => deskFromEvent = desk ;
@@ -304,21 +325,22 @@ public class DeskConnectionManagerTests
                      .Returns ( Task.FromResult ( ( true , ( IDesk ? )_desk ) ) ) ;
 
         _reconnectStrategy.ConnectWithRetryAsync (
-                              Arg.Any < Func < CancellationToken , Task < bool > > > ( ) ,
-                              Arg.Any < CancellationToken > ( ) )
+                                                  Arg.Any < Func < CancellationToken , Task < bool > > > ( ) ,
+                                                  Arg.Any < CancellationToken > ( ) )
                           .Returns ( callInfo =>
-                          {
-                              var connectFunc = callInfo.Arg < Func < CancellationToken , Task < bool > > > ( ) ;
-                              return connectFunc ( CancellationToken.None ) ;
-                          } ) ;
+                                     {
+                                         var connectFunc =
+                                             callInfo.Arg < Func < CancellationToken , Task < bool > > > ( ) ;
+                                         return connectFunc ( CancellationToken.None ) ;
+                                     } ) ;
 
         var manager = new DeskConnectionManager (
-            _logger ,
-            _settingsManager ,
-            _providerFactory ,
-            _reconnectStrategy ,
-            _errorManager ,
-            _connectionMonitor ) ;
+                                                 _logger ,
+                                                 _settingsManager ,
+                                                 _providerFactory ,
+                                                 _reconnectStrategy ,
+                                                 _errorManager ,
+                                                 _connectionMonitor ) ;
 
         // Act
         await manager.ConnectAsync ( CancellationToken.None ) ;
@@ -341,25 +363,27 @@ public class DeskConnectionManagerTests
                      .Returns ( Task.FromResult ( ( true , ( IDesk ? )_desk ) ) ) ;
 
         _reconnectStrategy.ConnectWithRetryAsync (
-                              Arg.Any < Func < CancellationToken , Task < bool > > > ( ) ,
-                              Arg.Any < CancellationToken > ( ) )
+                                                  Arg.Any < Func < CancellationToken , Task < bool > > > ( ) ,
+                                                  Arg.Any < CancellationToken > ( ) )
                           .Returns ( callInfo =>
-                          {
-                              var connectFunc = callInfo.Arg < Func < CancellationToken , Task < bool > > > ( ) ;
-                              return connectFunc ( CancellationToken.None ) ;
-                          } ) ;
+                                     {
+                                         var connectFunc =
+                                             callInfo.Arg < Func < CancellationToken , Task < bool > > > ( ) ;
+                                         return connectFunc ( CancellationToken.None ) ;
+                                     } ) ;
 
         var manager = new DeskConnectionManager (
-            _logger ,
-            _settingsManager ,
-            _providerFactory ,
-            _reconnectStrategy ,
-            _errorManager ,
-            _connectionMonitor ) ;
+                                                 _logger ,
+                                                 _settingsManager ,
+                                                 _providerFactory ,
+                                                 _reconnectStrategy ,
+                                                 _errorManager ,
+                                                 _connectionMonitor ) ;
 
         // Act
         await manager.ConnectAsync ( CancellationToken.None ) ;
-        await Task.Delay ( 100 , TestContext.Current.CancellationToken ) ; // Wait for background task
+        await Task.Delay ( 100 ,
+                           TestContext.Current.CancellationToken ) ; // Wait for background task
 
         // Assert
         await _desk.Received ( 1 ).MoveLockAsync ( ) ;
@@ -370,24 +394,26 @@ public class DeskConnectionManagerTests
     {
         // Arrange
         _reconnectStrategy.ConnectWithRetryAsync (
-                              Arg.Any < Func < CancellationToken , Task < bool > > > ( ) ,
-                              Arg.Any < CancellationToken > ( ) )
+                                                  Arg.Any < Func < CancellationToken , Task < bool > > > ( ) ,
+                                                  Arg.Any < CancellationToken > ( ) )
                           .Returns ( Task.FromResult ( false ) ) ;
 
         var manager = new DeskConnectionManager (
-            _logger ,
-            _settingsManager ,
-            _providerFactory ,
-            _reconnectStrategy ,
-            _errorManager ,
-            _connectionMonitor ) ;
+                                                 _logger ,
+                                                 _settingsManager ,
+                                                 _providerFactory ,
+                                                 _reconnectStrategy ,
+                                                 _errorManager ,
+                                                 _connectionMonitor ) ;
 
         // Act
         await manager.ConnectAsync ( CancellationToken.None ) ;
-        await Task.Delay ( 100 , TestContext.Current.CancellationToken ) ; // Wait for background task
+        await Task.Delay ( 100 ,
+                           TestContext.Current.CancellationToken ) ; // Wait for background task
 
         // Assert
-        _errorManager.Received ( 1 ).PublishForMessage ( "Failed to connect" , Arg.Any < string > ( ) ) ;
+        _errorManager.Received ( 1 ).PublishForMessage ( "Failed to connect" ,
+                                                         Arg.Any < string > ( ) ) ;
         manager.IsConnected.Should ( ).BeFalse ( ) ;
     }
 
@@ -396,25 +422,27 @@ public class DeskConnectionManagerTests
     {
         // Arrange
         _reconnectStrategy.ConnectWithRetryAsync (
-                              Arg.Any < Func < CancellationToken , Task < bool > > > ( ) ,
-                              Arg.Any < CancellationToken > ( ) )
+                                                  Arg.Any < Func < CancellationToken , Task < bool > > > ( ) ,
+                                                  Arg.Any < CancellationToken > ( ) )
                           .Throws ( new InvalidOperationException ( "Test exception" ) ) ;
 
         var manager = new DeskConnectionManager (
-            _logger ,
-            _settingsManager ,
-            _providerFactory ,
-            _reconnectStrategy ,
-            _errorManager ,
-            _connectionMonitor ) ;
+                                                 _logger ,
+                                                 _settingsManager ,
+                                                 _providerFactory ,
+                                                 _reconnectStrategy ,
+                                                 _errorManager ,
+                                                 _connectionMonitor ) ;
 
         // Act
         await manager.ConnectAsync ( CancellationToken.None ) ;
-        await Task.Delay ( 100 , TestContext.Current.CancellationToken ) ; // Wait for background task
+        await Task.Delay ( 100 ,
+                           TestContext.Current.CancellationToken ) ; // Wait for background task
 
         // Assert
         manager.IsConnected.Should ( ).BeFalse ( ) ;
-        _errorManager.Received ( 1 ).PublishForMessage ( "Failed to connect" , Arg.Any < string > ( ) ) ;
+        _errorManager.Received ( 1 ).PublishForMessage ( "Failed to connect" ,
+                                                         Arg.Any < string > ( ) ) ;
     }
 
     [ Fact ]
@@ -425,21 +453,22 @@ public class DeskConnectionManagerTests
                      .Returns ( Task.FromResult ( ( false , ( IDesk ? )null ) ) ) ;
 
         _reconnectStrategy.ConnectWithRetryAsync (
-                              Arg.Any < Func < CancellationToken , Task < bool > > > ( ) ,
-                              Arg.Any < CancellationToken > ( ) )
+                                                  Arg.Any < Func < CancellationToken , Task < bool > > > ( ) ,
+                                                  Arg.Any < CancellationToken > ( ) )
                           .Returns ( callInfo =>
-                          {
-                              var connectFunc = callInfo.Arg < Func < CancellationToken , Task < bool > > > ( ) ;
-                              return connectFunc ( CancellationToken.None ) ;
-                          } ) ;
+                                     {
+                                         var connectFunc =
+                                             callInfo.Arg < Func < CancellationToken , Task < bool > > > ( ) ;
+                                         return connectFunc ( CancellationToken.None ) ;
+                                     } ) ;
 
         var manager = new DeskConnectionManager (
-            _logger ,
-            _settingsManager ,
-            _providerFactory ,
-            _reconnectStrategy ,
-            _errorManager ,
-            _connectionMonitor ) ;
+                                                 _logger ,
+                                                 _settingsManager ,
+                                                 _providerFactory ,
+                                                 _reconnectStrategy ,
+                                                 _errorManager ,
+                                                 _connectionMonitor ) ;
 
         // Act
         await manager.ConnectAsync ( CancellationToken.None ) ;
@@ -456,21 +485,22 @@ public class DeskConnectionManagerTests
                      .Throws ( new InvalidOperationException ( "Test exception" ) ) ;
 
         _reconnectStrategy.ConnectWithRetryAsync (
-                              Arg.Any < Func < CancellationToken , Task < bool > > > ( ) ,
-                              Arg.Any < CancellationToken > ( ) )
+                                                  Arg.Any < Func < CancellationToken , Task < bool > > > ( ) ,
+                                                  Arg.Any < CancellationToken > ( ) )
                           .Returns ( callInfo =>
-                          {
-                              var connectFunc = callInfo.Arg < Func < CancellationToken , Task < bool > > > ( ) ;
-                              return connectFunc ( CancellationToken.None ) ;
-                          } ) ;
+                                     {
+                                         var connectFunc =
+                                             callInfo.Arg < Func < CancellationToken , Task < bool > > > ( ) ;
+                                         return connectFunc ( CancellationToken.None ) ;
+                                     } ) ;
 
         var manager = new DeskConnectionManager (
-            _logger ,
-            _settingsManager ,
-            _providerFactory ,
-            _reconnectStrategy ,
-            _errorManager ,
-            _connectionMonitor ) ;
+                                                 _logger ,
+                                                 _settingsManager ,
+                                                 _providerFactory ,
+                                                 _reconnectStrategy ,
+                                                 _errorManager ,
+                                                 _connectionMonitor ) ;
 
         // Act
         await manager.ConnectAsync ( CancellationToken.None ) ;
@@ -484,12 +514,12 @@ public class DeskConnectionManagerTests
     {
         // Arrange
         var manager = new DeskConnectionManager (
-            _logger ,
-            _settingsManager ,
-            _providerFactory ,
-            _reconnectStrategy ,
-            _errorManager ,
-            _connectionMonitor ) ;
+                                                 _logger ,
+                                                 _settingsManager ,
+                                                 _providerFactory ,
+                                                 _reconnectStrategy ,
+                                                 _errorManager ,
+                                                 _connectionMonitor ) ;
 
         // Act
         await manager.DisconnectAsync ( ) ;
@@ -508,21 +538,22 @@ public class DeskConnectionManagerTests
                      .Returns ( Task.FromResult ( ( true , ( IDesk ? )_desk ) ) ) ;
 
         _reconnectStrategy.ConnectWithRetryAsync (
-                              Arg.Any < Func < CancellationToken , Task < bool > > > ( ) ,
-                              Arg.Any < CancellationToken > ( ) )
+                                                  Arg.Any < Func < CancellationToken , Task < bool > > > ( ) ,
+                                                  Arg.Any < CancellationToken > ( ) )
                           .Returns ( callInfo =>
-                          {
-                              var connectFunc = callInfo.Arg < Func < CancellationToken , Task < bool > > > ( ) ;
-                              return connectFunc ( CancellationToken.None ) ;
-                          } ) ;
+                                     {
+                                         var connectFunc =
+                                             callInfo.Arg < Func < CancellationToken , Task < bool > > > ( ) ;
+                                         return connectFunc ( CancellationToken.None ) ;
+                                     } ) ;
 
         var manager = new DeskConnectionManager (
-            _logger ,
-            _settingsManager ,
-            _providerFactory ,
-            _reconnectStrategy ,
-            _errorManager ,
-            _connectionMonitor ) ;
+                                                 _logger ,
+                                                 _settingsManager ,
+                                                 _providerFactory ,
+                                                 _reconnectStrategy ,
+                                                 _errorManager ,
+                                                 _connectionMonitor ) ;
 
         await manager.ConnectAsync ( CancellationToken.None ) ;
 
@@ -545,21 +576,22 @@ public class DeskConnectionManagerTests
                      .Returns ( Task.FromResult ( ( true , ( IDesk ? )_desk ) ) ) ;
 
         _reconnectStrategy.ConnectWithRetryAsync (
-                              Arg.Any < Func < CancellationToken , Task < bool > > > ( ) ,
-                              Arg.Any < CancellationToken > ( ) )
+                                                  Arg.Any < Func < CancellationToken , Task < bool > > > ( ) ,
+                                                  Arg.Any < CancellationToken > ( ) )
                           .Returns ( callInfo =>
-                          {
-                              var connectFunc = callInfo.Arg < Func < CancellationToken , Task < bool > > > ( ) ;
-                              return connectFunc ( CancellationToken.None ) ;
-                          } ) ;
+                                     {
+                                         var connectFunc =
+                                             callInfo.Arg < Func < CancellationToken , Task < bool > > > ( ) ;
+                                         return connectFunc ( CancellationToken.None ) ;
+                                     } ) ;
 
         var manager = new DeskConnectionManager (
-            _logger ,
-            _settingsManager ,
-            _providerFactory ,
-            _reconnectStrategy ,
-            _errorManager ,
-            _connectionMonitor ) ;
+                                                 _logger ,
+                                                 _settingsManager ,
+                                                 _providerFactory ,
+                                                 _reconnectStrategy ,
+                                                 _errorManager ,
+                                                 _connectionMonitor ) ;
 
         await manager.ConnectAsync ( CancellationToken.None ) ;
 
@@ -585,21 +617,22 @@ public class DeskConnectionManagerTests
                      .Returns ( Task.FromResult ( ( true , ( IDesk ? )_desk ) ) ) ;
 
         _reconnectStrategy.ConnectWithRetryAsync (
-                              Arg.Any < Func < CancellationToken , Task < bool > > > ( ) ,
-                              Arg.Any < CancellationToken > ( ) )
+                                                  Arg.Any < Func < CancellationToken , Task < bool > > > ( ) ,
+                                                  Arg.Any < CancellationToken > ( ) )
                           .Returns ( callInfo =>
-                          {
-                              var connectFunc = callInfo.Arg < Func < CancellationToken , Task < bool > > > ( ) ;
-                              return connectFunc ( CancellationToken.None ) ;
-                          } ) ;
+                                     {
+                                         var connectFunc =
+                                             callInfo.Arg < Func < CancellationToken , Task < bool > > > ( ) ;
+                                         return connectFunc ( CancellationToken.None ) ;
+                                     } ) ;
 
         var manager = new DeskConnectionManager (
-            _logger ,
-            _settingsManager ,
-            _providerFactory ,
-            _reconnectStrategy ,
-            _errorManager ,
-            _connectionMonitor ) ;
+                                                 _logger ,
+                                                 _settingsManager ,
+                                                 _providerFactory ,
+                                                 _reconnectStrategy ,
+                                                 _errorManager ,
+                                                 _connectionMonitor ) ;
 
         await manager.ConnectAsync ( CancellationToken.None ) ;
 
@@ -613,12 +646,12 @@ public class DeskConnectionManagerTests
     {
         // Arrange
         var manager = new DeskConnectionManager (
-            _logger ,
-            _settingsManager ,
-            _providerFactory ,
-            _reconnectStrategy ,
-            _errorManager ,
-            _connectionMonitor ) ;
+                                                 _logger ,
+                                                 _settingsManager ,
+                                                 _providerFactory ,
+                                                 _reconnectStrategy ,
+                                                 _errorManager ,
+                                                 _connectionMonitor ) ;
 
         // Act
         manager.Dispose ( ) ;
@@ -633,19 +666,21 @@ public class DeskConnectionManagerTests
     {
         // Arrange
         var manager = new DeskConnectionManager (
-            _logger ,
-            _settingsManager ,
-            _providerFactory ,
-            _reconnectStrategy ,
-            _errorManager ,
-            _connectionMonitor ) ;
+                                                 _logger ,
+                                                 _settingsManager ,
+                                                 _providerFactory ,
+                                                 _reconnectStrategy ,
+                                                 _errorManager ,
+                                                 _connectionMonitor ) ;
 
         // Act
         var act = ( ) =>
-        {
-            manager.Dispose ( ) ;
-            manager.Dispose ( ) ;
-        } ;
+                  {
+#pragma warning disable S3966
+                      manager.Dispose ( ) ;
+                      manager.Dispose ( ) ;
+#pragma warning restore S3966
+                  } ;
 
         // Assert
         act.Should ( ).NotThrow ( ) ;
@@ -661,21 +696,22 @@ public class DeskConnectionManagerTests
                      .Returns ( Task.FromResult ( ( true , ( IDesk ? )_desk ) ) ) ;
 
         _reconnectStrategy.ConnectWithRetryAsync (
-                              Arg.Any < Func < CancellationToken , Task < bool > > > ( ) ,
-                              Arg.Any < CancellationToken > ( ) )
+                                                  Arg.Any < Func < CancellationToken , Task < bool > > > ( ) ,
+                                                  Arg.Any < CancellationToken > ( ) )
                           .Returns ( callInfo =>
-                          {
-                              var connectFunc = callInfo.Arg < Func < CancellationToken , Task < bool > > > ( ) ;
-                              return connectFunc ( CancellationToken.None ) ;
-                          } ) ;
+                                     {
+                                         var connectFunc =
+                                             callInfo.Arg < Func < CancellationToken , Task < bool > > > ( ) ;
+                                         return connectFunc ( CancellationToken.None ) ;
+                                     } ) ;
 
         var manager = new DeskConnectionManager (
-            _logger ,
-            _settingsManager ,
-            _providerFactory ,
-            _reconnectStrategy ,
-            _errorManager ,
-            _connectionMonitor ) ;
+                                                 _logger ,
+                                                 _settingsManager ,
+                                                 _providerFactory ,
+                                                 _reconnectStrategy ,
+                                                 _errorManager ,
+                                                 _connectionMonitor ) ;
 
         await manager.ConnectAsync ( CancellationToken.None ) ;
 
@@ -695,15 +731,15 @@ public class DeskConnectionManagerTests
                           .Do ( _ => throw new InvalidOperationException ( "Test exception" ) ) ;
 
         var manager = new DeskConnectionManager (
-            _logger ,
-            _settingsManager ,
-            _providerFactory ,
-            _reconnectStrategy ,
-            _errorManager ,
-            _connectionMonitor ) ;
+                                                 _logger ,
+                                                 _settingsManager ,
+                                                 _providerFactory ,
+                                                 _reconnectStrategy ,
+                                                 _errorManager ,
+                                                 _connectionMonitor ) ;
 
         // Act
-        var act = ( ) => manager.Dispose ( ) ;
+        var act = manager.Dispose ;
 
         // Assert - should not throw
         act.Should ( ).NotThrow ( ) ;
@@ -721,26 +757,27 @@ public class DeskConnectionManagerTests
                      .Returns ( Task.FromResult ( ( true , ( IDesk ? )_desk ) ) ) ;
 
         _reconnectStrategy.ConnectWithRetryAsync (
-                              Arg.Any < Func < CancellationToken , Task < bool > > > ( ) ,
-                              Arg.Any < CancellationToken > ( ) )
+                                                  Arg.Any < Func < CancellationToken , Task < bool > > > ( ) ,
+                                                  Arg.Any < CancellationToken > ( ) )
                           .Returns ( callInfo =>
-                          {
-                              var connectFunc = callInfo.Arg < Func < CancellationToken , Task < bool > > > ( ) ;
-                              return connectFunc ( CancellationToken.None ) ;
-                          } ) ;
+                                     {
+                                         var connectFunc =
+                                             callInfo.Arg < Func < CancellationToken , Task < bool > > > ( ) ;
+                                         return connectFunc ( CancellationToken.None ) ;
+                                     } ) ;
 
         var manager = new DeskConnectionManager (
-            _logger ,
-            _settingsManager ,
-            _providerFactory ,
-            _reconnectStrategy ,
-            _errorManager ,
-            _connectionMonitor ) ;
+                                                 _logger ,
+                                                 _settingsManager ,
+                                                 _providerFactory ,
+                                                 _reconnectStrategy ,
+                                                 _errorManager ,
+                                                 _connectionMonitor ) ;
 
         await manager.ConnectAsync ( CancellationToken.None ) ;
 
         // Act
-        var act = ( ) => manager.Dispose ( ) ;
+        var act = manager.Dispose ;
 
         // Assert - should not throw
         act.Should ( ).NotThrow ( ) ;
@@ -756,21 +793,22 @@ public class DeskConnectionManagerTests
                      .Returns ( Task.FromResult ( ( true , ( IDesk ? )_desk ) ) ) ;
 
         _reconnectStrategy.ConnectWithRetryAsync (
-                              Arg.Any < Func < CancellationToken , Task < bool > > > ( ) ,
-                              Arg.Any < CancellationToken > ( ) )
+                                                  Arg.Any < Func < CancellationToken , Task < bool > > > ( ) ,
+                                                  Arg.Any < CancellationToken > ( ) )
                           .Returns ( callInfo =>
-                          {
-                              var connectFunc = callInfo.Arg < Func < CancellationToken , Task < bool > > > ( ) ;
-                              return connectFunc ( CancellationToken.None ) ;
-                          } ) ;
+                                     {
+                                         var connectFunc =
+                                             callInfo.Arg < Func < CancellationToken , Task < bool > > > ( ) ;
+                                         return connectFunc ( CancellationToken.None ) ;
+                                     } ) ;
 
         var manager = new DeskConnectionManager (
-            _logger ,
-            _settingsManager ,
-            _providerFactory ,
-            _reconnectStrategy ,
-            _errorManager ,
-            _connectionMonitor ) ;
+                                                 _logger ,
+                                                 _settingsManager ,
+                                                 _providerFactory ,
+                                                 _reconnectStrategy ,
+                                                 _errorManager ,
+                                                 _connectionMonitor ) ;
 
         await manager.ConnectAsync ( CancellationToken.None ) ;
 
@@ -778,14 +816,18 @@ public class DeskConnectionManagerTests
         manager.Disconnected += ( _ , _ ) => disconnectedEventRaised = true ;
 
         // Act
-        _connectionMonitor.StaleConnectionDetected += Raise.Event < EventHandler > ( _connectionMonitor , EventArgs.Empty ) ;
-        await Task.Delay ( 200 , TestContext.Current.CancellationToken ) ; // Wait for background task
+        _connectionMonitor.StaleConnectionDetected += Raise.Event < EventHandler > ( _connectionMonitor ,
+                                                                                     EventArgs.Empty ) ;
+        await Task.Delay ( 200 ,
+                           TestContext.Current.CancellationToken ) ; // Wait for background task
 
         // Assert
         disconnectedEventRaised.Should ( ).BeTrue ( ) ;
         await _reconnectStrategy.Received ( 2 ).ConnectWithRetryAsync (
-            Arg.Any < Func < CancellationToken , Task < bool > > > ( ) ,
-            Arg.Any < CancellationToken > ( ) ) ; // Once for initial connect, once for reconnect
+                                                                       Arg.Any < Func < CancellationToken ,
+                                                                           Task < bool > > > ( ) ,
+                                                                       Arg.Any <
+                                                                           CancellationToken > ( ) ) ; // Once for initial connect, once for reconnect
     }
 
     [ Fact ]
@@ -800,35 +842,40 @@ public class DeskConnectionManagerTests
                      .Returns ( Task.FromResult ( ( true , ( IDesk ? )_desk ) ) ) ;
 
         _reconnectStrategy.ConnectWithRetryAsync (
-                              Arg.Any < Func < CancellationToken , Task < bool > > > ( ) ,
-                              Arg.Any < CancellationToken > ( ) )
+                                                  Arg.Any < Func < CancellationToken , Task < bool > > > ( ) ,
+                                                  Arg.Any < CancellationToken > ( ) )
                           .Returns ( async callInfo =>
-                          {
-                              reconnectCallCount++ ;
-                              if ( reconnectCallCount == 1 )
-                              {
-                                  // First call waits to simulate long reconnection
-                                  await Task.Delay ( 300 , TestContext.Current.CancellationToken ) ;
-                              }
-                              var connectFunc = callInfo.Arg < Func < CancellationToken , Task < bool > > > ( ) ;
-                              return await connectFunc ( CancellationToken.None ) ;
-                          } ) ;
+                                     {
+                                         reconnectCallCount ++ ;
+                                         if ( reconnectCallCount == 1 )
+                                             // First call waits to simulate long reconnection
+                                             await Task.Delay ( 300 ,
+                                                                TestContext.Current.CancellationToken ) ;
+                                         var connectFunc =
+                                             callInfo.Arg < Func < CancellationToken , Task < bool > > > ( ) ;
+                                         return await connectFunc ( CancellationToken.None ) ;
+                                     } ) ;
 
         _ = new DeskConnectionManager (
-            _logger ,
-            _settingsManager ,
-            _providerFactory ,
-            _reconnectStrategy ,
-            _errorManager ,
-            _connectionMonitor ) ;
+                                       _logger ,
+                                       _settingsManager ,
+                                       _providerFactory ,
+                                       _reconnectStrategy ,
+                                       _errorManager ,
+                                       _connectionMonitor ) ;
 
         // Act - Trigger first event, then rapidly trigger more while first is still reconnecting
-        _connectionMonitor.StaleConnectionDetected += Raise.Event < EventHandler > ( _connectionMonitor , EventArgs.Empty ) ;
-        await Task.Delay ( 50 , TestContext.Current.CancellationToken ) ; // Let first reconnection start
-        _connectionMonitor.StaleConnectionDetected += Raise.Event < EventHandler > ( _connectionMonitor , EventArgs.Empty ) ;
-        _connectionMonitor.StaleConnectionDetected += Raise.Event < EventHandler > ( _connectionMonitor , EventArgs.Empty ) ;
+        _connectionMonitor.StaleConnectionDetected += Raise.Event < EventHandler > ( _connectionMonitor ,
+                                                                                     EventArgs.Empty ) ;
+        await Task.Delay ( 50 ,
+                           TestContext.Current.CancellationToken ) ; // Let first reconnection start
+        _connectionMonitor.StaleConnectionDetected += Raise.Event < EventHandler > ( _connectionMonitor ,
+                                                                                     EventArgs.Empty ) ;
+        _connectionMonitor.StaleConnectionDetected += Raise.Event < EventHandler > ( _connectionMonitor ,
+                                                                                     EventArgs.Empty ) ;
 
-        await Task.Delay ( 500 , TestContext.Current.CancellationToken ) ; // Wait for reconnection to complete
+        await Task.Delay ( 500 ,
+                           TestContext.Current.CancellationToken ) ; // Wait for reconnection to complete
 
         // Assert - should only reconnect once (the other 2 events were ignored)
         reconnectCallCount.Should ( ).Be ( 1 ) ;
@@ -844,28 +891,32 @@ public class DeskConnectionManagerTests
                      .Returns ( Task.FromResult ( ( false , ( IDesk ? )null ) ) ) ;
 
         _reconnectStrategy.ConnectWithRetryAsync (
-                              Arg.Any < Func < CancellationToken , Task < bool > > > ( ) ,
-                              Arg.Any < CancellationToken > ( ) )
+                                                  Arg.Any < Func < CancellationToken , Task < bool > > > ( ) ,
+                                                  Arg.Any < CancellationToken > ( ) )
                           .Returns ( callInfo =>
-                          {
-                              var connectFunc = callInfo.Arg < Func < CancellationToken , Task < bool > > > ( ) ;
-                              return connectFunc ( CancellationToken.None ) ;
-                          } ) ;
+                                     {
+                                         var connectFunc =
+                                             callInfo.Arg < Func < CancellationToken , Task < bool > > > ( ) ;
+                                         return connectFunc ( CancellationToken.None ) ;
+                                     } ) ;
 
         var manager = new DeskConnectionManager (
-            _logger ,
-            _settingsManager ,
-            _providerFactory ,
-            _reconnectStrategy ,
-            _errorManager ,
-            _connectionMonitor ) ;
+                                                 _logger ,
+                                                 _settingsManager ,
+                                                 _providerFactory ,
+                                                 _reconnectStrategy ,
+                                                 _errorManager ,
+                                                 _connectionMonitor ) ;
 
         // Act - Trigger stale connection event which will attempt reconnection
-        _connectionMonitor.StaleConnectionDetected += Raise.Event < EventHandler > ( _connectionMonitor , EventArgs.Empty ) ;
-        await Task.Delay ( 300 , TestContext.Current.CancellationToken ) ; // Wait for background reconnection attempt
+        _connectionMonitor.StaleConnectionDetected += Raise.Event < EventHandler > ( _connectionMonitor ,
+                                                                                     EventArgs.Empty ) ;
+        await Task.Delay ( 300 ,
+                           TestContext.Current.CancellationToken ) ; // Wait for background reconnection attempt
 
         // Assert - should handle gracefully, publishing error message
-        _errorManager.Received ( 1 ).PublishForMessage ( "Failed to connect" , Arg.Any < string > ( ) ) ;
+        _errorManager.Received ( 1 ).PublishForMessage ( "Failed to connect" ,
+                                                         Arg.Any < string > ( ) ) ;
         manager.IsConnected.Should ( ).BeFalse ( ) ;
     }
 
@@ -881,31 +932,35 @@ public class DeskConnectionManagerTests
                      .Returns ( Task.FromResult ( ( true , ( IDesk ? )_desk ) ) ) ;
 
         _reconnectStrategy.ConnectWithRetryAsync (
-                              Arg.Any < Func < CancellationToken , Task < bool > > > ( ) ,
-                              Arg.Any < CancellationToken > ( ) )
+                                                  Arg.Any < Func < CancellationToken , Task < bool > > > ( ) ,
+                                                  Arg.Any < CancellationToken > ( ) )
                           .Returns ( callInfo =>
-                          {
-                              var connectFunc = callInfo.Arg < Func < CancellationToken , Task < bool > > > ( ) ;
-                              return connectFunc ( CancellationToken.None ) ;
-                          } ) ;
+                                     {
+                                         var connectFunc =
+                                             callInfo.Arg < Func < CancellationToken , Task < bool > > > ( ) ;
+                                         return connectFunc ( CancellationToken.None ) ;
+                                     } ) ;
 
         var manager = new DeskConnectionManager (
-            _logger ,
-            _settingsManager ,
-            _providerFactory ,
-            _reconnectStrategy ,
-            _errorManager ,
-            _connectionMonitor ) ;
+                                                 _logger ,
+                                                 _settingsManager ,
+                                                 _providerFactory ,
+                                                 _reconnectStrategy ,
+                                                 _errorManager ,
+                                                 _connectionMonitor ) ;
 
         await manager.ConnectAsync ( CancellationToken.None ) ;
 
         // Act - should not throw
-        _connectionMonitor.StaleConnectionDetected += Raise.Event < EventHandler > ( _connectionMonitor , EventArgs.Empty ) ;
-        await Task.Delay ( 200 , TestContext.Current.CancellationToken ) ; // Wait for background task
+        _connectionMonitor.StaleConnectionDetected += Raise.Event < EventHandler > ( _connectionMonitor ,
+                                                                                     EventArgs.Empty ) ;
+        await Task.Delay ( 200 ,
+                           TestContext.Current.CancellationToken ) ; // Wait for background task
 
         // Assert - should handle gracefully
         await _reconnectStrategy.Received ( 2 ).ConnectWithRetryAsync (
-            Arg.Any < Func < CancellationToken , Task < bool > > > ( ) ,
-            Arg.Any < CancellationToken > ( ) ) ;
+                                                                       Arg.Any < Func < CancellationToken ,
+                                                                           Task < bool > > > ( ) ,
+                                                                       Arg.Any < CancellationToken > ( ) ) ;
     }
 }

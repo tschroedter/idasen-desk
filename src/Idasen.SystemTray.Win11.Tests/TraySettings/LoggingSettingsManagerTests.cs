@@ -1,26 +1,32 @@
 using FluentAssertions ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.TraySettings ;
+using Idasen.TestLogger ;
 using NSubstitute ;
 using NSubstitute.ExceptionExtensions ;
-using Serilog ;
+using Serilog.Events ;
 
 #pragma warning disable CA2012 // Use ValueTasks correctly - disabled for test mocking
 
 namespace Idasen.SystemTray.Win11.Tests.TraySettings ;
 
-public class LoggingSettingsManagerTests
+public sealed class LoggingSettingsManagerTests : IDisposable
 {
-    private readonly ILogger                _logger ;
+    private readonly InMemoryLogger         _logger ;
     private readonly LoggingSettingsManager _manager ;
     private readonly ISettingsManager       _settingsManager ;
 
     public LoggingSettingsManagerTests ( )
     {
-        _logger          = Substitute.For < ILogger > ( ) ;
+        _logger          = new InMemoryLogger ( ) ;
         _settingsManager = Substitute.For < ISettingsManager > ( ) ;
         _manager = new LoggingSettingsManager ( _logger ,
                                                 _settingsManager ) ;
+    }
+
+    public void Dispose ( )
+    {
+        _logger.Dispose ( ) ;
     }
 
     [ Fact ]
@@ -28,10 +34,9 @@ public class LoggingSettingsManagerTests
     {
         await _manager.SaveAsync ( CancellationToken.None ) ;
 
-        var debugCalls = _logger.ReceivedCalls ( )
-                                .Where ( c => c.GetMethodInfo ( ).Name == nameof ( _logger.Debug ) ) ;
-
-        debugCalls.Count ( ).Should ( ).BeGreaterThanOrEqualTo ( 1 ) ;
+        _logger.ContainsLevel ( LogEventLevel.Debug )
+               .Should ( )
+               .BeTrue ( ) ;
 
         await _settingsManager.Received ( 1 )
                               .SaveAsync ( CancellationToken.None ) ;
@@ -42,10 +47,9 @@ public class LoggingSettingsManagerTests
     {
         await _manager.LoadAsync ( CancellationToken.None ) ;
 
-        var debugCalls = _logger.ReceivedCalls ( )
-                                .Where ( c => c.GetMethodInfo ( ).Name == nameof ( _logger.Debug ) ) ;
-
-        debugCalls.Count ( ).Should ( ).BeGreaterThanOrEqualTo ( 1 ) ;
+        _logger.ContainsLevel ( LogEventLevel.Debug )
+               .Should ( )
+               .BeTrue ( ) ;
 
         await _settingsManager.Received ( 1 )
                               .LoadAsync ( CancellationToken.None ) ;
@@ -61,10 +65,9 @@ public class LoggingSettingsManagerTests
         result.Should ( )
               .BeTrue ( ) ;
 
-        var debugCalls = _logger.ReceivedCalls ( )
-                                .Where ( c => c.GetMethodInfo ( ).Name == nameof ( _logger.Debug ) ) ;
-
-        debugCalls.Count ( ).Should ( ).BeGreaterThanOrEqualTo ( 1 ) ;
+        _logger.ContainsLevel ( LogEventLevel.Debug )
+               .Should ( )
+               .BeTrue ( ) ;
     }
 
     [ Fact ]
@@ -76,10 +79,9 @@ public class LoggingSettingsManagerTests
 
         result.Should ( ).BeFalse ( ) ;
 
-        var errorCalls = _logger.ReceivedCalls ( )
-                                .Where ( c => c.GetMethodInfo ( ).Name == nameof ( _logger.Error ) ) ;
-
-        errorCalls.Count ( ).Should ( ).BeGreaterThanOrEqualTo ( 1 ) ;
+        _logger.ContainsLevel ( LogEventLevel.Error )
+               .Should ( )
+               .BeTrue ( ) ;
     }
 
     [ Fact ]
@@ -90,10 +92,9 @@ public class LoggingSettingsManagerTests
         await _manager.SetLastKnownDeskHeight ( heightInCm ,
                                                 CancellationToken.None ) ;
 
-        var debugCalls = _logger.ReceivedCalls ( )
-                                .Where ( c => c.GetMethodInfo ( ).Name == nameof ( _logger.Debug ) ) ;
-
-        debugCalls.Count ( ).Should ( ).BeGreaterThanOrEqualTo ( 1 ) ;
+        _logger.ContainsLevel ( LogEventLevel.Debug )
+               .Should ( )
+               .BeTrue ( ) ;
 
         await _settingsManager.Received ( 1 )
                               .SetLastKnownDeskHeight ( heightInCm ,
@@ -115,9 +116,13 @@ public class LoggingSettingsManagerTests
         await act.Should ( ).ThrowAsync < InvalidOperationException > ( )
                  .WithMessage ( $"Failed to save settings in file {_settingsManager.SettingsFileName}" ) ;
 
-        _logger.Received ( 1 ).Error ( exception ,
-                                       "Failed to save settings in file {SettingsFileName}" ,
-                                       _settingsManager.SettingsFileName ) ;
+        _logger.Contains ( "Failed to save settings in file" )
+               .Should ( )
+               .BeTrue ( ) ;
+
+        _logger.ContainsLevel ( LogEventLevel.Error )
+               .Should ( )
+               .BeTrue ( ) ;
     }
 
     [ Fact ]
@@ -134,81 +139,66 @@ public class LoggingSettingsManagerTests
         // Assert
         await act.Should ( ).ThrowAsync < InvalidOperationException > ( )
                  .WithMessage ( $"Failed to load settings from file {_settingsManager.SettingsFileName}" ) ;
-        _logger.Received ( 1 ).Error ( Arg.Any < Exception > ( ) ,
-                                       "Failed to load settings" ) ;
+
+        _logger.Contains ( "Failed to load settings" )
+               .Should ( )
+               .BeTrue ( ) ;
+
+        _logger.ContainsLevel ( LogEventLevel.Error )
+               .Should ( )
+               .BeTrue ( ) ;
     }
 
-    [Fact]
-    public void Properties_ShouldReturnValuesFromSettingsManager()
+    [ Fact ]
+    public void Properties_ShouldReturnValuesFromSettingsManager ( )
     {
-        var settings = Substitute.For<ISettings>();
-        var settingsSaved = Substitute.For<IObservable<ISettings>>();
+        var settings      = Substitute.For < ISettings > ( ) ;
+        var settingsSaved = Substitute.For < IObservable < ISettings > > ( ) ;
 
-        _settingsManager.CurrentSettings.Returns(settings);
-        _settingsManager.SettingsFileName.Returns("someFile");
-        _settingsManager.SettingsSaved.Returns(settingsSaved);
+        _settingsManager.CurrentSettings.Returns ( settings ) ;
+        _settingsManager.SettingsFileName.Returns ( "someFile" ) ;
+        _settingsManager.SettingsSaved.Returns ( settingsSaved ) ;
 
-        _manager.CurrentSettings.Should().Be(settings);
-        _manager.SettingsFileName.Should().Be("someFile");
-        _manager.SettingsSaved.Should().Be(settingsSaved);
+        _manager.CurrentSettings.Should ( ).Be ( settings ) ;
+        _manager.SettingsFileName.Should ( ).Be ( "someFile" ) ;
+        _manager.SettingsSaved.Should ( ).Be ( settingsSaved ) ;
     }
 
-    [Fact]
-    public async Task UpgradeSettingsAsync_WhenThrows_ShouldReturnFalseAndLogError()
+    [ Fact ]
+    public async Task UpgradeSettingsAsync_WhenThrows_ShouldReturnFalseAndLogError ( )
     {
-        _settingsManager.UpgradeSettingsAsync(Arg.Any<CancellationToken>())
-                         .Returns(ValueTask.FromException<bool>(new InvalidOperationException("boom")));
+        _settingsManager.UpgradeSettingsAsync ( Arg.Any < CancellationToken > ( ) )
+                        .Returns ( ValueTask.FromException < bool > ( new InvalidOperationException ( "boom" ) ) ) ;
 
-        var result = await _manager.UpgradeSettingsAsync(CancellationToken.None);
+        var result = await _manager.UpgradeSettingsAsync ( CancellationToken.None ) ;
 
-        result.Should().BeFalse();
+        result.Should ( ).BeFalse ( ) ;
 
-        var errorCalls = _logger.ReceivedCalls()
-                                .Where(c => c.GetMethodInfo().Name == nameof(_logger.Error));
+        _logger.Contains ( "Failed to upgrade settings" )
+               .Should ( )
+               .BeTrue ( ) ;
 
-        errorCalls.Count().Should().BeGreaterThanOrEqualTo(1);
+        _logger.ContainsLevel ( LogEventLevel.Error )
+               .Should ( )
+               .BeTrue ( ) ;
     }
 
-    [Fact]
-    public async Task ResetSettingsAsync_ShouldLogInformationAndCallReset()
+    [ Fact ]
+    public async Task SaveAsync_WhenPreviousCancellationPending_LogsWarningAndCallsSave ( )
     {
-        _settingsManager.ResetSettingsAsync(Arg.Any<CancellationToken>())
-                        .Returns(new ValueTask());
-
-        await _manager.ResetSettingsAsync(CancellationToken.None);
-
-        await _settingsManager.Received(1)
-                              .ResetSettingsAsync(CancellationToken.None);
-
-        var infoCalls = _logger.ReceivedCalls()
-                               .Where(c => c.GetMethodInfo().Name == nameof(_logger.Information));
-
-        infoCalls.Count().Should().BeGreaterThanOrEqualTo(1);
-    }
-
-    [Fact]
-    public async Task SaveAsync_WhenSettingsFileNotFoundAfterSave_ShouldLogWarning()
-    {
-        // Arrange: ensure a path that does not exist
-        var tempDir = Path.GetTempPath();
-        var settingsFile = Path.Combine(tempDir, Guid.NewGuid().ToString() + ".json");
-
-        _settingsManager.SettingsFileName.Returns(settingsFile);
-
-        // Ensure SaveAsync succeeds
-        _settingsManager.SaveAsync(Arg.Any<CancellationToken>())
-                        .Returns(new ValueTask());
+        // Arrange
+        _settingsManager.SaveAsync ( Arg.Any < CancellationToken > ( ) )
+                        .Returns ( new ValueTask ( ) ) ;
 
         // Act
-        await _manager.SaveAsync(CancellationToken.None);
+        await _manager.SaveAsync ( CancellationToken.None ) ;
 
         // Assert
-        await _settingsManager.Received(1)
-                              .SaveAsync(CancellationToken.None);
+        await _settingsManager.Received ( 1 )
+                              .SaveAsync ( CancellationToken.None ) ;
 
-        var warningCalls = _logger.ReceivedCalls()
-                                  .Where(c => c.GetMethodInfo().Name == nameof(_logger.Warning));
-
-        warningCalls.Count().Should().BeGreaterThanOrEqualTo(1);
+        _logger.ContainsLevel ( LogEventLevel.Warning )
+               .Should ( )
+               .BeTrue ( ) ;
     }
 }

@@ -3,11 +3,11 @@ using FluentAssertions ;
 using Idasen.BluetoothLE.Linak.Interfaces ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.Utils ;
+using Idasen.TestLogger ;
 using NSubstitute ;
-using Serilog ;
 using Wpf.Ui.Controls ;
 
-#pragma warning disable CA2012 // ValueTask verification in tests
+#pragma warning disable CA2012    // ValueTask verification in tests
 #pragma warning disable xUnit1051 // CancellationToken matching is behavior under test here
 
 namespace Idasen.SystemTray.Win11.Tests.Utils ;
@@ -17,10 +17,10 @@ public class DeskReadyManagerTests
     [ Fact ]
     public void Constructor_NullLogger_ThrowsArgumentNullException ( )
     {
-        var settingsManager      = Substitute.For < ISettingsManager > ( ) ;
-        var iconProvider         = Substitute.For < ITaskbarIconProvider > ( ) ;
-        var notificationManager  = Substitute.For < IDeskNotificationManager > ( ) ;
-        var connectionManager    = Substitute.For < IDeskConnectionManager > ( ) ;
+        var settingsManager     = Substitute.For < ISettingsManager > ( ) ;
+        var iconProvider        = Substitute.For < ITaskbarIconProvider > ( ) ;
+        var notificationManager = Substitute.For < IDeskNotificationManager > ( ) ;
+        var connectionManager   = Substitute.For < IDeskConnectionManager > ( ) ;
 
         var act = ( ) => new DeskReadyManager ( null ! ,
                                                 settingsManager ,
@@ -114,7 +114,7 @@ public class DeskReadyManagerTests
     [ Fact ]
     public async Task OnDeskReady_WhenCalledAgain_DisposesPreviousDeskSubscriptions ( )
     {
-        using var originalContext = new TestHarness ( ) ;
+        using var originalContext    = new TestHarness ( ) ;
         using var replacementContext = new TestHarness ( ) ;
 
         originalContext.Sut.OnDeskReady ( originalContext.Desk ) ;
@@ -130,13 +130,13 @@ public class DeskReadyManagerTests
         originalContext.ConnectionMonitor.DidNotReceive ( )
                        .ResetActivityTimer ( ) ;
         originalContext.NotificationManager.DidNotReceiveWithAnyArgs ( )
-                       .ShowStatusUpdate ( default ,
+                       .ShowStatusUpdate ( 0 ,
                                            string.Empty ,
                                            string.Empty ,
                                            default ) ;
         await originalContext.SettingsManager.DidNotReceiveWithAnyArgs ( )
-                             .SetLastKnownDeskHeight ( default ,
-                                                       default ) ;
+                             .SetLastKnownDeskHeight ( 0 ,
+                                                       Arg.Any < CancellationToken > ( ) ) ;
     }
 
     [ Fact ]
@@ -156,24 +156,23 @@ public class DeskReadyManagerTests
         context.ConnectionMonitor.DidNotReceive ( )
                .ResetActivityTimer ( ) ;
         context.NotificationManager.DidNotReceiveWithAnyArgs ( )
-               .ShowStatusUpdate ( default ,
+               .ShowStatusUpdate ( 0 ,
                                    string.Empty ,
                                    string.Empty ,
                                    default ) ;
         await context.SettingsManager.DidNotReceiveWithAnyArgs ( )
-                     .SetLastKnownDeskHeight ( default ,
-                                               default ) ;
+                     .SetLastKnownDeskHeight ( 0 ,
+                                               Arg.Any < CancellationToken > ( ) ) ;
     }
 
     private static async Task EventuallyAsync ( Func < Task > assertion ,
-                                                int            timeoutMs = 2000 ,
-                                                int            pollMs = 25 )
+                                                int           timeoutMs = 2000 ,
+                                                int           pollMs    = 25 )
     {
-        var timeout = DateTime.UtcNow.AddMilliseconds ( timeoutMs ) ;
+        var         timeout       = DateTime.UtcNow.AddMilliseconds ( timeoutMs ) ;
         Exception ? lastException = null ;
 
         while ( DateTime.UtcNow < timeout )
-        {
             try
             {
                 await assertion ( ) ;
@@ -185,7 +184,6 @@ public class DeskReadyManagerTests
                 await Task.Delay ( pollMs ,
                                    TestContext.Current.CancellationToken ) ;
             }
-        }
 
         if ( lastException != null )
             throw lastException ;
@@ -209,16 +207,29 @@ public class DeskReadyManagerTests
                                          ConnectionManager ) ;
         }
 
-        public ILogger                   Logger              { get ; } = Substitute.For < ILogger > ( ) ;
-        public ISettingsManager          SettingsManager     { get ; } = Substitute.For < ISettingsManager > ( ) ;
-        public ITaskbarIconProvider      IconProvider        { get ; } = Substitute.For < ITaskbarIconProvider > ( ) ;
-        public IDeskNotificationManager  NotificationManager { get ; } = Substitute.For < IDeskNotificationManager > ( ) ;
-        public IDeskConnectionManager    ConnectionManager   { get ; } = Substitute.For < IDeskConnectionManager > ( ) ;
-        public IBluetoothConnectionMonitor ConnectionMonitor { get ; } = Substitute.For < IBluetoothConnectionMonitor > ( ) ;
-        public IDesk                     Desk                { get ; } = Substitute.For < IDesk > ( ) ;
-        public Subject < uint >          FinishedChanged     { get ; } = new ( ) ;
-        public Subject < uint >          HeightChanged       { get ; } = new ( ) ;
-        public DeskReadyManager          Sut                 { get ; }
+        public InMemoryLogger       Logger          { get ; } = new( ) ;
+        public ISettingsManager     SettingsManager { get ; } = Substitute.For < ISettingsManager > ( ) ;
+        public ITaskbarIconProvider IconProvider    { get ; } = Substitute.For < ITaskbarIconProvider > ( ) ;
+
+        public IDeskNotificationManager NotificationManager { get ; } =
+            Substitute.For < IDeskNotificationManager > ( ) ;
+
+        public IDeskConnectionManager ConnectionManager { get ; } = Substitute.For < IDeskConnectionManager > ( ) ;
+
+        public IBluetoothConnectionMonitor ConnectionMonitor { get ; } =
+            Substitute.For < IBluetoothConnectionMonitor > ( ) ;
+
+        public IDesk            Desk            { get ; } = Substitute.For < IDesk > ( ) ;
+        public Subject < uint > FinishedChanged { get ; } = new( ) ;
+        public Subject < uint > HeightChanged   { get ; } = new( ) ;
+        public DeskReadyManager Sut             { get ; }
+
+        public void Dispose ( )
+        {
+            Sut.Dispose ( ) ;
+            FinishedChanged.Dispose ( ) ;
+            HeightChanged.Dispose ( ) ;
+        }
 
         public void ClearReceivedCalls ( )
         {
@@ -226,13 +237,6 @@ public class DeskReadyManagerTests
             NotificationManager.ClearReceivedCalls ( ) ;
             SettingsManager.ClearReceivedCalls ( ) ;
             IconProvider.ClearReceivedCalls ( ) ;
-        }
-
-        public void Dispose ( )
-        {
-            Sut.Dispose ( ) ;
-            FinishedChanged.Dispose ( ) ;
-            HeightChanged.Dispose ( ) ;
         }
     }
 }

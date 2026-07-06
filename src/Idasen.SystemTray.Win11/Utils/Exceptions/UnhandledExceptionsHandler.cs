@@ -86,7 +86,7 @@ public static class UnhandledExceptionsHandler
                                                  ILogger                               log )
     {
         log.Error ( args.Exception ,
-                    "{Message}",
+                    "{Message}" ,
                     args.Exception.Message ) ;
     }
 
@@ -126,7 +126,7 @@ public static class UnhandledExceptionsHandler
                                                     string.Empty ) ;
         else
             log.Error ( exception ,
-                        "{Message}",
+                        "{Message}" ,
                         message ) ;
     }
 

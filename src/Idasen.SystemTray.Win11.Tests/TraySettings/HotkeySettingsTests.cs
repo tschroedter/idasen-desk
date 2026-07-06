@@ -1,3 +1,4 @@
+using System.Text.Json ;
 using FluentAssertions ;
 using Idasen.SystemTray.Win11.TraySettings ;
 using Idasen.SystemTray.Win11.Utils ;
@@ -106,7 +107,7 @@ public class HotkeySettingsTests
             StandingModifiers    = "Control, Shift"
         } ;
 
-        var json = System.Text.Json.JsonSerializer.Serialize ( settings ) ;
+        var json = JsonSerializer.Serialize ( settings ) ;
 
         json.Should ( ).Contain ( "GlobalHotkeysEnabled" ) ;
         json.Should ( ).Contain ( "false" ) ;
@@ -124,7 +125,7 @@ public class HotkeySettingsTests
                    }
                    """ ;
 
-        var settings = System.Text.Json.JsonSerializer.Deserialize < HotkeySettings > ( json ) ;
+        var settings = JsonSerializer.Deserialize < HotkeySettings > ( json ) ;
 
         settings.Should ( ).NotBeNull ( ) ;
         settings.GlobalHotkeysEnabled.Should ( ).BeFalse ( ) ;
@@ -141,7 +142,7 @@ public class HotkeySettingsTests
                    }
                    """ ;
 
-        var settings = System.Text.Json.JsonSerializer.Deserialize < HotkeySettings > ( json ) ;
+        var settings = JsonSerializer.Deserialize < HotkeySettings > ( json ) ;
 
         settings.Should ( ).NotBeNull ( ) ;
         settings.GlobalHotkeysEnabled.Should ( ).BeFalse ( ) ;

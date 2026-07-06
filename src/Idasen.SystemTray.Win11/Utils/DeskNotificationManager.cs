@@ -10,27 +10,25 @@ namespace Idasen.SystemTray.Win11.Utils ;
 
 public sealed class DeskNotificationManager : IDeskNotificationManager
 {
+    private readonly IDeskConnectionManager _deskConnectionManager ;
     private readonly IErrorManager          _errorManager ;
     private readonly ILogger                _logger ;
     private readonly INotifications         _notifications ;
     private readonly IScheduler             _scheduler ;
     private readonly ISettingsManager       _settingsManager ;
     private readonly IStatusBarManager      _statusBarManager ;
-    private readonly IDeskConnectionManager _deskConnectionManager ;
+    private          bool                   _disposed ;
 
     private IDisposable ? _errorChangedSubscription ;
-    private bool          _disposed ;
-
-    public IObservable < StatusBarInfo > StatusBarInfoChanged => _statusBarManager.StatusBarInfoChanged ;
 
     public DeskNotificationManager (
-        ILogger                 logger ,
-        INotifications          notifications ,
-        IErrorManager           errorManager ,
-        ISettingsManager        settingsManager ,
-        IStatusBarManager       statusBarManager ,
-        IScheduler              scheduler ,
-        IDeskConnectionManager  deskConnectionManager )
+        ILogger                logger ,
+        INotifications         notifications ,
+        IErrorManager          errorManager ,
+        ISettingsManager       settingsManager ,
+        IStatusBarManager      statusBarManager ,
+        IScheduler             scheduler ,
+        IDeskConnectionManager deskConnectionManager )
     {
         ArgumentNullException.ThrowIfNull ( logger ) ;
         ArgumentNullException.ThrowIfNull ( notifications ) ;
@@ -49,6 +47,8 @@ public sealed class DeskNotificationManager : IDeskNotificationManager
         _deskConnectionManager = deskConnectionManager ;
     }
 
+    public IObservable < StatusBarInfo > StatusBarInfoChanged => _statusBarManager.StatusBarInfoChanged ;
+
     public void Dispose ( )
     {
         if ( _disposed )
@@ -63,8 +63,8 @@ public sealed class DeskNotificationManager : IDeskNotificationManager
         catch ( Exception ex )
         {
             _logger.Warning ( ex ,
-                             "Failed to dispose {ResourceName}" ,
-                             nameof ( _errorChangedSubscription ) ) ;
+                              "Failed to dispose {ResourceName}" ,
+                              nameof ( _errorChangedSubscription ) ) ;
         }
 
         _errorChangedSubscription = null ;

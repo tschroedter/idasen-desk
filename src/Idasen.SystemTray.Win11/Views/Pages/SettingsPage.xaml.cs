@@ -36,47 +36,39 @@ public partial class SettingsPage : INavigableView < SettingsViewModel >
     {
         // Check if the event originated from or over a ComboBox or its parts
         var elementUnderMouse = Mouse.DirectlyOver as DependencyObject ;
-        var originalSource = e.OriginalSource as DependencyObject ;
+        var originalSource    = e.OriginalSource as DependencyObject ;
 
         // Guard debug logging and associated popup lookups behind level check
         if ( _logger.IsEnabled ( LogEventLevel.Debug ) )
         {
             // Log element types for debugging
             _logger.Debug ( "Mouse wheel: ElementUnderMouse={ElementType}, OriginalSource={SourceType}" ,
-                            elementUnderMouse?.GetType().Name ?? "null" ,
-                            originalSource?.GetType().Name ?? "null" ) ;
+                            elementUnderMouse?.GetType ( ).Name ?? "null" ,
+                            originalSource?.GetType ( ).Name    ?? "null" ) ;
 
             // Check for popup (only for logging purposes)
-            var mousePopup = FindAssociatedPopup ( elementUnderMouse ) ;
+            var mousePopup  = FindAssociatedPopup ( elementUnderMouse ) ;
             var sourcePopup = FindAssociatedPopup ( originalSource ) ;
 
             if ( mousePopup is not null )
-            {
                 _logger.Debug ( "Mouse popup found: PlacementTarget={TargetType}" ,
-                                mousePopup.PlacementTarget?.GetType().Name ?? "null" ) ;
-            }
+                                mousePopup.PlacementTarget?.GetType ( ).Name ?? "null" ) ;
 
             if ( sourcePopup is not null )
-            {
                 _logger.Debug ( "Source popup found: PlacementTarget={TargetType}" ,
-                                sourcePopup.PlacementTarget?.GetType().Name ?? "null" ) ;
-            }
+                                sourcePopup.PlacementTarget?.GetType ( ).Name ?? "null" ) ;
         }
 
         // Check both the element under mouse and the original source
         var insideComboBox = IsInsideComboBox ( elementUnderMouse ) || IsInsideComboBox ( originalSource ) ;
 
         if ( _logger.IsEnabled ( LogEventLevel.Debug ) )
-        {
-            _logger.Debug ( "InsideComboBox={Inside}" , insideComboBox ) ;
-        }
+            _logger.Debug ( "InsideComboBox={Inside}" ,
+                            insideComboBox ) ;
 
         if ( insideComboBox )
         {
-            if ( _logger.IsEnabled ( LogEventLevel.Debug ) )
-            {
-                _logger.Debug ( "Returning early - inside ComboBox" ) ;
-            }
+            if ( _logger.IsEnabled ( LogEventLevel.Debug ) ) _logger.Debug ( "Returning early - inside ComboBox" ) ;
             // Let the ComboBox handle its own scrolling
             return ;
         }
@@ -151,10 +143,8 @@ public partial class SettingsPage : INavigableView < SettingsViewModel >
             visualRoot = current ;
             var parent = VisualTreeHelper.GetParent ( current ) ;
             if ( parent is null )
-            {
                 // We've reached the visual root
                 break ;
-            }
 
             current = parent ;
             maxDepth ++ ;

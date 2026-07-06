@@ -2,6 +2,7 @@ using FluentAssertions ;
 using Idasen.BluetoothLE.Linak.Interfaces ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.Utils ;
+using Idasen.TestLogger ;
 using NSubstitute ;
 using Serilog ;
 
@@ -18,7 +19,8 @@ public class DeskMovementManagerTests
         var settingsManager = Substitute.For < ISettingsManager > ( ) ;
 
         // Act
-        var act = ( ) => new DeskMovementManager ( null! , settingsManager ) ;
+        var act = ( ) => new DeskMovementManager ( null! ,
+                                                   settingsManager ) ;
 
         // Assert
         act.Should ( ).Throw < ArgumentNullException > ( )
@@ -32,7 +34,8 @@ public class DeskMovementManagerTests
         var logger = Substitute.For < ILogger > ( ) ;
 
         // Act
-        var act = ( ) => new DeskMovementManager ( logger , null! ) ;
+        var act = ( ) => new DeskMovementManager ( logger ,
+                                                   null! ) ;
 
         // Assert
         act.Should ( ).Throw < ArgumentNullException > ( )
@@ -45,7 +48,8 @@ public class DeskMovementManagerTests
         // Arrange
         var logger          = Substitute.For < ILogger > ( ) ;
         var settingsManager = Substitute.For < ISettingsManager > ( ) ;
-        var sut             = new DeskMovementManager ( logger , settingsManager ) ;
+        var sut = new DeskMovementManager ( logger ,
+                                            settingsManager ) ;
 
         // Act
         var act = ( ) => sut.SetDeskAccessor ( null! ) ;
@@ -61,7 +65,8 @@ public class DeskMovementManagerTests
         // Arrange
         var logger          = Substitute.For < ILogger > ( ) ;
         var settingsManager = Substitute.For < ISettingsManager > ( ) ;
-        var sut             = new DeskMovementManager ( logger , settingsManager ) ;
+        var sut = new DeskMovementManager ( logger ,
+                                            settingsManager ) ;
 
         // Act
         var result = sut.IsDeskAvailable ( ) ;
@@ -76,7 +81,8 @@ public class DeskMovementManagerTests
         // Arrange
         var logger          = Substitute.For < ILogger > ( ) ;
         var settingsManager = Substitute.For < ISettingsManager > ( ) ;
-        var sut             = new DeskMovementManager ( logger , settingsManager ) ;
+        var sut = new DeskMovementManager ( logger ,
+                                            settingsManager ) ;
 
         sut.SetDeskAccessor ( ( ) => null ) ;
 
@@ -94,7 +100,8 @@ public class DeskMovementManagerTests
         var logger          = Substitute.For < ILogger > ( ) ;
         var settingsManager = Substitute.For < ISettingsManager > ( ) ;
         var desk            = Substitute.For < IDesk > ( ) ;
-        var sut             = new DeskMovementManager ( logger , settingsManager ) ;
+        var sut = new DeskMovementManager ( logger ,
+                                            settingsManager ) ;
 
         sut.SetDeskAccessor ( ( ) => desk ) ;
 
@@ -109,14 +116,16 @@ public class DeskMovementManagerTests
     public async Task MoveToHeightAsync_WhenDeskNotAvailable_DoesNotMoveDesk ( )
     {
         // Arrange
-        var logger          = Substitute.For < ILogger > ( ) ;
+        var logger          = new InMemoryLogger ( ) ;
         var settingsManager = Substitute.For < ISettingsManager > ( ) ;
-        var sut             = new DeskMovementManager ( logger , settingsManager ) ;
+        var sut = new DeskMovementManager ( logger ,
+                                            settingsManager ) ;
 
         sut.SetDeskAccessor ( ( ) => null ) ;
 
         // Act
-        await sut.MoveToHeightAsync ( 120 , "TestOperation" ) ;
+        await sut.MoveToHeightAsync ( 120 ,
+                                      "TestOperation" ) ;
 
         // Assert
         await settingsManager.DidNotReceive ( ).LoadAsync ( Arg.Any < CancellationToken > ( ) ) ;
@@ -126,17 +135,19 @@ public class DeskMovementManagerTests
     public async Task MoveToHeightAsync_WhenDeskAvailable_MovesDeskToCorrectHeight ( )
     {
         // Arrange
-        var logger          = Substitute.For < ILogger > ( ) ;
+        var logger          = new InMemoryLogger ( ) ;
         var settingsManager = Substitute.For < ISettingsManager > ( ) ;
         var desk            = Substitute.For < IDesk > ( ) ;
-        var sut             = new DeskMovementManager ( logger , settingsManager ) ;
+        var sut = new DeskMovementManager ( logger ,
+                                            settingsManager ) ;
 
         sut.SetDeskAccessor ( ( ) => desk ) ;
 
         settingsManager.LoadAsync ( Arg.Any < CancellationToken > ( ) ).Returns ( new ValueTask ( ) ) ;
 
         // Act
-        await sut.MoveToHeightAsync ( 120 , "Stand" ) ;
+        await sut.MoveToHeightAsync ( 120 ,
+                                      "Stand" ) ;
 
         // Assert
         await settingsManager.Received ( 1 ).LoadAsync ( Arg.Any < CancellationToken > ( ) ) ;
@@ -147,17 +158,19 @@ public class DeskMovementManagerTests
     public async Task MoveToHeightAsync_ConvertsHeightCorrectly ( )
     {
         // Arrange
-        var logger          = Substitute.For < ILogger > ( ) ;
+        var logger          = new InMemoryLogger ( ) ;
         var settingsManager = Substitute.For < ISettingsManager > ( ) ;
         var desk            = Substitute.For < IDesk > ( ) ;
-        var sut             = new DeskMovementManager ( logger , settingsManager ) ;
+        var sut = new DeskMovementManager ( logger ,
+                                            settingsManager ) ;
 
         sut.SetDeskAccessor ( ( ) => desk ) ;
 
         settingsManager.LoadAsync ( Arg.Any < CancellationToken > ( ) ).Returns ( new ValueTask ( ) ) ;
 
         // Act
-        await sut.MoveToHeightAsync ( 75 , "Sit" ) ;
+        await sut.MoveToHeightAsync ( 75 ,
+                                      "Sit" ) ;
 
         // Assert
         desk.Received ( 1 ).MoveTo ( 7500u ) ; // 75 cm * 100

@@ -3,4 +3,4 @@
 namespace Idasen.SystemTray.Win11.ViewModels.Pages ;
 
 [ ExcludeFromCodeCoverage ]
-public partial class StatusViewModel : ObservableObject ;
+public class StatusViewModel : ObservableObject ;

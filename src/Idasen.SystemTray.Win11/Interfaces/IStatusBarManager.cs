@@ -7,5 +7,5 @@ public interface IStatusBarManager
     IObservable < StatusBarInfo > StatusBarInfoChanged { get ; }
 
     void UpdateStatus ( StatusBarInfo info ) ;
-    void UpdateDeskHeight ( uint heightInMillimeters ) ;
+    void UpdateDeskHeight ( uint      heightInMillimeters ) ;
 }

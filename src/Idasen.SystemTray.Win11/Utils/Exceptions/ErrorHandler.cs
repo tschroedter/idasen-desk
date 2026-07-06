@@ -16,11 +16,12 @@ public class ErrorHandler
     {
         var handler = Handlers.FirstOrDefault ( handler => handler.CanHandle ( exception ) ) ;
 
-            handler?.Handle ( exception ,
+        handler?.Handle ( exception ,
                           logger ) ;
 
-            if ( handler is null )
-                throw new InvalidOperationException( $"No handler found for exception of type {exception.GetType().FullName}: {exception.Message}", 
-                                                     exception);
+        if ( handler is null )
+            throw new
+                InvalidOperationException ( $"No handler found for exception of type {exception.GetType ( ).FullName}: {exception.Message}" ,
+                                            exception ) ;
     }
 }

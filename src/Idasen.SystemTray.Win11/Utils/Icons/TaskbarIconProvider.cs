@@ -11,7 +11,7 @@ using Wpf.Ui.Tray.Controls ;
 namespace Idasen.SystemTray.Win11.Utils.Icons ;
 
 [ ExcludeFromCodeCoverage ]
-public partial class TaskbarIconProvider : ITaskbarIconProvider
+public class TaskbarIconProvider : ITaskbarIconProvider
 {
     private readonly IDynamicIconCreator _creator ;
     private readonly ISettingsManager    _manager ;
@@ -79,7 +79,8 @@ public partial class TaskbarIconProvider : ITaskbarIconProvider
 
             var heightInCm = _manager.CurrentSettings.HeightSettings.LastKnownDeskHeight ;
 
-            if ( heightInCm is >= AppConfiguration.Defaults.DeskMinHeightInCm and <= AppConfiguration.Defaults.DeskMaxHeightInCm )
+            if ( heightInCm is >= AppConfiguration.Defaults.DeskMinHeightInCm
+                 and <= AppConfiguration.Defaults.DeskMaxHeightInCm )
                 // HeightSpeedDetails expects height in millimeters
                 OnHeightAndSpeedChanged ( new HeightSpeedDetails (
                                                                   DateTimeOffset.Now ,

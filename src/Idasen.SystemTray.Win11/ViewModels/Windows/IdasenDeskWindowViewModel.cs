@@ -1,13 +1,15 @@
-﻿using Idasen.SystemTray.Win11.Interfaces ;
+using System.Collections.ObjectModel ;
+using System.Diagnostics.CodeAnalysis ;
+using System.Globalization ;
+using System.Reactive.Concurrency ;
+using System.Reactive.Linq ;
+using System.Text ;
+using System.Windows.Controls ;
+using System.Windows.Input ;
+using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.Utils ;
 using Idasen.SystemTray.Win11.ViewModels.Pages ;
 using Idasen.SystemTray.Win11.Views.Pages ;
-using System.Collections.ObjectModel ;
-using System.Diagnostics.CodeAnalysis ;
-using System.Reactive.Concurrency ;
-using System.Reactive.Linq ;
-using System.Windows.Controls ;
-using System.Windows.Input ;
 using Wpf.Ui.Controls ;
 using ILogger = Serilog.ILogger ;
 using MenuItem = Wpf.Ui.Controls.MenuItem ;
@@ -24,10 +26,11 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
     private const string DoubleClickToMoveTheDeskToPosition = "Double-Click to move the desk to the {0} position." ;
     private const string DoYouWantToMoveTheDeskIntoPosition = "Do you want to move the desk into the {0} position?" ;
 
-    private static readonly System.Text.CompositeFormat DoubleClickToMoveTheDeskToPositionFormat = 
-        System.Text.CompositeFormat.Parse ( DoubleClickToMoveTheDeskToPosition ) ;
-    private static readonly System.Text.CompositeFormat DoYouWantToMoveTheDeskIntoPositionFormat = 
-        System.Text.CompositeFormat.Parse ( DoYouWantToMoveTheDeskIntoPosition ) ;
+    private static readonly CompositeFormat DoubleClickToMoveTheDeskToPositionFormat =
+        CompositeFormat.Parse ( DoubleClickToMoveTheDeskToPosition ) ;
+
+    private static readonly CompositeFormat DoYouWantToMoveTheDeskIntoPositionFormat =
+        CompositeFormat.Parse ( DoYouWantToMoveTheDeskIntoPosition ) ;
 
     private readonly NavigationViewItem ? _closeWindowViewItem ;
     private readonly NavigationViewItem ? _connectViewItem ;
@@ -104,47 +107,55 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
             TargetPageType = typeof ( HomePage )
         } ;
 
-        var positionSitName = _settingsManager.CurrentSettings.HeightSettings.SeatingName;
+        var positionSitName = _settingsManager.CurrentSettings.HeightSettings.SeatingName ;
 
         _sitViewItem = new NavigationViewItem
         {
             Content        = positionSitName ,
             Icon           = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleDown24 } ,
             TargetPageType = typeof ( SettingsPage ) ,
-            ToolTip        = string.Format ( System.Globalization.CultureInfo.InvariantCulture , DoubleClickToMoveTheDeskToPositionFormat , positionSitName )
+            ToolTip = string.Format ( CultureInfo.InvariantCulture ,
+                                      DoubleClickToMoveTheDeskToPositionFormat ,
+                                      positionSitName )
         } ;
         _sitViewItem.MouseDoubleClick += OnClickSitViewItem ;
 
-        var positionStandName = _settingsManager.CurrentSettings.HeightSettings.StandingName;
+        var positionStandName = _settingsManager.CurrentSettings.HeightSettings.StandingName ;
 
         _standViewItem = new NavigationViewItem
         {
             Content        = positionStandName ,
             Icon           = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleUp24 } ,
             TargetPageType = typeof ( SettingsPage ) ,
-            ToolTip        = string.Format ( System.Globalization.CultureInfo.InvariantCulture , DoubleClickToMoveTheDeskToPositionFormat , positionStandName )
+            ToolTip = string.Format ( CultureInfo.InvariantCulture ,
+                                      DoubleClickToMoveTheDeskToPositionFormat ,
+                                      positionStandName )
         } ;
         _standViewItem.MouseDoubleClick += OnClickStandViewItem ;
 
-        var positionCustom1Name = _settingsManager.CurrentSettings.HeightSettings.Custom1Name;
+        var positionCustom1Name = _settingsManager.CurrentSettings.HeightSettings.Custom1Name ;
 
         _custom1ViewItem = new NavigationViewItem
         {
             Content        = positionCustom1Name ,
             Icon           = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleLeft24 } ,
             TargetPageType = typeof ( SettingsPage ) ,
-            ToolTip        = string.Format ( System.Globalization.CultureInfo.InvariantCulture , DoubleClickToMoveTheDeskToPositionFormat , positionCustom1Name )
+            ToolTip = string.Format ( CultureInfo.InvariantCulture ,
+                                      DoubleClickToMoveTheDeskToPositionFormat ,
+                                      positionCustom1Name )
         } ;
         _custom1ViewItem.MouseDoubleClick += OnClickCustom1ViewItem ;
 
-        var positionCustom2Name = _settingsManager.CurrentSettings.HeightSettings.Custom2Name;
+        var positionCustom2Name = _settingsManager.CurrentSettings.HeightSettings.Custom2Name ;
 
         _custom2ViewItem = new NavigationViewItem
         {
             Content        = positionCustom2Name ,
             Icon           = new SymbolIcon { Symbol = SymbolRegular.ArrowCircleRight24 } ,
             TargetPageType = typeof ( SettingsPage ) ,
-            ToolTip        = string.Format ( System.Globalization.CultureInfo.InvariantCulture , DoubleClickToMoveTheDeskToPositionFormat , positionCustom2Name )
+            ToolTip = string.Format ( CultureInfo.InvariantCulture ,
+                                      DoubleClickToMoveTheDeskToPositionFormat ,
+                                      positionCustom2Name )
         } ;
         _custom2ViewItem.MouseDoubleClick += OnClickCustom2ViewItem ;
 
@@ -565,7 +576,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         var positionName = _settingsManager.CurrentSettings.HeightSettings.SeatingName ;
 
         ConfirmAndExecute ( positionName + " ?" ,
-                            string.Format ( System.Globalization.CultureInfo.InvariantCulture ,
+                            string.Format ( CultureInfo.InvariantCulture ,
                                             DoYouWantToMoveTheDeskIntoPositionFormat ,
                                             positionName ) ,
                             positionName ,
@@ -577,7 +588,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         var positionName = _settingsManager.CurrentSettings.HeightSettings.StandingName ;
 
         ConfirmAndExecute ( positionName + " ?" ,
-                            string.Format ( System.Globalization.CultureInfo.InvariantCulture ,
+                            string.Format ( CultureInfo.InvariantCulture ,
                                             DoYouWantToMoveTheDeskIntoPositionFormat ,
                                             positionName ) ,
                             positionName ,
@@ -589,7 +600,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         var positionName = _settingsManager.CurrentSettings.HeightSettings.Custom1Name ;
 
         ConfirmAndExecute ( positionName + " ?" ,
-                            string.Format ( System.Globalization.CultureInfo.InvariantCulture ,
+                            string.Format ( CultureInfo.InvariantCulture ,
                                             DoYouWantToMoveTheDeskIntoPositionFormat ,
                                             positionName ) ,
                             positionName ,
@@ -601,7 +612,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         var positionName = _settingsManager.CurrentSettings.HeightSettings.Custom2Name ;
 
         ConfirmAndExecute ( positionName + " ?" ,
-                            string.Format ( System.Globalization.CultureInfo.InvariantCulture ,
+                            string.Format ( CultureInfo.InvariantCulture ,
                                             DoYouWantToMoveTheDeskIntoPositionFormat ,
                                             positionName ) ,
                             positionName ,
@@ -764,25 +775,33 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         if ( _standViewItem != null )
         {
             _standViewItem.Content = heightSettings.StandingName ;
-            _standViewItem.ToolTip = string.Format ( System.Globalization.CultureInfo.InvariantCulture , DoubleClickToMoveTheDeskToPositionFormat , heightSettings.StandingName ) ;
+            _standViewItem.ToolTip = string.Format ( CultureInfo.InvariantCulture ,
+                                                     DoubleClickToMoveTheDeskToPositionFormat ,
+                                                     heightSettings.StandingName ) ;
         }
 
         if ( _sitViewItem != null )
         {
             _sitViewItem.Content = heightSettings.SeatingName ;
-            _sitViewItem.ToolTip = string.Format ( System.Globalization.CultureInfo.InvariantCulture , DoubleClickToMoveTheDeskToPositionFormat , heightSettings.SeatingName ) ;
+            _sitViewItem.ToolTip = string.Format ( CultureInfo.InvariantCulture ,
+                                                   DoubleClickToMoveTheDeskToPositionFormat ,
+                                                   heightSettings.SeatingName ) ;
         }
 
         if ( _custom1ViewItem != null )
         {
             _custom1ViewItem.Content = heightSettings.Custom1Name ;
-            _custom1ViewItem.ToolTip = string.Format ( System.Globalization.CultureInfo.InvariantCulture , DoubleClickToMoveTheDeskToPositionFormat , heightSettings.Custom1Name ) ;
+            _custom1ViewItem.ToolTip = string.Format ( CultureInfo.InvariantCulture ,
+                                                       DoubleClickToMoveTheDeskToPositionFormat ,
+                                                       heightSettings.Custom1Name ) ;
         }
 
         if ( _custom2ViewItem != null )
         {
             _custom2ViewItem.Content = heightSettings.Custom2Name ;
-            _custom2ViewItem.ToolTip = string.Format ( System.Globalization.CultureInfo.InvariantCulture , DoubleClickToMoveTheDeskToPositionFormat , heightSettings.Custom2Name ) ;
+            _custom2ViewItem.ToolTip = string.Format ( CultureInfo.InvariantCulture ,
+                                                       DoubleClickToMoveTheDeskToPositionFormat ,
+                                                       heightSettings.Custom2Name ) ;
         }
 
         _logger.Debug ( "Navigation view item names updated: Stand={StandingName}, Sit={SeatingName}, Custom1={Custom1Name}, Custom2={Custom2Name}" ,

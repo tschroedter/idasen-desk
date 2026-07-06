@@ -3,9 +3,9 @@ using FluentAssertions ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.TraySettings ;
 using Idasen.SystemTray.Win11.Utils ;
+using Idasen.TestLogger ;
 using NSubstitute ;
 using NSubstitute.ExceptionExtensions ;
-using Serilog ;
 
 #pragma warning disable CA2012 // Use ValueTasks correctly - disabled for test mocking
 
@@ -15,14 +15,15 @@ public class SettingsManagerTests : IDisposable
 {
     private readonly ICommonApplicationData _commonApplicationData = Substitute.For < ICommonApplicationData > ( ) ;
     private readonly IFileSystem            _fileSystem            = Substitute.For < IFileSystem > ( ) ;
-    private readonly ILogger                _logger                = Substitute.For < ILogger > ( ) ;
+    private readonly InMemoryLogger         _logger                = new( ) ;
     private readonly SettingsManager        _settingsManager ;
     private readonly ISettingsStorage       _settingsStorage = Substitute.For < ISettingsStorage > ( ) ;
-    private bool _disposed;
+    private          bool                   _disposed ;
 
     public SettingsManagerTests ( )
     {
-        _commonApplicationData.ToFullPath ( AppConfiguration.Application.SettingsFileName ).Returns ( "TestSettingsFilePath" ) ;
+        _commonApplicationData.ToFullPath ( AppConfiguration.Application.SettingsFileName )
+                              .Returns ( "TestSettingsFilePath" ) ;
         _settingsManager = new SettingsManager ( _logger ,
                                                  _commonApplicationData ,
                                                  _settingsStorage ,
@@ -42,6 +43,7 @@ public class SettingsManagerTests : IDisposable
 
         if ( disposing )
         {
+            _logger.Dispose ( ) ;
             _settingsManager.Dispose ( ) ;
         }
 
@@ -90,7 +92,7 @@ public class SettingsManagerTests : IDisposable
     {
         // Arrange
         await File.WriteAllTextAsync ( "TestSettingsFilePath" ,
-                                       "{}",
+                                       "{}" ,
                                        TestContext.Current.CancellationToken ) ;
         _fileSystem.File.Exists ( "TestSettingsFilePath" ).Returns ( true ) ;
         _fileSystem.File.ReadAllTextAsync ( "TestSettingsFilePath" ,
@@ -152,7 +154,8 @@ public class SettingsManagerTests : IDisposable
                                                    Arg.Is < Settings > ( s => s.DeviceSettings.DeviceName ==
                                                                               AppConfiguration.Defaults.DeviceName &&
                                                                               s.HeightSettings.StandingHeightInCm ==
-                                                                              AppConfiguration.Defaults.HeightStandingInCm ) ,
+                                                                              AppConfiguration.Defaults
+                                                                                              .HeightStandingInCm ) ,
                                                    CancellationToken.None ) ;
         notified.Should ( ).BeTrue ( ) ;
     }
@@ -174,7 +177,8 @@ public class SettingsManagerTests : IDisposable
         // Assert
         await act.Should ( ).ThrowAsync < InvalidOperationException > ( )
                  .WithMessage ( "Failed to reset settings" ) ;
-        _logger.Received ( 1 ).Error ( testException ,
-                                       "Failed to reset settings" ) ;
+        _logger.Contains ( "Failed to reset settings" )
+               .Should ( )
+               .BeTrue ( ) ;
     }
 }

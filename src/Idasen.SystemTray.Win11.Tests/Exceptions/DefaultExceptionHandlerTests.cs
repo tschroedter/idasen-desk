@@ -1,13 +1,17 @@
 using FluentAssertions ;
 using Idasen.SystemTray.Win11.Utils.Exceptions ;
-using NSubstitute ;
-using Serilog ;
+using Idasen.TestLogger ;
 
 namespace Idasen.SystemTray.Win11.Tests.Exceptions ;
 
-public class DefaultExceptionHandlerTests
+public sealed class DefaultExceptionHandlerTests : IDisposable
 {
-    private readonly ILogger _logger = Substitute.For < ILogger > ( ) ;
+    private readonly InMemoryLogger _logger = new( ) ;
+
+    public void Dispose ( )
+    {
+        _logger.Dispose ( ) ;
+    }
 
     [ Fact ]
     public void CanHandle_ShouldAlwaysReturnTrue ( )
@@ -34,9 +38,9 @@ public class DefaultExceptionHandlerTests
                                _logger ) ;
 
         // Assert  
-        _logger.Received ( 1 )
-               .Error ( exception ,
-                        exception.Message ) ;
+        _logger.Contains ( exception.Message )
+               .Should ( )
+               .BeTrue ( ) ;
     }
 
     private static DefaultExceptionHandler CreateSut ( )

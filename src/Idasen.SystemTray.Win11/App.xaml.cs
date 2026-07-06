@@ -14,9 +14,11 @@ using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.Services ;
 using Idasen.SystemTray.Win11.TraySettings ;
 using Idasen.SystemTray.Win11.Utils ;
+using Idasen.SystemTray.Win11.Utils.Bluetooth ;
 using Idasen.SystemTray.Win11.Utils.Converters ;
 using Idasen.SystemTray.Win11.Utils.Exceptions ;
 using Idasen.SystemTray.Win11.Utils.Icons ;
+using Idasen.SystemTray.Win11.Utils.Validation ;
 using Idasen.SystemTray.Win11.ViewModels.Pages ;
 using Idasen.SystemTray.Win11.ViewModels.Windows ;
 using Idasen.SystemTray.Win11.Views.Pages ;
@@ -94,9 +96,9 @@ public partial class App
                                                                               .AddSingleton <
                                                                                    IdasenDeskWindowViewModel > ( ) ;
                                                                            services.AddSingleton < IProcessLauncher ,
-                                                                                    ProcessLauncher > ( ) ;
+                                                                               ProcessLauncher > ( ) ;
                                                                            services.AddSingleton < IDonateService ,
-                                                                                    DonateService > ( ) ;
+                                                                               DonateService > ( ) ;
                                                                            services.AddSingleton < HomePage > ( ) ;
                                                                            services
                                                                               .AddSingleton < DashboardViewModel > ( ) ;
@@ -145,28 +147,57 @@ public partial class App
                                                                               .AddSingleton < IStatusBarManager ,
                                                                                    StatusBarManager > ( ) ;
                                                                            services
-                                                                              .AddSingleton < IDeskMovementManager , DeskMovementManager > ( ) ;
+                                                                              .AddSingleton < IDeskMovementManager ,
+                                                                                   DeskMovementManager > ( ) ;
                                                                            services
-                                                                              .AddSingleton < IDeskConnectionManager , DeskConnectionManager > ( ) ;
+                                                                              .AddSingleton < IDeskConnectionManager ,
+                                                                                   DeskConnectionManager > ( ) ;
                                                                            services
-                                                                              .AddSingleton < IDeskNotificationManager , DeskNotificationManager > ( ) ;
+                                                                              .AddSingleton < IDeskNotificationManager ,
+                                                                                   DeskNotificationManager > ( ) ;
                                                                            services
-                                                                              .AddSingleton < IDeskReadyManager > ( provider =>
-                                                                              {
-                                                                                  var logger               = provider.GetRequiredService < ILogger > ( ) ;
-                                                                                  var settingsManager      = provider.GetRequiredService < ISettingsManager > ( ) ;
-                                                                                  var iconProvider         = provider.GetRequiredService < ITaskbarIconProvider > ( ) ;
-                                                                                  var notificationManager  = provider.GetRequiredService < IDeskNotificationManager > ( ) ;
-                                                                                  var notifyIcon           = provider.GetService < NotifyIcon > ( ) ;
-                                                                                  var connectionManager    = provider.GetRequiredService < IDeskConnectionManager > ( ) ;
+                                                                              .AddSingleton <
+                                                                                   IDeskReadyManager > ( provider =>
+                                                                                                         {
+                                                                                                             var
+                                                                                                                 logger =
+                                                                                                                     provider
+                                                                                                                        .GetRequiredService
+                                                                                                                             < ILogger > ( ) ;
+                                                                                                             var
+                                                                                                                 settingsManager =
+                                                                                                                     provider
+                                                                                                                        .GetRequiredService
+                                                                                                                             < ISettingsManager > ( ) ;
+                                                                                                             var
+                                                                                                                 iconProvider =
+                                                                                                                     provider
+                                                                                                                        .GetRequiredService
+                                                                                                                             < ITaskbarIconProvider > ( ) ;
+                                                                                                             var
+                                                                                                                 notificationManager =
+                                                                                                                     provider
+                                                                                                                        .GetRequiredService
+                                                                                                                             < IDeskNotificationManager > ( ) ;
+                                                                                                             var
+                                                                                                                 notifyIcon =
+                                                                                                                     provider
+                                                                                                                        .GetService
+                                                                                                                             < NotifyIcon > ( ) ;
+                                                                                                             var
+                                                                                                                 connectionManager =
+                                                                                                                     provider
+                                                                                                                        .GetRequiredService
+                                                                                                                             < IDeskConnectionManager > ( ) ;
 
-                                                                                  return new DeskReadyManager ( logger ,
-                                                                                                                settingsManager ,
-                                                                                                                iconProvider ,
-                                                                                                                notificationManager ,
-                                                                                                                notifyIcon ,
-                                                                                                                connectionManager ) ;
-                                                                              } ) ;
+                                                                                                             return new
+                                                                                                                 DeskReadyManager ( logger ,
+                                                                                                                                    settingsManager ,
+                                                                                                                                    iconProvider ,
+                                                                                                                                    notificationManager ,
+                                                                                                                                    notifyIcon ,
+                                                                                                                                    connectionManager ) ;
+                                                                                                         } ) ;
                                                                            services
                                                                               .AddSingleton < IUiDeskManager ,
                                                                                    UiDeskManager > ( ) ;
@@ -209,30 +240,42 @@ public partial class App
                                                                                    SettingsSynchronizer > ( ) ;
                                                                            services
                                                                               .AddSingleton < IHeightSettingsValidator ,
-                                                                                   Utils.Validation.HeightSettingsValidator > ( ) ;
+                                                                                   HeightSettingsValidator > ( ) ;
                                                                            // Composite settings service that combines settings-related dependencies
                                                                            services
                                                                               .AddSingleton < ISettingsService ,
                                                                                    SettingsService > ( ) ;
                                                                            services
-                                                                              .AddSingleton < IBluetoothReconnectStrategy ,
-                                                                                   Utils.Bluetooth.ExponentialBackoffReconnectStrategy > ( ) ;
+                                                                              .AddSingleton <
+                                                                                   IBluetoothReconnectStrategy ,
+                                                                                   ExponentialBackoffReconnectStrategy > ( ) ;
                                                                            services
-                                                                              .AddSingleton < IBluetoothConnectionMonitor > ( provider =>
-                                                                              {
-                                                                                  var logger = provider.GetRequiredService < ILogger > ( ) ;
-                                                                                  return new Utils.Bluetooth.BluetoothConnectionMonitor (
-                                                                                      logger ) ;
-                                                                              } ) ;
+                                                                              .AddSingleton <
+                                                                                   IBluetoothConnectionMonitor > ( provider =>
+                                                                                                                   {
+                                                                                                                       var
+                                                                                                                           logger =
+                                                                                                                               provider
+                                                                                                                                  .GetRequiredService
+                                                                                                                                       < ILogger > ( ) ;
+                                                                                                                       return
+                                                                                                                           new
+                                                                                                                               BluetoothConnectionMonitor (
+                                                                                                                                                           logger ) ;
+                                                                                                                   } ) ;
                                                                            services
                                                                               .AddSingleton < IApplicationThemeManager ,
                                                                                    MyApplicationThemeManager > ( ) ;
                                                                            // Power events wrapper used by resume theme restore
-                                                                           services.AddSingleton<IPowerEvents, PowerEventsWrapper>();
                                                                            services
-                                                                              .AddSingleton < ThemeRestoreOnResume > ( ) ;
+                                                                              .AddSingleton < IPowerEvents ,
+                                                                                   PowerEventsWrapper > ( ) ;
                                                                            services
-                                                                              .AddHostedService < ThemeRestoreActivator > ( ) ;
+                                                                              .AddSingleton <
+                                                                                   ThemeRestoreOnResume > ( ) ;
+                                                                           services
+                                                                              .AddHostedService <
+                                                                                   ThemeRestoreActivator > ( ) ;
                                                                            services
                                                                               .AddTransient <
                                                                                    IThemeRestoreWithDelayOnResume ,
@@ -250,13 +293,13 @@ public partial class App
                                                                                                              period ) ) ;
                                                                            services.AddSingleton ( _ =>
                                                                                                        CreateMainWindow ( ) ) ;
-                                                                               services
-                                                                                  .AddSingleton < IAssemblyVersionProvider ,
-                                                                                       AssemblyVersionProvider > ( ) ;
-                                                                               services
-                                                                                  .AddSingleton < IAvailableKeysProvider ,
-                                                                                       AvailableKeysProvider > ( ) ;
-                                                                           } ).Build ( ) ;
+                                                                           services
+                                                                              .AddSingleton < IAssemblyVersionProvider ,
+                                                                                   AssemblyVersionProvider > ( ) ;
+                                                                           services
+                                                                              .AddSingleton < IAvailableKeysProvider ,
+                                                                                   AvailableKeysProvider > ( ) ;
+                                                                       } ).Build ( ) ;
 
     private static Mutex ? _singleInstanceMutex ;
 
@@ -340,9 +383,9 @@ public partial class App
 
             // Show critical error to user and exit
             MessageBox.Show ( $"Failed to start application: {ex.Message}\n\nPlease check the logs for more details." ,
-                             "Startup Error" ,
-                             MessageBoxButton.OK ,
-                             MessageBoxImage.Error ) ;
+                              "Startup Error" ,
+                              MessageBoxButton.OK ,
+                              MessageBoxImage.Error ) ;
 
             // Exit the application since startup failed
             Shutdown ( 1 ) ;
@@ -492,7 +535,7 @@ public partial class App
         catch ( Exception ex )
         {
             Log.Warning ( ex ,
-                         "Failed to release or dispose single instance mutex" ) ;
+                          "Failed to release or dispose single instance mutex" ) ;
         }
     }
 }

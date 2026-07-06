@@ -1,10 +1,11 @@
+using System.Diagnostics ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Microsoft.Win32 ;
 using Serilog ;
 
 namespace Idasen.SystemTray.Win11.Utils ;
 
-public partial class ThemeRestoreOnResume (
+public class ThemeRestoreOnResume (
     ILogger                        logger ,
     IPowerEvents                   powerEvents ,
     IThemeRestoreWithDelayOnResume themeRestoreWithDelay )
@@ -75,16 +76,16 @@ public partial class ThemeRestoreOnResume (
     private void ReapplyConfiguredThemeWithDelay ( )
     {
         Task.Run ( async ( ) =>
-        {
-            try
-            {
-                await themeRestoreWithDelay.ApplyWithDelayAsync ( CancellationToken.None ) ;
-            }
-            catch ( Exception ex )
-            {
-                // Log error but don't crash - theme restoration is non-critical
-                System.Diagnostics.Debug.WriteLine ( $"Theme restoration failed: {ex.Message}" ) ;
-            }
-        } ) ;
+                   {
+                       try
+                       {
+                           await themeRestoreWithDelay.ApplyWithDelayAsync ( CancellationToken.None ) ;
+                       }
+                       catch ( Exception ex )
+                       {
+                           // Log error but don't crash - theme restoration is non-critical
+                           Debug.WriteLine ( $"Theme restoration failed: {ex.Message}" ) ;
+                       }
+                   } ) ;
     }
 }

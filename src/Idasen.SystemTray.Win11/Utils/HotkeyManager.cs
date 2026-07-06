@@ -1,6 +1,7 @@
 using System.Windows.Input ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using NHotkey ;
+using NHotkey.Wpf ;
 using Serilog ;
 using Wpf.Ui.Controls ;
 using WpfHotkeyManager = NHotkey.Wpf.HotkeyManager ;
@@ -30,26 +31,26 @@ public sealed class HotkeyManager : IHotkeyManager
                                                             ModifierKeys.Control | ModifierKeys.Alt |
                                                             ModifierKeys.Shift) ;
 
-    private static readonly char [ ] ModifierSeparators = [ ',' , ' ' ] ;
+    private static readonly char [ ] ModifierSeparators = [',' , ' '] ;
 
-    private readonly ILogger           _logger ;
-    private readonly ISettingsManager  _settingsManager ;
-    private readonly INotifications    _notifications ;
+    private readonly ILogger          _logger ;
+    private readonly INotifications   _notifications ;
+    private readonly ISettingsManager _settingsManager ;
 
     private bool _disposed ;
 
     public HotkeyManager (
-        ILogger           logger ,
-        ISettingsManager  settingsManager ,
-        INotifications    notifications )
+        ILogger          logger ,
+        ISettingsManager settingsManager ,
+        INotifications   notifications )
     {
         ArgumentNullException.ThrowIfNull ( logger ) ;
         ArgumentNullException.ThrowIfNull ( settingsManager ) ;
         ArgumentNullException.ThrowIfNull ( notifications ) ;
 
-        _logger           = logger ;
-        _settingsManager  = settingsManager ;
-        _notifications    = notifications ;
+        _logger          = logger ;
+        _settingsManager = settingsManager ;
+        _notifications   = notifications ;
 
         WpfHotkeyManager.HotkeyAlreadyRegistered += HotkeyManager_HotkeyAlreadyRegistered ;
     }
@@ -81,7 +82,7 @@ public sealed class HotkeyManager : IHotkeyManager
         catch ( Exception ex )
         {
             _logger.Warning ( ex ,
-                             "Failed to unregister hotkeys during disposal (hotkeys may not have been registered)" ) ;
+                              "Failed to unregister hotkeys during disposal (hotkeys may not have been registered)" ) ;
         }
     }
 
@@ -93,26 +94,34 @@ public sealed class HotkeyManager : IHotkeyManager
 
         // Create gestures from settings or use defaults
         var standingGesture = CreateKeyGesture ( hotkeySettings.StandingKey ,
-                                                hotkeySettings.StandingModifiers ,
-                                                StandingGesture ) ;
+                                                 hotkeySettings.StandingModifiers ,
+                                                 StandingGesture ) ;
 
         var seatingGesture = CreateKeyGesture ( hotkeySettings.SeatingKey ,
-                                               hotkeySettings.SeatingModifiers ,
-                                               SittingGesture ) ;
+                                                hotkeySettings.SeatingModifiers ,
+                                                SittingGesture ) ;
 
         var custom1Gesture = CreateKeyGesture ( hotkeySettings.Custom1Key ,
-                                               hotkeySettings.Custom1Modifiers ,
-                                               Custom1Gesture ) ;
+                                                hotkeySettings.Custom1Modifiers ,
+                                                Custom1Gesture ) ;
 
         var custom2Gesture = CreateKeyGesture ( hotkeySettings.Custom2Key ,
-                                               hotkeySettings.Custom2Modifiers ,
-                                               Custom2Gesture ) ;
+                                                hotkeySettings.Custom2Modifiers ,
+                                                Custom2Gesture ) ;
 
         // Register hotkeys - safely handle if they don't exist
-        SafeAddOrReplaceHotkey ( HotkeyNameStanding , standingGesture , OnGlobalHotKeyStanding ) ;
-        SafeAddOrReplaceHotkey ( HotkeyNameSeating , seatingGesture , OnGlobalHotKeySeating ) ;
-        SafeAddOrReplaceHotkey ( HotkeyNameCustom1 , custom1Gesture , OnGlobalHotKeyCustom1 ) ;
-        SafeAddOrReplaceHotkey ( HotkeyNameCustom2 , custom2Gesture , OnGlobalHotKeyCustom2 ) ;
+        SafeAddOrReplaceHotkey ( HotkeyNameStanding ,
+                                 standingGesture ,
+                                 OnGlobalHotKeyStanding ) ;
+        SafeAddOrReplaceHotkey ( HotkeyNameSeating ,
+                                 seatingGesture ,
+                                 OnGlobalHotKeySeating ) ;
+        SafeAddOrReplaceHotkey ( HotkeyNameCustom1 ,
+                                 custom1Gesture ,
+                                 OnGlobalHotKeyCustom1 ) ;
+        SafeAddOrReplaceHotkey ( HotkeyNameCustom2 ,
+                                 custom2Gesture ,
+                                 OnGlobalHotKeyCustom2 ) ;
 
         _logger.Information ( "Global hotkeys registered successfully" ) ;
     }
@@ -121,8 +130,8 @@ public sealed class HotkeyManager : IHotkeyManager
     {
         _logger.Information ( "Unregistering global hotkeys..." ) ;
 
-        var failedHotkeys = new List<string> ( ) ;
-        Exception? firstException = null ;
+        var         failedHotkeys  = new List < string > ( ) ;
+        Exception ? firstException = null ;
 
         var standingException = TryUnregisterGlobalHotkey ( HotkeyNameStanding ) ;
         if ( standingException is not null )
@@ -159,8 +168,8 @@ public sealed class HotkeyManager : IHotkeyManager
         }
 
         throw new InvalidOperationException (
-            $"Failed to unregister global hotkeys: {string.Join ( ", " , failedHotkeys )}. Hotkeys may still be active." ,
-            firstException ) ;
+                                             $"Failed to unregister global hotkeys: {string.Join ( ", " , failedHotkeys )}. Hotkeys may still be active." ,
+                                             firstException ) ;
     }
 
     private void SafeAddOrReplaceHotkey ( string name , KeyGesture gesture , EventHandler < HotkeyEventArgs > handler )
@@ -171,17 +180,24 @@ public sealed class HotkeyManager : IHotkeyManager
             try
             {
                 WpfHotkeyManager.Current.Remove ( name ) ;
-                _logger.Debug ( "Removed existing hotkey: {HotkeyName}" , name ) ;
+                _logger.Debug ( "Removed existing hotkey: {HotkeyName}" ,
+                                name ) ;
             }
             catch ( Exception ex )
             {
                 // Hotkey doesn't exist, that's fine
-                _logger.Debug ( ex , "Hotkey {HotkeyName} was not previously registered" , name ) ;
+                _logger.Debug ( ex ,
+                                "Hotkey {HotkeyName} was not previously registered" ,
+                                name ) ;
             }
 
             // Now add the hotkey
-            WpfHotkeyManager.Current.AddOrReplace ( name , gesture , handler ) ;
-            _logger.Debug ( "Registered hotkey: {HotkeyName} with gesture: {Gesture}" , name , gesture ) ;
+            WpfHotkeyManager.Current.AddOrReplace ( name ,
+                                                    gesture ,
+                                                    handler ) ;
+            _logger.Debug ( "Registered hotkey: {HotkeyName} with gesture: {Gesture}" ,
+                            name ,
+                            gesture ) ;
         }
         catch ( Exception e )
         {
@@ -191,13 +207,15 @@ public sealed class HotkeyManager : IHotkeyManager
         }
     }
 
-    private Exception? TryUnregisterGlobalHotkey ( string hotkeyName )
+    private Exception ? TryUnregisterGlobalHotkey ( string hotkeyName )
     {
         try
         {
-            _logger.Debug ( "Attempting to remove hotkey: {HotkeyName}" , hotkeyName ) ;
+            _logger.Debug ( "Attempting to remove hotkey: {HotkeyName}" ,
+                            hotkeyName ) ;
             WpfHotkeyManager.Current.Remove ( hotkeyName ) ;
-            _logger.Information ( "Successfully removed hotkey: {HotkeyName}" , hotkeyName ) ;
+            _logger.Information ( "Successfully removed hotkey: {HotkeyName}" ,
+                                  hotkeyName ) ;
             return null ;
         }
         catch ( Exception e )
@@ -209,7 +227,7 @@ public sealed class HotkeyManager : IHotkeyManager
         }
     }
 
-    private void HotkeyManager_HotkeyAlreadyRegistered ( object ? sender , NHotkey.Wpf.HotkeyAlreadyRegisteredEventArgs e )
+    private void HotkeyManager_HotkeyAlreadyRegistered ( object ? sender , HotkeyAlreadyRegisteredEventArgs e )
     {
         _logger.Warning ( "The hotkey {Name} is already registered by another application" ,
                           e.Name ) ;
@@ -226,12 +244,12 @@ public sealed class HotkeyManager : IHotkeyManager
     private static Key ParseKey ( string keyString )
     {
         // Handle user-friendly number key display names (1-9, 0) by mapping to their Key enum names (D1-D9, D0)
-        if ( keyString.Length == 1 && char.IsDigit ( keyString [ 0 ] ) )
-        {
-            keyString = "D" + keyString ;
-        }
+        if ( keyString.Length == 1 &&
+             char.IsDigit ( keyString [ 0 ] ) ) keyString = "D" + keyString ;
 
-        if ( Enum.TryParse < Key > ( keyString , true , out var key ) )
+        if ( Enum.TryParse < Key > ( keyString ,
+                                     true ,
+                                     out var key ) )
             return key ;
 
         throw new ArgumentException ( $"Invalid key string: '{keyString}'" ,
@@ -252,7 +270,9 @@ public sealed class HotkeyManager : IHotkeyManager
                                            StringSplitOptions.RemoveEmptyEntries ) ;
 
         foreach ( var part in parts )
-            if ( Enum.TryParse < ModifierKeys > ( part , true , out var modifier ) )
+            if ( Enum.TryParse < ModifierKeys > ( part ,
+                                                  true ,
+                                                  out var modifier ) )
                 modifiers |= modifier ;
 
         return modifiers ;
@@ -261,9 +281,9 @@ public sealed class HotkeyManager : IHotkeyManager
     /// <summary>
     ///     Creates a KeyGesture from key and modifier strings, with fallback to default gesture.
     /// </summary>
-    private KeyGesture CreateKeyGesture ( string keyString ,
-                                         string modifierString ,
-                                         KeyGesture defaultGesture )
+    private KeyGesture CreateKeyGesture ( string     keyString ,
+                                          string     modifierString ,
+                                          KeyGesture defaultGesture )
     {
         try
         {
@@ -271,14 +291,14 @@ public sealed class HotkeyManager : IHotkeyManager
             var modifiers = ParseModifierKeys ( modifierString ) ;
 
             return new KeyGesture ( key ,
-                                   modifiers ) ;
+                                    modifiers ) ;
         }
         catch ( Exception ex )
         {
             _logger.Warning ( ex ,
-                             "Failed to parse hotkey configuration (Key: '{Key}', Modifiers: '{Modifiers}'). Using default." ,
-                             keyString ,
-                             modifierString ) ;
+                              "Failed to parse hotkey configuration (Key: '{Key}', Modifiers: '{Modifiers}'). Using default." ,
+                              keyString ,
+                              modifierString ) ;
 
             return defaultGesture ;
         }
@@ -289,7 +309,8 @@ public sealed class HotkeyManager : IHotkeyManager
         try
         {
             _logger.Information ( "Received global hot key for 'Standing' command..." ) ;
-            StandingHotkeyPressed?.Invoke ( this , EventArgs.Empty ) ;
+            StandingHotkeyPressed?.Invoke ( this ,
+                                            EventArgs.Empty ) ;
         }
         catch ( Exception exception )
         {
@@ -303,7 +324,8 @@ public sealed class HotkeyManager : IHotkeyManager
         try
         {
             _logger.Information ( "Received global hot key for 'Seating' command..." ) ;
-            SeatingHotkeyPressed?.Invoke ( this , EventArgs.Empty ) ;
+            SeatingHotkeyPressed?.Invoke ( this ,
+                                           EventArgs.Empty ) ;
         }
         catch ( Exception exception )
         {
@@ -317,7 +339,8 @@ public sealed class HotkeyManager : IHotkeyManager
         try
         {
             _logger.Information ( "Received global hot key for 'Custom1' command..." ) ;
-            Custom1HotkeyPressed?.Invoke ( this , EventArgs.Empty ) ;
+            Custom1HotkeyPressed?.Invoke ( this ,
+                                           EventArgs.Empty ) ;
         }
         catch ( Exception exception )
         {
@@ -331,7 +354,8 @@ public sealed class HotkeyManager : IHotkeyManager
         try
         {
             _logger.Information ( "Received global hot key for 'Custom2' command..." ) ;
-            Custom2HotkeyPressed?.Invoke ( this , EventArgs.Empty ) ;
+            Custom2HotkeyPressed?.Invoke ( this ,
+                                           EventArgs.Empty ) ;
         }
         catch ( Exception exception )
         {

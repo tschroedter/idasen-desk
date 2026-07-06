@@ -6,7 +6,7 @@ namespace Idasen.SystemTray.Win11.Utils ;
 ///     Application configuration organized by concern.
 ///     Provides centralized, discoverable constants for application behavior, defaults, and timeouts.
 /// </summary>
-[ExcludeFromCodeCoverage]
+[ ExcludeFromCodeCoverage ]
 public static class AppConfiguration
 {
     /// <summary>
@@ -257,14 +257,14 @@ public static class Constants
     [ Obsolete ( "Use AppConfiguration.Hotkeys.Custom2Name" ) ]
     public const string DefaultCustom2Name = "Custom 2" ;
 
-    [ Obsolete ( "Use AppConfiguration.Defaults.NotificationsEnabled" ) ]
-    public static readonly bool NotificationsEnabled = true ;
-
     [ Obsolete ( "Use AppConfiguration.UI.DeskHeightFactor" ) ]
     public const uint DeskHeightFactor = 100 ;
 
     [ Obsolete ( "Use AppConfiguration.Timeouts.HeightChangeThrottleSeconds" ) ]
     public const int HeightChangeThrottleSeconds = 1 ;
+
+    [ Obsolete ( "Use AppConfiguration.Defaults.NotificationsEnabled" ) ]
+    public static readonly bool NotificationsEnabled = true ;
 
     /// <summary>
     ///     Timeout configuration for various operations

@@ -38,25 +38,15 @@ public class HeightSettingsValidator : IHeightSettingsValidator
 
         // Check absolute bounds first
         if ( height < AbsoluteMinHeight )
-        {
             errors.Add ( $"Height {height} cm is below the absolute minimum of {AbsoluteMinHeight} cm." ) ;
-        }
 
         if ( height > AbsoluteMaxHeight )
-        {
             errors.Add ( $"Height {height} cm exceeds the absolute maximum of {AbsoluteMaxHeight} cm." ) ;
-        }
 
         // Check against desk-specific constraints
-        if ( height < minHeight )
-        {
-            errors.Add ( $"Height {height} cm is below the desk minimum of {minHeight} cm." ) ;
-        }
+        if ( height < minHeight ) errors.Add ( $"Height {height} cm is below the desk minimum of {minHeight} cm." ) ;
 
-        if ( height > maxHeight )
-        {
-            errors.Add ( $"Height {height} cm exceeds the desk maximum of {maxHeight} cm." ) ;
-        }
+        if ( height > maxHeight ) errors.Add ( $"Height {height} cm exceeds the desk maximum of {maxHeight} cm." ) ;
 
         return errors.Count == 0
                    ? ValidationResult.Success ( )
@@ -69,30 +59,22 @@ public class HeightSettingsValidator : IHeightSettingsValidator
 
         // Check absolute bounds
         if ( minHeight < AbsoluteMinHeight )
-        {
             errors.Add ( $"Minimum height {minHeight} cm is below the absolute minimum of {AbsoluteMinHeight} cm." ) ;
-        }
 
         if ( maxHeight > AbsoluteMaxHeight )
-        {
             errors.Add ( $"Maximum height {maxHeight} cm exceeds the absolute maximum of {AbsoluteMaxHeight} cm." ) ;
-        }
 
         // Check that min is less than max
         if ( minHeight >= maxHeight )
-        {
             errors.Add ( $"Minimum height ({minHeight} cm) must be less than maximum height ({maxHeight} cm)." ) ;
-        }
 
         // Check that the range is reasonable
         if ( maxHeight > minHeight )
         {
-            int heightRange = (int)maxHeight - (int)minHeight;
+            var heightRange = ( int )maxHeight - ( int )minHeight ;
 
             if ( heightRange < MinHeightRange )
-            {
                 errors.Add ( $"Height range ({heightRange} cm) is too small. Minimum range is {MinHeightRange} cm." ) ;
-            }
         }
 
         return errors.Count == 0
@@ -110,7 +92,8 @@ public class HeightSettingsValidator : IHeightSettingsValidator
         var errors = new List < string > ( ) ;
 
         // First validate the constraints themselves
-        var constraintsResult = ValidateMinMaxConstraints ( minHeight , maxHeight ) ;
+        var constraintsResult = ValidateMinMaxConstraints ( minHeight ,
+                                                            maxHeight ) ;
         if ( ! constraintsResult.IsValid )
         {
             errors.AddRange ( constraintsResult.Errors ) ;
@@ -119,35 +102,29 @@ public class HeightSettingsValidator : IHeightSettingsValidator
         }
 
         // Validate each preset height
-        var standingResult = ValidateHeight ( standing , minHeight , maxHeight ) ;
-        if ( ! standingResult.IsValid )
-        {
-            errors.AddRange ( standingResult.Errors.Select ( e => $"Standing: {e}" ) ) ;
-        }
+        var standingResult = ValidateHeight ( standing ,
+                                              minHeight ,
+                                              maxHeight ) ;
+        if ( ! standingResult.IsValid ) errors.AddRange ( standingResult.Errors.Select ( e => $"Standing: {e}" ) ) ;
 
-        var seatingResult = ValidateHeight ( seating , minHeight , maxHeight ) ;
-        if ( ! seatingResult.IsValid )
-        {
-            errors.AddRange ( seatingResult.Errors.Select ( e => $"Seating: {e}" ) ) ;
-        }
+        var seatingResult = ValidateHeight ( seating ,
+                                             minHeight ,
+                                             maxHeight ) ;
+        if ( ! seatingResult.IsValid ) errors.AddRange ( seatingResult.Errors.Select ( e => $"Seating: {e}" ) ) ;
 
-        var custom1Result = ValidateHeight ( custom1 , minHeight , maxHeight ) ;
-        if ( ! custom1Result.IsValid )
-        {
-            errors.AddRange ( custom1Result.Errors.Select ( e => $"Custom 1: {e}" ) ) ;
-        }
+        var custom1Result = ValidateHeight ( custom1 ,
+                                             minHeight ,
+                                             maxHeight ) ;
+        if ( ! custom1Result.IsValid ) errors.AddRange ( custom1Result.Errors.Select ( e => $"Custom 1: {e}" ) ) ;
 
-        var custom2Result = ValidateHeight ( custom2 , minHeight , maxHeight ) ;
-        if ( ! custom2Result.IsValid )
-        {
-            errors.AddRange ( custom2Result.Errors.Select ( e => $"Custom 2: {e}" ) ) ;
-        }
+        var custom2Result = ValidateHeight ( custom2 ,
+                                             minHeight ,
+                                             maxHeight ) ;
+        if ( ! custom2Result.IsValid ) errors.AddRange ( custom2Result.Errors.Select ( e => $"Custom 2: {e}" ) ) ;
 
         // Logical validation: standing should typically be higher than seating
         if ( standing <= seating )
-        {
             errors.Add ( $"Warning: Standing height ({standing} cm) should typically be higher than seating height ({seating} cm)." ) ;
-        }
 
         return errors.Count == 0
                    ? ValidationResult.Success ( )
@@ -167,21 +144,15 @@ public class HeightSettingsValidator : IHeightSettingsValidator
         var trimmedName = name.Trim ( ) ;
 
         if ( trimmedName.Length < MinPresetNameLength )
-        {
             errors.Add ( $"Preset name must be at least {MinPresetNameLength} character long." ) ;
-        }
 
         if ( trimmedName.Length > MaxPresetNameLength )
-        {
             errors.Add ( $"Preset name cannot exceed {MaxPresetNameLength} characters." ) ;
-        }
 
         // Check for invalid characters (optional - you can customize this)
         var invalidChars = new [ ] { '<' , '>' , ':' , '"' , '/' , '\\' , '|' , '?' , '*' } ;
         if ( trimmedName.Any ( c => invalidChars.Contains ( c ) ) )
-        {
             errors.Add ( $"Preset name contains invalid characters. Avoid: {string.Join ( " " , invalidChars )}" ) ;
-        }
 
         return errors.Count == 0
                    ? ValidationResult.Success ( )

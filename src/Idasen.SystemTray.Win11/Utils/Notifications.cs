@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis ;
+using System.Diagnostics.CodeAnalysis ;
 using System.Reactive.Subjects ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Serilog ;
@@ -8,7 +8,7 @@ using Wpf.Ui.Tray.Controls ;
 namespace Idasen.SystemTray.Win11.Utils ;
 
 [ ExcludeFromCodeCoverage ]
-public partial class Notifications : INotifications
+public class Notifications : INotifications
 {
     private readonly ILogger                            _logger ;
     private readonly ISettingsManager                   _manager ;
@@ -42,36 +42,17 @@ public partial class Notifications : INotifications
         return this ;
     }
 
-    private void StartBackgroundInitialization ( CancellationToken token )
-    {
-        Task.Run ( async ( ) =>
-                   {
-                       try
-                       {
-                           await _manager.LoadAsync ( token ).ConfigureAwait ( false ) ;
-
-                           Show ( $"Idasen System Tray {_version.GetVersion ( )}" ,
-                                  "Running..." ,
-                                  InfoBarSeverity.Informational ) ;
-                       }
-                       catch ( OperationCanceledException ex )
-                       {
-                           _logger.Warning ( ex ,
-                                             "Notifications initialization canceled" ) ;
-                       }
-                       catch ( Exception ex )
-                       {
-                           _logger.Error ( ex ,
-                                           "Failed to initialize notifications" ) ;
-                       }
-                   } ,
-                   token ) ;
-    }
-
     public void Dispose ( )
     {
         Dispose ( true ) ;
         GC.SuppressFinalize ( this ) ;
+    }
+
+    public void Show ( string title , string text , InfoBarSeverity serverity )
+    {
+        Show ( new NotificationParameters ( title ,
+                                            text ,
+                                            serverity ) ) ;
     }
 
     protected virtual void Dispose ( bool disposing )
@@ -89,13 +70,6 @@ public partial class Notifications : INotifications
 
             _disposedValue = true ;
         }
-    }
-
-    public void Show(string title, string text, InfoBarSeverity serverity)
-    {
-        Show(new NotificationParameters(title,
-                                        text,
-                                        serverity));
     }
 
     public void Show ( NotificationParameters parameters )
@@ -132,5 +106,31 @@ public partial class Notifications : INotifications
                         parameters ) ;
 
         _toast.Show ( parameters ) ;
+    }
+
+    private void StartBackgroundInitialization(CancellationToken token)
+    {
+        Task.Run(async () =>
+                 {
+                     try
+                     {
+                         await _manager.LoadAsync(token).ConfigureAwait(false);
+
+                         Show($"Idasen System Tray {_version.GetVersion()}",
+                              "Running...",
+                              InfoBarSeverity.Informational);
+                     }
+                     catch (OperationCanceledException ex)
+                     {
+                         _logger.Warning(ex,
+                                         "Notifications initialization canceled");
+                     }
+                     catch (Exception ex)
+                     {
+                         _logger.Error(ex,
+                                       "Failed to initialize notifications");
+                     }
+                 },
+                 token);
     }
 }

@@ -5,7 +5,7 @@ namespace Idasen.SystemTray.Win11.Tests.Utils.Validation ;
 
 public class HeightSettingsValidatorTests
 {
-    private readonly HeightSettingsValidator _validator = new ( ) ;
+    private readonly HeightSettingsValidator _validator = new( ) ;
 
     [ Fact ]
     public void ValidateHeight_WithValidHeight_ReturnsSuccess ( )
@@ -16,7 +16,9 @@ public class HeightSettingsValidatorTests
         const uint maxHeight = 127 ;
 
         // Act
-        var result = _validator.ValidateHeight ( height , minHeight , maxHeight ) ;
+        var result = _validator.ValidateHeight ( height ,
+                                                 minHeight ,
+                                                 maxHeight ) ;
 
         // Assert
         result.IsValid.Should ( ).BeTrue ( ) ;
@@ -32,7 +34,9 @@ public class HeightSettingsValidatorTests
         const uint maxHeight = 127 ;
 
         // Act
-        var result = _validator.ValidateHeight ( height , minHeight , maxHeight ) ;
+        var result = _validator.ValidateHeight ( height ,
+                                                 minHeight ,
+                                                 maxHeight ) ;
 
         // Assert
         result.IsValid.Should ( ).BeFalse ( ) ;
@@ -48,7 +52,9 @@ public class HeightSettingsValidatorTests
         const uint maxHeight = 127 ;
 
         // Act
-        var result = _validator.ValidateHeight ( height , minHeight , maxHeight ) ;
+        var result = _validator.ValidateHeight ( height ,
+                                                 minHeight ,
+                                                 maxHeight ) ;
 
         // Assert
         result.IsValid.Should ( ).BeFalse ( ) ;
@@ -64,7 +70,9 @@ public class HeightSettingsValidatorTests
         const uint maxHeight = 127 ;
 
         // Act
-        var result = _validator.ValidateHeight ( height , minHeight , maxHeight ) ;
+        var result = _validator.ValidateHeight ( height ,
+                                                 minHeight ,
+                                                 maxHeight ) ;
 
         // Assert
         result.IsValid.Should ( ).BeFalse ( ) ;
@@ -80,7 +88,9 @@ public class HeightSettingsValidatorTests
         const uint maxHeight = 135 ;
 
         // Act
-        var result = _validator.ValidateHeight ( height , minHeight , maxHeight ) ;
+        var result = _validator.ValidateHeight ( height ,
+                                                 minHeight ,
+                                                 maxHeight ) ;
 
         // Assert
         result.IsValid.Should ( ).BeFalse ( ) ;
@@ -95,7 +105,8 @@ public class HeightSettingsValidatorTests
         const uint maxHeight = 127 ;
 
         // Act
-        var result = _validator.ValidateMinMaxConstraints ( minHeight , maxHeight ) ;
+        var result = _validator.ValidateMinMaxConstraints ( minHeight ,
+                                                            maxHeight ) ;
 
         // Assert
         result.IsValid.Should ( ).BeTrue ( ) ;
@@ -110,7 +121,8 @@ public class HeightSettingsValidatorTests
         const uint maxHeight = 60 ;
 
         // Act
-        var result = _validator.ValidateMinMaxConstraints ( minHeight , maxHeight ) ;
+        var result = _validator.ValidateMinMaxConstraints ( minHeight ,
+                                                            maxHeight ) ;
 
         // Assert
         result.IsValid.Should ( ).BeFalse ( ) ;
@@ -125,7 +137,8 @@ public class HeightSettingsValidatorTests
         const uint maxHeight = 100 ;
 
         // Act
-        var result = _validator.ValidateMinMaxConstraints ( minHeight , maxHeight ) ;
+        var result = _validator.ValidateMinMaxConstraints ( minHeight ,
+                                                            maxHeight ) ;
 
         // Assert
         result.IsValid.Should ( ).BeFalse ( ) ;
@@ -140,7 +153,8 @@ public class HeightSettingsValidatorTests
         const uint maxHeight = 105 ; // Only 5 cm range, minimum is 10 cm
 
         // Act
-        var result = _validator.ValidateMinMaxConstraints ( minHeight , maxHeight ) ;
+        var result = _validator.ValidateMinMaxConstraints ( minHeight ,
+                                                            maxHeight ) ;
 
         // Assert
         result.IsValid.Should ( ).BeFalse ( ) ;
@@ -155,7 +169,8 @@ public class HeightSettingsValidatorTests
         const uint maxHeight = 127 ;
 
         // Act
-        var result = _validator.ValidateMinMaxConstraints ( minHeight , maxHeight ) ;
+        var result = _validator.ValidateMinMaxConstraints ( minHeight ,
+                                                            maxHeight ) ;
 
         // Assert
         result.IsValid.Should ( ).BeFalse ( ) ;
@@ -170,7 +185,8 @@ public class HeightSettingsValidatorTests
         const uint maxHeight = 135 ; // Above absolute maximum of 130
 
         // Act
-        var result = _validator.ValidateMinMaxConstraints ( minHeight , maxHeight ) ;
+        var result = _validator.ValidateMinMaxConstraints ( minHeight ,
+                                                            maxHeight ) ;
 
         // Assert
         result.IsValid.Should ( ).BeFalse ( ) ;
@@ -189,7 +205,12 @@ public class HeightSettingsValidatorTests
         const uint maxHeight = 127 ;
 
         // Act
-        var result = _validator.ValidateAllHeights ( standing , seating , custom1 , custom2 , minHeight , maxHeight ) ;
+        var result = _validator.ValidateAllHeights ( standing ,
+                                                     seating ,
+                                                     custom1 ,
+                                                     custom2 ,
+                                                     minHeight ,
+                                                     maxHeight ) ;
 
         // Assert
         result.IsValid.Should ( ).BeTrue ( ) ;
@@ -200,7 +221,7 @@ public class HeightSettingsValidatorTests
     public void ValidateAllHeights_StandingLowerThanSeating_ReturnsWarning ( )
     {
         // Arrange
-        const uint standing  = 75 ;  // Lower than seating
+        const uint standing  = 75 ; // Lower than seating
         const uint seating   = 120 ;
         const uint custom1   = 100 ;
         const uint custom2   = 85 ;
@@ -208,7 +229,12 @@ public class HeightSettingsValidatorTests
         const uint maxHeight = 127 ;
 
         // Act
-        var result = _validator.ValidateAllHeights ( standing , seating , custom1 , custom2 , minHeight , maxHeight ) ;
+        var result = _validator.ValidateAllHeights ( standing ,
+                                                     seating ,
+                                                     custom1 ,
+                                                     custom2 ,
+                                                     minHeight ,
+                                                     maxHeight ) ;
 
         // Assert
         result.IsValid.Should ( ).BeFalse ( ) ;
@@ -227,7 +253,12 @@ public class HeightSettingsValidatorTests
         const uint maxHeight = 127 ;
 
         // Act
-        var result = _validator.ValidateAllHeights ( standing , seating , custom1 , custom2 , minHeight , maxHeight ) ;
+        var result = _validator.ValidateAllHeights ( standing ,
+                                                     seating ,
+                                                     custom1 ,
+                                                     custom2 ,
+                                                     minHeight ,
+                                                     maxHeight ) ;
 
         // Assert
         result.IsValid.Should ( ).BeFalse ( ) ;
@@ -248,7 +279,12 @@ public class HeightSettingsValidatorTests
         const uint maxHeight = 60 ;
 
         // Act
-        var result = _validator.ValidateAllHeights ( standing , seating , custom1 , custom2 , minHeight , maxHeight ) ;
+        var result = _validator.ValidateAllHeights ( standing ,
+                                                     seating ,
+                                                     custom1 ,
+                                                     custom2 ,
+                                                     minHeight ,
+                                                     maxHeight ) ;
 
         // Assert
         result.IsValid.Should ( ).BeFalse ( ) ;
@@ -301,7 +337,8 @@ public class HeightSettingsValidatorTests
     public void ValidatePresetName_TooLong_ReturnsFailure ( )
     {
         // Arrange
-        var name = new string ( 'A' , 51 ) ; // 51 characters, max is 50
+        var name = new string ( 'A' ,
+                                51 ) ; // 51 characters, max is 50
 
         // Act
         var result = _validator.ValidatePresetName ( name ) ;

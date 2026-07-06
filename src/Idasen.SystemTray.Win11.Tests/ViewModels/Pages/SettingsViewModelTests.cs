@@ -7,9 +7,9 @@ using Idasen.SystemTray.Win11.TraySettings ;
 using Idasen.SystemTray.Win11.Utils ;
 using Idasen.SystemTray.Win11.Utils.Validation ;
 using Idasen.SystemTray.Win11.ViewModels.Pages ;
+using Idasen.TestLogger ;
 using Microsoft.Reactive.Testing ;
 using NSubstitute ;
-using Serilog ;
 using Wpf.Ui.Appearance ;
 
 #pragma warning disable CA2012 // Use ValueTasks correctly - disabled for test mocking
@@ -19,18 +19,18 @@ namespace Idasen.SystemTray.Win11.Tests.ViewModels.Pages ;
 public sealed class SettingsViewModelTests
     : IDisposable
 {
-    private readonly ILogger                   _logger               = Substitute.For < ILogger > ( ) ;
-    private readonly IMainWindow               _mainWindow           = Substitute.For < IMainWindow > ( ) ;
-    private readonly TestScheduler             _scheduler            = new( ) ;
-    private readonly ILoggingSettingsManager   _settingsManager      = Substitute.For < ILoggingSettingsManager > ( ) ;
-    private readonly IHeightSettingsValidator  _heightValidator      = new HeightSettingsValidator ( ) ;
+    private readonly IAvailableKeysProvider   _availableKeysProvider = Substitute.For < IAvailableKeysProvider > ( ) ;
+    private readonly IHeightSettingsValidator _heightValidator       = new HeightSettingsValidator ( ) ;
+    private readonly InMemoryLogger           _logger                = new( ) ;
+    private readonly IMainWindow              _mainWindow            = Substitute.For < IMainWindow > ( ) ;
+    private readonly TestScheduler            _scheduler             = new( ) ;
+    private readonly ILoggingSettingsManager  _settingsManager       = Substitute.For < ILoggingSettingsManager > ( ) ;
 
-    private readonly Subject < ISettings >     _settingsSaved        = new( ) ;
-    private readonly ISettingsSynchronizer     _synchronizer         = Substitute.For < ISettingsSynchronizer > ( ) ;
-    private readonly IApplicationThemeManager  _themeManager         = Substitute.For < IApplicationThemeManager > ( ) ;
-    private readonly IAvailableKeysProvider    _availableKeysProvider = Substitute.For < IAvailableKeysProvider > ( ) ;
-    private readonly Subject < Visibility >    _visibilityChanges    = new( ) ;
-    private readonly ISettingsService          _settingsService      = Substitute.For < ISettingsService > ( ) ;
+    private readonly Subject < ISettings >    _settingsSaved     = new( ) ;
+    private readonly ISettingsService         _settingsService   = Substitute.For < ISettingsService > ( ) ;
+    private readonly ISettingsSynchronizer    _synchronizer      = Substitute.For < ISettingsSynchronizer > ( ) ;
+    private readonly IApplicationThemeManager _themeManager      = Substitute.For < IApplicationThemeManager > ( ) ;
+    private readonly Subject < Visibility >   _visibilityChanges = new( ) ;
 
     private bool _disposed ;
 
@@ -85,6 +85,7 @@ public sealed class SettingsViewModelTests
 
         if ( disposing )
         {
+            _logger.Dispose ( ) ;
             _settingsSaved.Dispose ( ) ;
             _visibilityChanges.Dispose ( ) ;
         }
@@ -675,8 +676,8 @@ public sealed class SettingsViewModelTests
 
         // Act
         vm.StandingControl = true ;
-        vm.StandingAlt = true ;
-        vm.StandingShift = true ;
+        vm.StandingAlt     = true ;
+        vm.StandingShift   = true ;
 
         // Assert
         vm.StandingModifiers.Should ( ).Contain ( "Control" ) ;
@@ -693,8 +694,8 @@ public sealed class SettingsViewModelTests
 
         // Act
         vm.StandingControl = false ;
-        vm.StandingAlt = false ;
-        vm.StandingShift = false ;
+        vm.StandingAlt     = false ;
+        vm.StandingShift   = false ;
 
         // Assert
         vm.StandingModifiers.Should ( ).BeEmpty ( ) ;
@@ -971,7 +972,7 @@ public sealed class SettingsViewModelTests
 
         // Act
         vm.StandingName = string.Empty ;
-        vm.SeatingName = "   " ;
+        vm.SeatingName  = "   " ;
 
         // Assert - Empty/whitespace should be allowed, synchronizer will handle defaults
         vm.StandingName.Should ( ).BeEmpty ( ) ;

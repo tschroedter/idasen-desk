@@ -60,22 +60,29 @@ public class ValidationResult
     /// <summary>
     ///     Gets the list of error messages if validation failed.
     /// </summary>
-    public IReadOnlyList < string > Errors { get ; init ; } = [ ] ;
+    public IReadOnlyList < string > Errors { get ; init ; } = [] ;
 
     /// <summary>
     ///     Creates a successful validation result.
     /// </summary>
-    public static ValidationResult Success ( ) => new() { IsValid = true } ;
+    public static ValidationResult Success ( )
+    {
+        return new ValidationResult { IsValid = true } ;
+    }
 
     /// <summary>
     ///     Creates a failed validation result with error messages.
     /// </summary>
-    public static ValidationResult Failure ( params string [ ] errors ) =>
-        new() { IsValid = false , Errors = errors } ;
+    public static ValidationResult Failure ( params string [ ] errors )
+    {
+        return new ValidationResult { IsValid = false , Errors = errors } ;
+    }
 
     /// <summary>
     ///     Creates a failed validation result with a list of error messages.
     /// </summary>
-    public static ValidationResult Failure ( IReadOnlyList < string > errors ) =>
-        new() { IsValid = false , Errors = errors } ;
+    public static ValidationResult Failure ( IReadOnlyList < string > errors )
+    {
+        return new ValidationResult { IsValid = false , Errors = errors } ;
+    }
 }

@@ -1,3 +1,4 @@
+using System.ComponentModel ;
 using System.Diagnostics ;
 using System.Diagnostics.CodeAnalysis ;
 using System.IO ;
@@ -8,8 +9,8 @@ using Serilog ;
 namespace Idasen.SystemTray.Win11.Services ;
 
 public class DonateService (
-    IConfiguration  configuration ,
-    ILogger         logger ,
+    IConfiguration   configuration ,
+    ILogger          logger ,
     IProcessLauncher processLauncher ) : IDonateService
 {
 #pragma warning disable S1075 // URIs should not be hardcoded - This is a fallback URL when configuration is missing
@@ -27,19 +28,22 @@ public class DonateService (
                 logger.Debug ( "DonateUrl is not configured. Using built-in default donate URL." ) ;
                 donateUrl = DefaultDonateUrl ;
             }
-            else if ( ! TryCreateDonateUri ( donateUrl , out _ ) )
+            else if ( ! TryCreateDonateUri ( donateUrl ,
+                                             out _ ) )
             {
                 logger.Warning ( "DonateUrl is invalid or not an absolute HTTP/HTTPS URI, using default URL" ) ;
                 donateUrl = DefaultDonateUrl ;
             }
 
-            if ( ! TryCreateDonateUri ( donateUrl , out var donateUri ) )
+            if ( ! TryCreateDonateUri ( donateUrl ,
+                                        out var donateUri ) )
             {
                 logger.Error ( "Unable to open donate URL because neither the configured value nor the fallback URL is a valid absolute HTTP/HTTPS URI." ) ;
                 return ;
             }
 
-            logger.Information ( "Donate button clicked. Using DonateUrl: {DonateUrl}" , donateUri.AbsoluteUri ) ;
+            logger.Information ( "Donate button clicked. Using DonateUrl: {DonateUrl}" ,
+                                 donateUri.AbsoluteUri ) ;
 
             OpenUrlInBrowser ( donateUri.AbsoluteUri ) ;
         }
@@ -50,10 +54,12 @@ public class DonateService (
         }
     }
 
-    private static bool TryCreateDonateUri ( string url , [ NotNullWhen ( true ) ] out Uri? donateUri )
+    private static bool TryCreateDonateUri ( string url , [ NotNullWhen ( true ) ] out Uri ? donateUri )
     {
-        if ( Uri.TryCreate ( url , UriKind.Absolute , out var parsedUri )
-             && ( parsedUri.Scheme == Uri.UriSchemeHttp || parsedUri.Scheme == Uri.UriSchemeHttps ) )
+        if ( Uri.TryCreate ( url ,
+                             UriKind.Absolute ,
+                             out var parsedUri ) &&
+             ( parsedUri.Scheme == Uri.UriSchemeHttp || parsedUri.Scheme == Uri.UriSchemeHttps ) )
         {
             donateUri = parsedUri ;
             return true ;
@@ -68,7 +74,8 @@ public class DonateService (
         try
         {
             // Primary method: Direct Process.Start with UseShellExecute
-            logger.Information ( "Attempting to open URL: {Url}" , url ) ;
+            logger.Information ( "Attempting to open URL: {Url}" ,
+                                 url ) ;
 
             var primaryInfo = new ProcessStartInfo
             {
@@ -84,13 +91,15 @@ public class DonateService (
 
             logger.Warning ( "Process.Start returned null, trying fallback method" ) ;
         }
-        catch ( System.ComponentModel.Win32Exception ex )
+        catch ( Win32Exception ex )
         {
-            logger.Warning ( ex , "Primary method failed with Win32Exception, trying fallback" ) ;
+            logger.Warning ( ex ,
+                             "Primary method failed with Win32Exception, trying fallback" ) ;
         }
         catch ( Exception ex )
         {
-            logger.Warning ( ex , "Primary method failed, trying fallback" ) ;
+            logger.Warning ( ex ,
+                             "Primary method failed, trying fallback" ) ;
         }
 
         // Fallback method: Use cmd /c start
@@ -99,7 +108,9 @@ public class DonateService (
             logger.Information ( "Trying fallback method with cmd /c start" ) ;
 
             var systemRoot = Environment.GetEnvironmentVariable ( "SystemRoot" ) ?? "C:\\Windows" ;
-            var cmdPath    = Path.Combine ( systemRoot , "System32" , "cmd.exe" ) ;
+            var cmdPath = Path.Combine ( systemRoot ,
+                                         "System32" ,
+                                         "cmd.exe" ) ;
 
             var fallbackInfo = new ProcessStartInfo
             {
@@ -109,7 +120,8 @@ public class DonateService (
                 CreateNoWindow  = true
             } ;
 
-            var ( started , exitCode ) = processLauncher.StartAndWait ( fallbackInfo , 5000 ) ;
+            var (started , exitCode) = processLauncher.StartAndWait ( fallbackInfo ,
+                                                                      5000 ) ;
 
             if ( ! started )
             {
@@ -124,17 +136,15 @@ public class DonateService (
             }
 
             if ( exitCode == 0 )
-            {
                 logger.Information ( "Successfully opened URL using fallback method" ) ;
-            }
             else
-            {
-                logger.Error ( "Fallback method failed with exit code {ExitCode}" , exitCode ) ;
-            }
+                logger.Error ( "Fallback method failed with exit code {ExitCode}" ,
+                               exitCode ) ;
         }
         catch ( Exception ex )
         {
-            logger.Error ( ex , "Fallback method also failed" ) ;
+            logger.Error ( ex ,
+                           "Fallback method also failed" ) ;
         }
     }
 }
