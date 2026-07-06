@@ -211,7 +211,7 @@ public class StatusBarManagerTests
         var       sut    = new StatusBarManager ( logger ) ;
 
         var receivedInfos = new List < StatusBarInfo > ( ) ;
-        sut.StatusBarInfoChanged.Subscribe ( info => receivedInfos.Add ( info ) ) ;
+        sut.StatusBarInfoChanged.Subscribe ( receivedInfos.Add ) ;
 
         // Act
         sut.UpdateDeskHeight ( 6500 ) ;  // 65 cm

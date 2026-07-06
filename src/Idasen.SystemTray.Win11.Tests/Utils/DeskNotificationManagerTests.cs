@@ -438,7 +438,7 @@ public sealed class DeskNotificationManagerTests : IDisposable
         manager.Initialize ( null ! , CancellationToken.None ) ;
 
         // Act
-        var act = ( ) => manager.Dispose ( ) ;
+        var act = manager.Dispose ;
 
         // Assert
         act.Should ( ).NotThrow ( ) ;
@@ -451,7 +451,7 @@ public sealed class DeskNotificationManagerTests : IDisposable
         var manager = CreateManager ( ) ;
 
         // Act
-        var act = ( ) => manager.Dispose ( ) ;
+        var act = manager.Dispose ;
 
         // Assert
         act.Should ( ).NotThrow ( ) ;

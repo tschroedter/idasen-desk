@@ -726,7 +726,7 @@ public class DeskConnectionManagerTests : IDisposable
             _connectionMonitor ) ;
 
         // Act
-        var act = ( ) => manager.Dispose ( ) ;
+        var act = manager.Dispose ;
 
         // Assert - should not throw
         act.Should ( ).NotThrow ( ) ;
@@ -763,7 +763,7 @@ public class DeskConnectionManagerTests : IDisposable
         await manager.ConnectAsync ( CancellationToken.None ) ;
 
         // Act
-        var act = ( ) => manager.Dispose ( ) ;
+        var act = manager.Dispose ;
 
         // Assert - should not throw
         act.Should ( ).NotThrow ( ) ;

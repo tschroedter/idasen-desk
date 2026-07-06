@@ -111,7 +111,7 @@ public class BluetoothConnectionMonitorTests : IDisposable
         monitor.Dispose ( ) ;
 
         // Act
-        var act = ( ) => monitor.StartMonitoring ( ) ;
+        var act = monitor.StartMonitoring ;
 
         // Assert
         act.Should ( ).Throw < ObjectDisposedException > ( ) ;

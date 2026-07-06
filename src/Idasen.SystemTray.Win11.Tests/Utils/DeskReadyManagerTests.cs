@@ -130,13 +130,13 @@ public class DeskReadyManagerTests
         originalContext.ConnectionMonitor.DidNotReceive ( )
                        .ResetActivityTimer ( ) ;
         originalContext.NotificationManager.DidNotReceiveWithAnyArgs ( )
-                       .ShowStatusUpdate ( default ,
+                       .ShowStatusUpdate ( 0 ,
                                            string.Empty ,
                                            string.Empty ,
                                            default ) ;
         await originalContext.SettingsManager.DidNotReceiveWithAnyArgs ( )
-                             .SetLastKnownDeskHeight ( default ,
-                                                       default ) ;
+                             .SetLastKnownDeskHeight ( 0 ,
+                                                       Arg.Any < CancellationToken > ( ) ) ;
     }
 
     [ Fact ]
@@ -156,13 +156,13 @@ public class DeskReadyManagerTests
         context.ConnectionMonitor.DidNotReceive ( )
                .ResetActivityTimer ( ) ;
         context.NotificationManager.DidNotReceiveWithAnyArgs ( )
-               .ShowStatusUpdate ( default ,
+               .ShowStatusUpdate ( 0 ,
                                    string.Empty ,
                                    string.Empty ,
                                    default ) ;
         await context.SettingsManager.DidNotReceiveWithAnyArgs ( )
-                     .SetLastKnownDeskHeight ( default ,
-                                               default ) ;
+                     .SetLastKnownDeskHeight ( 0 ,
+                                               Arg.Any < CancellationToken > ( ) ) ;
     }
 
     private static async Task EventuallyAsync ( Func < Task > assertion ,
