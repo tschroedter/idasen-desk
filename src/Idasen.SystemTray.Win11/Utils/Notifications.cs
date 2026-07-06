@@ -48,13 +48,6 @@ public class Notifications : INotifications
         GC.SuppressFinalize ( this ) ;
     }
 
-    public void Show ( string title , string text , InfoBarSeverity serverity )
-    {
-        Show ( new NotificationParameters ( title ,
-                                            text ,
-                                            serverity ) ) ;
-    }
-
     protected virtual void Dispose ( bool disposing )
     {
         if ( ! _disposedValue )
@@ -70,6 +63,13 @@ public class Notifications : INotifications
 
             _disposedValue = true ;
         }
+    }
+
+    public void Show(string title, string text, InfoBarSeverity serverity)
+    {
+        Show(new NotificationParameters(title,
+                                        text,
+                                        serverity));
     }
 
     public void Show ( NotificationParameters parameters )
