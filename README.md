@@ -52,6 +52,7 @@ A special thank you to all the amazing people who test this application and prov
 - 🔐 Updated CI workflow dependencies (`actions/checkout@v7`, `actions/cache@v6`) and release/changelog automation actions.
 
 ### Latest published release
+- **v0.1.492**: configurable desk position names
 - **v0.1.435**: configurable global hotkeys (UI-based), including enable/disable support.
 - See [CHANGELOG.md](CHANGELOG.md) for complete release history and details.
 
