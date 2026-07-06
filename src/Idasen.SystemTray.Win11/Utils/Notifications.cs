@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis ;
+using System.Diagnostics.CodeAnalysis ;
 using System.Reactive.Subjects ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Serilog ;
@@ -55,32 +55,6 @@ public class Notifications : INotifications
                                             serverity ) ) ;
     }
 
-    private void StartBackgroundInitialization ( CancellationToken token )
-    {
-        Task.Run ( async ( ) =>
-                   {
-                       try
-                       {
-                           await _manager.LoadAsync ( token ).ConfigureAwait ( false ) ;
-
-                           Show ( $"Idasen System Tray {_version.GetVersion ( )}" ,
-                                  "Running..." ,
-                                  InfoBarSeverity.Informational ) ;
-                       }
-                       catch ( OperationCanceledException ex )
-                       {
-                           _logger.Warning ( ex ,
-                                             "Notifications initialization canceled" ) ;
-                       }
-                       catch ( Exception ex )
-                       {
-                           _logger.Error ( ex ,
-                                           "Failed to initialize notifications" ) ;
-                       }
-                   } ,
-                   token ) ;
-    }
-
     protected virtual void Dispose ( bool disposing )
     {
         if ( ! _disposedValue )
@@ -132,5 +106,31 @@ public class Notifications : INotifications
                         parameters ) ;
 
         _toast.Show ( parameters ) ;
+    }
+
+    private void StartBackgroundInitialization(CancellationToken token)
+    {
+        Task.Run(async () =>
+                 {
+                     try
+                     {
+                         await _manager.LoadAsync(token).ConfigureAwait(false);
+
+                         Show($"Idasen System Tray {_version.GetVersion()}",
+                              "Running...",
+                              InfoBarSeverity.Informational);
+                     }
+                     catch (OperationCanceledException ex)
+                     {
+                         _logger.Warning(ex,
+                                         "Notifications initialization canceled");
+                     }
+                     catch (Exception ex)
+                     {
+                         _logger.Error(ex,
+                                       "Failed to initialize notifications");
+                     }
+                 },
+                 token);
     }
 }
