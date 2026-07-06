@@ -6,9 +6,9 @@ namespace Idasen.SystemTray.Win11.Utils ;
 
 public sealed class DeskMovementManager : IDeskMovementManager
 {
-    private readonly ILogger             _logger ;
-    private readonly ISettingsManager    _settingsManager ;
-    private Func < IDesk ? > ?           _deskAccessor ;
+    private readonly ILogger            _logger ;
+    private readonly ISettingsManager   _settingsManager ;
+    private          Func < IDesk ? > ? _deskAccessor ;
 
     public DeskMovementManager (
         ILogger          logger ,
@@ -17,14 +17,8 @@ public sealed class DeskMovementManager : IDeskMovementManager
         ArgumentNullException.ThrowIfNull ( logger ) ;
         ArgumentNullException.ThrowIfNull ( settingsManager ) ;
 
-        _logger           = logger ;
-        _settingsManager  = settingsManager ;
-    }
-
-    public void SetDeskAccessor ( Func < IDesk ? > deskAccessor )
-    {
-        ArgumentNullException.ThrowIfNull ( deskAccessor ) ;
-        _deskAccessor = deskAccessor ;
+        _logger          = logger ;
+        _settingsManager = settingsManager ;
     }
 
     public bool IsDeskAvailable ( )
@@ -42,7 +36,7 @@ public sealed class DeskMovementManager : IDeskMovementManager
         if ( desk is null )
         {
             _logger.Warning ( "{OperationName} failed - desk is not connected" ,
-                             operationName ) ;
+                              operationName ) ;
             return ;
         }
 
@@ -55,6 +49,12 @@ public sealed class DeskMovementManager : IDeskMovementManager
                               heightInMillimeters ) ;
 
         desk.MoveTo ( heightInMillimeters ) ;
+    }
+
+    public void SetDeskAccessor ( Func < IDesk ? > deskAccessor )
+    {
+        ArgumentNullException.ThrowIfNull ( deskAccessor ) ;
+        _deskAccessor = deskAccessor ;
     }
 
     private static uint HeightToDeskHeight ( uint heightInCm )

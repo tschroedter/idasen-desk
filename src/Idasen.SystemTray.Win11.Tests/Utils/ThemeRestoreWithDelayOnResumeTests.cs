@@ -16,23 +16,6 @@ public class ThemeRestoreWithDelayOnResumeTests : IDisposable
     private readonly IApplicationThemeManager _themeManager    = Substitute.For < IApplicationThemeManager > ( ) ;
     private          bool                     _disposed ;
 
-    public void Dispose()
-    {
-        Dispose(true);
-
-        GC.SuppressFinalize(this);
-    }
-
-    protected virtual void Dispose(bool disposing)
-    {
-        if (_disposed)
-            return;
-
-        if (disposing) _logger.Dispose();
-
-        _disposed = true;
-    }
-
     public ThemeRestoreWithDelayOnResumeTests ( )
     {
         // Default settings
@@ -40,6 +23,23 @@ public class ThemeRestoreWithDelayOnResumeTests : IDisposable
         _settingsManager.CurrentSettings.Returns ( settings ) ;
 
         _themeManager.ApplyAsync ( Arg.Any < ApplicationTheme > ( ) ).Returns ( Task.CompletedTask ) ;
+    }
+
+    public void Dispose ( )
+    {
+        Dispose ( true ) ;
+
+        GC.SuppressFinalize ( this ) ;
+    }
+
+    protected virtual void Dispose ( bool disposing )
+    {
+        if ( _disposed )
+            return ;
+
+        if ( disposing ) _logger.Dispose ( ) ;
+
+        _disposed = true ;
     }
 
     [ Fact ]

@@ -8,14 +8,10 @@ namespace Idasen.SystemTray.Win11.Utils.Bluetooth ;
 /// </summary>
 public class ExponentialBackoffReconnectStrategy : IBluetoothReconnectStrategy
 {
-    private readonly ILogger _logger ;
-    private readonly int     _maxRetries ;
-    private readonly int     _initialDelayMs ;
-    private readonly int     _maxDelayMs ;
     private readonly double  _backoffMultiplier ;
-
-    private int  _currentAttempt ;
-    private bool _isRetrying ;
+    private readonly int     _initialDelayMs ;
+    private readonly ILogger _logger ;
+    private readonly int     _maxDelayMs ;
 
     /// <summary>
     ///     Creates a new instance with default exponential backoff parameters.
@@ -27,32 +23,34 @@ public class ExponentialBackoffReconnectStrategy : IBluetoothReconnectStrategy
     /// <param name="backoffMultiplier">Multiplier for exponential growth (default: 2.0).</param>
     public ExponentialBackoffReconnectStrategy (
         ILogger logger ,
-        int     maxRetries          = 5 ,
-        int     initialDelayMs      = 1000 ,
-        int     maxDelayMs          = 30000 ,
-        double  backoffMultiplier   = 2.0 )
+        int     maxRetries        = 5 ,
+        int     initialDelayMs    = 1000 ,
+        int     maxDelayMs        = 30000 ,
+        double  backoffMultiplier = 2.0 )
     {
-        _logger             = logger ?? throw new ArgumentNullException ( nameof ( logger ) ) ;
-        _maxRetries         = maxRetries ;
-        _initialDelayMs     = initialDelayMs ;
-        _maxDelayMs         = maxDelayMs ;
-        _backoffMultiplier  = backoffMultiplier ;
-        _currentAttempt     = 0 ;
-        _isRetrying         = false ;
+        _logger            = logger ?? throw new ArgumentNullException ( nameof ( logger ) ) ;
+        MaxRetries         = maxRetries ;
+        _initialDelayMs    = initialDelayMs ;
+        _maxDelayMs        = maxDelayMs ;
+        _backoffMultiplier = backoffMultiplier ;
+        CurrentAttempt     = 0 ;
+        IsRetrying         = false ;
     }
 
-    public int CurrentAttempt => _currentAttempt ;
-    public int MaxRetries     => _maxRetries ;
-    public bool IsRetrying    => _isRetrying ;
+    public int CurrentAttempt { get ; private set ; }
+
+    public int MaxRetries { get ; }
+
+    public bool IsRetrying { get ; private set ; }
 
     public async Task < bool > ConnectWithRetryAsync (
         Func < CancellationToken , Task < bool > > connectAction ,
-        CancellationToken                            cancellationToken )
+        CancellationToken                          cancellationToken )
     {
         ArgumentNullException.ThrowIfNull ( connectAction ) ;
 
-        _isRetrying     = true ;
-        _currentAttempt = 0 ;
+        IsRetrying     = true ;
+        CurrentAttempt = 0 ;
 
         try
         {
@@ -70,7 +68,7 @@ public class ExponentialBackoffReconnectStrategy : IBluetoothReconnectStrategy
             // Start retry loop with exponential backoff
             _logger.Warning ( "Initial connection failed. Starting retry sequence with exponential backoff..." ) ;
 
-            for ( _currentAttempt = 1 ; _currentAttempt <= _maxRetries ; _currentAttempt++ )
+            for ( CurrentAttempt = 1 ; CurrentAttempt <= MaxRetries ; CurrentAttempt ++ )
             {
                 // Check for cancellation
                 if ( cancellationToken.IsCancellationRequested )
@@ -80,66 +78,68 @@ public class ExponentialBackoffReconnectStrategy : IBluetoothReconnectStrategy
                 }
 
                 // Calculate delay with exponential backoff
-                var delay = CalculateDelay ( _currentAttempt ) ;
+                var delay = CalculateDelay ( CurrentAttempt ) ;
 
                 _logger.Information (
-                    "Retry attempt {Attempt}/{MaxRetries} - waiting {DelaySeconds:F1} seconds before next attempt" ,
-                    _currentAttempt ,
-                    _maxRetries ,
-                    delay / 1000.0 ) ;
+                                     "Retry attempt {Attempt}/{MaxRetries} - waiting {DelaySeconds:F1} seconds before next attempt" ,
+                                     CurrentAttempt ,
+                                     MaxRetries ,
+                                     delay / 1000.0 ) ;
 
                 try
                 {
-                    await Task.Delay ( delay , cancellationToken ).ConfigureAwait ( false ) ;
+                    await Task.Delay ( delay ,
+                                       cancellationToken ).ConfigureAwait ( false ) ;
                 }
                 catch ( TaskCanceledException ex )
                 {
-                    _logger.Information ( ex , "Delay cancelled during retry sequence" ) ;
+                    _logger.Information ( ex ,
+                                          "Delay cancelled during retry sequence" ) ;
                     return false ;
                 }
 
                 // Attempt connection
                 _logger.Information ( "Attempting Bluetooth connection (retry {Attempt}/{MaxRetries})..." ,
-                                     _currentAttempt ,
-                                     _maxRetries ) ;
+                                      CurrentAttempt ,
+                                      MaxRetries ) ;
 
                 success = await connectAction ( cancellationToken ).ConfigureAwait ( false ) ;
 
                 if ( success )
                 {
                     _logger.Information ( "Bluetooth connection successful on retry attempt {Attempt}" ,
-                                         _currentAttempt ) ;
+                                          CurrentAttempt ) ;
                     return true ;
                 }
 
                 _logger.Warning ( "Retry attempt {Attempt}/{MaxRetries} failed" ,
-                                 _currentAttempt ,
-                                 _maxRetries ) ;
+                                  CurrentAttempt ,
+                                  MaxRetries ) ;
             }
 
             // All retries exhausted
             _logger.Error ( "All {MaxRetries} retry attempts exhausted. Connection failed." ,
-                           _maxRetries ) ;
+                            MaxRetries ) ;
 
             return false ;
         }
         catch ( Exception ex )
         {
             _logger.Error ( ex ,
-                           "Unexpected error during Bluetooth reconnection sequence" ) ;
+                            "Unexpected error during Bluetooth reconnection sequence" ) ;
             return false ;
         }
         finally
         {
-            _isRetrying = false ;
+            IsRetrying = false ;
         }
     }
 
     public void Reset ( )
     {
         _logger.Debug ( "Resetting reconnect strategy state" ) ;
-        _currentAttempt = 0 ;
-        _isRetrying     = false ;
+        CurrentAttempt = 0 ;
+        IsRetrying     = false ;
     }
 
     /// <summary>
@@ -157,9 +157,11 @@ public class ExponentialBackoffReconnectStrategy : IBluetoothReconnectStrategy
         //   Attempt 4: 8000ms  = 8s
         //   Attempt 5: 16000ms = 16s
 
-        var delay = _initialDelayMs * Math.Pow ( _backoffMultiplier , attempt - 1 ) ;
+        var delay = _initialDelayMs * Math.Pow ( _backoffMultiplier ,
+                                                 attempt - 1 ) ;
 
         // Cap at maximum delay
-        return ( int ) Math.Min ( delay , _maxDelayMs ) ;
+        return ( int )Math.Min ( delay ,
+                                 _maxDelayMs ) ;
     }
 }

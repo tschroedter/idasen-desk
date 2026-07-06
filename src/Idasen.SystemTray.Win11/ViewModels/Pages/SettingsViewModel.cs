@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis ;
 using System.Reactive.Concurrency ;
 using System.Reactive.Linq ;
 using System.Reflection ;
+using Idasen.BluetoothLE.Linak.Control ;
 using Idasen.Launcher ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.Utils ;
@@ -18,91 +19,35 @@ namespace Idasen.SystemTray.Win11.ViewModels.Pages ;
 [ ExcludeFromCodeCoverage ]
 public partial class SettingsViewModel : ObservableObject , INavigationAware , ISettingsViewModel
 {
-    private const string KeyNameShift   = "Shift";
-    private const string KeyNameAlt     = "Alt";
-    private const string KeyNameControl = "Control";
+    private const string KeyNameShift   = "Shift" ;
+    private const string KeyNameAlt     = "Alt" ;
+    private const string KeyNameControl = "Control" ;
 
-    private const string KeyNameStanding = "Standing";
-    private const string KeyNameSeating  = "Seating";
-    private const string KeyNameCustom1  = "Custom1";
-    private const string KeyNameCustom2  = "Custom2";
+    private const           string                 KeyNameStanding    = "Standing" ;
+    private const           string                 KeyNameSeating     = "Seating" ;
+    private const           string                 KeyNameCustom1     = "Custom1" ;
+    private const           string                 KeyNameCustom2     = "Custom2" ;
+    private static readonly char [ ]               ModifierSeparators = [',' , ' '] ;
+    private readonly        IAvailableKeysProvider _availableKeysProvider ;
 
     private readonly ILogger                  _logger ;
-    private readonly ISettingsService         _settingsService ;
-    private readonly IScheduler               _scheduler ;
-    private readonly IApplicationThemeManager _themeManager ;
     private readonly IMainWindow              _mainWindow ;
-    private readonly IAvailableKeysProvider   _availableKeysProvider ;
+    private readonly IScheduler               _scheduler ;
+    private readonly ISettingsService         _settingsService ;
+    private readonly IApplicationThemeManager _themeManager ;
 
     private IDisposable ? _autoSaveSubscription ;
-
-    [ ObservableProperty ] public partial string AppVersion { get ; set ; }
-
-    [ ObservableProperty ] public partial ApplicationTheme CurrentTheme { get ; set ; }
-
-    [ ObservableProperty ] public partial uint Custom1 { get ; set ; }
-
-    [ ObservableProperty ] public partial bool Custom1IsVisibleInContextMenu { get ; set ; }
-
-    [ ObservableProperty ] public partial string Custom1Name { get ; set ; }
-
-    [ ObservableProperty ] public partial uint Custom2 { get ; set ; }
-
-    [ ObservableProperty ] public partial bool Custom2IsVisibleInContextMenu { get ; set ; }
-
-    [ ObservableProperty ] public partial string Custom2Name { get ; set ; }
-
-    [ ObservableProperty ] public partial string DeskAddress { get ; set ; }
-
-    [ ObservableProperty ] public partial string DeskName { get ; set ; }
 
     private bool _disposed ;
 
     private bool _isInitialized ;
     private bool _isLoadingSettings ;
 
-    [ ObservableProperty ] public partial uint LastKnownDeskHeight { get ; set ; }
-
-    [ ObservableProperty ] public partial string LogFolderPath { get ; set ; }
-
-    [ ObservableProperty ] public partial uint MaxHeight { get ; set ; }
-
-    [ ObservableProperty ] public partial uint MaxSpeedToStopMovement { get ; set ; }
-
-    [ ObservableProperty ] public partial uint MinHeight { get ; set ; }
-
-    [ ObservableProperty ] public partial bool Notifications { get ; set ; }
-
-    [ ObservableProperty ] public partial bool ParentalLock { get ; set ; }
-
-    [ ObservableProperty ] public partial uint Seating { get ; set ; }
-
-    [ ObservableProperty ] public partial bool SeatingIsVisibleInContextMenu { get ; set ; }
-
-    [ ObservableProperty ] public partial string SettingsFileFullPath { get ; set ; }
+    private bool _isUpdatingModifiers ;
 
     private IDisposable ? _settingsSaved ;
 
-    [ ObservableProperty ] public partial uint Standing { get ; set ; }
-
-    [ ObservableProperty ] public partial bool StandingIsVisibleInContextMenu { get ; set ; }
-
-    [ ObservableProperty ] public partial bool StopIsVisibleInContextMenu { get ; set ; }
-    [ ObservableProperty ] public partial bool GlobalHotkeysEnabled       { get ; set ; }
-
-    [ ObservableProperty ] public partial string StandingName      { get ; set ; }
-    [ ObservableProperty ] public partial string StandingKey       { get ; set ; }
-    [ ObservableProperty ] public partial string StandingModifiers { get ; set ; }
-    [ ObservableProperty ] public partial string SeatingName       { get ; set ; }
-    [ ObservableProperty ] public partial string SeatingKey        { get ; set ; }
-    [ ObservableProperty ] public partial string SeatingModifiers  { get ; set ; }
-    [ ObservableProperty ] public partial string Custom1Key        { get ; set ; }
-    [ ObservableProperty ] public partial string Custom1Modifiers  { get ; set ; }
-    [ ObservableProperty ] public partial string Custom2Key        { get ; set ; }
-    [ ObservableProperty ] public partial string Custom2Modifiers  { get ; set ; }
-
-    private                 bool     _isUpdatingModifiers ;
-    private static readonly char [ ] ModifierSeparators = [',' , ' '] ;
+    private IDisposable ? _visibilitySubscription ;
 
     public SettingsViewModel (
         ILogger                  logger ,
@@ -120,41 +65,47 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
         _availableKeysProvider = availableKeysProvider ;
 
         // Initialize properties with default values
-        AppVersion = string.Empty ;
-        CurrentTheme = ApplicationTheme.Unknown ;
-        Custom1 = 100 ;
-        Custom1IsVisibleInContextMenu = true ;
-        Custom1Name = AppConfiguration.Hotkeys.Custom1Name ;
-        Custom2 = 90 ;
-        Custom2IsVisibleInContextMenu = true ;
-        Custom2Name = AppConfiguration.Hotkeys.Custom2Name ;
-        DeskAddress = string.Empty ;
-        DeskName = string.Empty ;
-        LastKnownDeskHeight = AppConfiguration.Defaults.DeskMinHeightInCm ;
-        LogFolderPath = string.Empty ;
-        MaxHeight = 90 ;
-        MaxSpeedToStopMovement = BluetoothLE.Linak.Control.StoppingHeightCalculatorSettings.MaxSpeedToStopMovement ;
-        MinHeight = 90 ;
-        Notifications = true ;
-        ParentalLock = false ;
-        Seating = 90 ;
-        SeatingIsVisibleInContextMenu = true ;
-        SettingsFileFullPath = string.Empty ;
-        Standing = 100 ;
+        AppVersion                     = string.Empty ;
+        CurrentTheme                   = ApplicationTheme.Unknown ;
+        Custom1                        = 100 ;
+        Custom1IsVisibleInContextMenu  = true ;
+        Custom1Name                    = AppConfiguration.Hotkeys.Custom1Name ;
+        Custom2                        = 90 ;
+        Custom2IsVisibleInContextMenu  = true ;
+        Custom2Name                    = AppConfiguration.Hotkeys.Custom2Name ;
+        DeskAddress                    = string.Empty ;
+        DeskName                       = string.Empty ;
+        LastKnownDeskHeight            = AppConfiguration.Defaults.DeskMinHeightInCm ;
+        LogFolderPath                  = string.Empty ;
+        MaxHeight                      = 90 ;
+        MaxSpeedToStopMovement         = StoppingHeightCalculatorSettings.MaxSpeedToStopMovement ;
+        MinHeight                      = 90 ;
+        Notifications                  = true ;
+        ParentalLock                   = false ;
+        Seating                        = 90 ;
+        SeatingIsVisibleInContextMenu  = true ;
+        SettingsFileFullPath           = string.Empty ;
+        Standing                       = 100 ;
         StandingIsVisibleInContextMenu = true ;
-        StopIsVisibleInContextMenu = true ;
-        GlobalHotkeysEnabled = AppConfiguration.Defaults.GlobalHotkeysEnabled ;
-        StandingName = AppConfiguration.Hotkeys.StandingName ;
-        StandingKey = AppConfiguration.Hotkeys.StandingKey ;
-        StandingModifiers = AppConfiguration.Hotkeys.DefaultModifiers ;
-        SeatingName = AppConfiguration.Hotkeys.SeatingName ;
-        SeatingKey = AppConfiguration.Hotkeys.SeatingKey ;
-        SeatingModifiers = AppConfiguration.Hotkeys.DefaultModifiers ;
-        Custom1Key = AppConfiguration.Hotkeys.Custom1Key ;
-        Custom1Modifiers = AppConfiguration.Hotkeys.DefaultModifiers ;
-        Custom2Key = AppConfiguration.Hotkeys.Custom2Key ;
-        Custom2Modifiers = AppConfiguration.Hotkeys.DefaultModifiers ;
+        StopIsVisibleInContextMenu     = true ;
+        GlobalHotkeysEnabled           = AppConfiguration.Defaults.GlobalHotkeysEnabled ;
+        StandingName                   = AppConfiguration.Hotkeys.StandingName ;
+        StandingKey                    = AppConfiguration.Hotkeys.StandingKey ;
+        StandingModifiers              = AppConfiguration.Hotkeys.DefaultModifiers ;
+        SeatingName                    = AppConfiguration.Hotkeys.SeatingName ;
+        SeatingKey                     = AppConfiguration.Hotkeys.SeatingKey ;
+        SeatingModifiers               = AppConfiguration.Hotkeys.DefaultModifiers ;
+        Custom1Key                     = AppConfiguration.Hotkeys.Custom1Key ;
+        Custom1Modifiers               = AppConfiguration.Hotkeys.DefaultModifiers ;
+        Custom2Key                     = AppConfiguration.Hotkeys.Custom2Key ;
+        Custom2Modifiers               = AppConfiguration.Hotkeys.DefaultModifiers ;
     }
+
+    [ ObservableProperty ] public partial string AppVersion { get ; set ; }
+
+    [ ObservableProperty ] public partial string LogFolderPath { get ; set ; }
+
+    [ ObservableProperty ] public partial string SettingsFileFullPath { get ; set ; }
 
     /// <summary>
     ///     Gets the available keys for hotkey configuration.
@@ -269,6 +220,79 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
                                 value ) ;
     }
 
+
+    public async Task OnNavigatedToAsync ( )
+    {
+        if ( _isInitialized )
+            return ;
+
+        await InitializeViewModelAsync ( ) ;
+    }
+
+    public async Task OnNavigatedFromAsync ( )
+    {
+        await _settingsService.Synchronizer.StoreSettingsAsync ( this ,
+                                                                 CancellationToken.None ).ConfigureAwait ( false ) ;
+    }
+
+    [ ObservableProperty ] public partial ApplicationTheme CurrentTheme { get ; set ; }
+
+    [ ObservableProperty ] public partial uint Custom1 { get ; set ; }
+
+    [ ObservableProperty ] public partial bool Custom1IsVisibleInContextMenu { get ; set ; }
+
+    [ ObservableProperty ] public partial string Custom1Name { get ; set ; }
+
+    [ ObservableProperty ] public partial uint Custom2 { get ; set ; }
+
+    [ ObservableProperty ] public partial bool Custom2IsVisibleInContextMenu { get ; set ; }
+
+    [ ObservableProperty ] public partial string Custom2Name { get ; set ; }
+
+    [ ObservableProperty ] public partial string DeskAddress { get ; set ; }
+
+    [ ObservableProperty ] public partial string DeskName { get ; set ; }
+
+    [ ObservableProperty ] public partial uint LastKnownDeskHeight { get ; set ; }
+
+    [ ObservableProperty ] public partial uint MaxHeight { get ; set ; }
+
+    [ ObservableProperty ] public partial uint MaxSpeedToStopMovement { get ; set ; }
+
+    [ ObservableProperty ] public partial uint MinHeight { get ; set ; }
+
+    [ ObservableProperty ] public partial bool Notifications { get ; set ; }
+
+    [ ObservableProperty ] public partial bool ParentalLock { get ; set ; }
+
+    [ ObservableProperty ] public partial uint Seating { get ; set ; }
+
+    [ ObservableProperty ] public partial bool SeatingIsVisibleInContextMenu { get ; set ; }
+
+    [ ObservableProperty ] public partial uint Standing { get ; set ; }
+
+    [ ObservableProperty ] public partial bool StandingIsVisibleInContextMenu { get ; set ; }
+
+    [ ObservableProperty ] public partial bool StopIsVisibleInContextMenu { get ; set ; }
+    [ ObservableProperty ] public partial bool GlobalHotkeysEnabled       { get ; set ; }
+
+    [ ObservableProperty ] public partial string StandingName      { get ; set ; }
+    [ ObservableProperty ] public partial string StandingKey       { get ; set ; }
+    [ ObservableProperty ] public partial string StandingModifiers { get ; set ; }
+    [ ObservableProperty ] public partial string SeatingName       { get ; set ; }
+    [ ObservableProperty ] public partial string SeatingKey        { get ; set ; }
+    [ ObservableProperty ] public partial string SeatingModifiers  { get ; set ; }
+    [ ObservableProperty ] public partial string Custom1Key        { get ; set ; }
+    [ ObservableProperty ] public partial string Custom1Modifiers  { get ; set ; }
+    [ ObservableProperty ] public partial string Custom2Key        { get ; set ; }
+    [ ObservableProperty ] public partial string Custom2Modifiers  { get ; set ; }
+
+    public void Dispose ( )
+    {
+        Dispose ( true ) ;
+        GC.SuppressFinalize ( this ) ;
+    }
+
     private void UpdateModifier ( string hotkeyName , string modifier , bool add )
     {
         if ( _isUpdatingModifiers )
@@ -353,10 +377,7 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
                         Justification = "Log message template" ) ]
     partial void OnStandingModifiersChanged ( string value )
     {
-        if ( _isUpdatingModifiers )
-        {
-            return ;
-        }
+        if ( _isUpdatingModifiers ) return ;
 
         _logger.Debug ( "value = {Value}" ,
                         value ) ;
@@ -371,10 +392,7 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
                         Justification = "Log message template" ) ]
     partial void OnSeatingModifiersChanged ( string value )
     {
-        if ( _isUpdatingModifiers )
-        {
-            return ;
-        }
+        if ( _isUpdatingModifiers ) return ;
 
         _logger.Debug ( "value = {Value}" ,
                         value ) ;
@@ -389,10 +407,7 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
                         Justification = "Log message template" ) ]
     partial void OnCustom1ModifiersChanged ( string value )
     {
-        if ( _isUpdatingModifiers )
-        {
-            return ;
-        }
+        if ( _isUpdatingModifiers ) return ;
 
         _logger.Debug ( "value = {Value}" ,
                         value ) ;
@@ -407,10 +422,7 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
                         Justification = "Log message template" ) ]
     partial void OnCustom2ModifiersChanged ( string value )
     {
-        if ( _isUpdatingModifiers )
-        {
-            return ;
-        }
+        if ( _isUpdatingModifiers ) return ;
 
         _logger.Debug ( "value = {Value}" ,
                         value ) ;
@@ -418,29 +430,6 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
         OnPropertyChanged ( nameof ( Custom2Control ) ) ;
         OnPropertyChanged ( nameof ( Custom2Alt ) ) ;
         OnPropertyChanged ( nameof ( Custom2Shift ) ) ;
-    }
-
-    private IDisposable ? _visibilitySubscription ;
-
-
-    public async Task OnNavigatedToAsync ( )
-    {
-        if ( _isInitialized )
-            return ;
-
-        await InitializeViewModelAsync ( ) ;
-    }
-
-    public async Task OnNavigatedFromAsync ( )
-    {
-        await _settingsService.Synchronizer.StoreSettingsAsync ( this ,
-                                                                 CancellationToken.None ).ConfigureAwait ( false ) ;
-    }
-
-    public void Dispose ( )
-    {
-        Dispose ( true ) ;
-        GC.SuppressFinalize ( this ) ;
     }
 
     protected virtual void Dispose ( bool disposing )
@@ -511,8 +500,9 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
                                                                  h => ( ( INotifyPropertyChanged )this )
                                                                      .PropertyChanged -= h )
                                .Where ( _ => ! _isLoadingSettings )
-                               .Throttle ( TimeSpan.FromMilliseconds ( AppConfiguration.Timeouts.SettingsAutoSaveThrottleMilliseconds ) ,
-                                                           _scheduler )
+                               .Throttle ( TimeSpan.FromMilliseconds ( AppConfiguration.Timeouts
+                                                                                       .SettingsAutoSaveThrottleMilliseconds ) ,
+                                           _scheduler )
                                .Select ( _ => Observable.FromAsync ( cancellationToken =>
                                                                          _settingsService.Synchronizer
                                                                                          .StoreSettingsAsync ( this ,
@@ -630,13 +620,14 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
                                                           {
                                                               try
                                                               {
-                                                                  _logger.Debug ( "Window hidden, storing settings automatically" ) ;
+                                                                  _logger
+                                                                     .Debug ( "Window hidden, storing settings automatically" ) ;
                                                                   await _settingsService.Synchronizer
                                                                                         .StoreSettingsAsync ( this ,
                                                                                                               CancellationToken
                                                                                                                  .None ) ;
                                                               }
-                                                              catch ( OperationCanceledException ex)
+                                                              catch ( OperationCanceledException ex )
                                                               {
                                                                   _logger.Information ( ex ,
                                                                                         "Settings save operation was cancelled during visibility change" ) ;
@@ -662,12 +653,10 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
         var result = _settingsService.HeightValidator.ValidateMinMaxConstraints ( value ,
                                                                                   MaxHeight ) ;
         if ( ! result.IsValid )
-        {
             _logger.Warning ( "Invalid min/max constraints: {Errors}" ,
                               string.Join ( ", " ,
                                             result.Errors ) ) ;
-            // Note: We log but don't block - allows temporary invalid states during editing
-        }
+        // Note: We log but don't block - allows temporary invalid states during editing
     }
 
     partial void OnMaxHeightChanged ( uint value )
@@ -677,11 +666,9 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
         var result = _settingsService.HeightValidator.ValidateMinMaxConstraints ( MinHeight ,
                                                                                   value ) ;
         if ( ! result.IsValid )
-        {
             _logger.Warning ( "Invalid min/max constraints: {Errors}" ,
                               string.Join ( ", " ,
                                             result.Errors ) ) ;
-        }
     }
 
     partial void OnStandingChanged ( uint value )
@@ -692,11 +679,9 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
                                                                        MinHeight ,
                                                                        MaxHeight ) ;
         if ( ! result.IsValid )
-        {
             _logger.Warning ( "Invalid standing height: {Errors}" ,
                               string.Join ( ", " ,
                                             result.Errors ) ) ;
-        }
     }
 
     partial void OnSeatingChanged ( uint value )
@@ -707,11 +692,9 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
                                                                        MinHeight ,
                                                                        MaxHeight ) ;
         if ( ! result.IsValid )
-        {
             _logger.Warning ( "Invalid seating height: {Errors}" ,
                               string.Join ( ", " ,
                                             result.Errors ) ) ;
-        }
     }
 
     partial void OnCustom1Changed ( uint value )
@@ -722,11 +705,9 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
                                                                        MinHeight ,
                                                                        MaxHeight ) ;
         if ( ! result.IsValid )
-        {
             _logger.Warning ( "Invalid custom 1 height: {Errors}" ,
                               string.Join ( ", " ,
                                             result.Errors ) ) ;
-        }
     }
 
     partial void OnCustom2Changed ( uint value )
@@ -737,11 +718,9 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
                                                                        MinHeight ,
                                                                        MaxHeight ) ;
         if ( ! result.IsValid )
-        {
             _logger.Warning ( "Invalid custom 2 height: {Errors}" ,
                               string.Join ( ", " ,
                                             result.Errors ) ) ;
-        }
     }
 
     partial void OnStandingNameChanged ( string value )
@@ -750,11 +729,9 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
 
         var result = _settingsService.HeightValidator.ValidatePresetName ( value ) ;
         if ( ! result.IsValid )
-        {
             _logger.Warning ( "Invalid standing preset name: {Errors}" ,
                               string.Join ( ", " ,
                                             result.Errors ) ) ;
-        }
     }
 
     partial void OnSeatingNameChanged ( string value )
@@ -763,11 +740,9 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
 
         var result = _settingsService.HeightValidator.ValidatePresetName ( value ) ;
         if ( ! result.IsValid )
-        {
             _logger.Warning ( "Invalid seating preset name: {Errors}" ,
                               string.Join ( ", " ,
                                             result.Errors ) ) ;
-        }
     }
 
     partial void OnCustom1NameChanged ( string value )
@@ -776,11 +751,9 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
 
         var result = _settingsService.HeightValidator.ValidatePresetName ( value ) ;
         if ( ! result.IsValid )
-        {
             _logger.Warning ( "Invalid custom 1 preset name: {Errors}" ,
                               string.Join ( ", " ,
                                             result.Errors ) ) ;
-        }
     }
 
     partial void OnCustom2NameChanged ( string value )
@@ -789,11 +762,9 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
 
         var result = _settingsService.HeightValidator.ValidatePresetName ( value ) ;
         if ( ! result.IsValid )
-        {
             _logger.Warning ( "Invalid custom 2 preset name: {Errors}" ,
                               string.Join ( ", " ,
                                             result.Errors ) ) ;
-        }
     }
 
     /// <summary>

@@ -6,7 +6,7 @@ using Serilog ;
 
 namespace Idasen.SystemTray.Win11.TraySettings ;
 
-public partial class SettingsManager (
+public class SettingsManager (
     ILogger                logger ,
     ICommonApplicationData commonApplicationData ,
     ISettingsStorage       settingsStorage ,
@@ -29,7 +29,8 @@ public partial class SettingsManager (
 
     public ISettings CurrentSettings => _current ;
 
-    public string SettingsFileName { get ; } = commonApplicationData.ToFullPath ( AppConfiguration.Application.SettingsFileName ) ;
+    public string SettingsFileName { get ; } =
+        commonApplicationData.ToFullPath ( AppConfiguration.Application.SettingsFileName ) ;
 
     public async ValueTask SaveAsync ( CancellationToken token )
     {

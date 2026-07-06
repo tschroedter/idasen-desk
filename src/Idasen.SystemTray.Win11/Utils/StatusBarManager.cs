@@ -9,7 +9,7 @@ public sealed class StatusBarManager : IStatusBarManager , IDisposable
 {
     private readonly ILogger                   _logger ;
     private readonly Subject < StatusBarInfo > _statusBarInfoSubject ;
-    private bool                               _disposed ;
+    private          bool                      _disposed ;
 
     public StatusBarManager ( ILogger logger )
     {
@@ -17,6 +17,26 @@ public sealed class StatusBarManager : IStatusBarManager , IDisposable
 
         _logger               = logger ;
         _statusBarInfoSubject = new Subject < StatusBarInfo > ( ) ;
+    }
+
+    public void Dispose ( )
+    {
+        if ( _disposed )
+            return ;
+
+        _disposed = true ;
+
+        try
+        {
+            _statusBarInfoSubject.OnCompleted ( ) ;
+            _statusBarInfoSubject.Dispose ( ) ;
+        }
+        catch ( Exception ex )
+        {
+            _logger.Warning ( ex ,
+                              "Failed to dispose {ResourceName}" ,
+                              nameof ( _statusBarInfoSubject ) ) ;
+        }
     }
 
     public IObservable < StatusBarInfo > StatusBarInfoChanged => _statusBarInfoSubject ;
@@ -39,31 +59,11 @@ public sealed class StatusBarManager : IStatusBarManager , IDisposable
                         heightInCm ) ;
 
         var info = new StatusBarInfo (
-            "" ,
-            heightInMillimeters ,
-            $"Height: {heightInCm} cm" ,
-            InfoBarSeverity.Informational ) ;
+                                      "" ,
+                                      heightInMillimeters ,
+                                      $"Height: {heightInCm} cm" ,
+                                      InfoBarSeverity.Informational ) ;
 
         _statusBarInfoSubject.OnNext ( info ) ;
-    }
-
-    public void Dispose ( )
-    {
-        if ( _disposed )
-            return ;
-
-        _disposed = true ;
-
-        try
-        {
-            _statusBarInfoSubject.OnCompleted ( ) ;
-            _statusBarInfoSubject.Dispose ( ) ;
-        }
-        catch ( Exception ex )
-        {
-            _logger.Warning ( ex ,
-                             "Failed to dispose {ResourceName}" ,
-                             nameof ( _statusBarInfoSubject ) ) ;
-        }
     }
 }

@@ -25,7 +25,7 @@
             <!-- Non-editable label (default) -->
             <Label HorizontalAlignment="Stretch"
                    Content="{Binding PositionName, ElementName=Root}"
-                   VerticalAlignment="Center" 
+                   VerticalAlignment="Center"
                    Padding="5,0,5,0">
                 <Label.Style>
                     <Style TargetType="Label">

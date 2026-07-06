@@ -8,7 +8,7 @@ using Wpf.Ui.Tray.Controls ;
 namespace Idasen.SystemTray.Win11.Utils ;
 
 [ ExcludeFromCodeCoverage ]
-public partial class Notifications : INotifications
+public class Notifications : INotifications
 {
     private readonly ILogger                            _logger ;
     private readonly ISettingsManager                   _manager ;
@@ -42,6 +42,19 @@ public partial class Notifications : INotifications
         return this ;
     }
 
+    public void Dispose ( )
+    {
+        Dispose ( true ) ;
+        GC.SuppressFinalize ( this ) ;
+    }
+
+    public void Show ( string title , string text , InfoBarSeverity serverity )
+    {
+        Show ( new NotificationParameters ( title ,
+                                            text ,
+                                            serverity ) ) ;
+    }
+
     private void StartBackgroundInitialization ( CancellationToken token )
     {
         Task.Run ( async ( ) =>
@@ -68,12 +81,6 @@ public partial class Notifications : INotifications
                    token ) ;
     }
 
-    public void Dispose ( )
-    {
-        Dispose ( true ) ;
-        GC.SuppressFinalize ( this ) ;
-    }
-
     protected virtual void Dispose ( bool disposing )
     {
         if ( ! _disposedValue )
@@ -89,13 +96,6 @@ public partial class Notifications : INotifications
 
             _disposedValue = true ;
         }
-    }
-
-    public void Show(string title, string text, InfoBarSeverity serverity)
-    {
-        Show(new NotificationParameters(title,
-                                        text,
-                                        serverity));
     }
 
     public void Show ( NotificationParameters parameters )

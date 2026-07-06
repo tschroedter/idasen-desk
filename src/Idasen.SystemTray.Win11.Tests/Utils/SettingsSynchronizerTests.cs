@@ -20,8 +20,10 @@ public class SettingsSynchronizerTests : IDisposable
         Substitute.For < IDeviceAddressToULongConverter > ( ) ;
 
     private readonly AppearanceSettings       _appearanceSettings = new( ) ;
+    private readonly IConverters              _converters         = Substitute.For < IConverters > ( ) ;
     private readonly DeviceSettings           _deviceSettings     = new( ) ;
     private readonly HeightSettings           _heightSettings     = new( ) ;
+    private readonly IHeightSettingsValidator _heightValidator    = new HeightSettingsValidator ( ) ;
     private readonly HotkeySettings           _hotkeySettings     = new( ) ;
     private readonly InMemoryLogger           _logger             = new( ) ;
     private readonly ISettingsViewModel       _model              = Substitute.For < ISettingsViewModel > ( ) ;
@@ -31,28 +33,23 @@ public class SettingsSynchronizerTests : IDisposable
     private readonly ILoggingSettingsManager  _settingsManager    = Substitute.For < ILoggingSettingsManager > ( ) ;
     private readonly IThemeSwitcher           _themeSwitcher      = Substitute.For < IThemeSwitcher > ( ) ;
     private readonly IDoubleToUIntConverter   _toUIntConverter    = Substitute.For < IDoubleToUIntConverter > ( ) ;
-    private readonly IHeightSettingsValidator _heightValidator    = new HeightSettingsValidator ( ) ;
-    private readonly IConverters              _converters         = Substitute.For < IConverters > ( ) ;
     private          bool                     _disposed ;
 
-    public void Dispose()
+    public void Dispose ( )
     {
-        Dispose(true);
+        Dispose ( true ) ;
 
-        GC.SuppressFinalize(this);
+        GC.SuppressFinalize ( this ) ;
     }
 
-    protected virtual void Dispose(bool disposing)
+    protected virtual void Dispose ( bool disposing )
     {
-        if (_disposed)
-            return;
+        if ( _disposed )
+            return ;
 
-        if (disposing)
-        {
-            _logger.Dispose();
-        }
+        if ( disposing ) _logger.Dispose ( ) ;
 
-        _disposed = true;
+        _disposed = true ;
     }
 
     private SettingsSynchronizer CreateSut ( )
@@ -80,27 +77,27 @@ public class SettingsSynchronizerTests : IDisposable
     {
         // Arrange
         var sut = CreateSut ( ) ;
-        _heightSettings.StandingHeightInCm   = 100 ;
-        _heightSettings.StandingName         = "My Stand" ;
-        _heightSettings.DeskMinHeightInCm    = 60 ;
-        _heightSettings.DeskMaxHeightInCm    = 120 ;
-        _heightSettings.SeatingHeightInCm    = 70 ;
-        _heightSettings.SeatingName          = "My Sit" ;
-        _heightSettings.Custom1HeightInCm    = 105 ;
-        _heightSettings.Custom1Name          = "My Custom 1" ;
-        _heightSettings.Custom2HeightInCm    = 72 ;
-        _heightSettings.Custom2Name          = "My Custom 2" ;
-        _heightSettings.LastKnownDeskHeight  = 80 ;
+        _heightSettings.StandingHeightInCm             = 100 ;
+        _heightSettings.StandingName                   = "My Stand" ;
+        _heightSettings.DeskMinHeightInCm              = 60 ;
+        _heightSettings.DeskMaxHeightInCm              = 120 ;
+        _heightSettings.SeatingHeightInCm              = 70 ;
+        _heightSettings.SeatingName                    = "My Sit" ;
+        _heightSettings.Custom1HeightInCm              = 105 ;
+        _heightSettings.Custom1Name                    = "My Custom 1" ;
+        _heightSettings.Custom2HeightInCm              = 72 ;
+        _heightSettings.Custom2Name                    = "My Custom 2" ;
+        _heightSettings.LastKnownDeskHeight            = 80 ;
         _heightSettings.StandingIsVisibleInContextMenu = true ;
         _heightSettings.SeatingIsVisibleInContextMenu  = false ;
         _heightSettings.Custom1IsVisibleInContextMenu  = true ;
         _heightSettings.Custom2IsVisibleInContextMenu  = false ;
-        _deviceSettings.DeviceName           = "Desk" ;
-        _deviceSettings.DeviceAddress        = 12345 ;
-        _deviceSettings.DeviceLocked         = true ;
-        _deviceSettings.NotificationsEnabled = true ;
-        _deviceSettings.StopIsVisibleInContextMenu = true ;
-        _appearanceSettings.ThemeName        = "Dark" ;
+        _deviceSettings.DeviceName                     = "Desk" ;
+        _deviceSettings.DeviceAddress                  = 12345 ;
+        _deviceSettings.DeviceLocked                   = true ;
+        _deviceSettings.NotificationsEnabled           = true ;
+        _deviceSettings.StopIsVisibleInContextMenu     = true ;
+        _appearanceSettings.ThemeName                  = "Dark" ;
         _nameConverter.EmptyIfDefault ( "Desk" ).Returns ( "Desk" ) ;
         _addressConverter.EmptyIfDefault ( 12345 ).Returns ( "12345" ) ;
 
@@ -197,24 +194,24 @@ public class SettingsSynchronizerTests : IDisposable
     {
         // Arrange
         var sut = CreateSut ( ) ;
-        _model.Standing            = 110 ;
-        _model.StandingName        = "My Standing" ;
-        _model.Seating             = 75 ;
-        _model.SeatingName         = "My Seating" ;
-        _model.Custom1             = 112 ;
-        _model.Custom1Name         = "My Custom 1" ;
-        _model.Custom2             = 74 ;
-        _model.Custom2Name         = "My Custom 2" ;
-        _model.LastKnownDeskHeight = 85 ;
+        _model.Standing                       = 110 ;
+        _model.StandingName                   = "My Standing" ;
+        _model.Seating                        = 75 ;
+        _model.SeatingName                    = "My Seating" ;
+        _model.Custom1                        = 112 ;
+        _model.Custom1Name                    = "My Custom 1" ;
+        _model.Custom2                        = 74 ;
+        _model.Custom2Name                    = "My Custom 2" ;
+        _model.LastKnownDeskHeight            = 85 ;
         _model.StandingIsVisibleInContextMenu = false ;
         _model.SeatingIsVisibleInContextMenu  = true ;
         _model.Custom1IsVisibleInContextMenu  = false ;
         _model.Custom2IsVisibleInContextMenu  = true ;
         _model.StopIsVisibleInContextMenu     = false ;
-        _model.DeskName            = "DeskX" ;
-        _model.DeskAddress         = "99999" ;
-        _model.ParentalLock        = true ;
-        _model.Notifications       = false ;
+        _model.DeskName                       = "DeskX" ;
+        _model.DeskAddress                    = "99999" ;
+        _model.ParentalLock                   = true ;
+        _model.Notifications                  = false ;
         _themeSwitcher.CurrentThemeName.Returns ( "Light" ) ;
         _toUIntConverter.ConvertToUInt ( 110 ,
                                          Arg.Any < uint > ( ) ).Returns ( 110u ) ;
@@ -325,7 +322,8 @@ public class SettingsSynchronizerTests : IDisposable
         // Assert
         await act.Should ( ).NotThrowAsync < InvalidOperationException > ( ) ;
 
-        _logger.Contains ( "Failed to load settings! Using default settings.", LogEventLevel.Error )
+        _logger.Contains ( "Failed to load settings! Using default settings." ,
+                           LogEventLevel.Error )
                .Should ( )
                .BeTrue ( ) ;
     }
@@ -389,7 +387,8 @@ public class SettingsSynchronizerTests : IDisposable
         await act.Should ( ).ThrowAsync < InvalidOperationException > ( )
                  .WithMessage ( "Failed to store settings" ) ;
 
-        _logger.Contains ( "Failed to store settings", LogEventLevel.Error )
+        _logger.Contains ( "Failed to store settings" ,
+                           LogEventLevel.Error )
                .Should ( )
                .BeTrue ( ) ;
     }
@@ -398,9 +397,9 @@ public class SettingsSynchronizerTests : IDisposable
     public void HaveHotkeySettingsChanged_ShouldReturnTrue_WhenGlobalHotkeysEnabledChanged ( )
     {
         // Arrange
-        var sut = CreateSut ( ) ;
+        var sut            = CreateSut ( ) ;
         var hotkeySettings = new HotkeySettings { GlobalHotkeysEnabled = true } ;
-        _settings.HotkeySettings = hotkeySettings ;
+        _settings.HotkeySettings    = hotkeySettings ;
         _model.GlobalHotkeysEnabled = false ;
 
         // Act
@@ -449,13 +448,14 @@ public class SettingsSynchronizerTests : IDisposable
     public async Task StoreSettingsAsync_ShouldNotifyHotkeySettingsChanged_WhenGlobalHotkeysEnabledChanged ( )
     {
         // Arrange
-        var sut = CreateSut ( ) ;
+        var sut            = CreateSut ( ) ;
         var hotkeySettings = new HotkeySettings { GlobalHotkeysEnabled = false } ;
-        _settings.HotkeySettings = hotkeySettings ;
+        _settings.HotkeySettings    = hotkeySettings ;
         _model.GlobalHotkeysEnabled = true ;
 
         // Act
-        await sut.StoreSettingsAsync ( _model , CancellationToken.None ) ;
+        await sut.StoreSettingsAsync ( _model ,
+                                       CancellationToken.None ) ;
 
         // Assert
         _settingsChanges.HotkeySettingsChanged.Received ( 1 ).OnNext ( true ) ;
@@ -490,7 +490,8 @@ public class SettingsSynchronizerTests : IDisposable
         _model.Custom2Modifiers.Returns ( AppConfiguration.Hotkeys.DefaultModifiers ) ;
 
         // Act
-        await sut.StoreSettingsAsync ( _model , CancellationToken.None ) ;
+        await sut.StoreSettingsAsync ( _model ,
+                                       CancellationToken.None ) ;
 
         // Assert
         _settingsChanges.HotkeySettingsChanged.DidNotReceive ( ).OnNext ( Arg.Any < bool > ( ) ) ;
@@ -500,12 +501,13 @@ public class SettingsSynchronizerTests : IDisposable
     public async Task LoadSettingsAsync_ShouldLoadGlobalHotkeysEnabled ( )
     {
         // Arrange
-        var sut = CreateSut ( ) ;
+        var sut            = CreateSut ( ) ;
         var hotkeySettings = new HotkeySettings { GlobalHotkeysEnabled = false } ;
         _settings.HotkeySettings = hotkeySettings ;
 
         // Act
-        await sut.LoadSettingsAsync ( _model , CancellationToken.None ) ;
+        await sut.LoadSettingsAsync ( _model ,
+                                      CancellationToken.None ) ;
 
         // Assert
         _model.Received ( 1 ).GlobalHotkeysEnabled = false ;
@@ -515,13 +517,14 @@ public class SettingsSynchronizerTests : IDisposable
     public async Task StoreSettingsAsync_ShouldUpdateGlobalHotkeysEnabled ( )
     {
         // Arrange
-        var sut = CreateSut ( ) ;
+        var sut            = CreateSut ( ) ;
         var hotkeySettings = new HotkeySettings { GlobalHotkeysEnabled = true } ;
-        _settings.HotkeySettings = hotkeySettings ;
+        _settings.HotkeySettings    = hotkeySettings ;
         _model.GlobalHotkeysEnabled = false ;
 
         // Act
-        await sut.StoreSettingsAsync ( _model , CancellationToken.None ) ;
+        await sut.StoreSettingsAsync ( _model ,
+                                       CancellationToken.None ) ;
 
         // Assert
         hotkeySettings.GlobalHotkeysEnabled.Should ( ).BeFalse ( ) ;
@@ -535,7 +538,8 @@ public class SettingsSynchronizerTests : IDisposable
         _heightSettings.StandingName = "My Standing Position" ;
 
         // Act
-        await sut.LoadSettingsAsync ( _model , CancellationToken.None ) ;
+        await sut.LoadSettingsAsync ( _model ,
+                                      CancellationToken.None ) ;
 
         // Assert
         _model.Received ( 1 ).StandingName = "My Standing Position" ;
@@ -549,7 +553,8 @@ public class SettingsSynchronizerTests : IDisposable
         _heightSettings.SeatingName = "My Sitting Position" ;
 
         // Act
-        await sut.LoadSettingsAsync ( _model , CancellationToken.None ) ;
+        await sut.LoadSettingsAsync ( _model ,
+                                      CancellationToken.None ) ;
 
         // Assert
         _model.Received ( 1 ).SeatingName = "My Sitting Position" ;
@@ -617,11 +622,12 @@ public class SettingsSynchronizerTests : IDisposable
         // Arrange
         var sut = CreateSut ( ) ;
         _heightSettings.StandingName = "Old Standing" ;
-        _model.StandingName = "New Standing" ;
+        _model.StandingName          = "New Standing" ;
         _settingsManager.SaveAsync ( Arg.Any < CancellationToken > ( ) ).Returns ( new ValueTask ( ) ) ;
 
         // Act
-        await sut.StoreSettingsAsync ( _model , CancellationToken.None ) ;
+        await sut.StoreSettingsAsync ( _model ,
+                                       CancellationToken.None ) ;
 
         // Assert
         await _settingsManager.Received ( 1 ).SaveAsync ( Arg.Any < CancellationToken > ( ) ) ;
@@ -634,11 +640,12 @@ public class SettingsSynchronizerTests : IDisposable
         // Arrange
         var sut = CreateSut ( ) ;
         _heightSettings.SeatingName = "Old Sitting" ;
-        _model.SeatingName = "New Sitting" ;
+        _model.SeatingName          = "New Sitting" ;
         _settingsManager.SaveAsync ( Arg.Any < CancellationToken > ( ) ).Returns ( new ValueTask ( ) ) ;
 
         // Act
-        await sut.StoreSettingsAsync ( _model , CancellationToken.None ) ;
+        await sut.StoreSettingsAsync ( _model ,
+                                       CancellationToken.None ) ;
 
         // Assert
         await _settingsManager.Received ( 1 ).SaveAsync ( Arg.Any < CancellationToken > ( ) ) ;
@@ -652,19 +659,19 @@ public class SettingsSynchronizerTests : IDisposable
         var sut = CreateSut ( ) ;
 
         // Set up heights
-        _heightSettings.StandingHeightInCm        = 100 ;
-        _heightSettings.SeatingHeightInCm         = 70 ;
-        _heightSettings.Custom1HeightInCm         = 105 ;
-        _heightSettings.Custom2HeightInCm         = 72 ;
-        _heightSettings.DeskMinHeightInCm         = 60 ;
-        _heightSettings.DeskMaxHeightInCm         = 120 ;
-        _heightSettings.LastKnownDeskHeight       = 80 ;
+        _heightSettings.StandingHeightInCm  = 100 ;
+        _heightSettings.SeatingHeightInCm   = 70 ;
+        _heightSettings.Custom1HeightInCm   = 105 ;
+        _heightSettings.Custom2HeightInCm   = 72 ;
+        _heightSettings.DeskMinHeightInCm   = 60 ;
+        _heightSettings.DeskMaxHeightInCm   = 120 ;
+        _heightSettings.LastKnownDeskHeight = 80 ;
 
         // Set up names
-        _heightSettings.StandingName              = "Same Standing" ;
-        _heightSettings.SeatingName               = "Same Sitting" ;
-        _heightSettings.Custom1Name               = "Same Custom1" ;
-        _heightSettings.Custom2Name               = "Same Custom2" ;
+        _heightSettings.StandingName = "Same Standing" ;
+        _heightSettings.SeatingName  = "Same Sitting" ;
+        _heightSettings.Custom1Name  = "Same Custom1" ;
+        _heightSettings.Custom2Name  = "Same Custom2" ;
 
         // Set up visibility
         _heightSettings.StandingIsVisibleInContextMenu = true ;
@@ -673,41 +680,45 @@ public class SettingsSynchronizerTests : IDisposable
         _heightSettings.Custom2IsVisibleInContextMenu  = true ;
 
         // Set up device settings
-        _deviceSettings.NotificationsEnabled      = true ;
-        _deviceSettings.DeviceLocked              = false ;
-        _deviceSettings.MaxSpeedToStopMovement    = 100 ;
-        _deviceSettings.DeviceName                = "TestDesk" ;
-        _deviceSettings.DeviceAddress             = 12345UL ;
+        _deviceSettings.NotificationsEnabled       = true ;
+        _deviceSettings.DeviceLocked               = false ;
+        _deviceSettings.MaxSpeedToStopMovement     = 100 ;
+        _deviceSettings.DeviceName                 = "TestDesk" ;
+        _deviceSettings.DeviceAddress              = 12345UL ;
         _deviceSettings.StopIsVisibleInContextMenu = true ;
 
         // Set up model with same values
-        _model.Standing                           = 100 ;
-        _model.Seating                            = 70 ;
-        _model.Custom1                            = 105 ;
-        _model.Custom2                            = 72 ;
-        _model.MinHeight                          = 60 ;
-        _model.MaxHeight                          = 120 ;
-        _model.LastKnownDeskHeight                = 80 ;
-        _model.StandingName                       = "Same Standing" ;
-        _model.SeatingName                        = "Same Sitting" ;
-        _model.Custom1Name                        = "Same Custom1" ;
-        _model.Custom2Name                        = "Same Custom2" ;
-        _model.StandingIsVisibleInContextMenu     = true ;
-        _model.SeatingIsVisibleInContextMenu      = true ;
-        _model.Custom1IsVisibleInContextMenu      = true ;
-        _model.Custom2IsVisibleInContextMenu      = true ;
-        _model.StopIsVisibleInContextMenu         = true ;
-        _model.Notifications                      = true ;
-        _model.ParentalLock                       = false ;
-        _model.MaxSpeedToStopMovement             = 100 ;
-        _model.DeskName                           = "TestDesk" ;
-        _model.DeskAddress                        = "12345" ;
+        _model.Standing                       = 100 ;
+        _model.Seating                        = 70 ;
+        _model.Custom1                        = 105 ;
+        _model.Custom2                        = 72 ;
+        _model.MinHeight                      = 60 ;
+        _model.MaxHeight                      = 120 ;
+        _model.LastKnownDeskHeight            = 80 ;
+        _model.StandingName                   = "Same Standing" ;
+        _model.SeatingName                    = "Same Sitting" ;
+        _model.Custom1Name                    = "Same Custom1" ;
+        _model.Custom2Name                    = "Same Custom2" ;
+        _model.StandingIsVisibleInContextMenu = true ;
+        _model.SeatingIsVisibleInContextMenu  = true ;
+        _model.Custom1IsVisibleInContextMenu  = true ;
+        _model.Custom2IsVisibleInContextMenu  = true ;
+        _model.StopIsVisibleInContextMenu     = true ;
+        _model.Notifications                  = true ;
+        _model.ParentalLock                   = false ;
+        _model.MaxSpeedToStopMovement         = 100 ;
+        _model.DeskName                       = "TestDesk" ;
+        _model.DeskAddress                    = "12345" ;
 
         // Mock converters
-        _toUIntConverter.ConvertToUInt ( 100 , Arg.Any < uint > ( ) ).Returns ( 100u ) ;
-        _toUIntConverter.ConvertToUInt ( 70 , Arg.Any < uint > ( ) ).Returns ( 70u ) ;
-        _toUIntConverter.ConvertToUInt ( 105 , Arg.Any < uint > ( ) ).Returns ( 105u ) ;
-        _toUIntConverter.ConvertToUInt ( 72 , Arg.Any < uint > ( ) ).Returns ( 72u ) ;
+        _toUIntConverter.ConvertToUInt ( 100 ,
+                                         Arg.Any < uint > ( ) ).Returns ( 100u ) ;
+        _toUIntConverter.ConvertToUInt ( 70 ,
+                                         Arg.Any < uint > ( ) ).Returns ( 70u ) ;
+        _toUIntConverter.ConvertToUInt ( 105 ,
+                                         Arg.Any < uint > ( ) ).Returns ( 105u ) ;
+        _toUIntConverter.ConvertToUInt ( 72 ,
+                                         Arg.Any < uint > ( ) ).Returns ( 72u ) ;
         _nameConverter.DefaultIfEmpty ( "TestDesk" ).Returns ( "TestDesk" ) ;
         _addressConverter.DefaultIfEmpty ( "12345" ).Returns ( 12345UL ) ;
 
@@ -738,7 +749,8 @@ public class SettingsSynchronizerTests : IDisposable
         _model.Custom2Modifiers.Returns ( AppConfiguration.Hotkeys.DefaultModifiers ) ;
 
         // Act
-        await sut.StoreSettingsAsync ( _model , CancellationToken.None ) ;
+        await sut.StoreSettingsAsync ( _model ,
+                                       CancellationToken.None ) ;
 
         // Assert
         await _settingsManager.DidNotReceive ( ).SaveAsync ( Arg.Any < CancellationToken > ( ) ) ;
@@ -750,17 +762,17 @@ public class SettingsSynchronizerTests : IDisposable
         // Arrange
         var sut = CreateSut ( ) ;
 
-        _heightSettings.StandingHeightInCm   = 100 ;
-        _heightSettings.SeatingHeightInCm    = 70 ;
-        _heightSettings.Custom1HeightInCm    = 105 ;
-        _heightSettings.Custom2HeightInCm    = 72 ;
-        _heightSettings.DeskMinHeightInCm    = 60 ;
-        _heightSettings.DeskMaxHeightInCm    = 120 ;
-        _heightSettings.LastKnownDeskHeight  = 80 ;
-        _heightSettings.StandingName         = AppConfiguration.Hotkeys.StandingName ;
-        _heightSettings.SeatingName          = AppConfiguration.Hotkeys.SeatingName ;
-        _heightSettings.Custom1Name          = AppConfiguration.Hotkeys.Custom1Name ;
-        _heightSettings.Custom2Name          = AppConfiguration.Hotkeys.Custom2Name ;
+        _heightSettings.StandingHeightInCm             = 100 ;
+        _heightSettings.SeatingHeightInCm              = 70 ;
+        _heightSettings.Custom1HeightInCm              = 105 ;
+        _heightSettings.Custom2HeightInCm              = 72 ;
+        _heightSettings.DeskMinHeightInCm              = 60 ;
+        _heightSettings.DeskMaxHeightInCm              = 120 ;
+        _heightSettings.LastKnownDeskHeight            = 80 ;
+        _heightSettings.StandingName                   = AppConfiguration.Hotkeys.StandingName ;
+        _heightSettings.SeatingName                    = AppConfiguration.Hotkeys.SeatingName ;
+        _heightSettings.Custom1Name                    = AppConfiguration.Hotkeys.Custom1Name ;
+        _heightSettings.Custom2Name                    = AppConfiguration.Hotkeys.Custom2Name ;
         _heightSettings.StandingIsVisibleInContextMenu = true ;
         _heightSettings.SeatingIsVisibleInContextMenu  = true ;
         _heightSettings.Custom1IsVisibleInContextMenu  = true ;
@@ -775,16 +787,16 @@ public class SettingsSynchronizerTests : IDisposable
 
         // Use default names directly instead of whitespace, since the comparison in HaveAnySettingsChanged
         // checks raw values before normalization
-        _model.StandingName = AppConfiguration.Hotkeys.StandingName ;
-        _model.SeatingName  = AppConfiguration.Hotkeys.SeatingName ;
-        _model.Custom1Name  = AppConfiguration.Hotkeys.Custom1Name ;
-        _model.Custom2Name  = AppConfiguration.Hotkeys.Custom2Name ;
-        _model.Standing     = 100 ;
-        _model.Seating      = 70 ;
-        _model.Custom1      = 105 ;
-        _model.Custom2      = 72 ;
-        _model.MinHeight    = 60 ;
-        _model.MaxHeight    = 120 ;
+        _model.StandingName                   = AppConfiguration.Hotkeys.StandingName ;
+        _model.SeatingName                    = AppConfiguration.Hotkeys.SeatingName ;
+        _model.Custom1Name                    = AppConfiguration.Hotkeys.Custom1Name ;
+        _model.Custom2Name                    = AppConfiguration.Hotkeys.Custom2Name ;
+        _model.Standing                       = 100 ;
+        _model.Seating                        = 70 ;
+        _model.Custom1                        = 105 ;
+        _model.Custom2                        = 72 ;
+        _model.MinHeight                      = 60 ;
+        _model.MaxHeight                      = 120 ;
         _model.LastKnownDeskHeight            = 80 ;
         _model.StandingIsVisibleInContextMenu = true ;
         _model.SeatingIsVisibleInContextMenu  = true ;
@@ -797,10 +809,14 @@ public class SettingsSynchronizerTests : IDisposable
         _model.DeskName                       = "TestDesk" ;
         _model.DeskAddress                    = "12345" ;
 
-        _toUIntConverter.ConvertToUInt ( 100 , Arg.Any < uint > ( ) ).Returns ( 100u ) ;
-        _toUIntConverter.ConvertToUInt ( 70 , Arg.Any < uint > ( ) ).Returns ( 70u ) ;
-        _toUIntConverter.ConvertToUInt ( 105 , Arg.Any < uint > ( ) ).Returns ( 105u ) ;
-        _toUIntConverter.ConvertToUInt ( 72 , Arg.Any < uint > ( ) ).Returns ( 72u ) ;
+        _toUIntConverter.ConvertToUInt ( 100 ,
+                                         Arg.Any < uint > ( ) ).Returns ( 100u ) ;
+        _toUIntConverter.ConvertToUInt ( 70 ,
+                                         Arg.Any < uint > ( ) ).Returns ( 70u ) ;
+        _toUIntConverter.ConvertToUInt ( 105 ,
+                                         Arg.Any < uint > ( ) ).Returns ( 105u ) ;
+        _toUIntConverter.ConvertToUInt ( 72 ,
+                                         Arg.Any < uint > ( ) ).Returns ( 72u ) ;
         _nameConverter.DefaultIfEmpty ( "TestDesk" ).Returns ( "TestDesk" ) ;
         _addressConverter.DefaultIfEmpty ( "12345" ).Returns ( 12345UL ) ;
         _themeSwitcher.CurrentThemeName.Returns ( _appearanceSettings.ThemeName ) ;
@@ -841,38 +857,42 @@ public class SettingsSynchronizerTests : IDisposable
     {
         // Arrange
         var sut = CreateSut ( ) ;
-        _heightSettings.StandingName              = "Old Standing" ;
-        _heightSettings.SeatingName               = "Same Sitting" ;
-        _heightSettings.Custom1Name               = "Same Custom1" ;
-        _heightSettings.Custom2Name               = "Same Custom2" ;
-        _heightSettings.StandingHeightInCm        = 100 ;
-        _heightSettings.SeatingHeightInCm         = 70 ;
-        _heightSettings.Custom1HeightInCm         = 105 ;
-        _heightSettings.Custom2HeightInCm         = 72 ;
-        _heightSettings.DeskMinHeightInCm         = 60 ;
-        _heightSettings.DeskMaxHeightInCm         = 120 ;
-        _heightSettings.LastKnownDeskHeight       = 80 ;
-        _deviceSettings.NotificationsEnabled      = true ;
-        _deviceSettings.DeviceLocked              = false ;
-        _deviceSettings.MaxSpeedToStopMovement    = 100 ;
-        _model.StandingName                       = "New Standing" ;
-        _model.SeatingName                        = "Same Sitting" ;
-        _model.Custom1Name                        = "Same Custom1" ;
-        _model.Custom2Name                        = "Same Custom2" ;
-        _model.Standing                           = 100 ;
-        _model.Seating                            = 70 ;
-        _model.Custom1                            = 105 ;
-        _model.Custom2                            = 72 ;
-        _model.MinHeight                          = 60 ;
-        _model.MaxHeight                          = 120 ;
-        _model.LastKnownDeskHeight                = 80 ;
-        _model.Notifications                      = true ;
-        _model.ParentalLock                       = false ;
-        _model.MaxSpeedToStopMovement             = 100 ;
-        _toUIntConverter.ConvertToUInt ( 100 , Arg.Any < uint > ( ) ).Returns ( 100u ) ;
-        _toUIntConverter.ConvertToUInt ( 70 , Arg.Any < uint > ( ) ).Returns ( 70u ) ;
-        _toUIntConverter.ConvertToUInt ( 105 , Arg.Any < uint > ( ) ).Returns ( 105u ) ;
-        _toUIntConverter.ConvertToUInt ( 72 , Arg.Any < uint > ( ) ).Returns ( 72u ) ;
+        _heightSettings.StandingName           = "Old Standing" ;
+        _heightSettings.SeatingName            = "Same Sitting" ;
+        _heightSettings.Custom1Name            = "Same Custom1" ;
+        _heightSettings.Custom2Name            = "Same Custom2" ;
+        _heightSettings.StandingHeightInCm     = 100 ;
+        _heightSettings.SeatingHeightInCm      = 70 ;
+        _heightSettings.Custom1HeightInCm      = 105 ;
+        _heightSettings.Custom2HeightInCm      = 72 ;
+        _heightSettings.DeskMinHeightInCm      = 60 ;
+        _heightSettings.DeskMaxHeightInCm      = 120 ;
+        _heightSettings.LastKnownDeskHeight    = 80 ;
+        _deviceSettings.NotificationsEnabled   = true ;
+        _deviceSettings.DeviceLocked           = false ;
+        _deviceSettings.MaxSpeedToStopMovement = 100 ;
+        _model.StandingName                    = "New Standing" ;
+        _model.SeatingName                     = "Same Sitting" ;
+        _model.Custom1Name                     = "Same Custom1" ;
+        _model.Custom2Name                     = "Same Custom2" ;
+        _model.Standing                        = 100 ;
+        _model.Seating                         = 70 ;
+        _model.Custom1                         = 105 ;
+        _model.Custom2                         = 72 ;
+        _model.MinHeight                       = 60 ;
+        _model.MaxHeight                       = 120 ;
+        _model.LastKnownDeskHeight             = 80 ;
+        _model.Notifications                   = true ;
+        _model.ParentalLock                    = false ;
+        _model.MaxSpeedToStopMovement          = 100 ;
+        _toUIntConverter.ConvertToUInt ( 100 ,
+                                         Arg.Any < uint > ( ) ).Returns ( 100u ) ;
+        _toUIntConverter.ConvertToUInt ( 70 ,
+                                         Arg.Any < uint > ( ) ).Returns ( 70u ) ;
+        _toUIntConverter.ConvertToUInt ( 105 ,
+                                         Arg.Any < uint > ( ) ).Returns ( 105u ) ;
+        _toUIntConverter.ConvertToUInt ( 72 ,
+                                         Arg.Any < uint > ( ) ).Returns ( 72u ) ;
         _themeSwitcher.CurrentThemeName.Returns ( _appearanceSettings.ThemeName ) ;
         _settingsManager.SaveAsync ( Arg.Any < CancellationToken > ( ) ).Returns ( new ValueTask ( ) ) ;
 
@@ -901,7 +921,8 @@ public class SettingsSynchronizerTests : IDisposable
         _model.Custom2Modifiers.Returns ( AppConfiguration.Hotkeys.DefaultModifiers ) ;
 
         // Act
-        await sut.StoreSettingsAsync ( _model , CancellationToken.None ) ;
+        await sut.StoreSettingsAsync ( _model ,
+                                       CancellationToken.None ) ;
 
         // Assert
         await _settingsManager.Received ( 1 ).SaveAsync ( Arg.Any < CancellationToken > ( ) ) ;
@@ -916,7 +937,8 @@ public class SettingsSynchronizerTests : IDisposable
         _heightSettings.Custom1Name = "My Custom Position 1" ;
 
         // Act
-        await sut.LoadSettingsAsync ( _model , CancellationToken.None ) ;
+        await sut.LoadSettingsAsync ( _model ,
+                                      CancellationToken.None ) ;
 
         // Assert
         _model.Received ( 1 ).Custom1Name = "My Custom Position 1" ;
@@ -930,7 +952,8 @@ public class SettingsSynchronizerTests : IDisposable
         _heightSettings.Custom2Name = "My Custom Position 2" ;
 
         // Act
-        await sut.LoadSettingsAsync ( _model , CancellationToken.None ) ;
+        await sut.LoadSettingsAsync ( _model ,
+                                      CancellationToken.None ) ;
 
         // Assert
         _model.Received ( 1 ).Custom2Name = "My Custom Position 2" ;
@@ -1004,7 +1027,8 @@ public class SettingsSynchronizerTests : IDisposable
         _deviceSettings.StopIsVisibleInContextMenu     = false ;
 
         // Act
-        await sut.LoadSettingsAsync ( _model , CancellationToken.None ) ;
+        await sut.LoadSettingsAsync ( _model ,
+                                      CancellationToken.None ) ;
 
         // Assert
         _model.Received ( 1 ).StandingIsVisibleInContextMenu = false ;
@@ -1055,7 +1079,8 @@ public class SettingsSynchronizerTests : IDisposable
         _settings.HotkeySettings = hotkeySettings ;
 
         // Act
-        await sut.LoadSettingsAsync ( _model , CancellationToken.None ) ;
+        await sut.LoadSettingsAsync ( _model ,
+                                      CancellationToken.None ) ;
 
         // Assert
         _model.Received ( 1 ).StandingKey       = "S" ;
@@ -1072,7 +1097,7 @@ public class SettingsSynchronizerTests : IDisposable
     public void UpdateCurrentSettings_ShouldUpdateHotkeyKeys ( )
     {
         // Arrange
-        var sut = CreateSut ( ) ;
+        var sut            = CreateSut ( ) ;
         var hotkeySettings = new HotkeySettings ( ) ;
         _settings.HotkeySettings = hotkeySettings ;
         _model.StandingKey       = "S" ;
@@ -1105,17 +1130,17 @@ public class SettingsSynchronizerTests : IDisposable
         var sut = CreateSut ( ) ;
         var hotkeySettings = new HotkeySettings
         {
-            StandingKey          = "S" ,
-            StandingModifiers    = AppConfiguration.Hotkeys.DefaultModifiers ,
-            SeatingKey           = AppConfiguration.Hotkeys.SeatingKey ,
-            SeatingModifiers     = AppConfiguration.Hotkeys.DefaultModifiers ,
-            Custom1Key           = AppConfiguration.Hotkeys.Custom1Key ,
-            Custom1Modifiers     = AppConfiguration.Hotkeys.DefaultModifiers ,
-            Custom2Key           = AppConfiguration.Hotkeys.Custom2Key ,
-            Custom2Modifiers     = AppConfiguration.Hotkeys.DefaultModifiers
+            StandingKey       = "S" ,
+            StandingModifiers = AppConfiguration.Hotkeys.DefaultModifiers ,
+            SeatingKey        = AppConfiguration.Hotkeys.SeatingKey ,
+            SeatingModifiers  = AppConfiguration.Hotkeys.DefaultModifiers ,
+            Custom1Key        = AppConfiguration.Hotkeys.Custom1Key ,
+            Custom1Modifiers  = AppConfiguration.Hotkeys.DefaultModifiers ,
+            Custom2Key        = AppConfiguration.Hotkeys.Custom2Key ,
+            Custom2Modifiers  = AppConfiguration.Hotkeys.DefaultModifiers
         } ;
         _settings.HotkeySettings = hotkeySettings ;
-        _model.StandingKey.Returns ( "D" ) ;  // Different key
+        _model.StandingKey.Returns ( "D" ) ; // Different key
         _model.StandingModifiers.Returns ( AppConfiguration.Hotkeys.DefaultModifiers ) ;
 
         // Act
@@ -1132,17 +1157,17 @@ public class SettingsSynchronizerTests : IDisposable
         var sut = CreateSut ( ) ;
         var hotkeySettings = new HotkeySettings
         {
-            StandingKey          = AppConfiguration.Hotkeys.StandingKey ,
-            StandingModifiers    = AppConfiguration.Hotkeys.DefaultModifiers ,
-            SeatingKey           = AppConfiguration.Hotkeys.SeatingKey ,
-            SeatingModifiers     = AppConfiguration.Hotkeys.DefaultModifiers ,
-            Custom1Key           = "D1" ,
-            Custom1Modifiers     = AppConfiguration.Hotkeys.DefaultModifiers ,
-            Custom2Key           = AppConfiguration.Hotkeys.Custom2Key ,
-            Custom2Modifiers     = AppConfiguration.Hotkeys.DefaultModifiers
+            StandingKey       = AppConfiguration.Hotkeys.StandingKey ,
+            StandingModifiers = AppConfiguration.Hotkeys.DefaultModifiers ,
+            SeatingKey        = AppConfiguration.Hotkeys.SeatingKey ,
+            SeatingModifiers  = AppConfiguration.Hotkeys.DefaultModifiers ,
+            Custom1Key        = "D1" ,
+            Custom1Modifiers  = AppConfiguration.Hotkeys.DefaultModifiers ,
+            Custom2Key        = AppConfiguration.Hotkeys.Custom2Key ,
+            Custom2Modifiers  = AppConfiguration.Hotkeys.DefaultModifiers
         } ;
         _settings.HotkeySettings = hotkeySettings ;
-        _model.Custom1Key.Returns ( "D2" ) ;  // Different key
+        _model.Custom1Key.Returns ( "D2" ) ; // Different key
         _model.Custom1Modifiers.Returns ( AppConfiguration.Hotkeys.DefaultModifiers ) ;
 
         // Act
@@ -1159,18 +1184,18 @@ public class SettingsSynchronizerTests : IDisposable
         var sut = CreateSut ( ) ;
         var hotkeySettings = new HotkeySettings
         {
-            StandingKey          = AppConfiguration.Hotkeys.StandingKey ,
-            StandingModifiers    = AppConfiguration.Hotkeys.DefaultModifiers ,
-            SeatingKey           = AppConfiguration.Hotkeys.SeatingKey ,
-            SeatingModifiers     = AppConfiguration.Hotkeys.DefaultModifiers ,
-            Custom1Key           = AppConfiguration.Hotkeys.Custom1Key ,
-            Custom1Modifiers     = AppConfiguration.Hotkeys.DefaultModifiers ,
-            Custom2Key           = AppConfiguration.Hotkeys.Custom2Key ,
-            Custom2Modifiers     = "Control"
+            StandingKey       = AppConfiguration.Hotkeys.StandingKey ,
+            StandingModifiers = AppConfiguration.Hotkeys.DefaultModifiers ,
+            SeatingKey        = AppConfiguration.Hotkeys.SeatingKey ,
+            SeatingModifiers  = AppConfiguration.Hotkeys.DefaultModifiers ,
+            Custom1Key        = AppConfiguration.Hotkeys.Custom1Key ,
+            Custom1Modifiers  = AppConfiguration.Hotkeys.DefaultModifiers ,
+            Custom2Key        = AppConfiguration.Hotkeys.Custom2Key ,
+            Custom2Modifiers  = "Control"
         } ;
         _settings.HotkeySettings = hotkeySettings ;
         _model.Custom2Key.Returns ( AppConfiguration.Hotkeys.Custom2Key ) ;
-        _model.Custom2Modifiers.Returns ( "Alt" ) ;  // Different modifiers
+        _model.Custom2Modifiers.Returns ( "Alt" ) ; // Different modifiers
 
         // Act
         var result = sut.HaveHotkeySettingsChanged ( _model ) ;

@@ -10,24 +10,24 @@ namespace Idasen.SystemTray.Win11.Utils ;
 
 public sealed class DeskReadyManager : IDeskReadyManager
 {
-    private readonly ILogger                       _logger ;
-    private readonly ISettingsManager              _settingsManager ;
-    private readonly ITaskbarIconProvider          _iconProvider ;
-    private readonly IDeskNotificationManager      _notificationManager ;
-    private readonly NotifyIcon ?                  _notifyIcon ;
-    private readonly IDeskConnectionManager        _connectionManager ;
+    private readonly IDeskConnectionManager   _connectionManager ;
+    private readonly ITaskbarIconProvider     _iconProvider ;
+    private readonly ILogger                  _logger ;
+    private readonly IDeskNotificationManager _notificationManager ;
+    private readonly NotifyIcon ?             _notifyIcon ;
+    private readonly ISettingsManager         _settingsManager ;
 
-    private bool            _disposed ;
-    private IDisposable ?   _finished ;
-    private IDisposable ?   _heightChanged ;
+    private bool          _disposed ;
+    private IDisposable ? _finished ;
+    private IDisposable ? _heightChanged ;
 
     public DeskReadyManager (
-        ILogger                   logger ,
-        ISettingsManager          settingsManager ,
-        ITaskbarIconProvider      iconProvider ,
-        IDeskNotificationManager  notificationManager ,
-        NotifyIcon ?              notifyIcon ,
-        IDeskConnectionManager    connectionManager )
+        ILogger                  logger ,
+        ISettingsManager         settingsManager ,
+        ITaskbarIconProvider     iconProvider ,
+        IDeskNotificationManager notificationManager ,
+        NotifyIcon ?             notifyIcon ,
+        IDeskConnectionManager   connectionManager )
     {
         ArgumentNullException.ThrowIfNull ( logger ) ;
         ArgumentNullException.ThrowIfNull ( settingsManager ) ;
@@ -35,12 +35,12 @@ public sealed class DeskReadyManager : IDeskReadyManager
         ArgumentNullException.ThrowIfNull ( notificationManager ) ;
         ArgumentNullException.ThrowIfNull ( connectionManager ) ;
 
-        _logger               = logger ;
-        _settingsManager      = settingsManager ;
-        _iconProvider         = iconProvider ;
-        _notificationManager  = notificationManager ;
-        _notifyIcon           = notifyIcon ;
-        _connectionManager    = connectionManager ;
+        _logger              = logger ;
+        _settingsManager     = settingsManager ;
+        _iconProvider        = iconProvider ;
+        _notificationManager = notificationManager ;
+        _notifyIcon          = notifyIcon ;
+        _connectionManager   = connectionManager ;
     }
 
     public void Dispose ( )
@@ -53,28 +53,13 @@ public sealed class DeskReadyManager : IDeskReadyManager
         _logger.Information ( "Disposing {TypeName}..." ,
                               nameof ( DeskReadyManager ) ) ;
 
-        DisposeResource ( _finished , nameof ( _finished ) ) ;
-        DisposeResource ( _heightChanged , nameof ( _heightChanged ) ) ;
+        DisposeResource ( _finished ,
+                          nameof ( _finished ) ) ;
+        DisposeResource ( _heightChanged ,
+                          nameof ( _heightChanged ) ) ;
 
         _finished      = null ;
         _heightChanged = null ;
-    }
-
-    private void DisposeResource ( IDisposable ? resource , string resourceName )
-    {
-        if ( resource == null )
-            return ;
-
-        try
-        {
-            resource.Dispose ( ) ;
-        }
-        catch ( Exception ex )
-        {
-            _logger.Warning ( ex ,
-                             "Failed to dispose {ResourceName}" ,
-                             resourceName ) ;
-        }
     }
 
     public void OnDeskReady ( IDesk desk )
@@ -115,6 +100,23 @@ public sealed class DeskReadyManager : IDeskReadyManager
                                                 InfoBarSeverity.Success ) ;
     }
 
+    private void DisposeResource ( IDisposable ? resource , string resourceName )
+    {
+        if ( resource == null )
+            return ;
+
+        try
+        {
+            resource.Dispose ( ) ;
+        }
+        catch ( Exception ex )
+        {
+            _logger.Warning ( ex ,
+                              "Failed to dispose {ResourceName}" ,
+                              resourceName ) ;
+        }
+    }
+
     private async Task HandleFinishedChangedAsync ( uint height )
     {
         try
@@ -124,20 +126,20 @@ public sealed class DeskReadyManager : IDeskReadyManager
         catch ( Exception ex )
         {
             _logger.Error ( ex ,
-                            "Error in HandleFinishedChangedAsync") ;
+                            "Error in HandleFinishedChangedAsync" ) ;
         }
     }
 
-    private async Task HandleHeightChangedAsync(uint height)
+    private async Task HandleHeightChangedAsync ( uint height )
     {
         try
         {
-            await OnHeightChanged(height).ConfigureAwait(false);
+            await OnHeightChanged ( height ).ConfigureAwait ( false ) ;
         }
-        catch (Exception ex)
+        catch ( Exception ex )
         {
-            _logger.Error(ex,
-                          "Error in HandleHeightChangedAsync");
+            _logger.Error ( ex ,
+                            "Error in HandleHeightChangedAsync" ) ;
         }
     }
 
@@ -189,7 +191,7 @@ public sealed class DeskReadyManager : IDeskReadyManager
         catch ( Exception ex )
         {
             _logger.Warning ( ex ,
-                             "Failed to reset connection monitor activity timer" ) ;
+                              "Failed to reset connection monitor activity timer" ) ;
         }
     }
 }

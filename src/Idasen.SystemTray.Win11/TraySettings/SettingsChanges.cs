@@ -3,12 +3,12 @@ using Idasen.SystemTray.Win11.Interfaces ;
 
 namespace Idasen.SystemTray.Win11.TraySettings ;
 
-public partial class SettingsChanges : IObserveSettingsChanges , INotifySettingsChanges , IDisposable
+public class SettingsChanges : IObserveSettingsChanges , INotifySettingsChanges , IDisposable
 {
     private readonly Subject < bool > _advancedSubject = new( ) ;
-    private readonly Subject < bool > _lockSubject     = new( ) ;
-    private readonly Subject < bool > _hotkeySubject   = new( ) ;
     private readonly Subject < bool > _heightSubject   = new( ) ;
+    private readonly Subject < bool > _hotkeySubject   = new( ) ;
+    private readonly Subject < bool > _lockSubject     = new( ) ;
 
     private bool _disposed ;
 

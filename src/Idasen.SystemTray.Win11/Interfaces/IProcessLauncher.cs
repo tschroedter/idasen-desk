@@ -18,5 +18,5 @@ public interface IProcessLauncher
     ///     <c>(true, null)</c> when the process started but did not complete within <paramref name="timeoutMs" />;
     ///     <c>(true, exitCode)</c> when the process completed.
     /// </returns>
-    ( bool started , int? exitCode ) StartAndWait ( ProcessStartInfo startInfo , int timeoutMs ) ;
+    ( bool started , int ? exitCode ) StartAndWait ( ProcessStartInfo startInfo , int timeoutMs ) ;
 }

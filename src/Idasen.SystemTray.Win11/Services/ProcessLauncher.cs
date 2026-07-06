@@ -20,7 +20,7 @@ public class ProcessLauncher : IProcessLauncher
     }
 
     /// <inheritdoc />
-    public ( bool started , int? exitCode ) StartAndWait ( ProcessStartInfo startInfo , int timeoutMs )
+    public ( bool started , int ? exitCode ) StartAndWait ( ProcessStartInfo startInfo , int timeoutMs )
     {
         using var process = Process.Start ( startInfo ) ;
 

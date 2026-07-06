@@ -16,17 +16,17 @@
         <ui:SymbolIcon Grid.Column="0"
                        MinWidth="32"
                        Symbol="{Binding Symbol, ElementName=Root}"
-                       HorizontalAlignment="Center" 
+                       HorizontalAlignment="Center"
                        VerticalAlignment="Center" />
 
         <!-- Label -->
-        <Label Grid.Column="1" 
-               MinWidth="80" 
+        <Label Grid.Column="1"
+               MinWidth="80"
                Margin="0,0,5,0"
                HorizontalAlignment="Stretch"
                Content="{Binding HotkeyName, ElementName=Root}"
                ToolTip="{Binding HotkeyTooltip, ElementName=Root}"
-               VerticalAlignment="Center" 
+               VerticalAlignment="Center"
                Padding="5,0,5,0" />
 
         <!-- Key ComboBox -->
@@ -41,7 +41,7 @@
                   ScrollViewer.VerticalScrollBarVisibility="Auto" />
 
         <!-- Modifier Checkboxes -->
-        <Grid Grid.Column="3" 
+        <Grid Grid.Column="3"
               Margin="5,0,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" MinWidth="50" />
@@ -50,17 +50,17 @@
             </Grid.ColumnDefinitions>
 
             <CheckBox Grid.Column="0"
-                      Content="Ctrl" 
+                      Content="Ctrl"
                       HorizontalAlignment="Stretch"
-                      IsChecked="{Binding IsControlChecked, ElementName=Root, Mode=TwoWay}" 
+                      IsChecked="{Binding IsControlChecked, ElementName=Root, Mode=TwoWay}"
                       Margin="0,0,10,0" />
             <CheckBox Grid.Column="1"
-                      Content="Alt" 
+                      Content="Alt"
                       HorizontalAlignment="Stretch"
-                      IsChecked="{Binding IsAltChecked, ElementName=Root, Mode=TwoWay}" 
+                      IsChecked="{Binding IsAltChecked, ElementName=Root, Mode=TwoWay}"
                       Margin="0,0,10,0" />
             <CheckBox Grid.Column="2"
-                      Content="Shift" 
+                      Content="Shift"
                       HorizontalAlignment="Stretch"
                       IsChecked="{Binding IsShiftChecked, ElementName=Root, Mode=TwoWay}" />
         </Grid>

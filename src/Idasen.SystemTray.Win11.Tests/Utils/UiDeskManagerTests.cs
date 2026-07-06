@@ -1,5 +1,6 @@
 using System.Reactive.Concurrency ;
 using FluentAssertions ;
+using FluentAssertions.Execution ;
 using Idasen.BluetoothLE.Linak.Interfaces ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.TraySettings ;
@@ -14,9 +15,9 @@ namespace Idasen.SystemTray.Win11.Tests.Utils ;
 public class UiDeskManagerTests
 {
     private static UiDeskManager CreateSut (
-        out IDesk            desk ,
-        out ISettingsManager settingsManager ,
-        out IDeskMovementManager deskMovementManager ,
+        out IDesk                  desk ,
+        out ISettingsManager       settingsManager ,
+        out IDeskMovementManager   deskMovementManager ,
         out IDeskConnectionManager deskConnectionManager )
     {
         var logger = Substitute.For < ILogger > ( ) ;
@@ -25,10 +26,10 @@ public class UiDeskManagerTests
         var errorManager    = Substitute.For < IErrorManager > ( ) ;
         var settingsChanges = Substitute.For < IObserveSettingsChanges > ( ) ;
         var hotkeyManager   = Substitute.For < IHotkeyManager > ( ) ;
-        deskMovementManager = Substitute.For < IDeskMovementManager > ( ) ;
+        deskMovementManager   = Substitute.For < IDeskMovementManager > ( ) ;
         deskConnectionManager = Substitute.For < IDeskConnectionManager > ( ) ;
         var notificationManager = Substitute.For < IDeskNotificationManager > ( ) ;
-        var deskReadyManager = Substitute.For < IDeskReadyManager > ( ) ;
+        var deskReadyManager    = Substitute.For < IDeskReadyManager > ( ) ;
 
         desk = Substitute.For < IDesk > ( ) ;
 
@@ -66,7 +67,8 @@ public class UiDeskManagerTests
 
         await sut.StandAsync ( ) ;
 
-        await deskMovementManager.Received ( 1 ).MoveToHeightAsync ( 120u , nameof ( UiDeskManager.StandAsync ) ) ;
+        await deskMovementManager.Received ( 1 ).MoveToHeightAsync ( 120u ,
+                                                                     nameof ( UiDeskManager.StandAsync ) ) ;
     }
 
     [ Fact ]
@@ -81,7 +83,8 @@ public class UiDeskManagerTests
 
         await sut.SitAsync ( ) ;
 
-        await deskMovementManager.Received ( 1 ).MoveToHeightAsync ( 70u , nameof ( UiDeskManager.SitAsync ) ) ;
+        await deskMovementManager.Received ( 1 ).MoveToHeightAsync ( 70u ,
+                                                                     nameof ( UiDeskManager.SitAsync ) ) ;
     }
 
     [ Fact ]
@@ -166,7 +169,8 @@ public class UiDeskManagerTests
 
         await sut.Custom1Async ( ) ;
 
-        await deskMovementManager.Received ( 1 ).MoveToHeightAsync ( 111u , nameof ( UiDeskManager.Custom1Async ) ) ;
+        await deskMovementManager.Received ( 1 ).MoveToHeightAsync ( 111u ,
+                                                                     nameof ( UiDeskManager.Custom1Async ) ) ;
     }
 
     [ Fact ]
@@ -181,7 +185,8 @@ public class UiDeskManagerTests
 
         await sut.Custom2Async ( ) ;
 
-        await deskMovementManager.Received ( 1 ).MoveToHeightAsync ( 66u , nameof ( UiDeskManager.Custom2Async ) ) ;
+        await deskMovementManager.Received ( 1 ).MoveToHeightAsync ( 66u ,
+                                                                     nameof ( UiDeskManager.Custom2Async ) ) ;
     }
 
     // Hotkey Configuration Tests
@@ -228,7 +233,7 @@ public class UiDeskManagerTests
         } ;
 
         // Act & Assert
-        using var scope = new FluentAssertions.Execution.AssertionScope ( ) ;
+        using var scope = new AssertionScope ( ) ;
         settings.HotkeySettings.StandingKey.Should ( ).Be ( "F9" ) ;
         settings.HotkeySettings.StandingModifiers.Should ( ).Be ( "Control, Alt" ) ;
         settings.HotkeySettings.SeatingKey.Should ( ).Be ( "F10" ) ;

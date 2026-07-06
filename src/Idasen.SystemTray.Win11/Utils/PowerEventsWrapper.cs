@@ -5,7 +5,7 @@ using Microsoft.Win32 ;
 namespace Idasen.SystemTray.Win11.Utils ;
 
 [ ExcludeFromCodeCoverage ]
-public partial class PowerEventsWrapper : IPowerEvents
+public class PowerEventsWrapper : IPowerEvents
 {
     private bool _disposed ;
 

@@ -14,8 +14,8 @@ public class Settings : ISettings
 
     public override string ToString ( )
     {
-        return $"{nameof ( DeviceSettings )} = {DeviceSettings}, " +
-               $"{nameof ( HeightSettings )} = {HeightSettings}, " +
+        return $"{nameof ( DeviceSettings )} = {DeviceSettings}, "         +
+               $"{nameof ( HeightSettings )} = {HeightSettings}, "         +
                $"{nameof ( AppearanceSettings )} = {AppearanceSettings}, " +
                $"{nameof ( HotkeySettings )} = {HotkeySettings}" ;
     }

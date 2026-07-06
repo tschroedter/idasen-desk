@@ -10,8 +10,8 @@ public interface IDeskConnectionManager : IDisposable
 
     IBluetoothConnectionMonitor ? ConnectionMonitor { get ; }
 
-    event EventHandler ? Connected ;
-    event EventHandler ? Disconnected ;
+    event EventHandler ?           Connected ;
+    event EventHandler ?           Disconnected ;
     event EventHandler < IDesk > ? DeskReady ;
 
     Task ConnectAsync ( CancellationToken cancellationToken ) ;

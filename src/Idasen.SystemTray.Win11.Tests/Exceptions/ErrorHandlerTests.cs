@@ -1,16 +1,16 @@
-using FluentAssertions;
+using FluentAssertions ;
 using Idasen.SystemTray.Win11.Utils.Exceptions ;
-using Idasen.TestLogger;
+using Idasen.TestLogger ;
 
 namespace Idasen.SystemTray.Win11.Tests.Exceptions ;
 
-public sealed class ErrorHandlerTests : IDisposable 
+public sealed class ErrorHandlerTests : IDisposable
 {
-    private readonly InMemoryLogger _logger = new();
+    private readonly InMemoryLogger _logger = new( ) ;
 
-    public void Dispose()
+    public void Dispose ( )
     {
-        _logger.Dispose();
+        _logger.Dispose ( ) ;
     }
 
     [ Theory ]
@@ -61,7 +61,8 @@ public sealed class ErrorHandlerTests : IDisposable
 
         // Act
         // Assert
-        Assert.Throws < InvalidOperationException > ( ( ) => sut.Handle ( exception , _logger ) ) ;
+        Assert.Throws < InvalidOperationException > ( ( ) => sut.Handle ( exception ,
+                                                                          _logger ) ) ;
     }
 
     private static ErrorHandler CreateSut ( )

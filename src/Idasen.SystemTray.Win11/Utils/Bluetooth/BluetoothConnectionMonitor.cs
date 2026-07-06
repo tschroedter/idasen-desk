@@ -16,13 +16,15 @@ public sealed class BluetoothConnectionMonitor : IBluetoothConnectionMonitor
     private readonly Timer   _watchdogTimer ;
 
     private bool _disposed ;
-    private bool _isMonitoring ;
 
     /// <summary>
     ///     Creates a new instance of the connection monitor.
     /// </summary>
     /// <param name="logger">Logger for diagnostics.</param>
-    /// <param name="timeoutMilliseconds">Timeout in milliseconds before connection is considered stale (default: 60000ms = 60s).</param>
+    /// <param name="timeoutMilliseconds">
+    ///     Timeout in milliseconds before connection is considered stale (default: 60000ms =
+    ///     60s).
+    /// </param>
     public BluetoothConnectionMonitor (
         ILogger logger ,
         int     timeoutMilliseconds = 60000 )
@@ -31,52 +33,53 @@ public sealed class BluetoothConnectionMonitor : IBluetoothConnectionMonitor
 
         if ( timeoutMilliseconds <= 0 )
             throw new ArgumentOutOfRangeException ( nameof ( timeoutMilliseconds ) ,
-                                                   "Timeout must be greater than zero" ) ;
+                                                    "Timeout must be greater than zero" ) ;
 
-        _logger               = logger ;
-        _timeoutMilliseconds  = timeoutMilliseconds ;
+        _logger              = logger ;
+        _timeoutMilliseconds = timeoutMilliseconds ;
 
         // Create timer but don't start it yet
-        _watchdogTimer          = new Timer ( _timeoutMilliseconds ) ;
-        _watchdogTimer.Elapsed += OnWatchdogTimerElapsed ;
-        _watchdogTimer.AutoReset = false ; // One-shot timer, reset manually on activity
+        _watchdogTimer           =  new Timer ( _timeoutMilliseconds ) ;
+        _watchdogTimer.Elapsed   += OnWatchdogTimerElapsed ;
+        _watchdogTimer.AutoReset =  false ; // One-shot timer, reset manually on activity
     }
 
-    public bool IsMonitoring => _isMonitoring ;
+    public bool IsMonitoring { get ; private set ; }
 
     public event EventHandler ? StaleConnectionDetected ;
 
     public void StartMonitoring ( )
     {
-        ObjectDisposedException.ThrowIf ( _disposed , nameof ( BluetoothConnectionMonitor ) ) ;
+        ObjectDisposedException.ThrowIf ( _disposed ,
+                                          nameof ( BluetoothConnectionMonitor ) ) ;
 
-        if ( _isMonitoring )
+        if ( IsMonitoring )
         {
             _logger.Debug ( "Connection monitoring already active" ) ;
             return ;
         }
 
         _logger.Information ( "Starting Bluetooth connection monitoring with timeout of {TimeoutSeconds}s" ,
-                             _timeoutMilliseconds / 1000.0 ) ;
+                              _timeoutMilliseconds / 1000.0 ) ;
 
-        _isMonitoring = true ;
+        IsMonitoring = true ;
         _watchdogTimer.Start ( ) ;
     }
 
     public void StopMonitoring ( )
     {
-        if ( ! _isMonitoring )
+        if ( ! IsMonitoring )
             return ;
 
         _logger.Information ( "Stopping Bluetooth connection monitoring" ) ;
 
-        _isMonitoring = false ;
+        IsMonitoring = false ;
         _watchdogTimer.Stop ( ) ;
     }
 
     public void ResetActivityTimer ( )
     {
-        if ( ! _isMonitoring )
+        if ( ! IsMonitoring )
             return ;
 
         _logger.Debug ( "Connection activity detected - resetting watchdog timer" ) ;
@@ -106,29 +109,30 @@ public sealed class BluetoothConnectionMonitor : IBluetoothConnectionMonitor
         catch ( Exception ex )
         {
             _logger.Warning ( ex ,
-                             "Failed to dispose watchdog timer" ) ;
+                              "Failed to dispose watchdog timer" ) ;
         }
     }
 
     private void OnWatchdogTimerElapsed ( object ? sender , ElapsedEventArgs e )
     {
-        if ( ! _isMonitoring )
+        if ( ! IsMonitoring )
             return ;
 
         _logger.Warning ( "Stale Bluetooth connection detected - no activity for {TimeoutSeconds}s" ,
-                         _timeoutMilliseconds / 1000.0 ) ;
+                          _timeoutMilliseconds / 1000.0 ) ;
 
         // Stop monitoring before raising event to prevent multiple triggers
         StopMonitoring ( ) ;
 
         try
         {
-            StaleConnectionDetected?.Invoke ( this , EventArgs.Empty ) ;
+            StaleConnectionDetected?.Invoke ( this ,
+                                              EventArgs.Empty ) ;
         }
         catch ( Exception ex )
         {
             _logger.Error ( ex ,
-                           "Error while handling stale connection event" ) ;
+                            "Error while handling stale connection event" ) ;
         }
     }
 }

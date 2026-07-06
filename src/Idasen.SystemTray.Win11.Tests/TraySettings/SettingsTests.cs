@@ -48,8 +48,8 @@ public class SettingsTests
         } ;
 
         var expected =
-            $"DeviceSettings = {deviceSettings}, " +
-            $"HeightSettings = {heightSettings}, " +
+            $"DeviceSettings = {deviceSettings}, "         +
+            $"HeightSettings = {heightSettings}, "         +
             $"AppearanceSettings = {appearanceSettings}, " +
             $"HotkeySettings = {hotkeySettings}" ;
 

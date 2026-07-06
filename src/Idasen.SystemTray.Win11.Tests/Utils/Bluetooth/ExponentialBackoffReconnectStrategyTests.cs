@@ -9,38 +9,36 @@ public class ExponentialBackoffReconnectStrategyTests : IDisposable
 {
     private readonly InMemoryLogger _logger = new( ) ;
 
-    private          bool           _disposed;
+    private bool _disposed ;
 
-    public void Dispose()
+    public void Dispose ( )
     {
-        Dispose(true);
+        Dispose ( true ) ;
 
-        GC.SuppressFinalize(this);
+        GC.SuppressFinalize ( this ) ;
     }
 
-    protected virtual void Dispose(bool disposing)
+    protected virtual void Dispose ( bool disposing )
     {
-        if (_disposed)
-            return;
+        if ( _disposed )
+            return ;
 
-        if (disposing)
-        {
-            _logger.Dispose();
-        }
+        if ( disposing ) _logger.Dispose ( ) ;
 
-        _disposed = true;
+        _disposed = true ;
     }
 
     [ Fact ]
     public async Task ConnectWithRetryAsync_SuccessOnFirstAttempt_ReturnsTrue ( )
     {
         // Arrange
-        var strategy = new ExponentialBackoffReconnectStrategy ( _logger ) ;
+        var strategy      = new ExponentialBackoffReconnectStrategy ( _logger ) ;
         var connectAction = Substitute.For < Func < CancellationToken , Task < bool > > > ( ) ;
         connectAction ( Arg.Any < CancellationToken > ( ) ).Returns ( Task.FromResult ( true ) ) ;
 
         // Act
-        var result = await strategy.ConnectWithRetryAsync ( connectAction , CancellationToken.None ) ;
+        var result = await strategy.ConnectWithRetryAsync ( connectAction ,
+                                                            CancellationToken.None ) ;
 
         // Assert
         result.Should ( ).BeTrue ( ) ;
@@ -54,20 +52,21 @@ public class ExponentialBackoffReconnectStrategyTests : IDisposable
     {
         // Arrange
         var strategy = new ExponentialBackoffReconnectStrategy ( _logger ,
-                                                                 maxRetries: 3 ,
-                                                                 initialDelayMs: 10 ) ; // Short delay for tests
-        var callCount = 0 ;
+                                                                 3 ,
+                                                                 10 ) ; // Short delay for tests
+        var callCount     = 0 ;
         var connectAction = Substitute.For < Func < CancellationToken , Task < bool > > > ( ) ;
 
         connectAction ( Arg.Any < CancellationToken > ( ) )
-                     .Returns ( _ =>
+           .Returns ( _ =>
                       {
-                          callCount++ ;
+                          callCount ++ ;
                           return Task.FromResult ( callCount == 2 ) ; // Succeed on second attempt
                       } ) ;
 
         // Act
-        var result = await strategy.ConnectWithRetryAsync ( connectAction , CancellationToken.None ) ;
+        var result = await strategy.ConnectWithRetryAsync ( connectAction ,
+                                                            CancellationToken.None ) ;
 
         // Assert
         result.Should ( ).BeTrue ( ) ;
@@ -81,18 +80,19 @@ public class ExponentialBackoffReconnectStrategyTests : IDisposable
     {
         // Arrange
         var strategy = new ExponentialBackoffReconnectStrategy ( _logger ,
-                                                                 maxRetries: 2 ,
-                                                                 initialDelayMs: 10 ) ;
+                                                                 2 ,
+                                                                 10 ) ;
         var connectAction = Substitute.For < Func < CancellationToken , Task < bool > > > ( ) ;
         connectAction ( Arg.Any < CancellationToken > ( ) ).Returns ( Task.FromResult ( false ) ) ;
 
         // Act
-        var result = await strategy.ConnectWithRetryAsync ( connectAction , CancellationToken.None ) ;
+        var result = await strategy.ConnectWithRetryAsync ( connectAction ,
+                                                            CancellationToken.None ) ;
 
         // Assert
         result.Should ( ).BeFalse ( ) ;
         strategy.IsRetrying.Should ( ).BeFalse ( ) ;
-        strategy.CurrentAttempt.Should ( ).BeGreaterThan ( 0 ) ; // Retries were exhausted
+        strategy.CurrentAttempt.Should ( ).BeGreaterThan ( 0 ) ;                          // Retries were exhausted
         await connectAction.Received ( 3 ).Invoke ( Arg.Any < CancellationToken > ( ) ) ; // Initial + 2 retries
     }
 
@@ -101,22 +101,23 @@ public class ExponentialBackoffReconnectStrategyTests : IDisposable
     {
         // Arrange
         var strategy = new ExponentialBackoffReconnectStrategy ( _logger ,
-                                                                 maxRetries: 5 ,
-                                                                 initialDelayMs: 100 ) ;
-        using var cts = new CancellationTokenSource ( ) ;
-        var callCount = 0 ;
-        var connectAction = Substitute.For < Func < CancellationToken , Task < bool > > > ( ) ;
+                                                                 5 ,
+                                                                 100 ) ;
+        using var cts           = new CancellationTokenSource ( ) ;
+        var       callCount     = 0 ;
+        var       connectAction = Substitute.For < Func < CancellationToken , Task < bool > > > ( ) ;
 
         connectAction ( Arg.Any < CancellationToken > ( ) )
-                     .Returns ( _ =>
+           .Returns ( _ =>
                       {
-                          callCount++ ;
+                          callCount ++ ;
                           if ( callCount == 2 ) cts.Cancel ( ) ; // Cancel after second attempt
                           return Task.FromResult ( false ) ;
                       } ) ;
 
         // Act
-        var result = await strategy.ConnectWithRetryAsync ( connectAction , cts.Token ) ;
+        var result = await strategy.ConnectWithRetryAsync ( connectAction ,
+                                                            cts.Token ) ;
 
         // Assert
         result.Should ( ).BeFalse ( ) ;
@@ -129,14 +130,15 @@ public class ExponentialBackoffReconnectStrategyTests : IDisposable
     {
         // Arrange
         var strategy = new ExponentialBackoffReconnectStrategy ( _logger ,
-                                                                 maxRetries: 2 ,
-                                                                 initialDelayMs: 10 ) ;
+                                                                 2 ,
+                                                                 10 ) ;
         var connectAction = Substitute.For < Func < CancellationToken , Task < bool > > > ( ) ;
         connectAction ( Arg.Any < CancellationToken > ( ) )
-                     .Returns < Task < bool > > ( _ => throw new InvalidOperationException ( "Connection failed" ) ) ;
+           .Returns < Task < bool > > ( _ => throw new InvalidOperationException ( "Connection failed" ) ) ;
 
         // Act
-        var result = await strategy.ConnectWithRetryAsync ( connectAction , CancellationToken.None ) ;
+        var result = await strategy.ConnectWithRetryAsync ( connectAction ,
+                                                            CancellationToken.None ) ;
 
         // Assert
         result.Should ( ).BeFalse ( ) ;
@@ -150,7 +152,8 @@ public class ExponentialBackoffReconnectStrategyTests : IDisposable
         var strategy = new ExponentialBackoffReconnectStrategy ( _logger ) ;
 
         // Act
-        Func < Task > act = async ( ) => await strategy.ConnectWithRetryAsync ( null! , CancellationToken.None ) ;
+        Func < Task > act = async ( ) => await strategy.ConnectWithRetryAsync ( null! ,
+                                                                                CancellationToken.None ) ;
 
         // Assert
         await act.Should ( ).ThrowAsync < ArgumentNullException > ( ) ;
@@ -171,7 +174,8 @@ public class ExponentialBackoffReconnectStrategyTests : IDisposable
     {
         // Arrange
         const int expectedMaxRetries = 7 ;
-        var strategy = new ExponentialBackoffReconnectStrategy ( _logger , maxRetries: expectedMaxRetries ) ;
+        var strategy = new ExponentialBackoffReconnectStrategy ( _logger ,
+                                                                 expectedMaxRetries ) ;
 
         // Act & Assert
         strategy.MaxRetries.Should ( ).Be ( expectedMaxRetries ) ;
@@ -182,13 +186,14 @@ public class ExponentialBackoffReconnectStrategyTests : IDisposable
     {
         // Arrange
         var strategy = new ExponentialBackoffReconnectStrategy ( _logger ,
-                                                                 maxRetries: 2 ,
-                                                                 initialDelayMs: 10 ) ;
+                                                                 2 ,
+                                                                 10 ) ;
         var connectAction = Substitute.For < Func < CancellationToken , Task < bool > > > ( ) ;
         connectAction ( Arg.Any < CancellationToken > ( ) ).Returns ( Task.FromResult ( false ) ) ;
 
         // Act
-        await strategy.ConnectWithRetryAsync ( connectAction , CancellationToken.None ) ;
+        await strategy.ConnectWithRetryAsync ( connectAction ,
+                                               CancellationToken.None ) ;
         var attemptsBefore = strategy.CurrentAttempt ;
 
         strategy.Reset ( ) ;
@@ -204,16 +209,17 @@ public class ExponentialBackoffReconnectStrategyTests : IDisposable
     {
         // Arrange
         var strategy = new ExponentialBackoffReconnectStrategy ( _logger ,
-                                                                 maxRetries: 3 ,
-                                                                 initialDelayMs: 100 ,
-                                                                 backoffMultiplier: 2.0 ) ;
+                                                                 3 ,
+                                                                 100 ,
+                                                                 backoffMultiplier : 2.0 ) ;
         var connectAction = Substitute.For < Func < CancellationToken , Task < bool > > > ( ) ;
         connectAction ( Arg.Any < CancellationToken > ( ) ).Returns ( Task.FromResult ( false ) ) ;
 
         var startTime = DateTime.UtcNow ;
 
         // Act
-        await strategy.ConnectWithRetryAsync ( connectAction , CancellationToken.None ) ;
+        await strategy.ConnectWithRetryAsync ( connectAction ,
+                                               CancellationToken.None ) ;
 
         var elapsed = DateTime.UtcNow - startTime ;
 
@@ -229,17 +235,18 @@ public class ExponentialBackoffReconnectStrategyTests : IDisposable
     {
         // Arrange
         var strategy = new ExponentialBackoffReconnectStrategy ( _logger ,
-                                                                 maxRetries: 5 ,
-                                                                 initialDelayMs: 1000 ,
-                                                                 maxDelayMs: 2000 ,
-                                                                 backoffMultiplier: 2.0 ) ;
+                                                                 5 ,
+                                                                 1000 ,
+                                                                 2000 ,
+                                                                 2.0 ) ;
         var connectAction = Substitute.For < Func < CancellationToken , Task < bool > > > ( ) ;
         connectAction ( Arg.Any < CancellationToken > ( ) ).Returns ( Task.FromResult ( false ) ) ;
 
         var startTime = DateTime.UtcNow ;
 
         // Act
-        await strategy.ConnectWithRetryAsync ( connectAction , CancellationToken.None ) ;
+        await strategy.ConnectWithRetryAsync ( connectAction ,
+                                               CancellationToken.None ) ;
 
         var elapsed = DateTime.UtcNow - startTime ;
 
@@ -261,22 +268,24 @@ public class ExponentialBackoffReconnectStrategyTests : IDisposable
     {
         // Arrange
         var strategy = new ExponentialBackoffReconnectStrategy ( _logger ,
-                                                                 maxRetries: 1 ,
-                                                                 initialDelayMs: 10 ) ;
+                                                                 1 ,
+                                                                 10 ) ;
         var connectAction = Substitute.For < Func < CancellationToken , Task < bool > > > ( ) ;
 
         // First call fails
         connectAction ( Arg.Any < CancellationToken > ( ) ).Returns ( Task.FromResult ( false ) ) ;
-        await strategy.ConnectWithRetryAsync ( connectAction , CancellationToken.None ) ;
+        await strategy.ConnectWithRetryAsync ( connectAction ,
+                                               CancellationToken.None ) ;
         var attemptAfterFirst = strategy.CurrentAttempt ;
 
         // Second call succeeds
         connectAction ( Arg.Any < CancellationToken > ( ) ).Returns ( Task.FromResult ( true ) ) ;
-        await strategy.ConnectWithRetryAsync ( connectAction , CancellationToken.None ) ;
+        await strategy.ConnectWithRetryAsync ( connectAction ,
+                                               CancellationToken.None ) ;
 
         // Assert
         attemptAfterFirst.Should ( ).BeGreaterThan ( 0 ) ; // Had retries after first call
-        strategy.CurrentAttempt.Should ( ).Be ( 0 ) ; // Reset to 0 on new successful call
+        strategy.CurrentAttempt.Should ( ).Be ( 0 ) ;      // Reset to 0 on new successful call
         strategy.IsRetrying.Should ( ).BeFalse ( ) ;
     }
 
@@ -285,13 +294,13 @@ public class ExponentialBackoffReconnectStrategyTests : IDisposable
     {
         // Arrange
         var strategy = new ExponentialBackoffReconnectStrategy ( _logger ,
-                                                                 maxRetries: 2 ,
-                                                                 initialDelayMs: 100 ) ;
+                                                                 2 ,
+                                                                 100 ) ;
         var isRetryingDuringExecution = false ;
-        var connectAction = Substitute.For < Func < CancellationToken , Task < bool > > > ( ) ;
+        var connectAction             = Substitute.For < Func < CancellationToken , Task < bool > > > ( ) ;
 
         connectAction ( Arg.Any < CancellationToken > ( ) )
-                     .Returns ( async _ =>
+           .Returns ( async _ =>
                       {
                           await Task.Delay ( 10 ) ;
                           isRetryingDuringExecution = strategy.IsRetrying ;
@@ -299,7 +308,8 @@ public class ExponentialBackoffReconnectStrategyTests : IDisposable
                       } ) ;
 
         // Act
-        await strategy.ConnectWithRetryAsync ( connectAction , CancellationToken.None ) ;
+        await strategy.ConnectWithRetryAsync ( connectAction ,
+                                               CancellationToken.None ) ;
 
         // Assert
         isRetryingDuringExecution.Should ( ).BeTrue ( ) ;

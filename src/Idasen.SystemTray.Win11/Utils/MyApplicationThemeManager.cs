@@ -79,7 +79,7 @@ public class MyApplicationThemeManager ( ILogger logger ) : IApplicationThemeMan
             logger.Error ( e ,
                            "Failed to schedule theme apply for {Theme}" ,
                            theme ) ;
-            return Task.FromException(e) ;
+            return Task.FromException ( e ) ;
         }
     }
 

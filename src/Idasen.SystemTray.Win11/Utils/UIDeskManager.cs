@@ -12,21 +12,21 @@ using Wpf.Ui.Tray.Controls ;
 namespace Idasen.SystemTray.Win11.Utils ;
 
 [ ExcludeFromCodeCoverage ]
-public sealed partial class UiDeskManager : IUiDeskManager
+public sealed class UiDeskManager : IUiDeskManager
 {
-    private readonly IErrorManager                 _errorManager ;
-    private readonly ILogger                       _logger ;
-    private readonly ISettingsManager              _manager ;
-    private readonly IScheduler                    _scheduler ;
-    private readonly IObserveSettingsChanges       _settingsChanges ;
-    private readonly IHotkeyManager                _hotkeyManager ;
-    private readonly IDeskMovementManager          _deskMovementManager ;
-    private readonly IDeskConnectionManager        _deskConnectionManager ;
-    private readonly IDeskNotificationManager      _notificationManager ;
-    private readonly IDeskReadyManager             _deskReadyManager ;
+    private readonly IDeskConnectionManager   _deskConnectionManager ;
+    private readonly IDeskMovementManager     _deskMovementManager ;
+    private readonly IDeskReadyManager        _deskReadyManager ;
+    private readonly IErrorManager            _errorManager ;
+    private readonly IHotkeyManager           _hotkeyManager ;
+    private readonly ILogger                  _logger ;
+    private readonly ISettingsManager         _manager ;
+    private readonly IDeskNotificationManager _notificationManager ;
+    private readonly IScheduler               _scheduler ;
+    private readonly IObserveSettingsChanges  _settingsChanges ;
 
-    private bool            _disposed ;
-    private NotifyIcon ?    _notifyIcon ;
+    private bool         _disposed ;
+    private NotifyIcon ? _notifyIcon ;
 
     [ UsedImplicitly ] private IDisposable ? _onHotkeySettingsChanged ;
 
@@ -34,16 +34,16 @@ public sealed partial class UiDeskManager : IUiDeskManager
     private CancellationTokenSource ? _tokenSource ;
 
     public UiDeskManager (
-        ILogger                       logger ,
-        ISettingsManager              manager ,
-        IScheduler                    scheduler ,
-        IErrorManager                 errorManager ,
-        IObserveSettingsChanges       settingsChanges ,
-        IHotkeyManager                hotkeyManager ,
-        IDeskMovementManager          deskMovementManager ,
-        IDeskConnectionManager        deskConnectionManager ,
-        IDeskNotificationManager      notificationManager ,
-        IDeskReadyManager             deskReadyManager )
+        ILogger                  logger ,
+        ISettingsManager         manager ,
+        IScheduler               scheduler ,
+        IErrorManager            errorManager ,
+        IObserveSettingsChanges  settingsChanges ,
+        IHotkeyManager           hotkeyManager ,
+        IDeskMovementManager     deskMovementManager ,
+        IDeskConnectionManager   deskConnectionManager ,
+        IDeskNotificationManager notificationManager ,
+        IDeskReadyManager        deskReadyManager )
     {
         Guard.ArgumentNotNull ( logger ,
                                 nameof ( logger ) ) ;
@@ -96,13 +96,19 @@ public sealed partial class UiDeskManager : IUiDeskManager
         UnsubscribeEvents ( ) ;
 
         // Dispose managed resources
-        DisposeResource ( _hotkeyManager , nameof ( _hotkeyManager ) ) ;
+        DisposeResource ( _hotkeyManager ,
+                          nameof ( _hotkeyManager ) ) ;
         CancelPendingOperations ( ) ;
-        DisposeResource ( _onHotkeySettingsChanged , nameof ( _onHotkeySettingsChanged ) ) ;
-        DisposeResource ( _deskReadyManager , nameof ( _deskReadyManager ) ) ;
-        DisposeResource ( _notificationManager , nameof ( _notificationManager ) ) ;
-        DisposeResource ( _deskConnectionManager , nameof ( _deskConnectionManager ) ) ;
-        DisposeResource ( _tokenSource , nameof ( _tokenSource ) ) ;
+        DisposeResource ( _onHotkeySettingsChanged ,
+                          nameof ( _onHotkeySettingsChanged ) ) ;
+        DisposeResource ( _deskReadyManager ,
+                          nameof ( _deskReadyManager ) ) ;
+        DisposeResource ( _notificationManager ,
+                          nameof ( _notificationManager ) ) ;
+        DisposeResource ( _deskConnectionManager ,
+                          nameof ( _deskConnectionManager ) ) ;
+        DisposeResource ( _tokenSource ,
+                          nameof ( _tokenSource ) ) ;
 
         // Clear references
         _onHotkeySettingsChanged = null ;
@@ -114,57 +120,7 @@ public sealed partial class UiDeskManager : IUiDeskManager
                               nameof ( UiDeskManager ) ) ;
     }
 
-    private void UnsubscribeEvents ( )
-    {
-        try
-        {
-            _hotkeyManager.StandingHotkeyPressed -= OnStandingHotkeyPressed ;
-            _hotkeyManager.SeatingHotkeyPressed  -= OnSeatingHotkeyPressed ;
-            _hotkeyManager.Custom1HotkeyPressed  -= OnCustom1HotkeyPressed ;
-            _hotkeyManager.Custom2HotkeyPressed  -= OnCustom2HotkeyPressed ;
-
-            _deskConnectionManager.DeskReady -= OnDeskReady ;
-        }
-        catch ( Exception ex )
-        {
-            _logger.Warning ( ex ,
-                              "Failed to unsubscribe from events during disposal" ) ;
-        }
-    }
-
-    private void CancelPendingOperations ( )
-    {
-        try
-        {
-            _tokenSource?.Cancel ( ) ;
-        }
-        catch ( Exception ex )
-        {
-            _logger.Warning ( ex ,
-                             "Failed to cancel pending operations during disposal" ) ;
-        }
-    }
-
-    private void DisposeResource ( IDisposable ? resource , string resourceName )
-    {
-        if ( resource == null )
-            return ;
-
-        try
-        {
-            resource.Dispose ( ) ;
-        }
-        catch ( Exception ex )
-        {
-            _logger.Warning ( ex ,
-                             "Failed to dispose {ResourceName}" ,
-                             resourceName ) ;
-        }
-    }
-
     public bool IsConnected => _deskConnectionManager.IsConnected ;
-
-    internal IDesk ? GetDesk ( ) => _deskConnectionManager.CurrentDesk ;
 
     public Task DisconnectAsync ( )
     {
@@ -218,14 +174,13 @@ public sealed partial class UiDeskManager : IUiDeskManager
 
         _logger.Debug ( "UI Desk Manager Initializing..." ) ;
 
-        _tokenSource = new CancellationTokenSource ( TimeSpan.FromSeconds ( AppConfiguration.Timeouts.InitializationSeconds ) ) ;
-        _token       = _tokenSource.Token ;
+        _tokenSource =
+            new CancellationTokenSource ( TimeSpan.FromSeconds ( AppConfiguration.Timeouts.InitializationSeconds ) ) ;
+        _token = _tokenSource.Token ;
 
         // Configure desk accessor for movement manager
         if ( _deskMovementManager is DeskMovementManager movementManager )
-        {
             movementManager.SetDeskAccessor ( ( ) => _deskConnectionManager.CurrentDesk ) ;
-        }
 
         // Subscribe to connection manager events
         _deskConnectionManager.DeskReady += OnDeskReady ;
@@ -256,35 +211,14 @@ public sealed partial class UiDeskManager : IUiDeskManager
         return this ;
     }
 
-    private void StartAutoConnectInBackground ( )
-    {
-        Task.Run ( async ( ) =>
-                   {
-                       try
-                       {
-                           await AutoConnectAsync ( ) ;
-                       }
-                       catch ( Exception e )
-                       {
-                           _logger.Error ( e ,
-                                           "Unhandled exception in background auto-connect task" ) ;
-                       }
-                   } ,
-                   _token ) ;
-    }
-
-    private void RegisterGlobalHotkeys ( )
-    {
-        _hotkeyManager.RegisterGlobalHotkeys ( ) ;
-    }
-
     public async Task StandAsync ( )
     {
         if ( ! _deskMovementManager.IsDeskAvailable ( ) )
             return ;
 
         var heightInCm = _manager.CurrentSettings.HeightSettings.StandingHeightInCm ;
-        await _deskMovementManager.MoveToHeightAsync ( heightInCm , nameof ( StandAsync ) ) ;
+        await _deskMovementManager.MoveToHeightAsync ( heightInCm ,
+                                                       nameof ( StandAsync ) ) ;
     }
 
     public async Task SitAsync ( )
@@ -293,7 +227,8 @@ public sealed partial class UiDeskManager : IUiDeskManager
             return ;
 
         var heightInCm = _manager.CurrentSettings.HeightSettings.SeatingHeightInCm ;
-        await _deskMovementManager.MoveToHeightAsync ( heightInCm , nameof ( SitAsync ) ) ;
+        await _deskMovementManager.MoveToHeightAsync ( heightInCm ,
+                                                       nameof ( SitAsync ) ) ;
     }
 
     public async Task Custom1Async ( )
@@ -302,7 +237,8 @@ public sealed partial class UiDeskManager : IUiDeskManager
             return ;
 
         var heightInCm = _manager.CurrentSettings.HeightSettings.Custom1HeightInCm ;
-        await _deskMovementManager.MoveToHeightAsync ( heightInCm , nameof ( Custom1Async ) ) ;
+        await _deskMovementManager.MoveToHeightAsync ( heightInCm ,
+                                                       nameof ( Custom1Async ) ) ;
     }
 
     public async Task Custom2Async ( )
@@ -311,7 +247,8 @@ public sealed partial class UiDeskManager : IUiDeskManager
             return ;
 
         var heightInCm = _manager.CurrentSettings.HeightSettings.Custom2HeightInCm ;
-        await _deskMovementManager.MoveToHeightAsync ( heightInCm , nameof ( Custom2Async ) ) ;
+        await _deskMovementManager.MoveToHeightAsync ( heightInCm ,
+                                                       nameof ( Custom2Async ) ) ;
     }
 
     public async Task AutoConnectAsync ( )
@@ -326,8 +263,10 @@ public sealed partial class UiDeskManager : IUiDeskManager
             if ( _tokenSource == null ||
                  _tokenSource.IsCancellationRequested )
             {
-                _tokenSource = new CancellationTokenSource ( TimeSpan.FromSeconds ( AppConfiguration.Timeouts.InitializationSeconds ) ) ;
-                _token       = _tokenSource.Token ;
+                _tokenSource =
+                    new CancellationTokenSource ( TimeSpan.FromSeconds ( AppConfiguration.Timeouts
+                                                                                         .InitializationSeconds ) ) ;
+                _token = _tokenSource.Token ;
             }
 
             _logger.Debug ( "Trying to load settings..." ) ;
@@ -343,24 +282,20 @@ public sealed partial class UiDeskManager : IUiDeskManager
                 // Hotkey registration must happen on the UI thread
                 var dispatcher = Application.Current?.Dispatcher ;
                 if ( dispatcher != null )
-                {
                     await dispatcher.InvokeAsync ( ( ) =>
-                    {
-                        try
-                        {
-                            RegisterGlobalHotkeys ( ) ;
-                        }
-                        catch ( Exception e )
-                        {
-                            _logger.Error ( e ,
-                                            "Failed to register hotkeys during startup" ) ;
-                        }
-                    } ) ;
-                }
+                                                   {
+                                                       try
+                                                       {
+                                                           RegisterGlobalHotkeys ( ) ;
+                                                       }
+                                                       catch ( Exception e )
+                                                       {
+                                                           _logger.Error ( e ,
+                                                                           "Failed to register hotkeys during startup" ) ;
+                                                       }
+                                                   } ) ;
                 else
-                {
                     _logger.Warning ( "Cannot access UI dispatcher for hotkey registration during startup" ) ;
-                }
             }
             else
             {
@@ -389,6 +324,81 @@ public sealed partial class UiDeskManager : IUiDeskManager
                             "Failed to auto connect to desk" ) ;
             // Note: Error is already published by DeskConnectionManager.HandleConnectionFailed
         }
+    }
+
+    private void UnsubscribeEvents ( )
+    {
+        try
+        {
+            _hotkeyManager.StandingHotkeyPressed -= OnStandingHotkeyPressed ;
+            _hotkeyManager.SeatingHotkeyPressed  -= OnSeatingHotkeyPressed ;
+            _hotkeyManager.Custom1HotkeyPressed  -= OnCustom1HotkeyPressed ;
+            _hotkeyManager.Custom2HotkeyPressed  -= OnCustom2HotkeyPressed ;
+
+            _deskConnectionManager.DeskReady -= OnDeskReady ;
+        }
+        catch ( Exception ex )
+        {
+            _logger.Warning ( ex ,
+                              "Failed to unsubscribe from events during disposal" ) ;
+        }
+    }
+
+    private void CancelPendingOperations ( )
+    {
+        try
+        {
+            _tokenSource?.Cancel ( ) ;
+        }
+        catch ( Exception ex )
+        {
+            _logger.Warning ( ex ,
+                              "Failed to cancel pending operations during disposal" ) ;
+        }
+    }
+
+    private void DisposeResource ( IDisposable ? resource , string resourceName )
+    {
+        if ( resource == null )
+            return ;
+
+        try
+        {
+            resource.Dispose ( ) ;
+        }
+        catch ( Exception ex )
+        {
+            _logger.Warning ( ex ,
+                              "Failed to dispose {ResourceName}" ,
+                              resourceName ) ;
+        }
+    }
+
+    internal IDesk ? GetDesk ( )
+    {
+        return _deskConnectionManager.CurrentDesk ;
+    }
+
+    private void StartAutoConnectInBackground ( )
+    {
+        Task.Run ( async ( ) =>
+                   {
+                       try
+                       {
+                           await AutoConnectAsync ( ) ;
+                       }
+                       catch ( Exception e )
+                       {
+                           _logger.Error ( e ,
+                                           "Unhandled exception in background auto-connect task" ) ;
+                       }
+                   } ,
+                   _token ) ;
+    }
+
+    private void RegisterGlobalHotkeys ( )
+    {
+        _hotkeyManager.RegisterGlobalHotkeys ( ) ;
     }
 
     // Helper to run an action only when connected
@@ -444,9 +454,9 @@ public sealed partial class UiDeskManager : IUiDeskManager
                             nameof ( SitAsync ) ) ;
             await SitAsync ( ).ConfigureAwait ( false ) ;
         }
-        catch ( OperationCanceledException ex)
+        catch ( OperationCanceledException ex )
         {
-            _logger.Information ( ex,
+            _logger.Information ( ex ,
                                   "Seating operation was cancelled" ) ;
         }
         catch ( Exception ex )
@@ -488,7 +498,7 @@ public sealed partial class UiDeskManager : IUiDeskManager
         }
         catch ( OperationCanceledException ex )
         {
-            _logger.Information ( ex,
+            _logger.Information ( ex ,
                                   "Custom2 operation was cancelled" ) ;
         }
         catch ( Exception ex )
@@ -513,26 +523,26 @@ public sealed partial class UiDeskManager : IUiDeskManager
         }
 
         dispatcher.Invoke ( ( ) =>
-        {
-            try
-            {
-                if ( enabled )
-                {
-                    _logger.Information ( "Registering hotkeys due to settings change" ) ;
-                    _hotkeyManager.RegisterGlobalHotkeys ( ) ;
-                }
-                else
-                {
-                    _logger.Information ( "Unregistering hotkeys due to settings change" ) ;
-                    _hotkeyManager.UnregisterGlobalHotkeys ( ) ;
-                }
-            }
-            catch ( Exception e )
-            {
-                _logger.Error ( e ,
-                                "Failed to handle hotkey settings change" ) ;
-            }
-        } ) ;
+                            {
+                                try
+                                {
+                                    if ( enabled )
+                                    {
+                                        _logger.Information ( "Registering hotkeys due to settings change" ) ;
+                                        _hotkeyManager.RegisterGlobalHotkeys ( ) ;
+                                    }
+                                    else
+                                    {
+                                        _logger.Information ( "Unregistering hotkeys due to settings change" ) ;
+                                        _hotkeyManager.UnregisterGlobalHotkeys ( ) ;
+                                    }
+                                }
+                                catch ( Exception e )
+                                {
+                                    _logger.Error ( e ,
+                                                    "Failed to handle hotkey settings change" ) ;
+                                }
+                            } ) ;
     }
 
     private void CheckIfInitialized ( )

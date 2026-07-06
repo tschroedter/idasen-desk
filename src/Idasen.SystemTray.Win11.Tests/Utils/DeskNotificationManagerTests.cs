@@ -14,19 +14,19 @@ namespace Idasen.SystemTray.Win11.Tests.Utils ;
 
 public sealed class DeskNotificationManagerTests : IDisposable
 {
-    private readonly InMemoryLogger                _logger ;
-    private readonly INotifications         _notifications ;
-    private readonly IErrorManager          _errorManager ;
-    private readonly ISettingsManager       _settingsManager ;
-    private readonly IStatusBarManager      _statusBarManager ;
-    private readonly IScheduler             _scheduler ;
-    private readonly IDeskConnectionManager _deskConnectionManager ;
+    private readonly IDeskConnectionManager    _deskConnectionManager ;
     private readonly Subject < IErrorDetails > _errorChangedSubject ;
+    private readonly IErrorManager             _errorManager ;
+    private readonly InMemoryLogger            _logger ;
+    private readonly INotifications            _notifications ;
+    private readonly IScheduler                _scheduler ;
+    private readonly ISettingsManager          _settingsManager ;
     private readonly Subject < StatusBarInfo > _statusBarInfoSubject ;
+    private readonly IStatusBarManager         _statusBarManager ;
 
     public DeskNotificationManagerTests ( )
     {
-        _logger                = new () ;
+        _logger                = new InMemoryLogger ( ) ;
         _notifications         = Substitute.For < INotifications > ( ) ;
         _errorManager          = Substitute.For < IErrorManager > ( ) ;
         _settingsManager       = Substitute.For < ISettingsManager > ( ) ;
@@ -61,13 +61,13 @@ public sealed class DeskNotificationManagerTests : IDisposable
     {
         // Act
         var act = ( ) => new DeskNotificationManager (
-            null ! ,
-            _notifications ,
-            _errorManager ,
-            _settingsManager ,
-            _statusBarManager ,
-            _scheduler ,
-            _deskConnectionManager ) ;
+                                                      null ! ,
+                                                      _notifications ,
+                                                      _errorManager ,
+                                                      _settingsManager ,
+                                                      _statusBarManager ,
+                                                      _scheduler ,
+                                                      _deskConnectionManager ) ;
 
         // Assert
         act.Should ( ).Throw < ArgumentNullException > ( )
@@ -79,13 +79,13 @@ public sealed class DeskNotificationManagerTests : IDisposable
     {
         // Act
         var act = ( ) => new DeskNotificationManager (
-            _logger ,
-            null ! ,
-            _errorManager ,
-            _settingsManager ,
-            _statusBarManager ,
-            _scheduler ,
-            _deskConnectionManager ) ;
+                                                      _logger ,
+                                                      null ! ,
+                                                      _errorManager ,
+                                                      _settingsManager ,
+                                                      _statusBarManager ,
+                                                      _scheduler ,
+                                                      _deskConnectionManager ) ;
 
         // Assert
         act.Should ( ).Throw < ArgumentNullException > ( )
@@ -97,13 +97,13 @@ public sealed class DeskNotificationManagerTests : IDisposable
     {
         // Act
         var act = ( ) => new DeskNotificationManager (
-            _logger ,
-            _notifications ,
-            null ! ,
-            _settingsManager ,
-            _statusBarManager ,
-            _scheduler ,
-            _deskConnectionManager ) ;
+                                                      _logger ,
+                                                      _notifications ,
+                                                      null ! ,
+                                                      _settingsManager ,
+                                                      _statusBarManager ,
+                                                      _scheduler ,
+                                                      _deskConnectionManager ) ;
 
         // Assert
         act.Should ( ).Throw < ArgumentNullException > ( )
@@ -115,13 +115,13 @@ public sealed class DeskNotificationManagerTests : IDisposable
     {
         // Act
         var act = ( ) => new DeskNotificationManager (
-            _logger ,
-            _notifications ,
-            _errorManager ,
-            null ! ,
-            _statusBarManager ,
-            _scheduler ,
-            _deskConnectionManager ) ;
+                                                      _logger ,
+                                                      _notifications ,
+                                                      _errorManager ,
+                                                      null ! ,
+                                                      _statusBarManager ,
+                                                      _scheduler ,
+                                                      _deskConnectionManager ) ;
 
         // Assert
         act.Should ( ).Throw < ArgumentNullException > ( )
@@ -133,13 +133,13 @@ public sealed class DeskNotificationManagerTests : IDisposable
     {
         // Act
         var act = ( ) => new DeskNotificationManager (
-            _logger ,
-            _notifications ,
-            _errorManager ,
-            _settingsManager ,
-            null ! ,
-            _scheduler ,
-            _deskConnectionManager ) ;
+                                                      _logger ,
+                                                      _notifications ,
+                                                      _errorManager ,
+                                                      _settingsManager ,
+                                                      null ! ,
+                                                      _scheduler ,
+                                                      _deskConnectionManager ) ;
 
         // Assert
         act.Should ( ).Throw < ArgumentNullException > ( )
@@ -151,13 +151,13 @@ public sealed class DeskNotificationManagerTests : IDisposable
     {
         // Act
         var act = ( ) => new DeskNotificationManager (
-            _logger ,
-            _notifications ,
-            _errorManager ,
-            _settingsManager ,
-            _statusBarManager ,
-            null ! ,
-            _deskConnectionManager ) ;
+                                                      _logger ,
+                                                      _notifications ,
+                                                      _errorManager ,
+                                                      _settingsManager ,
+                                                      _statusBarManager ,
+                                                      null ! ,
+                                                      _deskConnectionManager ) ;
 
         // Assert
         act.Should ( ).Throw < ArgumentNullException > ( )
@@ -169,13 +169,13 @@ public sealed class DeskNotificationManagerTests : IDisposable
     {
         // Act
         var act = ( ) => new DeskNotificationManager (
-            _logger ,
-            _notifications ,
-            _errorManager ,
-            _settingsManager ,
-            _statusBarManager ,
-            _scheduler ,
-            null ! ) ;
+                                                      _logger ,
+                                                      _notifications ,
+                                                      _errorManager ,
+                                                      _settingsManager ,
+                                                      _statusBarManager ,
+                                                      _scheduler ,
+                                                      null ! ) ;
 
         // Assert
         act.Should ( ).Throw < ArgumentNullException > ( )
@@ -187,13 +187,13 @@ public sealed class DeskNotificationManagerTests : IDisposable
     {
         // Act
         var manager = new DeskNotificationManager (
-            _logger ,
-            _notifications ,
-            _errorManager ,
-            _settingsManager ,
-            _statusBarManager ,
-            _scheduler ,
-            _deskConnectionManager ) ;
+                                                   _logger ,
+                                                   _notifications ,
+                                                   _errorManager ,
+                                                   _settingsManager ,
+                                                   _statusBarManager ,
+                                                   _scheduler ,
+                                                   _deskConnectionManager ) ;
 
         // Assert
         manager.Should ( ).NotBeNull ( ) ;
@@ -204,13 +204,13 @@ public sealed class DeskNotificationManagerTests : IDisposable
     {
         // Arrange
         var manager = new DeskNotificationManager (
-            _logger ,
-            _notifications ,
-            _errorManager ,
-            _settingsManager ,
-            _statusBarManager ,
-            _scheduler ,
-            _deskConnectionManager ) ;
+                                                   _logger ,
+                                                   _notifications ,
+                                                   _errorManager ,
+                                                   _settingsManager ,
+                                                   _statusBarManager ,
+                                                   _scheduler ,
+                                                   _deskConnectionManager ) ;
 
         // Act
         var observable = manager.StatusBarInfoChanged ;
@@ -228,14 +228,17 @@ public sealed class DeskNotificationManagerTests : IDisposable
 
         // We can't create NotifyIcon in a non-STA thread, so we just pass null
         // The implementation should handle this gracefully
-        _notifications.When ( x => x.Initialize ( Arg.Any < NotifyIcon > ( ) , Arg.Any < CancellationToken > ( ) ) )
-                     .Do ( _ => { } ) ; // Just accept the call
+        _notifications.When ( x => x.Initialize ( Arg.Any < NotifyIcon > ( ) ,
+                                                  Arg.Any < CancellationToken > ( ) ) )
+                      .Do ( _ => { } ) ; // Just accept the call
 
         // Act & Assert - Should not throw even with null NotifyIcon
-        var act = ( ) => manager.Initialize ( null ! , token ) ;
+        var act = ( ) => manager.Initialize ( null ! ,
+                                              token ) ;
         act.Should ( ).NotThrow ( ) ;
 
-        _notifications.Received ( 1 ).Initialize ( null ! , token ) ;
+        _notifications.Received ( 1 ).Initialize ( null ! ,
+                                                   token ) ;
     }
 
     [ Fact ]
@@ -245,11 +248,13 @@ public sealed class DeskNotificationManagerTests : IDisposable
         var manager = CreateManager ( ) ;
         var token   = CancellationToken.None ;
 
-        _notifications.When ( x => x.Initialize ( Arg.Any < NotifyIcon > ( ) , Arg.Any < CancellationToken > ( ) ) )
-                     .Do ( _ => { } ) ;
+        _notifications.When ( x => x.Initialize ( Arg.Any < NotifyIcon > ( ) ,
+                                                  Arg.Any < CancellationToken > ( ) ) )
+                      .Do ( _ => { } ) ;
 
         // Act
-        manager.Initialize ( null ! , token ) ;
+        manager.Initialize ( null ! ,
+                             token ) ;
 
         // Assert - Verify subscription by triggering an error
         var errorDetails = Substitute.For < IErrorDetails > ( ) ;
@@ -270,10 +275,14 @@ public sealed class DeskNotificationManagerTests : IDisposable
         var severity = InfoBarSeverity.Informational ;
 
         // Act
-        manager.ShowNotification ( title , message , severity ) ;
+        manager.ShowNotification ( title ,
+                                   message ,
+                                   severity ) ;
 
         // Assert
-        _notifications.Received ( 1 ).Show ( title , message , severity ) ;
+        _notifications.Received ( 1 ).Show ( title ,
+                                             message ,
+                                             severity ) ;
     }
 
     [ Fact ]
@@ -287,16 +296,21 @@ public sealed class DeskNotificationManagerTests : IDisposable
         var severity = InfoBarSeverity.Success ;
 
         // Act
-        manager.ShowStatusUpdate ( height , title , message , severity ) ;
+        manager.ShowStatusUpdate ( height ,
+                                   title ,
+                                   message ,
+                                   severity ) ;
 
         // Assert
         _statusBarManager.Received ( 1 ).UpdateStatus ( Arg.Is < StatusBarInfo > ( info =>
-            info.Title == title &&
-            info.Height == height &&
-            info.Message == message &&
-            info.Severity == severity ) ) ;
+                                                                                       info.Title    == title   &&
+                                                                                       info.Height   == height  &&
+                                                                                       info.Message  == message &&
+                                                                                       info.Severity == severity ) ) ;
 
-        _notifications.Received ( 1 ).Show ( title , message , severity ) ;
+        _notifications.Received ( 1 ).Show ( title ,
+                                             message ,
+                                             severity ) ;
     }
 
     [ Fact ]
@@ -310,13 +324,19 @@ public sealed class DeskNotificationManagerTests : IDisposable
         var severity = InfoBarSeverity.Warning ;
 
         // Act
-        manager.ShowStatusUpdate ( height , title , message , severity ) ;
+        manager.ShowStatusUpdate ( height ,
+                                   title ,
+                                   message ,
+                                   severity ) ;
 
         // Assert
         _statusBarManager.Received ( 1 ).UpdateStatus ( Arg.Is < StatusBarInfo > ( info =>
-            info.Height == 1000 ) ) ; // LastKnownDeskHeight from setup
+                                                                                       info.Height ==
+                                                                                       1000 ) ) ; // LastKnownDeskHeight from setup
 
-        _notifications.Received ( 1 ).Show ( title , message , severity ) ;
+        _notifications.Received ( 1 ).Show ( title ,
+                                             message ,
+                                             severity ) ;
     }
 
     [ Fact ]
@@ -324,7 +344,8 @@ public sealed class DeskNotificationManagerTests : IDisposable
     {
         // Arrange
         var manager = CreateManager ( ) ;
-        manager.Initialize ( null ! , CancellationToken.None ) ;
+        manager.Initialize ( null ! ,
+                             CancellationToken.None ) ;
 
         var desk = Substitute.For < IDesk > ( ) ;
         desk.DeviceName.Returns ( "TestDesk" ) ;
@@ -338,10 +359,13 @@ public sealed class DeskNotificationManagerTests : IDisposable
 
         // Assert
         _statusBarManager.Received ( 1 ).UpdateStatus ( Arg.Is < StatusBarInfo > ( info =>
-            info.Title == "Error" &&
-            info.Message.Contains ( "TestDesk" ) &&
-            info.Message.Contains ( "Test error message" ) &&
-            info.Severity == InfoBarSeverity.Error ) ) ;
+                                                                                       info.Title == "Error" &&
+                                                                                       info.Message
+                                                                                           .Contains ( "TestDesk" ) &&
+                                                                                       info.Message
+                                                                                           .Contains ( "Test error message" ) &&
+                                                                                       info.Severity ==
+                                                                                       InfoBarSeverity.Error ) ) ;
     }
 
     [ Fact ]
@@ -349,7 +373,8 @@ public sealed class DeskNotificationManagerTests : IDisposable
     {
         // Arrange
         var manager = CreateManager ( ) ;
-        manager.Initialize ( null ! , CancellationToken.None ) ;
+        manager.Initialize ( null ! ,
+                             CancellationToken.None ) ;
 
         _deskConnectionManager.CurrentDesk.Returns ( ( IDesk ? )null ) ;
 
@@ -361,8 +386,10 @@ public sealed class DeskNotificationManagerTests : IDisposable
 
         // Assert
         _statusBarManager.Received ( 1 ).UpdateStatus ( Arg.Is < StatusBarInfo > ( info =>
-            info.Message.Contains ( "Unknown" ) &&
-            info.Message.Contains ( "Test error" ) ) ) ;
+                                                                                       info.Message
+                                                                                           .Contains ( "Unknown" ) &&
+                                                                                       info.Message
+                                                                                           .Contains ( "Test error" ) ) ) ;
     }
 
     [ Fact ]
@@ -370,7 +397,8 @@ public sealed class DeskNotificationManagerTests : IDisposable
     {
         // Arrange
         var manager = CreateManager ( ) ;
-        manager.Initialize ( null ! , CancellationToken.None ) ;
+        manager.Initialize ( null ! ,
+                             CancellationToken.None ) ;
 
         var errorDetails = Substitute.For < IErrorDetails > ( ) ;
         errorDetails.Message.Returns ( "Connection failed" ) ;
@@ -380,14 +408,16 @@ public sealed class DeskNotificationManagerTests : IDisposable
 
         // Assert
         _statusBarManager.Received ( 1 ).UpdateStatus ( Arg.Is < StatusBarInfo > ( info =>
-            info.Height == 1000 && // LastKnownDeskHeight
-            info.Title == "Error" &&
-            info.Severity == InfoBarSeverity.Error ) ) ;
+                                                                                       info.Height ==
+                                                                                       1000 && // LastKnownDeskHeight
+                                                                                       info.Title == "Error" &&
+                                                                                       info.Severity ==
+                                                                                       InfoBarSeverity.Error ) ) ;
 
         _notifications.Received ( 1 ).Show (
-            "Error" ,
-            Arg.Any < string > ( ) ,
-            InfoBarSeverity.Error ) ;
+                                            "Error" ,
+                                            Arg.Any < string > ( ) ,
+                                            InfoBarSeverity.Error ) ;
     }
 
     [ Fact ]
@@ -395,7 +425,8 @@ public sealed class DeskNotificationManagerTests : IDisposable
     {
         // Arrange
         var manager = CreateManager ( ) ;
-        manager.Initialize ( null ! , CancellationToken.None ) ;
+        manager.Initialize ( null ! ,
+                             CancellationToken.None ) ;
 
         // Act
         manager.Dispose ( ) ;
@@ -418,13 +449,13 @@ public sealed class DeskNotificationManagerTests : IDisposable
 
         // Act
         var act = ( ) =>
-        {
+                  {
 #pragma warning disable S3966
-            manager.Dispose ( ) ;
-            manager.Dispose ( ) ;
-            manager.Dispose ( ) ;
+                      manager.Dispose ( ) ;
+                      manager.Dispose ( ) ;
+                      manager.Dispose ( ) ;
 #pragma warning restore S3966
-        };
+                  } ;
 
         // Assert
         act.Should ( ).NotThrow ( ) ;
@@ -435,7 +466,8 @@ public sealed class DeskNotificationManagerTests : IDisposable
     {
         // Arrange
         var manager = CreateManager ( ) ;
-        manager.Initialize ( null ! , CancellationToken.None ) ;
+        manager.Initialize ( null ! ,
+                             CancellationToken.None ) ;
 
         // Act
         var act = manager.Dispose ;
@@ -460,12 +492,12 @@ public sealed class DeskNotificationManagerTests : IDisposable
     private DeskNotificationManager CreateManager ( )
     {
         return new DeskNotificationManager (
-            _logger ,
-            _notifications ,
-            _errorManager ,
-            _settingsManager ,
-            _statusBarManager ,
-            _scheduler ,
-            _deskConnectionManager ) ;
+                                            _logger ,
+                                            _notifications ,
+                                            _errorManager ,
+                                            _settingsManager ,
+                                            _statusBarManager ,
+                                            _scheduler ,
+                                            _deskConnectionManager ) ;
     }
 }

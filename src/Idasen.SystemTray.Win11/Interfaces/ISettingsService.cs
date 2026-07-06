@@ -1,3 +1,5 @@
+using Idasen.SystemTray.Win11.Utils ;
+
 namespace Idasen.SystemTray.Win11.Interfaces ;
 
 /// <summary>
@@ -5,7 +7,7 @@ namespace Idasen.SystemTray.Win11.Interfaces ;
 /// </summary>
 public interface ISettingsService
 {
-    ILoggingSettingsManager SettingsManager { get ; }
-    Utils.ISettingsSynchronizer Synchronizer { get ; }
+    ILoggingSettingsManager  SettingsManager { get ; }
+    ISettingsSynchronizer    Synchronizer    { get ; }
     IHeightSettingsValidator HeightValidator { get ; }
 }
