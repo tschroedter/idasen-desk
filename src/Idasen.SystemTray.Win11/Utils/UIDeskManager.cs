@@ -174,6 +174,8 @@ public sealed class UiDeskManager : IUiDeskManager
 
         _logger.Debug ( "UI Desk Manager Initializing..." ) ;
 
+        _deskReadyManager.Initialize ( notifyIcon ) ;
+
         _tokenSource =
             new CancellationTokenSource ( TimeSpan.FromSeconds ( AppConfiguration.Timeouts.InitializationSeconds ) ) ;
         _token = _tokenSource.Token ;

@@ -180,11 +180,6 @@ public partial class App
                                                                                                                         .GetRequiredService
                                                                                                                              < IDeskNotificationManager > ( ) ;
                                                                                                              var
-                                                                                                                 notifyIcon =
-                                                                                                                     provider
-                                                                                                                        .GetService
-                                                                                                                             < NotifyIcon > ( ) ;
-                                                                                                             var
                                                                                                                  connectionManager =
                                                                                                                      provider
                                                                                                                         .GetRequiredService
@@ -195,7 +190,6 @@ public partial class App
                                                                                                                                     settingsManager ,
                                                                                                                                     iconProvider ,
                                                                                                                                     notificationManager ,
-                                                                                                                                    notifyIcon ,
                                                                                                                                     connectionManager ) ;
                                                                                                          } ) ;
                                                                            services

@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis ;
 using System.Reactive.Concurrency ;
 using System.Reactive.Linq ;
 using Idasen.BluetoothLE.Linak.Interfaces ;
@@ -14,19 +15,19 @@ public sealed class DeskReadyManager : IDeskReadyManager
     private readonly ITaskbarIconProvider     _iconProvider ;
     private readonly ILogger                  _logger ;
     private readonly IDeskNotificationManager _notificationManager ;
-    private readonly NotifyIcon ?             _notifyIcon ;
     private readonly ISettingsManager         _settingsManager ;
 
     private bool          _disposed ;
     private IDisposable ? _finished ;
     private IDisposable ? _heightChanged ;
 
+    internal NotifyIcon ? NotifyIcon ;
+
     public DeskReadyManager (
         ILogger                  logger ,
         ISettingsManager         settingsManager ,
         ITaskbarIconProvider     iconProvider ,
         IDeskNotificationManager notificationManager ,
-        NotifyIcon ?             notifyIcon ,
         IDeskConnectionManager   connectionManager )
     {
         ArgumentNullException.ThrowIfNull ( logger ) ;
@@ -39,7 +40,6 @@ public sealed class DeskReadyManager : IDeskReadyManager
         _settingsManager     = settingsManager ;
         _iconProvider        = iconProvider ;
         _notificationManager = notificationManager ;
-        _notifyIcon          = notifyIcon ;
         _connectionManager   = connectionManager ;
     }
 
@@ -90,7 +90,7 @@ public sealed class DeskReadyManager : IDeskReadyManager
 
         _iconProvider.Initialize ( _logger ,
                                    desk ,
-                                   _notifyIcon ) ;
+                                   NotifyIcon ) ;
 
         var message = $"Connected successfully to '{desk.DeviceName}'." ;
 
@@ -98,6 +98,15 @@ public sealed class DeskReadyManager : IDeskReadyManager
                                                 "Connected" ,
                                                 message ,
                                                 InfoBarSeverity.Success ) ;
+    }
+
+    [ ExcludeFromCodeCoverage ]
+    public void Initialize ( NotifyIcon notifyIcon )
+    {
+        NotifyIcon = notifyIcon ;
+
+        _logger.Debug ( "{ResourceName} initialized" ,
+                        nameof ( DeskReadyManager ) ) ;
     }
 
     private void DisposeResource ( IDisposable ? resource , string resourceName )
