@@ -26,7 +26,6 @@ public class DeskReadyManagerTests
                                                 settingsManager ,
                                                 iconProvider ,
                                                 notificationManager ,
-                                                null ,
                                                 connectionManager ) ;
 
         act.Should ( )
@@ -203,7 +202,6 @@ public class DeskReadyManagerTests
                                          SettingsManager ,
                                          IconProvider ,
                                          NotificationManager ,
-                                         null ,
                                          ConnectionManager ) ;
         }
 

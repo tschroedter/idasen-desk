@@ -921,6 +921,57 @@ public class DeskConnectionManagerTests : IDisposable
     }
 
     [ Fact ]
+    public async Task OnStaleConnectionDetected_WhenAlreadyConnected_DoesNotReconnect ( )
+    {
+        // Arrange
+        _desk.DeviceName.Returns ( "TestDesk" ) ;
+        _desk.BluetoothAddress.Returns ( 123456789UL ) ;
+        _deskProvider.TryGetDesk ( Arg.Any < CancellationToken > ( ) )
+                     .Returns ( Task.FromResult ( ( true , ( IDesk ? )_desk ) ) ) ;
+        _deskProvider.ConnectionStatus.Returns ( Windows.Devices.Bluetooth.BluetoothConnectionStatus.Connected ) ;
+
+        _reconnectStrategy.ConnectWithRetryAsync (
+                                                  Arg.Any < Func < CancellationToken , Task < bool > > > ( ) ,
+                                                  Arg.Any < CancellationToken > ( ) )
+                          .Returns ( callInfo =>
+                                     {
+                                         var connectFunc =
+                                             callInfo.Arg < Func < CancellationToken , Task < bool > > > ( ) ;
+                                         return connectFunc ( CancellationToken.None ) ;
+                                     } ) ;
+
+        var manager = new DeskConnectionManager (
+                                                 _logger ,
+                                                 _settingsManager ,
+                                                 _providerFactory ,
+                                                 _reconnectStrategy ,
+                                                 _errorManager ,
+                                                 _connectionMonitor ) ;
+
+        await manager.ConnectAsync ( CancellationToken.None ) ;
+
+        var disconnectedEventRaised = false ;
+        manager.Disconnected += ( _ , _ ) => disconnectedEventRaised = true ;
+
+        _connectionMonitor.ClearReceivedCalls();
+
+        // Act
+        _connectionMonitor.StaleConnectionDetected += Raise.Event < EventHandler > ( _connectionMonitor ,
+                                                                                     EventArgs.Empty ) ;
+        await Task.Delay ( 200 ,
+                           TestContext.Current.CancellationToken ) ; // Wait for background task
+
+        // Assert
+        disconnectedEventRaised.Should ( ).BeFalse ( ) ;
+        _connectionMonitor.Received ( 1 ).StartMonitoring ( ) ; // Should restart monitoring since connection is still valid
+        await _reconnectStrategy.Received ( 1 ).ConnectWithRetryAsync (
+                                                                       Arg.Any < Func < CancellationToken ,
+                                                                           Task < bool > > > ( ) ,
+                                                                       Arg.Any <
+                                                                           CancellationToken > ( ) ) ; // Only once for initial connect, not for reconnect
+    }
+
+    [ Fact ]
     public async Task OnStaleConnectionDetected_DisposeDeskThrows_HandlesGracefully ( )
     {
         // Arrange

@@ -32,7 +32,7 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="FluentAssertions" Version="8.10.0" />
-        <PackageReference Include="Idasen.Desk.Core" Version="0.1.249" />
+        <PackageReference Include="Idasen.Desk.Core" Version="0.1.258" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.7.0" />
         <PackageReference Include="Microsoft.Reactive.Testing" Version="6.1.0" />
         <PackageReference Include="NSubstitute" Version="5.3.0" />
