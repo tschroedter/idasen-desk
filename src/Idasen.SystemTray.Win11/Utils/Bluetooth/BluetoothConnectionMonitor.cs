@@ -1,6 +1,6 @@
-using System.Timers ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Serilog ;
+using System.Timers ;
 using Timer = System.Timers.Timer ;
 
 namespace Idasen.SystemTray.Win11.Utils.Bluetooth ;
@@ -11,9 +11,9 @@ namespace Idasen.SystemTray.Win11.Utils.Bluetooth ;
 /// </summary>
 public sealed class BluetoothConnectionMonitor : IBluetoothConnectionMonitor
 {
-    private readonly ILogger _logger ;
-    private readonly int     _timeoutMilliseconds ;
-    private readonly Timer   _watchdogTimer ;
+    private readonly ILogger       _logger ;
+    private readonly int           _timeoutMilliseconds ;
+    private readonly Timer         _watchdogTimer ;
 
     private bool _disposed ;
 
@@ -59,8 +59,8 @@ public sealed class BluetoothConnectionMonitor : IBluetoothConnectionMonitor
             return ;
         }
 
-        _logger.Information ( "Starting Bluetooth connection monitoring with timeout of {TimeoutSeconds}s" ,
-                              _timeoutMilliseconds / 1000.0 ) ;
+        _logger.Debug( "Starting Bluetooth connection monitoring with timeout of {TimeoutSeconds}s" ,
+                       _timeoutMilliseconds / 1000.0 ) ;
 
         IsMonitoring = true ;
         _watchdogTimer.Start ( ) ;
@@ -71,7 +71,7 @@ public sealed class BluetoothConnectionMonitor : IBluetoothConnectionMonitor
         if ( ! IsMonitoring )
             return ;
 
-        _logger.Information ( "Stopping Bluetooth connection monitoring" ) ;
+        _logger.Debug( "Stopping Bluetooth connection monitoring" ) ;
 
         IsMonitoring = false ;
         _watchdogTimer.Stop ( ) ;
@@ -118,8 +118,8 @@ public sealed class BluetoothConnectionMonitor : IBluetoothConnectionMonitor
         if ( ! IsMonitoring )
             return ;
 
-        _logger.Warning ( "Stale Bluetooth connection detected - no activity for {TimeoutSeconds}s" ,
-                          _timeoutMilliseconds / 1000.0 ) ;
+        _logger.Debug ( "Stale Bluetooth connection detected - no activity for {TimeoutSeconds}s" ,
+                        _timeoutMilliseconds / 1000.0 ) ;
 
         // Stop monitoring before raising event to prevent multiple triggers
         StopMonitoring ( ) ;

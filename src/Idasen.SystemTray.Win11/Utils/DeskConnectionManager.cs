@@ -1,6 +1,7 @@
 using Idasen.BluetoothLE.Linak.Interfaces ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Serilog ;
+using Windows.Devices.Bluetooth ;
 
 namespace Idasen.SystemTray.Win11.Utils ;
 
@@ -63,8 +64,7 @@ public sealed class DeskConnectionManager : IDeskConnectionManager
                                                                           {
                                                                               try
                                                                               {
-                                                                                  _logger
-                                                                                     .Debug ( "Attempting connection to desk..." ) ;
+                                                                                  _logger.Debug ( "Attempting connection to desk..." ) ;
 
                                                                                   _deskProvider?.Dispose ( ) ;
                                                                                   _deskProvider = _providerFactory ( ) ;
@@ -272,6 +272,15 @@ public sealed class DeskConnectionManager : IDeskConnectionManager
 
     private void OnStaleConnectionDetected ( object ? sender , EventArgs e )
     {
+        if ( _deskProvider?.ConnectionStatus == BluetoothConnectionStatus.Connected )
+        {
+            _logger.Debug ( "Desk is still connected via Bluetooth. Restarting connection monitoring." ) ;
+
+            ConnectionMonitor.StartMonitoring ( ) ;
+
+            return ;
+        }
+
         if ( _isReconnecting )
         {
             _logger.Debug ( "Stale connection event ignored - reconnection already in progress" ) ;
