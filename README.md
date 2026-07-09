@@ -22,6 +22,7 @@ This project uses the [idasen-desk-core](https://github.com/tschroedter/idasen-d
 - [Installation](#installation)
   - [Direct Download](#direct-download)
   - [Scoop Package Manager](#scoop-package-manager)
+  - [Build from Source](#build-from-source)
 - [Usage](#usage)
   - [System Tray Icon](#system-tray-icon)
   - [Context Menu](#context-menu)
@@ -34,6 +35,7 @@ This project uses the [idasen-desk-core](https://github.com/tschroedter/idasen-d
 - [Troubleshooting](#troubleshooting)
   - [Pairing the Desk](#pairing-the-desk)
   - [Connection Issues](#connection-issues)
+  - [Known Limitations](#known-limitations)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -43,67 +45,17 @@ A special thank you to all the amazing people who test this application and prov
 
 ## What's New
 
-### Version 0.1.443
-- ⌨️ **Configurable Global Hotkeys**:
-  - Enable/disable all global hotkeys from the Settings → Hot Keys page
-  - Select individual keys (e.g. F-keys, arrow keys, numpad) and modifier combinations (Ctrl, Alt, Shift, Win) per position
-  - Settings are persisted automatically — no manual JSON editing required
-  - See the [Hotkey Customization Guide](docs/HOTKEY_CUSTOMIZATION.md) for advanced JSON-based configuration
-- 🐛 Fixed mouse wheel scrolling detection for ComboBox dropdowns in Settings.
+### Main branch updates (latest)
+- ⚙️ Allow renaming of desk position preset
+- 📡 Improved Bluetooth reliability with stale connection detection and automatic reconnection.
+- 🛠️ Refactored desk orchestration into focused managers (`DeskConnectionManager`, `DeskMovementManager`, `DeskNotificationManager`, `DeskReadyManager`, `StatusBarManager`) with expanded test coverage.
+- 🔐 Updated CI workflow dependencies (`actions/checkout@v7`, `actions/cache@v6`) and release/changelog automation actions.
 
-### Version 0.1.401
-- 🔗 Fixed the donation link.
-
-### Version 0.1.388
-- ✨ Upgrade to .NET 10.0 and resolve security vulnerability
-- 🐛 Fixed: Desk cannot be controlled after interrupted desk movement (#108).
-- 🧰 Maintenance: Updated NuGet packages and other dependency/CI maintenance.
-
-### Version 0.1.357
-- 📦 Updated NuGet packages.
-
-### Version 0.1.350
-- 🔧 Fixed minor SonarCloud issue: '...class should be marked partial...'
- 
-### Version 0.1.345
-- 🔧 Fixed not catching COMException (0x80263001).
-
-### Version 0.1.336
-- 🔧 Fixed restoring theme after resuming from hibernation.
-- 🔧 Fixed restoring theme when connecting eGPU.
-
-### Version 0.1.329
-- 🔧 Fixed 'Failed to load settings' error.
-
-### Version 0.1.299
-- Increase scroll speed when using mouse wheel.
-
-### Version 0.1.280
-- 🎨 Enable support for mouse wheel scrolling inside 'SettingsPage'.
-
-### Version 0.1.250
-Short description: This patch release focuses on stability and quality-of-life improvements. It includes several bug fixes, performance optimizations, small usability improvements, dependency/security updates, and code quality tooling enhancements.
-
-- 🛡️Fixes: resolved multiple reported crashes and edge-case bugs.
-- 📡Improvements: reduced memory/CPU usage in core processing paths and improved logging for easier troubleshooting.
-- 📊 Quality: all code is now scanned by SonarCloud (static analysis for bugs, code smells, and security issues).
-- 📦 Maintenance: updated third-party dependencies and applied security patches.
-
-### Version 0.1.182
-
-- ✨ Added 2 new desk positions: Custom 1 and Custom 2
-- ⚙️ Desk positions can be fine-tuned using up/down icons or arrow keys in the confirmation dialog
-- 🎨 Enhanced UI for the system tray application
-- 👁️ Configurable visibility for desk positions and Stop command in context menu
-- 🔌 Smart context menu: shows only 'Connect' or 'Disconnect' based on connection state
-- 🖱️ Click system tray icon to show/hide settings window
-- 🪟 Resizable settings window with improved window management
-- 📡 Improved Bluetooth LE connection handling
-- 📦 Updated all NuGet packages to latest versions
-- 🔒 Masked sensitive data in log files
-- 🛡️ Fixed security vulnerabilities through package updates
-- 📊 Added SonarCloud code quality analysis
-- 🐛 Fixed various code smells and bugs identified by SonarCloud
+### Latest published release
+- **v0.1.495**: fixes for missing icon height and connection notifications
+- **v0.1.492**: configurable desk position names
+- **v0.1.435**: configurable global hotkeys (UI-based), including enable/disable support.
+- See [CHANGELOG.md](CHANGELOG.md) for complete release history and details.
 
 [View full changelog](CHANGELOG.md)
 
@@ -131,10 +83,11 @@ Short description: This patch release focuses on stability and quality-of-life i
 
 ## Requirements
 
-- **Operating System**: Windows 10/11
+- **Operating System (app runtime)**: Windows 10/11
 - **Hardware**: Bluetooth LE adapter
 - **Desk**: Ikea Idasen standing desk
 - **Pairing**: Desk must be paired with Windows via Bluetooth settings
+- **For local development**: .NET SDK 10.0+
 
 ## Installation
 
@@ -142,7 +95,7 @@ Short description: This patch release focuses on stability and quality-of-life i
 
 Download the latest self-contained executable (no .NET runtime installation required):
 
-**[Download Latest](https://github.com/tschroedter/idasen-desk/releases/download/v0.1.443/Idasen-SystemTray-0.1.443-win-x64.exe)**
+**[Download Latest Release Asset](https://github.com/tschroedter/idasen-desk/releases/latest)**
 
 1. Download the executable from the link above
 2. Run the executable
@@ -164,6 +117,27 @@ scoop update tschroedter/idasen-systemtray
 ```
 
 _Note: The app doesn't have enough stars to be in the official Scoop repository, so we maintain our own bucket ([PR #20](https://github.com/tschroedter/idasen-desk/issues/20))._
+
+### Build from Source
+
+```bash
+cd src
+dotnet restore Idasen-Desk.sln
+dotnet build Idasen-Desk.sln --configuration Release
+dotnet test Idasen-Desk.sln --configuration Release
+```
+
+Publish a self-contained executable:
+
+```bash
+cd src
+dotnet publish Idasen.SystemTray.Win11/Idasen.SystemTray.Win11.csproj \
+  --configuration Release \
+  --runtime win-x64 \
+  --self-contained true \
+  -p:PublishSingleFile=true \
+  -p:PublishReadyToRun=true
+```
 
 ## Usage
 
@@ -221,6 +195,8 @@ The application automatically connects to your Idasen desk on startup. Desktop n
 - 🔄 Trying to connect...
 - ✅ Connected
 - ❌ Failed to connect
+
+If an existing Bluetooth session becomes stale, the app attempts to recover by reconnecting automatically.
 
 ## Settings
 
@@ -371,11 +347,18 @@ If the desk is paired but the application still can't connect:
 - Restart the application
 - Check the log files (location shown in Advanced Settings)
 - Ensure no other application is using the desk's Bluetooth connection
+- Wait briefly and retry; recent versions include stale connection detection and automatic reconnection.
 
 **Still having problems?** Please [open an issue](https://github.com/tschroedter/idasen-desk/issues) with:
 - Your Windows version
 - Error messages from log files
 - Steps you've already tried
+
+### Known Limitations
+
+- Windows-only application (WPF + Windows Bluetooth stack).
+- The desk must already be paired in Windows before first use.
+- Only one controller can actively control the desk over Bluetooth at a time.
 
 ## Contributing
 
@@ -422,6 +405,15 @@ dotnet build Idasen-Desk.sln --configuration Release
 # Run tests
 dotnet test Idasen-Desk.sln --configuration Release
 ```
+
+> Note: The test project targets `net10.0-windows10.0.19041`, so tests require a Windows desktop runtime environment.
+
+### CI/CD and Automation Workflows
+
+- **Build and Test (Draft Release)**: `.github/workflows/dotnet-ci.yml` builds, tests, publishes a versioned `win-x64` single-file executable, tags, and drafts releases.
+- **Release Drafter**: `.github/workflows/release-drafter.yml` updates draft release notes on pushes to `main`.
+- **Update Changelog**: `.github/workflows/update-changelog.yml` updates `CHANGELOG.md` when a release is published.
+- **SonarCloud**: `.github/workflows/sonarcloud.yml` performs static analysis.
 
 ### Tech Stack
 
