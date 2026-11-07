@@ -28,10 +28,10 @@ jobs:
         with:
           fetch-depth: 0  # Shallow clones should be disabled for better analysis
 
-      - name: Setup .NET 8.x SDK
+      - name: Setup .NET 10.x SDK
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: '8.0.x'
+          dotnet-version: '10.0.x'
 
       - name: Cache SonarCloud packages
         uses: actions/cache@v6
@@ -70,7 +70,7 @@ jobs:
           SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
         run: |
           if (-not $Env:SONAR_TOKEN) { Write-Error "SONAR_TOKEN is not set in this run. Secrets may be unavailable (e.g. PR from a fork)."; exit 1 } else { Write-Host "SONAR_TOKEN is present." }
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"tschroedter_idasen-desk" /o:"$Env:SONAR_ORGANIZATION" /d:sonar.token="$Env:SONAR_TOKEN" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="./TestResults/**/*.opencover.xml"
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"tschroedter_idasen-desk" /o:"$Env:SONAR_ORGANIZATION" /d:sonar.token="$Env:SONAR_TOKEN" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="./TestResults/**/coverage.opencover.*.xml"
           dotnet build Idasen-Desk.sln --configuration Release --no-restore
-          dotnet test Idasen-Desk.sln --configuration Release --no-build --verbosity detailed --collect:"XPlat Code Coverage;Format=opencover" --results-directory ./TestResults/ /p:Exclude="[*.Tests]*" /p:ExcludeByAttribute=Obsolete /p:ExcludeByAttribute=ObsoleteAttribute /p:ExcludeByAttribute=GeneratedCodeAttribute /p:ExcludeByAttribute=CompilerGeneratedAttribute /p:ExcludeByAttribute=ExcludeFromCodeCoverage /p:ExcludeByAttribute=ExcludeFromCodeCoverageAttribute
+          dotnet test Idasen-Desk.sln --configuration Release --no-build --verbosity detailed --coverlet --coverlet-output-format opencover --coverlet-exclude "[*.Tests]*" --coverlet-exclude-by-attribute Obsolete --coverlet-exclude-by-attribute ObsoleteAttribute --coverlet-exclude-by-attribute GeneratedCodeAttribute --coverlet-exclude-by-attribute CompilerGeneratedAttribute --coverlet-exclude-by-attribute ExcludeFromCodeCoverage --coverlet-exclude-by-attribute ExcludeFromCodeCoverageAttribute --results-directory ./TestResults/
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="$Env:SONAR_TOKEN"
