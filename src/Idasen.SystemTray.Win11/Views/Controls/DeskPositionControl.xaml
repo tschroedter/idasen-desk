@@ -26,18 +26,18 @@
             <Label HorizontalAlignment="Stretch"
                    Content="{Binding PositionName, ElementName=Root}"
                    VerticalAlignment="Center"
-                   Padding="5,0,5,0">
-                <Label.Style>
-                    <Style TargetType="Label">
-                        <Setter Property="Visibility" Value="Visible" />
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding IsEditable, ElementName=Root}" Value="True">
-                                <Setter Property="Visibility" Value="Collapsed" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </Label.Style>
-            </Label>
+                           Padding="5,0,5,0">
+                       <Label.Style>
+                           <Style TargetType="Label" BasedOn="{StaticResource {x:Type Label}}">
+                               <Setter Property="Visibility" Value="Visible" />
+                               <Style.Triggers>
+                                   <DataTrigger Binding="{Binding IsEditable, ElementName=Root}" Value="True">
+                                       <Setter Property="Visibility" Value="Collapsed" />
+                                   </DataTrigger>
+                               </Style.Triggers>
+                           </Style>
+                       </Label.Style>
+                   </Label>
 
             <!-- Editable text box -->
             <ui:TextBox HorizontalAlignment="Stretch"
