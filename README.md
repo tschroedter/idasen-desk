@@ -52,7 +52,7 @@ A special thank you to all the amazing people who test this application and prov
 - 🔐 Updated CI workflow dependencies (`actions/checkout@v7`, `actions/cache@v6`) and release/changelog automation actions.
 
 ### Latest published release
-- **v0.1.503**: updated NuGet packages and removed the dependency on the Selie package.
+- **v0.1.504**: updated NuGet packages and removed the dependency on the Selie package.
 - **v0.1.495**: fixes for missing icon height and connection notifications
 - **v0.1.492**: configurable desk position names
 - **v0.1.435**: configurable global hotkeys (UI-based), including enable/disable support.
