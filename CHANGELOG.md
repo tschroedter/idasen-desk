@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/tschroedter/idasen-desk/compare/v0.1.495...HEAD)
+## [Unreleased](https://github.com/tschroedter/idasen-desk/compare/v0.1.504...HEAD)
 
 ## [0.1.78](https://github.com/tschroedter/idasen-desk/releases/tag/V0.1.78) - 2024-10-07
 
@@ -21,6 +21,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fixed vulnerabilities in external NuGet packages by updating to latest version
+
+## [v0.1.504](https://github.com/tschroedter/idasen-desk/compare/v0.1.495...v0.1.504) - 2026-11-09
+
+Changes:
+
+- Updated NuGet Packages
+- Removed dependency on Selkie NuGet package
 
 ## [v0.1.495](https://github.com/tschroedter/idasen-desk/compare/v0.1.492...v0.1.495) - 2026-07-08
 
