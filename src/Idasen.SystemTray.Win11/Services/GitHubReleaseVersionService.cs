@@ -4,6 +4,7 @@ using System.Text.Json ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Microsoft.Extensions.Hosting ;
 using Serilog ;
+using Wpf.Ui.Controls ;
 
 namespace Idasen.SystemTray.Win11.Services ;
 
@@ -13,15 +14,18 @@ public sealed class GitHubReleaseVersionService : BackgroundService
 
     private readonly HttpClient       _httpClient ;
     private readonly ILogger          _logger ;
+    private readonly INotifications   _notifications ;
     private readonly IVersionProvider _versionProvider ;
 
     public GitHubReleaseVersionService ( HttpClient       httpClient ,
                                          ILogger          logger ,
-                                         IVersionProvider versionProvider )
+                                         IVersionProvider versionProvider ,
+                                         INotifications   notifications )
     {
         _httpClient      = httpClient ;
         _logger          = logger ;
         _versionProvider = versionProvider ;
+        _notifications  = notifications ;
     }
 
     public async Task LogLatestReleaseVersionAsync ( CancellationToken cancellationToken )
@@ -53,10 +57,18 @@ public sealed class GitHubReleaseVersionService : BackgroundService
             if ( ! TryParseVersion ( currentAppVersion , out var currentVersion ) )
                 throw new InvalidOperationException ( $"The current app version '{currentAppVersion}' is not a valid version." ) ;
 
+            var updateAvailable = latestVersion > currentVersion ;
+
             _logger.Information ( "App version {CurrentVersion}; latest GitHub release version {LatestVersion}; update available: {UpdateAvailable}" ,
                                   currentAppVersion ,
                                   latestReleaseVersion ,
-                                  latestVersion > currentVersion ) ;
+                                  updateAvailable ) ;
+
+            if ( updateAvailable )
+                _notifications.Show ( "Idasen Desk update available" ,
+                                      $"Version {latestReleaseVersion} is available. You are using {currentAppVersion}." ,
+                                      InfoBarSeverity.Informational ,
+                                      alwaysShow : true ) ;
         }
         catch ( OperationCanceledException ) when ( cancellationToken.IsCancellationRequested )
         {

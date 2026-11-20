@@ -5,6 +5,7 @@ using Idasen.SystemTray.Win11.Services ;
 using Idasen.TestLogger ;
 using NSubstitute ;
 using Serilog.Events ;
+using Wpf.Ui.Controls ;
 
 namespace Idasen.SystemTray.Win11.Tests.Services ;
 
@@ -17,6 +18,7 @@ public sealed class GitHubReleaseVersionServiceTests
         using var logger = new InMemoryLogger ( ) ;
         var       versionProvider = Substitute.For < IVersionProvider > ( ) ;
         versionProvider.GetVersion ( ).Returns ( "v1.2.0" ) ;
+        var       notifications = Substitute.For < INotifications > ( ) ;
         var       handler = new StubHttpMessageHandler ( new HttpResponseMessage ( HttpStatusCode.OK )
         {
             Content = new StringContent ( "{\"tag_name\":\"v1.2.3\"}" )
@@ -25,7 +27,7 @@ public sealed class GitHubReleaseVersionServiceTests
         {
             BaseAddress = new Uri ( "https://api.github.com/" )
         } ;
-        using var sut = new GitHubReleaseVersionService ( httpClient , logger , versionProvider ) ;
+        using var sut = new GitHubReleaseVersionService ( httpClient , logger , versionProvider , notifications ) ;
 
         // Act
         await sut.LogLatestReleaseVersionAsync ( CancellationToken.None ) ;
@@ -34,6 +36,10 @@ public sealed class GitHubReleaseVersionServiceTests
         handler.RequestUri.Should ( ).Be ( new Uri ( "https://api.github.com/repos/tschroedter/idasen-desk/releases/latest" ) ) ;
         logger.Output.Should ( ).Contain ( "App version \"v1.2.0\"; latest GitHub release version \"v1.2.3\"; update available: True" ) ;
         logger.CountLinesContaining ( "App version" ).Should ( ).Be ( 1 ) ;
+        notifications.Received ( 1 ).Show ( "Idasen Desk update available" ,
+                                            "Version v1.2.3 is available. You are using v1.2.0." ,
+                                            InfoBarSeverity.Informational ,
+                                            alwaysShow : true ) ;
     }
 
     [ Fact ]
@@ -43,6 +49,7 @@ public sealed class GitHubReleaseVersionServiceTests
         using var logger = new InMemoryLogger ( ) ;
         var       versionProvider = Substitute.For < IVersionProvider > ( ) ;
         versionProvider.GetVersion ( ).Returns ( "v1.2.3" ) ;
+        var       notifications = Substitute.For < INotifications > ( ) ;
         var       handler = new StubHttpMessageHandler ( new HttpResponseMessage ( HttpStatusCode.OK )
         {
             Content = new StringContent ( "{\"tag_name\":\"v1.2.3\"}" )
@@ -51,13 +58,14 @@ public sealed class GitHubReleaseVersionServiceTests
         {
             BaseAddress = new Uri ( "https://api.github.com/" )
         } ;
-        using var sut = new GitHubReleaseVersionService ( httpClient , logger , versionProvider ) ;
+        using var sut = new GitHubReleaseVersionService ( httpClient , logger , versionProvider , notifications ) ;
 
         // Act
         await sut.LogLatestReleaseVersionAsync ( CancellationToken.None ) ;
 
         // Assert
         logger.Output.Should ( ).Contain ( "App version \"v1.2.3\"; latest GitHub release version \"v1.2.3\"; update available: False" ) ;
+        notifications.DidNotReceiveWithAnyArgs ( ).Show ( default! , default! , default , default ) ;
     }
 
     [ Fact ]
@@ -71,7 +79,8 @@ public sealed class GitHubReleaseVersionServiceTests
             BaseAddress = new Uri ( "https://api.github.com/" )
         } ;
         var versionProvider = Substitute.For < IVersionProvider > ( ) ;
-        using var sut = new GitHubReleaseVersionService ( httpClient , logger , versionProvider ) ;
+        var notifications = Substitute.For < INotifications > ( ) ;
+        using var sut = new GitHubReleaseVersionService ( httpClient , logger , versionProvider , notifications ) ;
 
         // Act
         await sut.LogLatestReleaseVersionAsync ( CancellationToken.None ) ;
