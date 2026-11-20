@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis ;
 using System.IO.Abstractions ;
+using System.Net.Http ;
 using System.Reactive.Concurrency ;
 using System.Windows.Media ;
 using Autofac ;
@@ -108,6 +109,17 @@ public partial class App
                                                                            services.AddSingleton < SettingsPage > ( ) ;
                                                                            services
                                                                               .AddSingleton < SettingsViewModel > ( ) ;
+                                                                           services.AddSingleton < HttpClient > ( _ =>
+                                                                           {
+                                                                               var client = new HttpClient
+                                                                               {
+                                                                                   BaseAddress = new Uri ( "https://api.github.com/" ) ,
+                                                                                   Timeout     = TimeSpan.FromSeconds ( 10 )
+                                                                               } ;
+                                                                               client.DefaultRequestHeaders.UserAgent.ParseAdd ( "Idasen-Desk" ) ;
+                                                                               return client ;
+                                                                           } ) ;
+                                                                           services.AddHostedService < GitHubReleaseVersionService > ( ) ;
                                                                            services
                                                                               .AddSingleton < IVersionProvider ,
                                                                                    VersionProvider > ( ) ;
