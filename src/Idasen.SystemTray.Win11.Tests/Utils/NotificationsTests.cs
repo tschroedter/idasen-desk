@@ -10,16 +10,15 @@ namespace Idasen.SystemTray.Win11.Tests.Utils ;
 public sealed class NotificationsTests : IDisposable
 {
     private readonly ISettingsManager _settingsManager ;
-    private readonly InMemoryLogger    _logger ;
-    private readonly IToastService     _toastService ;
+    private readonly IToastService    _toastService ;
     private readonly Notifications    _notifications ;
 
     public NotificationsTests ( )
     {
         _settingsManager = Substitute.For < ISettingsManager > ( ) ;
-        _logger          = new InMemoryLogger ( ) ;
+        var logger = new InMemoryLogger ( ) ;
         _toastService    = Substitute.For < IToastService > ( ) ;
-        _notifications   = new Notifications ( _logger ,
+        _notifications   = new Notifications ( logger ,
                                               _settingsManager ,
                                               Substitute.For < IVersionProvider > ( ) ,
                                               _toastService ) ;

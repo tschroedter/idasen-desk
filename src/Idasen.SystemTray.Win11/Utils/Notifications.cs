@@ -69,7 +69,7 @@ public class Notifications : INotifications
     public void Show ( string          title ,
                        string          text ,
                        InfoBarSeverity serverity ,
-                       bool              alwaysShow = false )
+                       bool            alwaysShow = false )
     {
         Show ( new NotificationParameters ( title ,
                                             text ,
@@ -77,7 +77,8 @@ public class Notifications : INotifications
                alwaysShow ) ;
     }
 
-    public void Show ( NotificationParameters parameters , bool alwaysShow = false )
+    public void Show ( NotificationParameters parameters,
+                       bool alwaysShow = false )
     {
         if ( _disposedValue )
             return ;
@@ -85,7 +86,8 @@ public class Notifications : INotifications
         _showSubject.OnNext ( ( parameters , alwaysShow ) ) ;
     }
 
-    private void OnShow ( NotificationParameters parameters , bool alwaysShow )
+    private void OnShow ( NotificationParameters parameters ,
+                          bool alwaysShow )
     {
         if ( _disposedValue )
             return ;
