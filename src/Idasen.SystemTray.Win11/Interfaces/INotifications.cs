@@ -10,5 +10,6 @@ public interface INotifications : IDisposable
 
     void Show ( string          title ,
                 string          text ,
-                InfoBarSeverity serverity ) ;
+                InfoBarSeverity serverity ,
+                bool              alwaysShow = false ) ;
 }
