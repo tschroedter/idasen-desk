@@ -212,7 +212,7 @@ public class DeskReadyManagerTests
         public IDeskNotificationManager NotificationManager { get ; } =
             Substitute.For < IDeskNotificationManager > ( ) ;
 
-        public IDeskConnectionManager ConnectionManager { get ; } = Substitute.For < IDeskConnectionManager > ( ) ;
+        private IDeskConnectionManager ConnectionManager { get ; } = Substitute.For < IDeskConnectionManager > ( ) ;
 
         public IBluetoothConnectionMonitor ConnectionMonitor { get ; } =
             Substitute.For < IBluetoothConnectionMonitor > ( ) ;

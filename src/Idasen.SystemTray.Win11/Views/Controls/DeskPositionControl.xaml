@@ -47,7 +47,7 @@
                         MaxLength="50"
                         ClearButtonEnabled="False">
                 <ui:TextBox.Style>
-                    <Style TargetType="ui:TextBox" BasedOn="{StaticResource {x:Type ui:TextBox}}">
+                    <Style TargetType="ui:TextBox">
                         <Setter Property="Visibility" Value="Collapsed" />
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding IsEditable, ElementName=Root}" Value="True">

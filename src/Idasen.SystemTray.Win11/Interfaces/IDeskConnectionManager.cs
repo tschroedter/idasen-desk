@@ -1,4 +1,5 @@
 using Idasen.BluetoothLE.Linak.Interfaces ;
+using JetBrains.Annotations ;
 
 namespace Idasen.SystemTray.Win11.Interfaces ;
 
@@ -10,7 +11,9 @@ public interface IDeskConnectionManager : IDisposable
 
     IBluetoothConnectionMonitor ? ConnectionMonitor { get ; }
 
+    [UsedImplicitly]
     event EventHandler ?           Connected ;
+    [UsedImplicitly]
     event EventHandler ?           Disconnected ;
     event EventHandler < IDesk > ? DeskReady ;
 

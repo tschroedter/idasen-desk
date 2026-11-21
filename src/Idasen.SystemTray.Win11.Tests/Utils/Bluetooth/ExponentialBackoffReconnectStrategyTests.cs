@@ -237,8 +237,7 @@ public class ExponentialBackoffReconnectStrategyTests : IDisposable
         var strategy = new ExponentialBackoffReconnectStrategy ( _logger ,
                                                                  5 ,
                                                                  1000 ,
-                                                                 2000 ,
-                                                                 2.0 ) ;
+                                                                 2000 ) ;
         var connectAction = Substitute.For < Func < CancellationToken , Task < bool > > > ( ) ;
         connectAction ( Arg.Any < CancellationToken > ( ) ).Returns ( Task.FromResult ( false ) ) ;
 

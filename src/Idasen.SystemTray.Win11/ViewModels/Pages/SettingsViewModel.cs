@@ -364,12 +364,14 @@ public partial class SettingsViewModel : ObservableObject , INavigationAware , I
         if ( string.IsNullOrWhiteSpace ( modifierString ) )
             return [] ;
 
-        return modifierString
+        return
+        [
+            .. modifierString
               .Split ( ModifierSeparators ,
                        StringSplitOptions.RemoveEmptyEntries )
               .Select ( s => s.Trim ( ) )
               .Where ( s => ! string.IsNullOrEmpty ( s ) )
-              .ToList ( ) ;
+        ] ;
     }
 
     [ SuppressMessage ( "Minor Code Smell" ,
