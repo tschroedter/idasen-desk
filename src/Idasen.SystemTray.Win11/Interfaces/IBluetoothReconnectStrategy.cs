@@ -1,3 +1,5 @@
+using JetBrains.Annotations ;
+
 namespace Idasen.SystemTray.Win11.Interfaces ;
 
 /// <summary>
@@ -8,16 +10,19 @@ public interface IBluetoothReconnectStrategy
     /// <summary>
     ///     Gets the current retry attempt number (0-based).
     /// </summary>
+    [UsedImplicitly]
     int CurrentAttempt { get ; }
 
     /// <summary>
     ///     Gets the maximum number of retry attempts before giving up.
     /// </summary>
+    [UsedImplicitly]
     int MaxRetries { get ; }
 
     /// <summary>
     ///     Gets whether the strategy is currently in a retry cycle.
     /// </summary>
+    [UsedImplicitly]
     bool IsRetrying { get ; }
 
     /// <summary>

@@ -75,9 +75,9 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
     private bool _isActionInProgress ;
 
-    private bool          _isInitialized ;
-    private IDisposable ? _lockSubscription ;
-    private IDisposable ? _updateSubscription ;
+    private          bool          _isInitialized ;
+    private          IDisposable ? _lockSubscription ;
+    private readonly IDisposable ? _updateSubscription ;
 
     [ ObservableProperty ] private Visibility _updateAvailableVisibility = Visibility.Collapsed ;
 

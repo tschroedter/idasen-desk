@@ -23,10 +23,8 @@ public sealed class GitHubReleaseVersionServiceTests
         {
             Content = new StringContent ( "{\"tag_name\":\"v1.2.3\"}" )
         } ) ;
-        using var httpClient = new HttpClient ( handler )
-        {
-            BaseAddress = new Uri ( "https://api.github.com/" )
-        } ;
+        using var httpClient = new HttpClient ( handler ) ;
+        httpClient.BaseAddress = new Uri ( "https://api.github.com/" ) ;
         var updateAvailableState = Substitute.For < IUpdateAvailableState > ( ) ;
         using var sut = new GitHubReleaseVersionService ( httpClient , logger , versionProvider , notifications , updateAvailableState ) ;
 
@@ -56,10 +54,8 @@ public sealed class GitHubReleaseVersionServiceTests
         {
             Content = new StringContent ( "{\"tag_name\":\"v1.2.3\"}" )
         } ) ;
-        using var httpClient = new HttpClient ( handler )
-        {
-            BaseAddress = new Uri ( "https://api.github.com/" )
-        } ;
+        using var httpClient = new HttpClient ( handler ) ;
+        httpClient.BaseAddress = new Uri ( "https://api.github.com/" ) ;
         var updateAvailableState = Substitute.For < IUpdateAvailableState > ( ) ;
         using var sut = new GitHubReleaseVersionService ( httpClient , logger , versionProvider , notifications , updateAvailableState ) ;
 
@@ -68,7 +64,7 @@ public sealed class GitHubReleaseVersionServiceTests
 
         // Assert
         logger.Output.Should ( ).Contain ( "App version \"v1.2.3\"; latest GitHub release version \"v1.2.3\"; update available: False" ) ;
-        notifications.DidNotReceiveWithAnyArgs ( ).Show ( default! , default! , default , default ) ;
+        notifications.DidNotReceiveWithAnyArgs ( ).Show ( null! , null! , default ) ;
         updateAvailableState.Received ( 1 ).SetUpdateAvailable ( false ) ;
     }
 
@@ -78,10 +74,8 @@ public sealed class GitHubReleaseVersionServiceTests
         // Arrange
         using var logger = new InMemoryLogger ( ) ;
         var       handler = new StubHttpMessageHandler ( new HttpResponseMessage ( HttpStatusCode.NotFound ) ) ;
-        using var httpClient = new HttpClient ( handler )
-        {
-            BaseAddress = new Uri ( "https://api.github.com/" )
-        } ;
+        using var httpClient = new HttpClient ( handler ) ;
+        httpClient.BaseAddress = new Uri ( "https://api.github.com/" ) ;
         var versionProvider = Substitute.For < IVersionProvider > ( ) ;
         var notifications = Substitute.For < INotifications > ( ) ;
         var updateAvailableState = Substitute.For < IUpdateAvailableState > ( ) ;
