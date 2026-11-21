@@ -27,7 +27,8 @@ public sealed class GitHubReleaseVersionServiceTests
         {
             BaseAddress = new Uri ( "https://api.github.com/" )
         } ;
-        using var sut = new GitHubReleaseVersionService ( httpClient , logger , versionProvider , notifications ) ;
+        var updateAvailableState = Substitute.For < IUpdateAvailableState > ( ) ;
+        using var sut = new GitHubReleaseVersionService ( httpClient , logger , versionProvider , notifications , updateAvailableState ) ;
 
         // Act
         await sut.LogLatestReleaseVersionAsync ( CancellationToken.None ) ;
@@ -40,6 +41,7 @@ public sealed class GitHubReleaseVersionServiceTests
                                             "Version v1.2.3 is available. You are using v1.2.0." ,
                                             InfoBarSeverity.Informational ,
                                             alwaysShow : true ) ;
+        updateAvailableState.Received ( 1 ).SetUpdateAvailable ( true ) ;
     }
 
     [ Fact ]
@@ -58,7 +60,8 @@ public sealed class GitHubReleaseVersionServiceTests
         {
             BaseAddress = new Uri ( "https://api.github.com/" )
         } ;
-        using var sut = new GitHubReleaseVersionService ( httpClient , logger , versionProvider , notifications ) ;
+        var updateAvailableState = Substitute.For < IUpdateAvailableState > ( ) ;
+        using var sut = new GitHubReleaseVersionService ( httpClient , logger , versionProvider , notifications , updateAvailableState ) ;
 
         // Act
         await sut.LogLatestReleaseVersionAsync ( CancellationToken.None ) ;
@@ -66,6 +69,7 @@ public sealed class GitHubReleaseVersionServiceTests
         // Assert
         logger.Output.Should ( ).Contain ( "App version \"v1.2.3\"; latest GitHub release version \"v1.2.3\"; update available: False" ) ;
         notifications.DidNotReceiveWithAnyArgs ( ).Show ( default! , default! , default , default ) ;
+        updateAvailableState.Received ( 1 ).SetUpdateAvailable ( false ) ;
     }
 
     [ Fact ]
@@ -80,7 +84,8 @@ public sealed class GitHubReleaseVersionServiceTests
         } ;
         var versionProvider = Substitute.For < IVersionProvider > ( ) ;
         var notifications = Substitute.For < INotifications > ( ) ;
-        using var sut = new GitHubReleaseVersionService ( httpClient , logger , versionProvider , notifications ) ;
+        var updateAvailableState = Substitute.For < IUpdateAvailableState > ( ) ;
+        using var sut = new GitHubReleaseVersionService ( httpClient , logger , versionProvider , notifications , updateAvailableState ) ;
 
         // Act
         await sut.LogLatestReleaseVersionAsync ( CancellationToken.None ) ;

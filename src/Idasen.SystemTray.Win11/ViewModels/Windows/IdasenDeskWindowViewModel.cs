@@ -61,6 +61,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
     private readonly StatusBarInfoViewModelBase _statusBarInfoViewModel ;
     private readonly NavigationViewItem ?       _stopViewItem ;
     private readonly IUiDeskManager             _uiDeskManager ;
+    private readonly ILatestReleaseLinkService  _latestReleaseLinkService ;
 
     private IDisposable ? _advancedSubscription ;
 
@@ -76,6 +77,9 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
     private bool          _isInitialized ;
     private IDisposable ? _lockSubscription ;
+    private IDisposable ? _updateSubscription ;
+
+    [ ObservableProperty ] private Visibility _updateAvailableVisibility = Visibility.Collapsed ;
 
     [ ObservableProperty ] private ObservableCollection < object > _menuItems = [] ;
 
@@ -92,13 +96,31 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
                                        IObserveSettingsChanges settingsChanges ,
                                        IScheduler scheduler ,
                                        ISettingsManager settingsManager ,
+                                       IUpdateAvailableState updateAvailableState ,
+                                       ILatestReleaseLinkService latestReleaseLinkService ,
                                        Func < TimerCallback , object ? , TimeSpan , TimeSpan , ITimer > timerFactory )
     {
         _logger          = logger ;
         _uiDeskManager   = uiDeskManager ;
         _settingsChanges = settingsChanges ;
-        _scheduler       = scheduler ;
-        _settingsManager = settingsManager ;
+        _scheduler               = scheduler ;
+        _settingsManager         = settingsManager ;
+        _latestReleaseLinkService = latestReleaseLinkService ;
+
+        OpenLatestReleaseCommand = new DelegateCommand ( OpenLatestRelease ) ;
+
+        UpdateAvailableVisibility = updateAvailableState.IsUpdateAvailable
+                                        ? Visibility.Visible
+                                        : Visibility.Collapsed ;
+        _updateSubscription = updateAvailableState.UpdateAvailableChanged.Subscribe ( available =>
+        {
+            var visibility = available ? Visibility.Visible : Visibility.Collapsed ;
+
+            if ( Application.Current?.Dispatcher.CheckAccess ( ) == true )
+                UpdateAvailableVisibility = visibility ;
+            else
+                Application.Current?.Dispatcher.BeginInvoke ( ( ) => UpdateAvailableVisibility = visibility ) ;
+        } ) ;
 
         var homeViewItem = new NavigationViewItem
         {
@@ -359,6 +381,14 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
     /// </summary>
     public ICommand HideSettingsCommand { get ; }
 
+    public ICommand OpenLatestReleaseCommand { get ; }
+
+    private void OpenLatestRelease ( object ? _ )
+    {
+        if ( ! _latestReleaseLinkService.OpenLatestRelease ( ) )
+            _logger.Warning ( "Failed to open the latest Idasen Desk release website." ) ;
+    }
+
     public async ValueTask DisposeAsync ( )
     {
         _logger.Information ( "Disposing..." ) ;
@@ -401,6 +431,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         await CastAndDispose ( _advancedSubscription ) ;
         await CastAndDispose ( _lockSubscription ) ;
         await CastAndDispose ( _hotkeySubscription ) ;
+        await CastAndDispose ( _updateSubscription ) ;
 
         _statusBarInfoViewModel.Dispose ( ) ;
 

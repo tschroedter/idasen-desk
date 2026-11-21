@@ -119,6 +119,10 @@ public partial class App
                                                                                client.DefaultRequestHeaders.UserAgent.ParseAdd ( "Idasen-Desk" ) ;
                                                                                return client ;
                                                                            } ) ;
+                                                                           services.AddSingleton < IUpdateAvailableState ,
+                                                                               UpdateAvailableState > ( ) ;
+                                                                           services.AddSingleton < ILatestReleaseLinkService ,
+                                                                               LatestReleaseLinkService > ( ) ;
                                                                            services.AddHostedService < GitHubReleaseVersionService > ( ) ;
                                                                            services
                                                                               .AddSingleton < IVersionProvider ,

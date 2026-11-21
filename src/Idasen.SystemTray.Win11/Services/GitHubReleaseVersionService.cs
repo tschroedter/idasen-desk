@@ -14,18 +14,21 @@ public sealed class GitHubReleaseVersionService : BackgroundService
 
     private readonly HttpClient       _httpClient ;
     private readonly ILogger          _logger ;
-    private readonly INotifications   _notifications ;
-    private readonly IVersionProvider _versionProvider ;
+    private readonly INotifications       _notifications ;
+    private readonly IUpdateAvailableState _updateAvailableState ;
+    private readonly IVersionProvider     _versionProvider ;
 
-    public GitHubReleaseVersionService ( HttpClient       httpClient ,
-                                         ILogger          logger ,
-                                         IVersionProvider versionProvider ,
-                                         INotifications   notifications )
+    public GitHubReleaseVersionService ( HttpClient           httpClient ,
+                                         ILogger              logger ,
+                                         IVersionProvider     versionProvider ,
+                                         INotifications       notifications ,
+                                         IUpdateAvailableState updateAvailableState )
     {
-        _httpClient      = httpClient ;
-        _logger          = logger ;
-        _versionProvider = versionProvider ;
-        _notifications  = notifications ;
+        _httpClient           = httpClient ;
+        _logger               = logger ;
+        _versionProvider      = versionProvider ;
+        _notifications        = notifications ;
+        _updateAvailableState = updateAvailableState ;
     }
 
     public async Task LogLatestReleaseVersionAsync ( CancellationToken cancellationToken )
@@ -58,6 +61,7 @@ public sealed class GitHubReleaseVersionService : BackgroundService
                 throw new InvalidOperationException ( $"The current app version '{currentAppVersion}' is not a valid version." ) ;
 
             var updateAvailable = latestVersion > currentVersion ;
+            _updateAvailableState.SetUpdateAvailable ( updateAvailable ) ;
 
             _logger.Information ( "App version {CurrentVersion}; latest GitHub release version {LatestVersion}; update available: {UpdateAvailable}" ,
                                   currentAppVersion ,
