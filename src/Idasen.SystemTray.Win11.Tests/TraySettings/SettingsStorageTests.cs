@@ -81,7 +81,7 @@ public class SettingsStorageTests
     }
 
     [ Fact ]
-    public async Task SaveSettingsAsync_InvalidFileName_ThrowsIOException ( )
+    public async Task SaveSettingsAsync_InvalidFileName_ThrowsArgumentException ( )
     {
         // Arrange
         var settings        = new Settings ( ) ;
@@ -90,8 +90,35 @@ public class SettingsStorageTests
         // Act & Assert
         var act = async ( ) => await CreateSut ( ).SaveSettingsAsync ( invalidFileName ,
                                                                        settings ,
-                                                                       CancellationToken.None ) ;
-        await act.Should ( ).ThrowAsync < IOException > ( ) ;
+                                                                       TestContext.Current.CancellationToken ) ;
+        await act.Should ( ).ThrowAsync < ArgumentException > ( ) ;
+    }
+
+    [ Fact ]
+    public async Task SaveSettingsAsync_NullSettings_ThrowsArgumentNullException ( )
+    {
+        // Act
+        var act = async ( ) => await CreateSut ( ).SaveSettingsAsync ( TestFileName ,
+                                                                       null! ,
+                                                                       TestContext.Current.CancellationToken ) ;
+
+        // Assert
+        await act.Should ( ).ThrowAsync < ArgumentNullException > ( ) ;
+    }
+
+    [ Fact ]
+    public async Task LoadSettingsAsync_CanceledToken_ThrowsOperationCanceledException ( )
+    {
+        // Arrange
+        using var cancellationSource = new CancellationTokenSource ( ) ;
+        await cancellationSource.CancelAsync ( ) ;
+
+        // Act
+        var act = async ( ) => await CreateSut ( ).LoadSettingsAsync ( TestFileName ,
+                                                                       cancellationSource.Token ) ;
+
+        // Assert
+        await act.Should ( ).ThrowAsync < OperationCanceledException > ( ) ;
     }
 
     // New tests to increase coverage

@@ -8,7 +8,7 @@ using Idasen.SystemTray.Win11.Utils ;
 
 namespace Idasen.SystemTray.Win11.TraySettings ;
 
-public class SettingsStorage ( IFileSystem fileSystem ) : ISettingsStorage
+public sealed class SettingsStorage ( IFileSystem fileSystem ) : ISettingsStorage
 {
     // Win32 HResults for sharing / lock violations.
     private const int SharingViolationHResult = unchecked ( ( int )0x80070020 ) ; // ERROR_SHARING_VIOLATION
@@ -30,6 +30,7 @@ public class SettingsStorage ( IFileSystem fileSystem ) : ISettingsStorage
     public async ValueTask < Settings > LoadSettingsAsync ( string            settingsFileName ,
                                                             CancellationToken token )
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace ( settingsFileName ) ;
         await IoLock.WaitAsync ( token ).ConfigureAwait ( false ) ;
 
         try
@@ -59,6 +60,10 @@ public class SettingsStorage ( IFileSystem fileSystem ) : ISettingsStorage
 
                 return result ?? new Settings ( ) ;
             }
+            catch ( OperationCanceledException ) when ( token.IsCancellationRequested )
+            {
+                throw ;
+            }
             catch ( Exception ex )
             {
                 throw new IOException ( $"Failed to load settings from {settingsFileName}" ,
@@ -75,6 +80,8 @@ public class SettingsStorage ( IFileSystem fileSystem ) : ISettingsStorage
                                                Settings          settings ,
                                                CancellationToken token )
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace ( settingsFileName ) ;
+        ArgumentNullException.ThrowIfNull ( settings ) ;
         await IoLock.WaitAsync ( token ).ConfigureAwait ( false ) ;
 
         try
@@ -127,34 +134,30 @@ public class SettingsStorage ( IFileSystem fileSystem ) : ISettingsStorage
 
                     return ; // Success
                 }
-                catch ( IOException ioEx ) when ( IsSharingOrLockViolation ( ioEx ) && attempt < MaxSaveAttempts )
+                catch ( IOException ioEx ) when ( IsSharingOrLockViolation ( ioEx ) )
                 {
-                    // Backoff with simple exponential delay
-                    var delay = InitialBackoffMs * ( 1 << ( attempt - 1 ) ) ;
+                    SafeDelete ( tempFile ) ;
 
-                    try
-                    {
-                        await Task.Delay ( delay ,
-                                           token ).ConfigureAwait ( false ) ;
-                    }
-                    finally
-                    {
-                        // Clean temp between retries if it lingered
-                        SafeDelete ( tempFile ) ;
-                    }
+                    if ( attempt == MaxSaveAttempts )
+                        throw new IOException ( $"Failed to save settings to {settingsFileName} after {MaxSaveAttempts} attempts due to sharing/lock violations." ,
+                                                ioEx ) ;
+
+                    var delay = InitialBackoffMs * ( 1 << ( attempt - 1 ) ) ;
+                    await Task.Delay ( delay ,
+                                       token ).ConfigureAwait ( false ) ;
+                }
+                catch ( OperationCanceledException ) when ( token.IsCancellationRequested )
+                {
+                    SafeDelete ( tempFile ) ;
+                    throw ;
                 }
                 catch ( Exception ex )
                 {
-                    // Clean temp and rethrow wrapped
                     SafeDelete ( tempFile ) ;
                     throw new IOException ( $"Failed to save settings to {settingsFileName}" ,
                                             ex ) ;
                 }
             }
-
-            // If all retries failed we throw a final explicit error
-            throw new
-                IOException ( $"Failed to save settings to {settingsFileName} after {MaxSaveAttempts} attempts due to sharing/lock violations." ) ;
         }
         finally
         {
