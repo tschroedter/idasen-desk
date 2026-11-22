@@ -93,6 +93,8 @@ public partial class App
                                                                               .AddSingleton < INavigationWindow ,
                                                                                    IdasenDeskWindow > ( ) ;
                                                                            services
+                                                                              .AddSingleton < UpdateAvailableViewModel > ( ) ;
+                                                                           services
                                                                               .AddSingleton <
                                                                                    IdasenDeskWindowViewModel > ( ) ;
                                                                            services.AddSingleton < IProcessLauncher ,

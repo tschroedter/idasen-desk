@@ -61,7 +61,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
     private readonly StatusBarInfoViewModelBase _statusBarInfoViewModel ;
     private readonly NavigationViewItem ?       _stopViewItem ;
     private readonly IUiDeskManager             _uiDeskManager ;
-    private readonly ILatestReleaseLinkService  _latestReleaseLinkService ;
+    private readonly UpdateAvailableViewModel   _updateAvailableViewModel ;
 
     private IDisposable ? _advancedSubscription ;
 
@@ -77,9 +77,6 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
     private          bool          _isInitialized ;
     private          IDisposable ? _lockSubscription ;
-    private readonly IDisposable ? _updateSubscription ;
-
-    [ ObservableProperty ] public partial Visibility UpdateAvailableVisibility { get ; set ; }
 
     [ ObservableProperty ] private ObservableCollection < object > _menuItems = [] ;
 
@@ -96,31 +93,15 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
                                        IObserveSettingsChanges settingsChanges ,
                                        IScheduler scheduler ,
                                        ISettingsManager settingsManager ,
-                                       IUpdateAvailableState updateAvailableState ,
-                                       ILatestReleaseLinkService latestReleaseLinkService ,
+                                       UpdateAvailableViewModel updateAvailableViewModel ,
                                        Func < TimerCallback , object ? , TimeSpan , TimeSpan , ITimer > timerFactory )
     {
-        _logger          = logger ;
-        _uiDeskManager   = uiDeskManager ;
-        _settingsChanges = settingsChanges ;
-        _scheduler               = scheduler ;
-        _settingsManager         = settingsManager ;
-        _latestReleaseLinkService = latestReleaseLinkService ;
-
-        OpenLatestReleaseCommand = new DelegateCommand ( OpenLatestRelease ) ;
-
-        UpdateAvailableVisibility = updateAvailableState.IsUpdateAvailable
-                                        ? Visibility.Visible
-                                        : Visibility.Collapsed ;
-        _updateSubscription = updateAvailableState.UpdateAvailableChanged.Subscribe ( available =>
-        {
-            var visibility = available ? Visibility.Visible : Visibility.Collapsed ;
-
-            if ( Application.Current?.Dispatcher.CheckAccess ( ) == true )
-                UpdateAvailableVisibility = visibility ;
-            else
-                Application.Current?.Dispatcher.BeginInvoke ( ( ) => UpdateAvailableVisibility = visibility ) ;
-        } ) ;
+        _logger                    = logger ;
+        _uiDeskManager             = uiDeskManager ;
+        _settingsChanges           = settingsChanges ;
+        _scheduler                 = scheduler ;
+        _settingsManager           = settingsManager ;
+        _updateAvailableViewModel = updateAvailableViewModel ;
 
         var homeViewItem = new NavigationViewItem
         {
@@ -381,13 +362,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
     /// </summary>
     public ICommand HideSettingsCommand { get ; }
 
-    public ICommand OpenLatestReleaseCommand { get ; }
-
-    private void OpenLatestRelease ( object ? _ )
-    {
-        if ( ! _latestReleaseLinkService.OpenLatestRelease ( ) )
-            _logger.Warning ( "Failed to open the latest Idasen Desk release website." ) ;
-    }
+    public UpdateAvailableViewModel UpdateAvailableViewModel => _updateAvailableViewModel ;
 
     public async ValueTask DisposeAsync ( )
     {
@@ -431,9 +406,9 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         await CastAndDispose ( _advancedSubscription ) ;
         await CastAndDispose ( _lockSubscription ) ;
         await CastAndDispose ( _hotkeySubscription ) ;
-        await CastAndDispose ( _updateSubscription ) ;
 
         _statusBarInfoViewModel.Dispose ( ) ;
+        _updateAvailableViewModel.Dispose ( ) ;
 
         GC.SuppressFinalize ( this ) ;
     }

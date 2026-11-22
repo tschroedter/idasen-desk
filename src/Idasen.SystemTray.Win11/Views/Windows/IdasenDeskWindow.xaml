@@ -59,14 +59,14 @@
                             Text="{Binding ViewModel.ApplicationTitle}"
                             VerticalAlignment="Center" />
                         <Button
-                            Command="{Binding ViewModel.OpenLatestReleaseCommand}"
+                            Command="{Binding ViewModel.UpdateAvailableViewModel.OpenLatestReleaseCommand}"
                             Margin="6,0,0,0"
                             Padding="2"
                             BorderThickness="0"
                             Background="Transparent"
                             Cursor="Hand"
                             ToolTip="Open the latest Idasen Desk release."
-                            Visibility="{Binding ViewModel.UpdateAvailableVisibility}">
+                            Visibility="{Binding ViewModel.UpdateAvailableViewModel.UpdateAvailableVisibility}">
                             <ui:SymbolIcon
                                 Symbol="ArrowDownload24"
                                 FontSize="16"
