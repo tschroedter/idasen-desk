@@ -1,11 +1,12 @@
 using System.ComponentModel ;
 using System.Globalization ;
+using System.Windows.Data ;
 using Idasen.SystemTray.Win11.Helpers ;
 using Wpf.Ui.Appearance ;
 
 namespace Idasen.SystemTray.Win11.Tests.Helpers ;
 
-public class EnumToBooleanConverterTests
+public class ApplicationThemeToBooleanConverterTests
 {
     [ Theory ]
     [ InlineData ( ApplicationTheme.Light ,
@@ -20,7 +21,9 @@ public class EnumToBooleanConverterTests
     [ InlineData ( ApplicationTheme.HighContrast ,
                    "Dark" ,
                    false ) ]
-    public void Convert_ReturnsExpectedBoolean ( ApplicationTheme value , string parameter , bool expected )
+    public void Convert_ReturnsExpectedBoolean ( ApplicationTheme value ,
+                                                 string parameter ,
+                                                 bool expected )
     {
         var result = CreateSut ( ).Convert ( value ,
                                              typeof ( bool ) ,
@@ -37,7 +40,8 @@ public class EnumToBooleanConverterTests
                    ApplicationTheme.Dark ) ]
     [ InlineData ( "HighContrast" ,
                    ApplicationTheme.HighContrast ) ]
-    public void ConvertBack_ReturnsExpectedEnum ( string parameter , ApplicationTheme expected )
+    public void ConvertBack_ReturnsExpectedEnum ( string parameter ,
+                                                  ApplicationTheme expected )
     {
         var result = CreateSut ( ).ConvertBack ( true ,
                                                  typeof ( ApplicationTheme ) ,
@@ -45,6 +49,17 @@ public class EnumToBooleanConverterTests
                                                  CultureInfo.InvariantCulture ) ;
         Assert.Equal ( expected ,
                        result ) ;
+    }
+
+    [ Fact ]
+    public void ConvertBack_ReturnsBindingDoNothing_WhenUnchecked ( )
+    {
+        var result = CreateSut ( ).ConvertBack ( false ,
+                                                 typeof ( ApplicationTheme ) ,
+                                                 "Light" ,
+                                                 CultureInfo.InvariantCulture ) ;
+        Assert.Same ( Binding.DoNothing ,
+                      result ) ;
     }
 
     [ Fact ]
@@ -117,8 +132,18 @@ public class EnumToBooleanConverterTests
                                                                               CultureInfo.InvariantCulture ) ) ;
     }
 
-    private static EnumToBooleanConverter CreateSut ( )
+    [ Fact ]
+    public void ConvertBack_ThrowsArgumentException_WhenParameterIsUndefinedNumericValue ( )
     {
-        return new EnumToBooleanConverter ( ) ;
+        Assert.Throws < ArgumentException > ( ( ) =>
+                                                  CreateSut ( ).ConvertBack ( true ,
+                                                                              typeof ( ApplicationTheme ) ,
+                                                                              "999" ,
+                                                                              CultureInfo.InvariantCulture ) ) ;
+    }
+
+    private static ApplicationThemeToBooleanConverter CreateSut ( )
+    {
+        return new ApplicationThemeToBooleanConverter ( ) ;
     }
 }
