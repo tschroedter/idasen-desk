@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis ;
+using System.Diagnostics.CodeAnalysis ;
 using Idasen.SystemTray.Win11.Views.Pages ;
 using Idasen.SystemTray.Win11.Views.Windows ;
 using Microsoft.Extensions.Hosting ;
@@ -10,7 +10,7 @@ namespace Idasen.SystemTray.Win11.Services ;
 ///     Managed host of the application.
 /// </summary>
 [ ExcludeFromCodeCoverage ] // "Depends on WPF WindowCollection class"
-public class ApplicationHostService ( IServiceProvider serviceProvider ) : IHostedService
+public class ApplicationHostService ( INavigationWindow navigationWindow ) : IHostedService
 {
     private static Window CurrentWindow =>
         Application.Current.MainWindow ?? throw new InvalidOperationException ( "Can't find the main window!" ) ;
@@ -19,39 +19,32 @@ public class ApplicationHostService ( IServiceProvider serviceProvider ) : IHost
     ///     Triggered when the application host is ready to start the service.
     /// </summary>
     /// <param name="cancellationToken">Indicates that the start process has been aborted.</param>
-    public async Task StartAsync ( CancellationToken cancellationToken )
+    public Task StartAsync ( CancellationToken cancellationToken )
     {
-        await HandleActivationAsync ( ).ConfigureAwait ( false ) ;
+        cancellationToken.ThrowIfCancellationRequested ( ) ;
+        HandleActivation ( ) ;
+        return Task.CompletedTask ;
     }
 
     /// <summary>
     ///     Triggered when the application host is performing a graceful shutdown.
     /// </summary>
     /// <param name="cancellationToken">Indicates that the shutdown process should no longer be graceful.</param>
-    public async Task StopAsync ( CancellationToken cancellationToken )
+    public Task StopAsync ( CancellationToken cancellationToken )
     {
-        await Task.CompletedTask.ConfigureAwait ( false ) ;
+        return Task.CompletedTask ;
     }
 
     /// <summary>
     ///     Creates main window during activation.
     /// </summary>
-    private async Task HandleActivationAsync ( )
+    private void HandleActivation ( )
     {
-        if ( ! Application.Current.Windows.OfType < IdasenDeskWindow > ( ).Any ( ) )
-        {
-            var navigationWindow = serviceProvider.GetService ( typeof ( INavigationWindow ) ) as INavigationWindow ;
+        if ( Application.Current.Windows.OfType < IdasenDeskWindow > ( ).Any ( ) )
+            return ;
 
-            if ( navigationWindow is null )
-                throw new InvalidOperationException ( "Can't create the main window!" ) ;
-
-            navigationWindow.ShowWindow ( ) ;
-
-            navigationWindow.Navigate ( typeof ( SettingsPage ) ) ;
-
-            CurrentWindow.Visibility = Visibility.Hidden ;
-        }
-
-        await Task.CompletedTask.ConfigureAwait ( false ) ;
+        navigationWindow.ShowWindow ( ) ;
+        navigationWindow.Navigate ( typeof ( SettingsPage ) ) ;
+        CurrentWindow.Visibility = Visibility.Hidden ;
     }
 }
