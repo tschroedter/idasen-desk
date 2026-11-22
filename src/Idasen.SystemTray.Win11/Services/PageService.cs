@@ -25,9 +25,8 @@ public class PageService : INavigationViewPageProvider
     /// <inheritdoc />
     public object ? GetPage ( Type pageType )
     {
-        if ( ! typeof ( FrameworkElement ).IsAssignableFrom ( pageType ) )
-            throw new InvalidOperationException ( "The page should be a WPF control." ) ;
-
-        return _serviceProvider.GetService ( pageType ) ;
+        return ! typeof ( FrameworkElement ).IsAssignableFrom ( pageType )
+                   ? throw new InvalidOperationException ( "The page should be a WPF control." )
+                   : _serviceProvider.GetService ( pageType ) ;
     }
 }
