@@ -22,8 +22,7 @@ public class ApplicationHostService ( INavigationWindow navigationWindow ) : IHo
     public Task StartAsync ( CancellationToken cancellationToken )
     {
         cancellationToken.ThrowIfCancellationRequested ( ) ;
-        HandleActivation ( ) ;
-        return Task.CompletedTask ;
+        return HandleActivationAsync ( cancellationToken ) ;
     }
 
     /// <summary>
@@ -38,13 +37,33 @@ public class ApplicationHostService ( INavigationWindow navigationWindow ) : IHo
     /// <summary>
     ///     Creates main window during activation.
     /// </summary>
-    private void HandleActivation ( )
+    private async Task HandleActivationAsync ( CancellationToken cancellationToken )
     {
-        if ( Application.Current.Windows.OfType < IdasenDeskWindow > ( ).Any ( ) )
-            return ;
+        var currentWindow = CurrentWindow ;
+        var contentRendered = new TaskCompletionSource ( TaskCreationOptions.RunContinuationsAsynchronously ) ;
+        EventHandler? onContentRendered = null ;
+        onContentRendered = ( sender , args ) => contentRendered.TrySetResult ( ) ;
+        currentWindow.ContentRendered += onContentRendered ;
 
-        navigationWindow.ShowWindow ( ) ;
-        navigationWindow.Navigate ( typeof ( SettingsPage ) ) ;
-        CurrentWindow.Visibility = Visibility.Hidden ;
+        try
+        {
+            navigationWindow.ShowWindow ( ) ;
+            navigationWindow.Navigate ( typeof ( SettingsPage ) ) ;
+
+            await contentRendered.Task.WaitAsync ( cancellationToken ) ;
+
+            var trayIcon = ( ( IdasenDeskWindow )currentWindow ).TrayIcon ;
+            if ( ! trayIcon.IsRegistered )
+                trayIcon.Register ( ) ;
+
+            if ( ! trayIcon.IsRegistered )
+                throw new InvalidOperationException ( "Failed to register the Idasen Desk tray icon." ) ;
+
+            currentWindow.Visibility = Visibility.Hidden ;
+        }
+        finally
+        {
+            currentWindow.ContentRendered -= onContentRendered ;
+        }
     }
 }

@@ -107,6 +107,7 @@
                 Name="IdasenNotifyIcon"
                 FocusOnLeftClick="False"
                 Icon="pack://application:,,,/Resources/cup-xl.ico"
+                TooltipText="Idasen Desk"
                 MenuOnRightClick="True"
                 LeftClick="IdasenNotifyIcon_OnLeftClick">
                 <!-- ContextMenu set in code
