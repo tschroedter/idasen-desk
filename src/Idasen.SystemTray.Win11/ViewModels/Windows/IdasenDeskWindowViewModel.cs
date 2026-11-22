@@ -79,7 +79,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
     private          IDisposable ? _lockSubscription ;
     private readonly IDisposable ? _updateSubscription ;
 
-    [ ObservableProperty ] private Visibility _updateAvailableVisibility = Visibility.Collapsed ;
+    [ ObservableProperty ] public partial Visibility UpdateAvailableVisibility { get ; set ; } = Visibility.Collapsed ;
 
     [ ObservableProperty ] private ObservableCollection < object > _menuItems = [] ;
 
