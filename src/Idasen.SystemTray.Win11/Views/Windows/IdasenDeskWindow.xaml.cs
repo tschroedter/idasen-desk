@@ -1,4 +1,4 @@
-﻿using System.ComponentModel ;
+using System.ComponentModel ;
 using System.Diagnostics.CodeAnalysis ;
 using System.Reactive.Linq ;
 using System.Reactive.Subjects ;
@@ -9,6 +9,7 @@ using Wpf.Ui ;
 using Wpf.Ui.Abstractions ;
 using Wpf.Ui.Appearance ;
 using Wpf.Ui.Controls ;
+using Wpf.Ui.Tray.Controls ;
 
 namespace Idasen.SystemTray.Win11.Views.Windows ;
 
@@ -37,6 +38,8 @@ public partial class IdasenDeskWindow : INavigationWindow , IMainWindow , IDispo
     }
 
     public IdasenDeskWindowViewModel ViewModel { get ; }
+
+    public NotifyIcon TrayIcon => IdasenNotifyIcon ;
 
     public void Dispose ( )
     {

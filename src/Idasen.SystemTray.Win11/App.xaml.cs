@@ -2,7 +2,6 @@ using System.Diagnostics.CodeAnalysis ;
 using System.IO.Abstractions ;
 using System.Net.Http ;
 using System.Reactive.Concurrency ;
-using System.Windows.Media ;
 using Autofac ;
 using Autofac.Extensions.DependencyInjection ;
 using AutofacSerilogIntegration ;
@@ -506,32 +505,15 @@ public partial class App
     {
         if ( ! CurrentWindow.CheckAccess ( ) ) return CurrentWindow.Dispatcher.Invoke ( FindNotifyIcon ) ;
 
-        var notifyIcons = FindVisualChildren < NotifyIcon > ( CurrentWindow ) ;
-
-        return notifyIcons.FirstOrDefault ( ) ??
-               throw new InvalidOperationException ( "Can't find the main notify icon!" ) ;
+        return CurrentWindow is IdasenDeskWindow deskWindow
+                   ? deskWindow.TrayIcon
+                   : throw new InvalidOperationException ( $"The main window is not a {nameof ( IdasenDeskWindow )}." ) ;
     }
 
     private static void GetBasePath ( IConfigurationBuilder c )
     {
         c.SetBasePath ( AppContext.BaseDirectory ??
                         throw new InvalidOperationException ( "Couldn't get directory name from entry assembly" ) ) ;
-    }
-
-    public static IEnumerable < T > FindVisualChildren < T > ( DependencyObject parent )
-        where T : DependencyObject
-    {
-        var childrenCount = VisualTreeHelper.GetChildrenCount ( parent ) ;
-
-        for ( var i = 0 ; i < childrenCount ; i ++ )
-        {
-            var child = VisualTreeHelper.GetChild ( parent ,
-                                                    i ) ;
-
-            if ( child is T childType ) yield return childType ;
-
-            foreach ( var other in FindVisualChildren < T > ( child ) ) yield return other ;
-        }
     }
 
     private static void ReleaseSingleInstanceMutex ( )
