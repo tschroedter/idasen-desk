@@ -13,7 +13,6 @@ public sealed class BluetoothConnectionMonitor : IBluetoothConnectionMonitor
     private readonly ILogger       _logger ;
     private readonly TimeProvider  _timeProvider ;
     private readonly TimeSpan      _timeout ;
-    private readonly int           _timeoutMilliseconds ;
     private readonly ITimer        _watchdogTimer ;
 
     private bool _disposed ;
@@ -24,29 +23,33 @@ public sealed class BluetoothConnectionMonitor : IBluetoothConnectionMonitor
     ///     Creates a new instance of the connection monitor.
     /// </summary>
     /// <param name="logger">Logger for diagnostics.</param>
-    /// <param name="timeoutMilliseconds">
-    ///     Timeout in milliseconds before connection is considered stale (default: 60000ms =
-    ///     60s).
-    /// </param>
+    /// <param name="timeout">Timeout before the connection is considered stale.</param>
+    /// <param name="timeProvider">Provider for timers and monotonic timestamps.</param>
     public BluetoothConnectionMonitor (
-        ILogger      logger ,
-        int          timeoutMilliseconds = 60000 ,
+        ILogger       logger ,
+        TimeSpan      timeout ,
         TimeProvider? timeProvider = null )
     {
         ArgumentNullException.ThrowIfNull ( logger ) ;
 
-        if ( timeoutMilliseconds <= 0 )
-            throw new ArgumentOutOfRangeException ( nameof ( timeoutMilliseconds ) ,
+        if ( timeout <= TimeSpan.Zero )
+            throw new ArgumentOutOfRangeException ( nameof ( timeout ) ,
                                                     "Timeout must be greater than zero" ) ;
 
-        _logger              = logger ;
-        _timeProvider        = timeProvider ?? TimeProvider.System ;
-        _timeout             = TimeSpan.FromMilliseconds ( timeoutMilliseconds ) ;
-        _timeoutMilliseconds = timeoutMilliseconds ;
-        _watchdogTimer       = _timeProvider.CreateTimer ( OnWatchdogTimerElapsed ,
+        _logger        = logger ;
+        _timeProvider  = timeProvider ?? TimeProvider.System ;
+        _timeout       = timeout ;
+        _watchdogTimer = _timeProvider.CreateTimer ( OnWatchdogTimerElapsed ,
                                                            null ,
                                                            Timeout.InfiniteTimeSpan ,
                                                            Timeout.InfiniteTimeSpan ) ;
+    }
+
+    public BluetoothConnectionMonitor ( ILogger logger , TimeProvider? timeProvider = null )
+        : this ( logger ,
+                 TimeSpan.FromSeconds ( 60 ) ,
+                 timeProvider )
+    {
     }
 
     public bool IsMonitoring
@@ -80,7 +83,7 @@ public sealed class BluetoothConnectionMonitor : IBluetoothConnectionMonitor
         }
 
         _logger.Debug ( "Starting Bluetooth connection monitoring with timeout of {TimeoutSeconds}s" ,
-                        _timeoutMilliseconds / 1000.0 ) ;
+                        _timeout.TotalSeconds ) ;
     }
 
     public void StopMonitoring ( )
@@ -148,7 +151,7 @@ public sealed class BluetoothConnectionMonitor : IBluetoothConnectionMonitor
         }
 
         _logger.Debug ( "Stale Bluetooth connection detected - no activity for {TimeoutSeconds}s" ,
-                        _timeoutMilliseconds / 1000.0 ) ;
+                        _timeout.TotalSeconds ) ;
 
         var handlers = StaleConnectionDetected?.GetInvocationList ( ) ;
         if ( handlers is null )
