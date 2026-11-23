@@ -134,7 +134,7 @@ public class ExponentialBackoffReconnectStrategyTests : IDisposable
         // Assert
         result.Should ( ).BeFalse ( ) ;
         strategy.IsRetrying.Should ( ).BeFalse ( ) ;
-        strategy.CurrentAttempt.Should ( ).BeGreaterThan ( 0 ) ;                          // Retries were exhausted
+        strategy.CurrentAttempt.Should ( ).Be ( strategy.MaxRetries ) ;
         await connectAction.Received ( 3 ).Invoke ( Arg.Any < CancellationToken > ( ) ) ; // Initial + 2 retries
     }
 

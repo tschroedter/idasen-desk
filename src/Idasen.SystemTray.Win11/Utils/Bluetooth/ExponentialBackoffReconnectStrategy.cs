@@ -94,8 +94,10 @@ public class ExponentialBackoffReconnectStrategy : IBluetoothReconnectStrategy
             // Start retry loop with exponential backoff
             _logger.Warning ( "Initial connection failed. Starting retry sequence with exponential backoff..." ) ;
 
-            for ( CurrentAttempt = 1 ; CurrentAttempt <= MaxRetries ; CurrentAttempt ++ )
+            for ( var attempt = 1 ; attempt <= MaxRetries ; attempt ++ )
             {
+                CurrentAttempt = attempt ;
+
                 // Check for cancellation
                 if ( cancellationToken.IsCancellationRequested )
                 {
