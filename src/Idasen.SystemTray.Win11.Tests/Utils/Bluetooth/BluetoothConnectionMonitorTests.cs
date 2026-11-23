@@ -180,47 +180,58 @@ public class BluetoothConnectionMonitorTests : IDisposable
     }
 
     [ Fact ]
-    public async Task StaleConnectionDetected_AfterTimeout_RaisesEvent ( )
+    public void StaleConnectionDetected_AtTimeout_RaisesEvent ( )
     {
         // Arrange
-        var monitor = new BluetoothConnectionMonitor ( _logger ,
-                                                       100 ) ; // 100ms timeout for quick test
+        var timeProvider = new ManualTimeProvider ( ) ;
+        var monitor      = new BluetoothConnectionMonitor ( _logger ,
+                                                            100 ,
+                                                            timeProvider ) ;
         var eventRaised = false ;
-
         monitor.StaleConnectionDetected += ( _ , _ ) => { eventRaised = true ; } ;
-
-        // Act
         monitor.StartMonitoring ( ) ;
-        await Task.Delay ( 200 ,
-                           TestContext.Current.CancellationToken ) ; // Wait longer than timeout
+
+        // Act: A callback that arrives early must wait until the full timeout has elapsed.
+        timeProvider.Advance ( TimeSpan.FromMilliseconds ( 99 ) ) ;
+        timeProvider.Timer.Fire ( ) ;
+        eventRaised.Should ( ).BeFalse ( ) ;
+        timeProvider.Timer.DueTime.Should ( ).Be ( TimeSpan.FromMilliseconds ( 1 ) ) ;
+
+        timeProvider.Advance ( TimeSpan.FromMilliseconds ( 1 ) ) ;
+        timeProvider.Timer.Fire ( ) ;
 
         // Assert
         eventRaised.Should ( ).BeTrue ( ) ;
-        monitor.IsMonitoring.Should ( ).BeFalse ( ) ; // Should stop monitoring after event
+        monitor.IsMonitoring.Should ( ).BeFalse ( ) ;
     }
 
     [ Fact ]
-    public async Task StaleConnectionDetected_WithActivityBeforeTimeout_DoesNotRaiseEvent ( )
+    public void StaleConnectionDetected_AfterActivity_WaitsForNewTimeout ( )
     {
         // Arrange
-        var monitor = new BluetoothConnectionMonitor ( _logger ,
-                                                       200 ) ; // 200ms timeout
+        var timeProvider = new ManualTimeProvider ( ) ;
+        var monitor      = new BluetoothConnectionMonitor ( _logger ,
+                                                            200 ,
+                                                            timeProvider ) ;
         var eventRaised = false ;
-
         monitor.StaleConnectionDetected += ( _ , _ ) => { eventRaised = true ; } ;
+        monitor.StartMonitoring ( ) ;
 
         // Act
-        monitor.StartMonitoring ( ) ;
-        await Task.Delay ( 100 ,
-                           TestContext.Current.CancellationToken ) ; // Wait half the timeout
-        monitor.ResetActivityTimer ( ) ;                             // Reset timer before timeout
-        await Task.Delay ( 150 ,
-                           TestContext.Current
-                                      .CancellationToken ) ; // Wait another 150ms (total 250ms, but timer was reset at 100ms)
+        timeProvider.Advance ( TimeSpan.FromMilliseconds ( 100 ) ) ;
+        monitor.ResetActivityTimer ( ) ;
+        timeProvider.Advance ( TimeSpan.FromMilliseconds ( 199 ) ) ;
+        timeProvider.Timer.Fire ( ) ;
 
         // Assert
         eventRaised.Should ( ).BeFalse ( ) ;
-        monitor.IsMonitoring.Should ( ).BeTrue ( ) ; // Should still be monitoring
+        monitor.IsMonitoring.Should ( ).BeTrue ( ) ;
+        timeProvider.Timer.DueTime.Should ( ).Be ( TimeSpan.FromMilliseconds ( 1 ) ) ;
+
+        timeProvider.Advance ( TimeSpan.FromMilliseconds ( 1 ) ) ;
+        timeProvider.Timer.Fire ( ) ;
+        eventRaised.Should ( ).BeTrue ( ) ;
+        monitor.IsMonitoring.Should ( ).BeFalse ( ) ;
     }
 
     [ Fact ]
@@ -316,21 +327,21 @@ public class BluetoothConnectionMonitorTests : IDisposable
     }
 
     [ Fact ]
-    public async Task StaleConnectionDetected_AfterDispose_DoesNotRaiseEvent ( )
+    public void StaleConnectionDetected_AfterDispose_DoesNotRaiseEvent ( )
     {
         // Arrange
-        var monitor = new BluetoothConnectionMonitor ( _logger ,
-                                                       100 ) ; // 100ms timeout
+        var timeProvider = new ManualTimeProvider ( ) ;
+        var monitor      = new BluetoothConnectionMonitor ( _logger ,
+                                                            100 ,
+                                                            timeProvider ) ;
         var eventRaised = false ;
-
         monitor.StaleConnectionDetected += ( _ , _ ) => { eventRaised = true ; } ;
-
         monitor.StartMonitoring ( ) ;
-
-        // Act
         monitor.Dispose ( ) ;
-        await Task.Delay ( 200 ,
-                           TestContext.Current.CancellationToken ) ; // Wait longer than timeout
+
+        // Act: Simulate an elapsed callback that was queued before disposal.
+        timeProvider.Advance ( TimeSpan.FromMilliseconds ( 100 ) ) ;
+        timeProvider.Timer.Fire ( ) ;
 
         // Assert
         eventRaised.Should ( ).BeFalse ( ) ;
