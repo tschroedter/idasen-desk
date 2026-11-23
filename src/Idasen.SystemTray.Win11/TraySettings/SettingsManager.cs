@@ -128,13 +128,18 @@ public sealed class SettingsManager (
                                          out JsonElement propertyValue )
     {
         if ( element.ValueKind == JsonValueKind.Object )
-            foreach ( var property in element.EnumerateObject ( ).Where ( property => string.Equals ( property.Name ,
-                                                                                                      propertyName ,
-                                                                                                      StringComparison.OrdinalIgnoreCase ) ) )
+        {
+            var property = element.EnumerateObject ( )
+                                  .FirstOrDefault ( property => string.Equals ( property.Name ,
+                                                                                propertyName ,
+                                                                                StringComparison.OrdinalIgnoreCase ) ) ;
+
+            if ( property.Value.ValueKind != JsonValueKind.Undefined )
             {
                 propertyValue = property.Value ;
                 return true ;
             }
+        }
 
         propertyValue = default ;
         return false ;
