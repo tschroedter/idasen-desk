@@ -39,10 +39,9 @@ public class ApplicationHostService ( INavigationWindow navigationWindow ) : IHo
     /// </summary>
     private async Task HandleActivationAsync ( CancellationToken cancellationToken )
     {
-        var currentWindow = CurrentWindow ;
-        var contentRendered = new TaskCompletionSource ( TaskCreationOptions.RunContinuationsAsynchronously ) ;
-        EventHandler? onContentRendered = null ;
-        onContentRendered = ( sender , args ) => contentRendered.TrySetResult ( ) ;
+        var           currentWindow     = CurrentWindow ;
+        var           contentRendered   = new TaskCompletionSource ( TaskCreationOptions.RunContinuationsAsynchronously ) ;
+        EventHandler onContentRendered = ( _ , _ ) => contentRendered.TrySetResult ( ) ;
         currentWindow.ContentRendered += onContentRendered ;
 
         try

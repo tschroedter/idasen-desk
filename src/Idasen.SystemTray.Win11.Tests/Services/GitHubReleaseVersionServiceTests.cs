@@ -93,10 +93,8 @@ public sealed class GitHubReleaseVersionServiceTests
         {
             Content = new StringContent ( "{\"tag_name\":\"v1.2.3\"}" )
         } ) ;
-        using var httpClient = new HttpClient ( handler )
-        {
-            BaseAddress = new Uri ( "https://api.github.com/" )
-        } ;
+        using var httpClient = new HttpClient ( handler ) ;
+        httpClient.BaseAddress = new Uri ( "https://api.github.com/" ) ;
         var updateAvailableState = Substitute.For < IUpdateAvailableState > ( ) ;
         using var sut = new GitHubReleaseVersionService ( httpClient ,
                                                           logger ,
@@ -126,10 +124,8 @@ public sealed class GitHubReleaseVersionServiceTests
         {
             Content = new StringContent ( responseContent )
         } ) ;
-        using var httpClient = new HttpClient ( handler )
-        {
-            BaseAddress = new Uri ( "https://api.github.com/" )
-        } ;
+        using var httpClient = new HttpClient ( handler ) ;
+        httpClient.BaseAddress = new Uri ( "https://api.github.com/" ) ;
         var versionProvider      = Substitute.For < IVersionProvider > ( ) ;
         var notifications        = Substitute.For < INotifications > ( ) ;
         var updateAvailableState = Substitute.For < IUpdateAvailableState > ( ) ;
@@ -147,7 +143,7 @@ public sealed class GitHubReleaseVersionServiceTests
                           LogEventLevel.Error )
               .Should ( )
               .BeTrue ( ) ;
-        updateAvailableState.DidNotReceiveWithAnyArgs ( ).SetUpdateAvailable ( default ) ;
+        updateAvailableState.DidNotReceiveWithAnyArgs ( ).SetUpdateAvailable ( false ) ;
         notifications.DidNotReceiveWithAnyArgs ( ).Show ( null! ,
                                                           null! ,
                                                           default ) ;
