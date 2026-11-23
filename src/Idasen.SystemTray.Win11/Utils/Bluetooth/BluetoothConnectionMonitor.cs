@@ -150,15 +150,22 @@ public sealed class BluetoothConnectionMonitor : IBluetoothConnectionMonitor
         _logger.Debug ( "Stale Bluetooth connection detected - no activity for {TimeoutSeconds}s" ,
                         _timeoutMilliseconds / 1000.0 ) ;
 
-        try
+        var handlers = StaleConnectionDetected?.GetInvocationList ( ) ;
+        if ( handlers is null )
+            return ;
+
+        foreach ( var handler in handlers.Cast < EventHandler > ( ) )
         {
-            StaleConnectionDetected?.Invoke ( this ,
-                                              EventArgs.Empty ) ;
-        }
-        catch ( Exception ex )
-        {
-            _logger.Error ( ex ,
-                            "Error while handling stale connection event" ) ;
+            try
+            {
+                handler ( this ,
+                          EventArgs.Empty ) ;
+            }
+            catch ( Exception ex )
+            {
+                _logger.Error ( ex ,
+                                "Error while handling stale connection event" ) ;
+            }
         }
     }
 }

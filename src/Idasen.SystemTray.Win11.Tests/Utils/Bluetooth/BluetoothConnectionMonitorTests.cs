@@ -257,6 +257,30 @@ public class BluetoothConnectionMonitorTests : IDisposable
     }
 
     [ Fact ]
+    public void StaleConnectionDetected_WhenHandlerThrows_LogsAndInvokesRemainingHandlers ( )
+    {
+        // Arrange
+        var timeProvider = new ManualTimeProvider ( ) ;
+        var monitor      = new BluetoothConnectionMonitor ( _logger ,
+                                                            100 ,
+                                                            timeProvider ) ;
+        var secondHandlerInvoked = false ;
+        monitor.StaleConnectionDetected += ( _ , _ ) => throw new InvalidOperationException ( "Handler failure" ) ;
+        monitor.StaleConnectionDetected += ( _ , _ ) => secondHandlerInvoked = true ;
+        monitor.StartMonitoring ( ) ;
+
+        // Act
+        timeProvider.Advance ( TimeSpan.FromMilliseconds ( 100 ) ) ;
+        timeProvider.Timer.Fire ( ) ;
+
+        // Assert
+        secondHandlerInvoked.Should ( ).BeTrue ( ) ;
+        _logger.Contains ( "Error while handling stale connection event" ,
+                           Serilog.Events.LogEventLevel.Error )
+                .Should ( ).BeTrue ( ) ;
+    }
+
+    [ Fact ]
     public void Dispose_WhenMonitoring_StopsMonitoring ( )
     {
         // Arrange
