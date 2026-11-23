@@ -31,7 +31,24 @@ public class ExponentialBackoffReconnectStrategy : IBluetoothReconnectStrategy
         int     maxDelayMs        = 30000 ,
         double  backoffMultiplier = 2.0 )
     {
-        _logger            = logger ?? throw new ArgumentNullException ( nameof ( logger ) ) ;
+        _logger = logger ?? throw new ArgumentNullException ( nameof ( logger ) ) ;
+
+        if ( maxRetries < 0 )
+            throw new ArgumentOutOfRangeException ( nameof ( maxRetries ) ,
+                                                    "Maximum retries cannot be negative" ) ;
+
+        if ( initialDelayMs <= 0 )
+            throw new ArgumentOutOfRangeException ( nameof ( initialDelayMs ) ,
+                                                    "Initial delay must be greater than zero" ) ;
+
+        if ( maxDelayMs <= 0 || maxDelayMs < initialDelayMs )
+            throw new ArgumentOutOfRangeException ( nameof ( maxDelayMs ) ,
+                                                    "Maximum delay must be greater than or equal to the initial delay" ) ;
+
+        if ( ! double.IsFinite ( backoffMultiplier ) || backoffMultiplier <= 1 )
+            throw new ArgumentOutOfRangeException ( nameof ( backoffMultiplier ) ,
+                                                    "Backoff multiplier must be finite and greater than one" ) ;
+
         MaxRetries         = maxRetries ;
         _initialDelayMs    = initialDelayMs ;
         _maxDelayMs        = maxDelayMs ;

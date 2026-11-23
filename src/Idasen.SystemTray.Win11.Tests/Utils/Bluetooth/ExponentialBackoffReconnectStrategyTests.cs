@@ -211,6 +211,78 @@ public class ExponentialBackoffReconnectStrategyTests : IDisposable
         act.Should ( ).Throw < ArgumentNullException > ( ) ;
     }
 
+    [ Theory ]
+    [ InlineData ( - 1 ) ]
+    [ InlineData ( - 5 ) ]
+    public void Constructor_NegativeMaxRetries_ThrowsArgumentOutOfRangeException ( int maxRetries )
+    {
+        // Act
+        Action act = ( ) => _ = new ExponentialBackoffReconnectStrategy ( _logger ,
+                                                                           maxRetries ) ;
+
+        // Assert
+        act.Should ( ).Throw < ArgumentOutOfRangeException > ( )
+           .WithParameterName ( nameof ( maxRetries ) ) ;
+    }
+
+    [ Theory ]
+    [ InlineData ( 0 ) ]
+    [ InlineData ( - 1 ) ]
+    public void Constructor_NonpositiveInitialDelay_ThrowsArgumentOutOfRangeException ( int initialDelayMs )
+    {
+        // Act
+        Action act = ( ) => _ = new ExponentialBackoffReconnectStrategy ( _logger ,
+                                                                           initialDelayMs : initialDelayMs ) ;
+
+        // Assert
+        act.Should ( ).Throw < ArgumentOutOfRangeException > ( )
+           .WithParameterName ( nameof ( initialDelayMs ) ) ;
+    }
+
+    [ Theory ]
+    [ InlineData ( 0 , 1000 ) ]
+    [ InlineData ( - 1 , 1000 ) ]
+    [ InlineData ( 999 , 1000 ) ]
+    public void Constructor_InvalidMaximumDelay_ThrowsArgumentOutOfRangeException (
+        int maxDelayMs ,
+        int initialDelayMs )
+    {
+        // Act
+        Action act = ( ) => _ = new ExponentialBackoffReconnectStrategy ( _logger ,
+                                                                           initialDelayMs : initialDelayMs ,
+                                                                           maxDelayMs : maxDelayMs ) ;
+
+        // Assert
+        act.Should ( ).Throw < ArgumentOutOfRangeException > ( )
+           .WithParameterName ( nameof ( maxDelayMs ) ) ;
+    }
+
+    [ Theory ]
+    [ InlineData ( 0.5 ) ]
+    [ InlineData ( 1.0 ) ]
+    public void Constructor_NonIncreasingMultiplier_ThrowsArgumentOutOfRangeException ( double backoffMultiplier )
+    {
+        // Act
+        Action act = ( ) => _ = new ExponentialBackoffReconnectStrategy ( _logger ,
+                                                                           backoffMultiplier : backoffMultiplier ) ;
+
+        // Assert
+        act.Should ( ).Throw < ArgumentOutOfRangeException > ( )
+           .WithParameterName ( nameof ( backoffMultiplier ) ) ;
+    }
+
+    [ Fact ]
+    public void Constructor_NonfiniteMultiplier_ThrowsArgumentOutOfRangeException ( )
+    {
+        // Act
+        Action act = ( ) => _ = new ExponentialBackoffReconnectStrategy ( _logger ,
+                                                                           backoffMultiplier : double.NaN ) ;
+
+        // Assert
+        act.Should ( ).Throw < ArgumentOutOfRangeException > ( )
+           .WithParameterName ( "backoffMultiplier" ) ;
+    }
+
     [ Fact ]
     public void MaxRetries_ReturnsConfiguredValue ( )
     {
