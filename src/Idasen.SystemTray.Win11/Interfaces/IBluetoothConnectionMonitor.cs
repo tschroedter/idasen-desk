@@ -1,3 +1,5 @@
+using JetBrains.Annotations ;
+
 namespace Idasen.SystemTray.Win11.Interfaces ;
 
 /// <summary>
@@ -8,6 +10,7 @@ public interface IBluetoothConnectionMonitor : IDisposable
     /// <summary>
     ///     Gets whether connection monitoring is currently active.
     /// </summary>
+    [UsedImplicitly]
     bool IsMonitoring { get ; }
 
     /// <summary>

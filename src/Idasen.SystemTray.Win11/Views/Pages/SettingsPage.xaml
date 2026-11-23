@@ -17,7 +17,7 @@
     Foreground="{DynamicResource TextFillColorPrimaryBrush}"
     mc:Ignorable="d">
     <Page.Resources>
-        <helpers:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
+        <helpers:ApplicationThemeToBooleanConverter x:Key="ApplicationThemeToBooleanConverter" />
     </Page.Resources>
 
     <Grid>
@@ -158,14 +158,14 @@
                         <TextBlock Margin="0,12,0,0" Text="Theme" />
                         <RadioButton Margin="0,12,0,0" Command="{Binding ViewModel.ChangeThemeCommand, Mode=OneWay}"
                                      CommandParameter="theme_light" Content="Light" GroupName="themeSelect"
-                                     IsChecked="{Binding ViewModel.CurrentTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Light, Mode=OneWay}" />
+                                     IsChecked="{Binding ViewModel.CurrentTheme, Converter={StaticResource ApplicationThemeToBooleanConverter}, ConverterParameter=Light, Mode=OneWay}" />
                         <RadioButton Margin="0,8,0,0" Command="{Binding ViewModel.ChangeThemeCommand, Mode=OneWay}"
                                      CommandParameter="theme_dark" Content="Dark" GroupName="themeSelect"
-                                     IsChecked="{Binding ViewModel.CurrentTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Dark, Mode=OneWay}" />
+                                     IsChecked="{Binding ViewModel.CurrentTheme, Converter={StaticResource ApplicationThemeToBooleanConverter}, ConverterParameter=Dark, Mode=OneWay}" />
                         <RadioButton Margin="0,8,0,0" Command="{Binding ViewModel.ChangeThemeCommand, Mode=OneWay}"
                                      CommandParameter="theme_high_contrast" Content="High Contrast"
                                      GroupName="themeSelect"
-                                     IsChecked="{Binding ViewModel.CurrentTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=HighContrast, Mode=OneWay}" />
+                                     IsChecked="{Binding ViewModel.CurrentTheme, Converter={StaticResource ApplicationThemeToBooleanConverter}, ConverterParameter=HighContrast, Mode=OneWay}" />
                     </StackPanel>
                 </ui:CardExpander>
 

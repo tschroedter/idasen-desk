@@ -91,9 +91,6 @@ public class SettingsManagerTests : IDisposable
     public async Task UpgradeSettingsAsync_ShouldAddMissingSettings ( )
     {
         // Arrange
-        await File.WriteAllTextAsync ( "TestSettingsFilePath" ,
-                                       "{}" ,
-                                       TestContext.Current.CancellationToken ) ;
         _fileSystem.File.Exists ( "TestSettingsFilePath" ).Returns ( true ) ;
         _fileSystem.File.ReadAllTextAsync ( "TestSettingsFilePath" ,
                                             TestContext.Current.CancellationToken ).Returns ( "{}" ) ;
@@ -110,6 +107,51 @@ public class SettingsManagerTests : IDisposable
                         .NotificationsEnabled
                         .Should ( )
                         .BeTrue ( ) ;
+        await _settingsStorage.Received ( 1 ).SaveSettingsAsync ( "TestSettingsFilePath" ,
+                                                                  Arg.Is < Settings > ( settings =>
+                                                                                            settings.DeviceSettings
+                                                                                                    .NotificationsEnabled ) ,
+                                                                  TestContext.Current.CancellationToken ) ;
+    }
+
+    [ Fact ]
+    public async Task UpgradeSettingsAsync_WhenNotificationsSettingExistsInCamelCase_DoesNotRewriteSettings ( )
+    {
+        // Arrange
+        const string settingsJson = "{\"deviceSettings\":{\"notificationsEnabled\":false}}" ;
+        _fileSystem.File.Exists ( "TestSettingsFilePath" ).Returns ( true ) ;
+        _fileSystem.File.ReadAllTextAsync ( "TestSettingsFilePath" ,
+                                            TestContext.Current.CancellationToken ).Returns ( settingsJson ) ;
+
+        // Act
+        var result = await _settingsManager.UpgradeSettingsAsync ( TestContext.Current.CancellationToken ) ;
+
+        // Assert
+        result.Should ( ).BeTrue ( ) ;
+        await _settingsStorage.DidNotReceiveWithAnyArgs ( ).LoadSettingsAsync ( null! ,
+                                                                                TestContext.Current
+                                                                                           .CancellationToken ) ;
+        await _settingsStorage.DidNotReceiveWithAnyArgs ( ).SaveSettingsAsync ( null! ,
+                                                                                null! ,
+                                                                                TestContext.Current
+                                                                                           .CancellationToken ) ;
+    }
+
+    [ Fact ]
+    public async Task UpgradeSettingsAsync_WhenCanceled_PropagatesCancellation ( )
+    {
+        // Arrange
+        using var cancellationSource = new CancellationTokenSource ( ) ;
+        await cancellationSource.CancelAsync ( ) ;
+
+        // Act
+        var act = async ( ) => await _settingsManager.UpgradeSettingsAsync ( cancellationSource.Token ) ;
+
+        // Assert
+        await act.Should ( ).ThrowAsync < OperationCanceledException > ( ) ;
+        _logger.Contains ( "Failed to upgrade settings" )
+               .Should ( )
+               .BeFalse ( ) ;
     }
 
     [ Fact ]
@@ -175,8 +217,9 @@ public class SettingsManagerTests : IDisposable
         var act = async ( ) => await _settingsManager.ResetSettingsAsync ( CancellationToken.None ) ;
 
         // Assert
-        await act.Should ( ).ThrowAsync < InvalidOperationException > ( )
-                 .WithMessage ( "Failed to reset settings" ) ;
+        var exception = await act.Should ( ).ThrowAsync < InvalidOperationException > ( )
+                                 .WithMessage ( "Failed to reset settings" ) ;
+        exception.Which.InnerException.Should ( ).BeSameAs ( testException ) ;
         _logger.Contains ( "Failed to reset settings" )
                .Should ( )
                .BeTrue ( ) ;

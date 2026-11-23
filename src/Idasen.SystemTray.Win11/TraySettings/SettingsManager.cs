@@ -1,12 +1,13 @@
-﻿using System.IO.Abstractions ;
+using System.IO.Abstractions ;
 using System.Reactive.Subjects ;
+using System.Text.Json ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.Utils ;
 using Serilog ;
 
 namespace Idasen.SystemTray.Win11.TraySettings ;
 
-public class SettingsManager (
+public sealed class SettingsManager (
     ILogger                logger ,
     ICommonApplicationData commonApplicationData ,
     ISettingsStorage       settingsStorage ,
@@ -16,13 +17,10 @@ public class SettingsManager (
     private readonly Subject < ISettings > _settingsSaved = new( ) ;
 
     private Settings _current = new( ) ;
-    private bool     _disposed ;
 
     public void Dispose ( )
     {
-        Dispose ( true ) ;
-
-        GC.SuppressFinalize ( this ) ;
+        _settingsSaved.Dispose ( ) ;
     }
 
     public IObservable < ISettings > SettingsSaved => _settingsSaved ;
@@ -45,6 +43,8 @@ public class SettingsManager (
     {
         try
         {
+            token.ThrowIfCancellationRequested ( ) ;
+
             if ( ! fileSystem.File.Exists ( SettingsFileName ) )
                 return true ; // Nothing to upgrade
 
@@ -56,6 +56,10 @@ public class SettingsManager (
 
             return true ; // Upgrade not needed or successfully completed
         }
+        catch ( OperationCanceledException ) when ( token.IsCancellationRequested )
+        {
+            throw ;
+        }
         catch ( Exception e )
         {
             logger.Error ( e ,
@@ -66,6 +70,7 @@ public class SettingsManager (
 
     public async ValueTask SetLastKnownDeskHeight ( uint heightInCm , CancellationToken token )
     {
+        token.ThrowIfCancellationRequested ( ) ;
         CurrentSettings.HeightSettings.LastKnownDeskHeight = heightInCm ;
 
         await SaveAsync ( token ).ConfigureAwait ( false ) ;
@@ -81,6 +86,7 @@ public class SettingsManager (
     {
         try
         {
+            token.ThrowIfCancellationRequested ( ) ;
             logger.Information ( "Resetting settings to defaults" ) ;
 
             // Create a fresh default settings instance and align theme with current Windows theme
@@ -91,19 +97,52 @@ public class SettingsManager (
 
             await SaveAsync ( token ).ConfigureAwait ( false ) ;
         }
+        catch ( OperationCanceledException ) when ( token.IsCancellationRequested )
+        {
+            throw ;
+        }
         catch ( Exception ex )
         {
             logger.Error ( ex ,
                            "Failed to reset settings" ) ;
 
-            throw new InvalidOperationException ( "Failed to reset settings" ) ;
+            throw new InvalidOperationException ( "Failed to reset settings" ,
+                                                  ex ) ;
         }
     }
 
     private static bool MissingNotificationsEnabled ( string settingsJson )
     {
-        return ! settingsJson.Contains ( nameof ( Settings.DeviceSettings.NotificationsEnabled ) ,
-                                         StringComparison.Ordinal ) ;
+        using var document = JsonDocument.Parse ( settingsJson ) ;
+
+        return ! TryGetProperty ( document.RootElement ,
+                                 nameof ( Settings.DeviceSettings ) ,
+                                 out var deviceSettings ) ||
+               ! TryGetProperty ( deviceSettings ,
+                                  nameof ( DeviceSettings.NotificationsEnabled ) ,
+                                  out _ ) ;
+    }
+
+    private static bool TryGetProperty ( JsonElement element ,
+                                         string propertyName ,
+                                         out JsonElement propertyValue )
+    {
+        if ( element.ValueKind == JsonValueKind.Object )
+        {
+            var property = element.EnumerateObject ( )
+                                  .FirstOrDefault ( property => string.Equals ( property.Name ,
+                                                                                propertyName ,
+                                                                                StringComparison.OrdinalIgnoreCase ) ) ;
+
+            if ( property.Value.ValueKind != JsonValueKind.Undefined )
+            {
+                propertyValue = property.Value ;
+                return true ;
+            }
+        }
+
+        propertyValue = default ;
+        return false ;
     }
 
     private async ValueTask AddMissingSettingsNotificationsEnabled ( CancellationToken token )
@@ -116,15 +155,5 @@ public class SettingsManager (
         _current.DeviceSettings.NotificationsEnabled = AppConfiguration.Defaults.NotificationsEnabled ;
 
         await SaveAsync ( token ).ConfigureAwait ( false ) ;
-    }
-
-    protected virtual void Dispose ( bool disposing )
-    {
-        if ( _disposed )
-            return ;
-
-        if ( disposing ) _settingsSaved.Dispose ( ) ;
-
-        _disposed = true ;
     }
 }

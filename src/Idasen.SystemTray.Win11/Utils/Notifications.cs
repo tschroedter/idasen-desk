@@ -10,10 +10,10 @@ namespace Idasen.SystemTray.Win11.Utils ;
 [ ExcludeFromCodeCoverage ]
 public class Notifications : INotifications
 {
-    private readonly ILogger                            _logger ;
-    private readonly ISettingsManager                   _manager ;
-    private readonly Subject < NotificationParameters > _showSubject ;
-    private readonly IDisposable                        _showSubscribe ;
+    private readonly ILogger                                                        _logger ;
+    private readonly ISettingsManager                                               _manager ;
+    private readonly Subject < ( NotificationParameters Parameters , bool AlwaysShow ) > _showSubject ;
+    private readonly IDisposable                                                    _showSubscribe ;
     private readonly IToastService                      _toast ;
     private readonly IVersionProvider                   _version ;
     private          bool                               _disposedValue ;
@@ -27,8 +27,9 @@ public class Notifications : INotifications
         _manager       = manager ;
         _version       = version ;
         _toast         = toast ;
-        _showSubject   = new Subject < NotificationParameters > ( ) ;
-        _showSubscribe = _showSubject.Subscribe ( OnShow ) ;
+        _showSubject   = new Subject < ( NotificationParameters Parameters , bool AlwaysShow ) > ( ) ;
+        _showSubscribe = _showSubject.Subscribe ( notification => OnShow ( notification.Parameters ,
+                                                                            notification.AlwaysShow ) ) ;
     }
 
     public INotifications Initialize ( NotifyIcon        notifyIcon ,
@@ -65,27 +66,34 @@ public class Notifications : INotifications
         }
     }
 
-    public void Show(string title, string text, InfoBarSeverity serverity)
+    public void Show ( string          title ,
+                       string          text ,
+                       InfoBarSeverity serverity ,
+                       bool            alwaysShow = false )
     {
-        Show(new NotificationParameters(title,
-                                        text,
-                                        serverity));
+        Show ( new NotificationParameters ( title ,
+                                            text ,
+                                            serverity ) ,
+               alwaysShow ) ;
     }
 
-    public void Show ( NotificationParameters parameters )
+    public void Show ( NotificationParameters parameters,
+                       bool alwaysShow = false )
     {
         if ( _disposedValue )
             return ;
 
-        _showSubject.OnNext ( parameters ) ;
+        _showSubject.OnNext ( ( parameters , alwaysShow ) ) ;
     }
 
-    private void OnShow ( NotificationParameters parameters )
+    private void OnShow ( NotificationParameters parameters ,
+                          bool alwaysShow )
     {
         if ( _disposedValue )
             return ;
 
-        if ( ! _manager.CurrentSettings.DeviceSettings.NotificationsEnabled )
+        if ( ! alwaysShow &&
+             ! _manager.CurrentSettings.DeviceSettings.NotificationsEnabled )
         {
             _logger.Information ( "Notifications are disabled. {Parameters}" ,
                                   parameters ) ;
@@ -98,7 +106,8 @@ public class Notifications : INotifications
              ! appDispatcher.CheckAccess ( ) )
         {
             _logger.Debug ( "Dispatching call on UI thread" ) ;
-            appDispatcher.BeginInvoke ( new Action ( ( ) => Show ( parameters ) ) ) ;
+            appDispatcher.BeginInvoke ( new Action ( ( ) => OnShow ( parameters ,
+                                                                      alwaysShow ) ) ) ;
             return ;
         }
 

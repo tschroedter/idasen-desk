@@ -61,6 +61,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
     private readonly StatusBarInfoViewModelBase _statusBarInfoViewModel ;
     private readonly NavigationViewItem ?       _stopViewItem ;
     private readonly IUiDeskManager             _uiDeskManager ;
+    private readonly UpdateAvailableViewModel   _updateAvailableViewModel ;
 
     private IDisposable ? _advancedSubscription ;
 
@@ -74,8 +75,8 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
 
     private bool _isActionInProgress ;
 
-    private bool          _isInitialized ;
-    private IDisposable ? _lockSubscription ;
+    private          bool          _isInitialized ;
+    private          IDisposable ? _lockSubscription ;
 
     [ ObservableProperty ] private ObservableCollection < object > _menuItems = [] ;
 
@@ -92,13 +93,15 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
                                        IObserveSettingsChanges settingsChanges ,
                                        IScheduler scheduler ,
                                        ISettingsManager settingsManager ,
+                                       UpdateAvailableViewModel updateAvailableViewModel ,
                                        Func < TimerCallback , object ? , TimeSpan , TimeSpan , ITimer > timerFactory )
     {
-        _logger          = logger ;
-        _uiDeskManager   = uiDeskManager ;
-        _settingsChanges = settingsChanges ;
-        _scheduler       = scheduler ;
-        _settingsManager = settingsManager ;
+        _logger                    = logger ;
+        _uiDeskManager             = uiDeskManager ;
+        _settingsChanges           = settingsChanges ;
+        _scheduler                 = scheduler ;
+        _settingsManager           = settingsManager ;
+        _updateAvailableViewModel = updateAvailableViewModel ;
 
         var homeViewItem = new NavigationViewItem
         {
@@ -359,6 +362,8 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
     /// </summary>
     public ICommand HideSettingsCommand { get ; }
 
+    public UpdateAvailableViewModel UpdateAvailableViewModel => _updateAvailableViewModel ;
+
     public async ValueTask DisposeAsync ( )
     {
         _logger.Information ( "Disposing..." ) ;
@@ -403,6 +408,7 @@ public partial class IdasenDeskWindowViewModel : ObservableObject , IAsyncDispos
         await CastAndDispose ( _hotkeySubscription ) ;
 
         _statusBarInfoViewModel.Dispose ( ) ;
+        _updateAvailableViewModel.Dispose ( ) ;
 
         GC.SuppressFinalize ( this ) ;
     }

@@ -76,10 +76,52 @@ public sealed class DonateServiceTests : IDisposable
     }
 
     [ Fact ]
+    public void OpenDonateUrl_WhenDonateUrlIsWhitespace_LogsDebugAndUsesDefaultUrl ( )
+    {
+        // Arrange
+        _configuration [ "DonateUrl" ].Returns ( "   " ) ;
+        _processLauncher.TryStart ( Arg.Any < ProcessStartInfo > ( ) ).Returns ( true ) ;
+
+        var sut = CreateSut ( ) ;
+
+        // Act
+        sut.OpenDonateUrl ( ) ;
+
+        // Assert
+        _logger.Contains ( "DonateUrl is not configured. Using built-in default donate URL." )
+               .Should ( )
+               .BeTrue ( ) ;
+
+        _processLauncher.Received ( 1 ).TryStart (
+                                                  Arg.Is < ProcessStartInfo > ( psi => psi.FileName == DefaultUrl ) ) ;
+    }
+
+    [ Fact ]
     public void OpenDonateUrl_WhenDonateUrlIsNotHttpOrHttps_LogsWarningAndUsesDefaultUrl ( )
     {
         // Arrange
         _configuration [ "DonateUrl" ].Returns ( "ftp://example.com/donate" ) ;
+        _processLauncher.TryStart ( Arg.Any < ProcessStartInfo > ( ) ).Returns ( true ) ;
+
+        var sut = CreateSut ( ) ;
+
+        // Act
+        sut.OpenDonateUrl ( ) ;
+
+        // Assert
+        _logger.Contains ( "DonateUrl is invalid or not an absolute HTTP/HTTPS URI, using default URL" )
+               .Should ( )
+               .BeTrue ( ) ;
+
+        _processLauncher.Received ( 1 ).TryStart (
+                                                  Arg.Is < ProcessStartInfo > ( psi => psi.FileName == DefaultUrl ) ) ;
+    }
+
+    [ Fact ]
+    public void OpenDonateUrl_WhenDonateUrlHasNoHost_LogsWarningAndUsesDefaultUrl ( )
+    {
+        // Arrange
+        _configuration [ "DonateUrl" ].Returns ( "http:relative-path" ) ;
         _processLauncher.TryStart ( Arg.Any < ProcessStartInfo > ( ) ).Returns ( true ) ;
 
         var sut = CreateSut ( ) ;

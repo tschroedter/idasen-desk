@@ -1,4 +1,4 @@
-﻿using Wpf.Ui.Controls ;
+using Wpf.Ui.Controls ;
 using Wpf.Ui.Tray.Controls ;
 
 namespace Idasen.SystemTray.Win11.Interfaces ;
@@ -10,5 +10,6 @@ public interface INotifications : IDisposable
 
     void Show ( string          title ,
                 string          text ,
-                InfoBarSeverity serverity ) ;
+                InfoBarSeverity serverity ,
+                bool            alwaysShow = false ) ;
 }

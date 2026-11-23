@@ -9,10 +9,13 @@ using Serilog ;
 namespace Idasen.SystemTray.Win11.Services ;
 
 public class DonateService (
-    IConfiguration   configuration ,
-    ILogger          logger ,
+    IConfiguration configuration ,
+    ILogger logger ,
     IProcessLauncher processLauncher ) : IDonateService
 {
+    private const string DonateUrlConfigurationKey   = "DonateUrl" ;
+    private const int    FallbackTimeoutMilliseconds = 5000 ;
+
 #pragma warning disable S1075 // URIs should not be hardcoded - This is a fallback URL when configuration is missing
     private const string DefaultDonateUrl = "https://www.paypal.com/donate/?hosted_button_id=KAWJDNVJTD7SJ" ;
 #pragma warning restore S1075
@@ -21,31 +24,12 @@ public class DonateService (
     {
         try
         {
-            var donateUrl = configuration [ "DonateUrl" ] ;
-
-            if ( string.IsNullOrEmpty ( donateUrl ) )
-            {
-                logger.Debug ( "DonateUrl is not configured. Using built-in default donate URL." ) ;
-                donateUrl = DefaultDonateUrl ;
-            }
-            else if ( ! TryCreateDonateUri ( donateUrl ,
-                                             out _ ) )
-            {
-                logger.Warning ( "DonateUrl is invalid or not an absolute HTTP/HTTPS URI, using default URL" ) ;
-                donateUrl = DefaultDonateUrl ;
-            }
-
-            if ( ! TryCreateDonateUri ( donateUrl ,
-                                        out var donateUri ) )
-            {
-                logger.Error ( "Unable to open donate URL because neither the configured value nor the fallback URL is a valid absolute HTTP/HTTPS URI." ) ;
-                return ;
-            }
+            var donateUri = GetDonateUri ( ) ;
 
             logger.Information ( "Donate button clicked. Using DonateUrl: {DonateUrl}" ,
                                  donateUri.AbsoluteUri ) ;
 
-            OpenUrlInBrowser ( donateUri.AbsoluteUri ) ;
+            OpenUrlInBrowser ( donateUri ) ;
         }
         catch ( Exception ex )
         {
@@ -54,12 +38,38 @@ public class DonateService (
         }
     }
 
-    private static bool TryCreateDonateUri ( string url , [ NotNullWhen ( true ) ] out Uri ? donateUri )
+    private Uri GetDonateUri ( )
+    {
+        var configuredUrl = configuration [ DonateUrlConfigurationKey ] ;
+
+        if ( string.IsNullOrWhiteSpace ( configuredUrl ) )
+            logger.Debug ( "DonateUrl is not configured. Using built-in default donate URL." ) ;
+        else if ( TryCreateDonateUri ( configuredUrl ,
+                                       out var configuredUri ) )
+            return configuredUri ;
+        else
+            logger.Warning ( "DonateUrl is invalid or not an absolute HTTP/HTTPS URI, using default URL" ) ;
+
+        if ( ! TryCreateDonateUri ( DefaultDonateUrl ,
+                                    out var defaultUri ) )
+            throw new InvalidOperationException ( "The built-in donate URL is invalid." ) ;
+
+        return defaultUri ;
+    }
+
+    private static bool TryCreateDonateUri ( string url ,
+                                             [ NotNullWhen ( true ) ] out Uri ? donateUri )
     {
         if ( Uri.TryCreate ( url ,
                              UriKind.Absolute ,
                              out var parsedUri ) &&
-             ( parsedUri.Scheme == Uri.UriSchemeHttp || parsedUri.Scheme == Uri.UriSchemeHttps ) )
+             ( string.Equals ( parsedUri.Scheme ,
+                               Uri.UriSchemeHttp ,
+                               StringComparison.OrdinalIgnoreCase ) ||
+               string.Equals ( parsedUri.Scheme ,
+                               Uri.UriSchemeHttps ,
+                               StringComparison.OrdinalIgnoreCase ) ) &&
+             ! string.IsNullOrWhiteSpace ( parsedUri.Host ) )
         {
             donateUri = parsedUri ;
             return true ;
@@ -69,17 +79,17 @@ public class DonateService (
         return false ;
     }
 
-    private void OpenUrlInBrowser ( string url )
+    private void OpenUrlInBrowser ( Uri donateUri )
     {
         try
         {
-            // Primary method: Direct Process.Start with UseShellExecute
+            // Primary method: launch through the shell so the registered browser opens the URL.
             logger.Information ( "Attempting to open URL: {Url}" ,
-                                 url ) ;
+                                 donateUri.AbsoluteUri ) ;
 
             var primaryInfo = new ProcessStartInfo
             {
-                FileName        = url ,
+                FileName        = donateUri.AbsoluteUri ,
                 UseShellExecute = true
             } ;
 
@@ -115,13 +125,13 @@ public class DonateService (
             var fallbackInfo = new ProcessStartInfo
             {
                 FileName        = cmdPath ,
-                Arguments       = $"/c start \"\" \"{url}\"" ,
+                Arguments       = $"/c start \"\" \"{donateUri.AbsoluteUri}\"" ,
                 UseShellExecute = false ,
                 CreateNoWindow  = true
             } ;
 
             var (started , exitCode) = processLauncher.StartAndWait ( fallbackInfo ,
-                                                                      5000 ) ;
+                                                                      FallbackTimeoutMilliseconds ) ;
 
             if ( ! started )
             {
