@@ -1,4 +1,3 @@
-using System.Windows ;
 using System.Windows.Input ;
 using Idasen.SystemTray.Win11.Interfaces ;
 using Idasen.SystemTray.Win11.Utils ;
@@ -33,12 +32,19 @@ public partial class UpdateAvailableViewModel : ObservableObject , IDisposable
 
     public void Dispose ( )
     {
+        Dispose ( true ) ;
+        GC.SuppressFinalize ( this ) ;
+    }
+
+    protected virtual void Dispose ( bool disposing )
+    {
         if ( _disposed )
             return ;
 
-        _updateSubscription.Dispose ( ) ;
+        if ( disposing )
+            _updateSubscription.Dispose ( ) ;
+
         _disposed = true ;
-        GC.SuppressFinalize ( this ) ;
     }
 
     private void OpenLatestRelease ( object ? _ )
