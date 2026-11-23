@@ -1,7 +1,5 @@
 using Idasen.SystemTray.Win11.Interfaces ;
 using Serilog ;
-using System.Timers ;
-using Timer = System.Timers.Timer ;
 
 namespace Idasen.SystemTray.Win11.Utils.Bluetooth ;
 
@@ -11,11 +9,16 @@ namespace Idasen.SystemTray.Win11.Utils.Bluetooth ;
 /// </summary>
 public sealed class BluetoothConnectionMonitor : IBluetoothConnectionMonitor
 {
+    private readonly object        _syncRoot = new( ) ;
     private readonly ILogger       _logger ;
+    private readonly TimeProvider  _timeProvider ;
+    private readonly TimeSpan      _timeout ;
     private readonly int           _timeoutMilliseconds ;
-    private readonly Timer         _watchdogTimer ;
+    private readonly ITimer        _watchdogTimer ;
 
     private bool _disposed ;
+    private bool _isMonitoring ;
+    private long _lastActivityTimestamp ;
 
     /// <summary>
     ///     Creates a new instance of the connection monitor.
@@ -26,8 +29,9 @@ public sealed class BluetoothConnectionMonitor : IBluetoothConnectionMonitor
     ///     60s).
     /// </param>
     public BluetoothConnectionMonitor (
-        ILogger logger ,
-        int     timeoutMilliseconds = 60000 )
+        ILogger      logger ,
+        int          timeoutMilliseconds = 60000 ,
+        TimeProvider? timeProvider = null )
     {
         ArgumentNullException.ThrowIfNull ( logger ) ;
 
@@ -36,93 +40,115 @@ public sealed class BluetoothConnectionMonitor : IBluetoothConnectionMonitor
                                                     "Timeout must be greater than zero" ) ;
 
         _logger              = logger ;
+        _timeProvider        = timeProvider ?? TimeProvider.System ;
+        _timeout             = TimeSpan.FromMilliseconds ( timeoutMilliseconds ) ;
         _timeoutMilliseconds = timeoutMilliseconds ;
-
-        // Create timer but don't start it yet
-        _watchdogTimer           =  new Timer ( _timeoutMilliseconds ) ;
-        _watchdogTimer.Elapsed   += OnWatchdogTimerElapsed ;
-        _watchdogTimer.AutoReset =  false ; // One-shot timer, reset manually on activity
+        _watchdogTimer       = _timeProvider.CreateTimer ( OnWatchdogTimerElapsed ,
+                                                           null ,
+                                                           Timeout.InfiniteTimeSpan ,
+                                                           Timeout.InfiniteTimeSpan ) ;
     }
 
-    public bool IsMonitoring { get ; private set ; }
+    public bool IsMonitoring
+    {
+        get
+        {
+            lock ( _syncRoot )
+                return _isMonitoring ;
+        }
+    }
 
     public event EventHandler ? StaleConnectionDetected ;
 
     public void StartMonitoring ( )
     {
-        ObjectDisposedException.ThrowIf ( _disposed ,
-                                          nameof ( BluetoothConnectionMonitor ) ) ;
-
-        if ( IsMonitoring )
+        lock ( _syncRoot )
         {
-            _logger.Debug ( "Connection monitoring already active" ) ;
-            return ;
+            ObjectDisposedException.ThrowIf ( _disposed ,
+                                              nameof ( BluetoothConnectionMonitor ) ) ;
+
+            if ( _isMonitoring )
+            {
+                _logger.Debug ( "Connection monitoring already active" ) ;
+                return ;
+            }
+
+            _isMonitoring          = true ;
+            _lastActivityTimestamp = _timeProvider.GetTimestamp ( ) ;
+            _watchdogTimer.Change ( _timeout ,
+                                    Timeout.InfiniteTimeSpan ) ;
         }
 
-        _logger.Debug( "Starting Bluetooth connection monitoring with timeout of {TimeoutSeconds}s" ,
-                       _timeoutMilliseconds / 1000.0 ) ;
-
-        IsMonitoring = true ;
-        _watchdogTimer.Start ( ) ;
+        _logger.Debug ( "Starting Bluetooth connection monitoring with timeout of {TimeoutSeconds}s" ,
+                        _timeoutMilliseconds / 1000.0 ) ;
     }
 
     public void StopMonitoring ( )
     {
-        if ( ! IsMonitoring )
-            return ;
+        lock ( _syncRoot )
+        {
+            if ( ! _isMonitoring )
+                return ;
 
-        _logger.Debug( "Stopping Bluetooth connection monitoring" ) ;
+            _isMonitoring = false ;
+            _watchdogTimer.Change ( Timeout.InfiniteTimeSpan ,
+                                    Timeout.InfiniteTimeSpan ) ;
+        }
 
-        IsMonitoring = false ;
-        _watchdogTimer.Stop ( ) ;
+        _logger.Debug ( "Stopping Bluetooth connection monitoring" ) ;
     }
 
     public void ResetActivityTimer ( )
     {
-        if ( ! IsMonitoring )
-            return ;
+        lock ( _syncRoot )
+        {
+            if ( ! _isMonitoring )
+                return ;
+
+            _lastActivityTimestamp = _timeProvider.GetTimestamp ( ) ;
+            _watchdogTimer.Change ( _timeout ,
+                                    Timeout.InfiniteTimeSpan ) ;
+        }
 
         _logger.Debug ( "Connection activity detected - resetting watchdog timer" ) ;
-
-        // Stop and restart the timer to reset the countdown
-        _watchdogTimer.Stop ( ) ;
-        _watchdogTimer.Start ( ) ;
     }
 
     public void Dispose ( )
     {
-        if ( _disposed )
-            return ;
+        lock ( _syncRoot )
+        {
+            if ( _disposed )
+                return ;
 
-        _disposed = true ;
+            _disposed      = true ;
+            _isMonitoring = false ;
+            _watchdogTimer.Dispose ( ) ;
+        }
 
         _logger.Information ( "Disposing {TypeName}..." ,
                               nameof ( BluetoothConnectionMonitor ) ) ;
-
-        StopMonitoring ( ) ;
-
-        try
-        {
-            _watchdogTimer.Elapsed -= OnWatchdogTimerElapsed ;
-            _watchdogTimer.Dispose ( ) ;
-        }
-        catch ( Exception ex )
-        {
-            _logger.Warning ( ex ,
-                              "Failed to dispose watchdog timer" ) ;
-        }
     }
 
-    private void OnWatchdogTimerElapsed ( object ? sender , ElapsedEventArgs e )
+    private void OnWatchdogTimerElapsed ( object? state )
     {
-        if ( ! IsMonitoring )
-            return ;
+        lock ( _syncRoot )
+        {
+            if ( _disposed || ! _isMonitoring )
+                return ;
+
+            var elapsed = _timeProvider.GetElapsedTime ( _lastActivityTimestamp ) ;
+            if ( elapsed < _timeout )
+            {
+                _watchdogTimer.Change ( _timeout - elapsed ,
+                                        Timeout.InfiniteTimeSpan ) ;
+                return ;
+            }
+
+            _isMonitoring = false ;
+        }
 
         _logger.Debug ( "Stale Bluetooth connection detected - no activity for {TimeoutSeconds}s" ,
                         _timeoutMilliseconds / 1000.0 ) ;
-
-        // Stop monitoring before raising event to prevent multiple triggers
-        StopMonitoring ( ) ;
 
         try
         {

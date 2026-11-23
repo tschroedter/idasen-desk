@@ -224,6 +224,39 @@ public class BluetoothConnectionMonitorTests : IDisposable
     }
 
     [ Fact ]
+    public void StaleConnectionDetected_WhenQueuedCallbackRunsAfterActivity_WaitsForFullTimeout ( )
+    {
+        // Arrange
+        var timeProvider = new ManualTimeProvider ( ) ;
+        var monitor      = new BluetoothConnectionMonitor ( _logger ,
+                                                            100 ,
+                                                            timeProvider ) ;
+        var eventRaised = false ;
+        monitor.StaleConnectionDetected += ( _ , _ ) => { eventRaised = true ; } ;
+        monitor.StartMonitoring ( ) ;
+        timeProvider.Advance ( TimeSpan.FromMilliseconds ( 75 ) ) ;
+        monitor.ResetActivityTimer ( ) ;
+
+        // Act: Simulate an elapsed callback queued before the activity reset.
+        timeProvider.Advance ( TimeSpan.FromMilliseconds ( 50 ) ) ;
+        timeProvider.Timer.Fire ( ) ;
+
+        // Assert: The queued callback must not report stale activity early.
+        eventRaised.Should ( ).BeFalse ( ) ;
+        monitor.IsMonitoring.Should ( ).BeTrue ( ) ;
+        timeProvider.Timer.DueTime.Should ( ).Be ( TimeSpan.FromMilliseconds ( 50 ) ) ;
+
+        timeProvider.Advance ( TimeSpan.FromMilliseconds ( 49 ) ) ;
+        timeProvider.Timer.Fire ( ) ;
+        eventRaised.Should ( ).BeFalse ( ) ;
+
+        timeProvider.Advance ( TimeSpan.FromMilliseconds ( 1 ) ) ;
+        timeProvider.Timer.Fire ( ) ;
+        eventRaised.Should ( ).BeTrue ( ) ;
+        monitor.IsMonitoring.Should ( ).BeFalse ( ) ;
+    }
+
+    [ Fact ]
     public void Dispose_WhenMonitoring_StopsMonitoring ( )
     {
         // Arrange
@@ -277,5 +310,52 @@ public class BluetoothConnectionMonitorTests : IDisposable
 
         // Assert
         eventRaised.Should ( ).BeFalse ( ) ;
+    }
+
+    private sealed class ManualTimeProvider : TimeProvider
+    {
+        private long _timestamp ;
+
+        public ManualTimer Timer { get ; private set ; } = null! ;
+
+        public override long TimestampFrequency => TimeSpan.TicksPerSecond ;
+
+        public override long GetTimestamp ( ) => _timestamp ;
+
+        public override ITimer CreateTimer (
+            TimerCallback callback ,
+            object?       state ,
+            TimeSpan      dueTime ,
+            TimeSpan      period )
+        {
+            Timer = new ManualTimer ( callback , state ) ;
+            Timer.Change ( dueTime , period ) ;
+            return Timer ;
+        }
+
+        public void Advance ( TimeSpan elapsed ) => _timestamp += elapsed.Ticks ;
+    }
+
+    private sealed class ManualTimer (
+        TimerCallback callback ,
+        object?       state ) : ITimer
+    {
+        public TimeSpan DueTime { get ; private set ; }
+
+        public bool Change ( TimeSpan dueTime , TimeSpan period )
+        {
+            DueTime = dueTime ;
+            return true ;
+        }
+
+        public void Fire ( ) => callback ( state ) ;
+
+        public void Dispose ( ) => DueTime = Timeout.InfiniteTimeSpan ;
+
+        public ValueTask DisposeAsync ( )
+        {
+            Dispose ( ) ;
+            return ValueTask.CompletedTask ;
+        }
     }
 }
