@@ -48,6 +48,48 @@ public class ExponentialBackoffReconnectStrategyTests : IDisposable
     }
 
     [ Fact ]
+    public async Task ConnectWithRetryAsync_ConcurrentCalls_AreSerialized ( )
+    {
+        // Arrange
+        var strategy = new ExponentialBackoffReconnectStrategy ( _logger ) ;
+        var firstConnectionStarted = new TaskCompletionSource ( TaskCreationOptions.RunContinuationsAsynchronously ) ;
+        var completeFirstConnection = new TaskCompletionSource < bool > ( TaskCreationOptions.RunContinuationsAsynchronously ) ;
+        var secondActionInvoked = false ;
+
+        var firstCall = strategy.ConnectWithRetryAsync (
+                                                        async _ =>
+                                                        {
+                                                            firstConnectionStarted.SetResult ( ) ;
+                                                            return await completeFirstConnection.Task.ConfigureAwait ( false ) ;
+                                                        } ,
+                                                        CancellationToken.None ) ;
+        await firstConnectionStarted.Task ;
+
+        var secondCall = strategy.ConnectWithRetryAsync (
+                                                         _ =>
+                                                         {
+                                                             secondActionInvoked = true ;
+                                                             return Task.FromResult ( true ) ;
+                                                         } ,
+                                                         CancellationToken.None ) ;
+
+        // Assert while the first connection is still pending.
+        secondActionInvoked.Should ( ).BeFalse ( ) ;
+        strategy.IsRetrying.Should ( ).BeTrue ( ) ;
+
+        // Act
+        completeFirstConnection.SetResult ( true ) ;
+        var firstResult  = await firstCall ;
+        var secondResult = await secondCall ;
+
+        // Assert
+        firstResult.Should ( ).BeTrue ( ) ;
+        secondResult.Should ( ).BeTrue ( ) ;
+        secondActionInvoked.Should ( ).BeTrue ( ) ;
+        strategy.IsRetrying.Should ( ).BeFalse ( ) ;
+    }
+
+    [ Fact ]
     public async Task ConnectWithRetryAsync_FailsThenSucceeds_ReturnsTrue ( )
     {
         // Arrange
@@ -92,7 +134,7 @@ public class ExponentialBackoffReconnectStrategyTests : IDisposable
         // Assert
         result.Should ( ).BeFalse ( ) ;
         strategy.IsRetrying.Should ( ).BeFalse ( ) ;
-        strategy.CurrentAttempt.Should ( ).BeGreaterThan ( 0 ) ;                          // Retries were exhausted
+        strategy.CurrentAttempt.Should ( ).Be ( strategy.MaxRetries ) ;
         await connectAction.Received ( 3 ).Invoke ( Arg.Any < CancellationToken > ( ) ) ; // Initial + 2 retries
     }
 
@@ -169,6 +211,78 @@ public class ExponentialBackoffReconnectStrategyTests : IDisposable
         act.Should ( ).Throw < ArgumentNullException > ( ) ;
     }
 
+    [ Theory ]
+    [ InlineData ( - 1 ) ]
+    [ InlineData ( - 5 ) ]
+    public void Constructor_NegativeMaxRetries_ThrowsArgumentOutOfRangeException ( int maxRetries )
+    {
+        // Act
+        Action act = ( ) => _ = new ExponentialBackoffReconnectStrategy ( _logger ,
+                                                                           maxRetries ) ;
+
+        // Assert
+        act.Should ( ).Throw < ArgumentOutOfRangeException > ( )
+           .WithParameterName ( nameof ( maxRetries ) ) ;
+    }
+
+    [ Theory ]
+    [ InlineData ( 0 ) ]
+    [ InlineData ( - 1 ) ]
+    public void Constructor_NonpositiveInitialDelay_ThrowsArgumentOutOfRangeException ( int initialDelayMs )
+    {
+        // Act
+        Action act = ( ) => _ = new ExponentialBackoffReconnectStrategy ( _logger ,
+                                                                           initialDelayMs : initialDelayMs ) ;
+
+        // Assert
+        act.Should ( ).Throw < ArgumentOutOfRangeException > ( )
+           .WithParameterName ( nameof ( initialDelayMs ) ) ;
+    }
+
+    [ Theory ]
+    [ InlineData ( 0 , 1000 ) ]
+    [ InlineData ( - 1 , 1000 ) ]
+    [ InlineData ( 999 , 1000 ) ]
+    public void Constructor_InvalidMaximumDelay_ThrowsArgumentOutOfRangeException (
+        int maxDelayMs ,
+        int initialDelayMs )
+    {
+        // Act
+        Action act = ( ) => _ = new ExponentialBackoffReconnectStrategy ( _logger ,
+                                                                           initialDelayMs : initialDelayMs ,
+                                                                           maxDelayMs : maxDelayMs ) ;
+
+        // Assert
+        act.Should ( ).Throw < ArgumentOutOfRangeException > ( )
+           .WithParameterName ( nameof ( maxDelayMs ) ) ;
+    }
+
+    [ Theory ]
+    [ InlineData ( 0.5 ) ]
+    [ InlineData ( 1.0 ) ]
+    public void Constructor_NonIncreasingMultiplier_ThrowsArgumentOutOfRangeException ( double backoffMultiplier )
+    {
+        // Act
+        Action act = ( ) => _ = new ExponentialBackoffReconnectStrategy ( _logger ,
+                                                                           backoffMultiplier : backoffMultiplier ) ;
+
+        // Assert
+        act.Should ( ).Throw < ArgumentOutOfRangeException > ( )
+           .WithParameterName ( nameof ( backoffMultiplier ) ) ;
+    }
+
+    [ Fact ]
+    public void Constructor_NonfiniteMultiplier_ThrowsArgumentOutOfRangeException ( )
+    {
+        // Act
+        Action act = ( ) => _ = new ExponentialBackoffReconnectStrategy ( _logger ,
+                                                                           backoffMultiplier : double.NaN ) ;
+
+        // Assert
+        act.Should ( ).Throw < ArgumentOutOfRangeException > ( )
+           .WithParameterName ( "backoffMultiplier" ) ;
+    }
+
     [ Fact ]
     public void MaxRetries_ReturnsConfiguredValue ( )
     {
@@ -208,58 +322,48 @@ public class ExponentialBackoffReconnectStrategyTests : IDisposable
     public async Task ConnectWithRetryAsync_UsesExponentialBackoff ( )
     {
         // Arrange
+        var timeProvider = new ImmediateTimeProvider ( ) ;
         var strategy = new ExponentialBackoffReconnectStrategy ( _logger ,
                                                                  3 ,
                                                                  100 ,
-                                                                 backoffMultiplier : 2.0 ) ;
+                                                                 backoffMultiplier : 2.0 ,
+                                                                 timeProvider : timeProvider ) ;
         var connectAction = Substitute.For < Func < CancellationToken , Task < bool > > > ( ) ;
         connectAction ( Arg.Any < CancellationToken > ( ) ).Returns ( Task.FromResult ( false ) ) ;
-
-        var startTime = DateTime.UtcNow ;
 
         // Act
         await strategy.ConnectWithRetryAsync ( connectAction ,
                                                CancellationToken.None ) ;
 
-        var elapsed = DateTime.UtcNow - startTime ;
-
         // Assert
-        // Expected delays: 100ms, 200ms, 400ms = 700ms total
-        // With some tolerance for execution time
-        elapsed.TotalMilliseconds.Should ( ).BeGreaterThan ( 650 ) ;
-        elapsed.TotalMilliseconds.Should ( ).BeLessThan ( 1500 ) ; // Allow some overhead
+        timeProvider.Delays.Should ( ).Equal ( TimeSpan.FromMilliseconds ( 100 ) ,
+                                               TimeSpan.FromMilliseconds ( 200 ) ,
+                                               TimeSpan.FromMilliseconds ( 400 ) ) ;
     }
 
     [ Fact ]
     public async Task ConnectWithRetryAsync_CapsDelayAtMaximum ( )
     {
         // Arrange
+        var timeProvider = new ImmediateTimeProvider ( ) ;
         var strategy = new ExponentialBackoffReconnectStrategy ( _logger ,
                                                                  5 ,
                                                                  1000 ,
-                                                                 2000 ) ;
+                                                                 2000 ,
+                                                                 timeProvider : timeProvider ) ;
         var connectAction = Substitute.For < Func < CancellationToken , Task < bool > > > ( ) ;
         connectAction ( Arg.Any < CancellationToken > ( ) ).Returns ( Task.FromResult ( false ) ) ;
-
-        var startTime = DateTime.UtcNow ;
 
         // Act
         await strategy.ConnectWithRetryAsync ( connectAction ,
                                                CancellationToken.None ) ;
 
-        var elapsed = DateTime.UtcNow - startTime ;
-
         // Assert
-        // Expected delays with cap:
-        //   Attempt 1: 1000ms
-        //   Attempt 2: 2000ms (capped, would be 2000ms)
-        //   Attempt 3: 2000ms (capped, would be 4000ms)
-        //   Attempt 4: 2000ms (capped, would be 8000ms)
-        //   Attempt 5: 2000ms (capped, would be 16000ms)
-        // Total: 9000ms
-
-        elapsed.TotalMilliseconds.Should ( ).BeGreaterThan ( 8500 ) ;
-        elapsed.TotalMilliseconds.Should ( ).BeLessThan ( 12000 ) ; // Allow overhead
+        timeProvider.Delays.Should ( ).Equal ( TimeSpan.FromMilliseconds ( 1000 ) ,
+                                               TimeSpan.FromMilliseconds ( 2000 ) ,
+                                               TimeSpan.FromMilliseconds ( 2000 ) ,
+                                               TimeSpan.FromMilliseconds ( 2000 ) ,
+                                               TimeSpan.FromMilliseconds ( 2000 ) ) ;
     }
 
     [ Fact ]
@@ -313,5 +417,30 @@ public class ExponentialBackoffReconnectStrategyTests : IDisposable
         // Assert
         isRetryingDuringExecution.Should ( ).BeTrue ( ) ;
         strategy.IsRetrying.Should ( ).BeFalse ( ) ; // After completion
+    }
+
+    private sealed class ImmediateTimeProvider : TimeProvider
+    {
+        public List < TimeSpan > Delays { get ; } = [ ] ;
+
+        public override ITimer CreateTimer (
+            TimerCallback callback ,
+            object?       state ,
+            TimeSpan      dueTime ,
+            TimeSpan      period )
+        {
+            Delays.Add ( dueTime ) ;
+            callback ( state ) ;
+            return new ImmediateTimer ( ) ;
+        }
+    }
+
+    private sealed class ImmediateTimer : ITimer
+    {
+        public bool Change ( TimeSpan dueTime , TimeSpan period ) => true ;
+
+        public void Dispose ( ) { }
+
+        public ValueTask DisposeAsync ( ) => ValueTask.CompletedTask ;
     }
 }

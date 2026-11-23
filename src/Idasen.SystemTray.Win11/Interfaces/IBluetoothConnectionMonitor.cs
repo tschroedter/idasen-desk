@@ -15,6 +15,9 @@ public interface IBluetoothConnectionMonitor : IDisposable
 
     /// <summary>
     ///     Event raised when a stale connection is detected and reconnection should be attempted.
+    ///     The event is raised on the timer callback thread; handlers that require a specific
+    ///     synchronization context, such as the WPF dispatcher, must marshal to it themselves.
+    ///     Exceptions from a handler are logged and do not prevent other handlers from running.
     /// </summary>
     event EventHandler ? StaleConnectionDetected ;
 
