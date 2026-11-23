@@ -10,9 +10,10 @@ public class ExponentialBackoffReconnectStrategy : IBluetoothReconnectStrategy
 {
     private readonly double  _backoffMultiplier ;
     private readonly int     _initialDelayMs ;
-    private readonly ILogger _logger ;
-    private readonly int     _maxDelayMs ;
-    private readonly object  _executionLock = new( ) ;
+    private readonly ILogger      _logger ;
+    private readonly int          _maxDelayMs ;
+    private readonly TimeProvider _timeProvider ;
+    private readonly object       _executionLock = new( ) ;
 
     private Task _executionTail = Task.CompletedTask ;
 
@@ -24,12 +25,14 @@ public class ExponentialBackoffReconnectStrategy : IBluetoothReconnectStrategy
     /// <param name="initialDelayMs">Initial delay in milliseconds (default: 1000ms).</param>
     /// <param name="maxDelayMs">Maximum delay cap in milliseconds (default: 30000ms = 30s).</param>
     /// <param name="backoffMultiplier">Multiplier for exponential growth (default: 2.0).</param>
+    /// <param name="timeProvider">Provider used to perform retry delays.</param>
     public ExponentialBackoffReconnectStrategy (
-        ILogger logger ,
-        int     maxRetries        = 5 ,
-        int     initialDelayMs    = 1000 ,
-        int     maxDelayMs        = 30000 ,
-        double  backoffMultiplier = 2.0 )
+        ILogger       logger ,
+        int           maxRetries        = 5 ,
+        int           initialDelayMs    = 1000 ,
+        int           maxDelayMs        = 30000 ,
+        double        backoffMultiplier = 2.0 ,
+        TimeProvider? timeProvider      = null )
     {
         _logger = logger ?? throw new ArgumentNullException ( nameof ( logger ) ) ;
 
@@ -53,6 +56,7 @@ public class ExponentialBackoffReconnectStrategy : IBluetoothReconnectStrategy
         _initialDelayMs    = initialDelayMs ;
         _maxDelayMs        = maxDelayMs ;
         _backoffMultiplier = backoffMultiplier ;
+        _timeProvider      = timeProvider ?? TimeProvider.System ;
         CurrentAttempt     = 0 ;
         IsRetrying         = false ;
     }
@@ -133,7 +137,8 @@ public class ExponentialBackoffReconnectStrategy : IBluetoothReconnectStrategy
 
                 try
                 {
-                    await Task.Delay ( delay ,
+                    await Task.Delay ( TimeSpan.FromMilliseconds ( delay ) ,
+                                       _timeProvider ,
                                        cancellationToken ).ConfigureAwait ( false ) ;
                 }
                 catch ( TaskCanceledException ex )
