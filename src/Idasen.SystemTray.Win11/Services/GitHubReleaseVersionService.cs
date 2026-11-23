@@ -64,6 +64,7 @@ public sealed class GitHubReleaseVersionService (
         }
         catch ( OperationCanceledException ) when ( cancellationToken.IsCancellationRequested )
         {
+            logger.Debug ( "Latest GitHub release version check was canceled" ) ;
         }
         catch ( HttpRequestException ex )
         {
