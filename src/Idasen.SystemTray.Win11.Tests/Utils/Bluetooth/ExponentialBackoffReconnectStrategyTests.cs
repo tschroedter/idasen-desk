@@ -48,6 +48,48 @@ public class ExponentialBackoffReconnectStrategyTests : IDisposable
     }
 
     [ Fact ]
+    public async Task ConnectWithRetryAsync_ConcurrentCalls_AreSerialized ( )
+    {
+        // Arrange
+        var strategy = new ExponentialBackoffReconnectStrategy ( _logger ) ;
+        var firstConnectionStarted = new TaskCompletionSource ( TaskCreationOptions.RunContinuationsAsynchronously ) ;
+        var completeFirstConnection = new TaskCompletionSource < bool > ( TaskCreationOptions.RunContinuationsAsynchronously ) ;
+        var secondActionInvoked = false ;
+
+        var firstCall = strategy.ConnectWithRetryAsync (
+                                                        async _ =>
+                                                        {
+                                                            firstConnectionStarted.SetResult ( ) ;
+                                                            return await completeFirstConnection.Task.ConfigureAwait ( false ) ;
+                                                        } ,
+                                                        CancellationToken.None ) ;
+        await firstConnectionStarted.Task ;
+
+        var secondCall = strategy.ConnectWithRetryAsync (
+                                                         _ =>
+                                                         {
+                                                             secondActionInvoked = true ;
+                                                             return Task.FromResult ( true ) ;
+                                                         } ,
+                                                         CancellationToken.None ) ;
+
+        // Assert while the first connection is still pending.
+        secondActionInvoked.Should ( ).BeFalse ( ) ;
+        strategy.IsRetrying.Should ( ).BeTrue ( ) ;
+
+        // Act
+        completeFirstConnection.SetResult ( true ) ;
+        var firstResult  = await firstCall ;
+        var secondResult = await secondCall ;
+
+        // Assert
+        firstResult.Should ( ).BeTrue ( ) ;
+        secondResult.Should ( ).BeTrue ( ) ;
+        secondActionInvoked.Should ( ).BeTrue ( ) ;
+        strategy.IsRetrying.Should ( ).BeFalse ( ) ;
+    }
+
+    [ Fact ]
     public async Task ConnectWithRetryAsync_FailsThenSucceeds_ReturnsTrue ( )
     {
         // Arrange

@@ -12,6 +12,9 @@ public class ExponentialBackoffReconnectStrategy : IBluetoothReconnectStrategy
     private readonly int     _initialDelayMs ;
     private readonly ILogger _logger ;
     private readonly int     _maxDelayMs ;
+    private readonly object  _executionLock = new( ) ;
+
+    private Task _executionTail = Task.CompletedTask ;
 
     /// <summary>
     ///     Creates a new instance with default exponential backoff parameters.
@@ -48,6 +51,29 @@ public class ExponentialBackoffReconnectStrategy : IBluetoothReconnectStrategy
         CancellationToken                          cancellationToken )
     {
         ArgumentNullException.ThrowIfNull ( connectAction ) ;
+
+        Task previousExecution ;
+        var  executionCompletion = new TaskCompletionSource ( TaskCreationOptions.RunContinuationsAsynchronously ) ;
+        lock ( _executionLock )
+        {
+            previousExecution = _executionTail ;
+            _executionTail    = executionCompletion.Task ;
+        }
+
+        try
+        {
+            await previousExecution.WaitAsync ( cancellationToken ).ConfigureAwait ( false ) ;
+        }
+        catch ( OperationCanceledException ex )
+        {
+            _ = previousExecution.ContinueWith ( _ => executionCompletion.TrySetResult ( ) ,
+                                                 CancellationToken.None ,
+                                                 TaskContinuationOptions.ExecuteSynchronously ,
+                                                 TaskScheduler.Default ) ;
+            _logger.Information ( ex ,
+                                  "Retry sequence cancelled while waiting for another connection attempt" ) ;
+            return false ;
+        }
 
         IsRetrying     = true ;
         CurrentAttempt = 0 ;
@@ -132,6 +158,7 @@ public class ExponentialBackoffReconnectStrategy : IBluetoothReconnectStrategy
         finally
         {
             IsRetrying = false ;
+            executionCompletion.SetResult ( ) ;
         }
     }
 
