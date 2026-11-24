@@ -163,6 +163,19 @@ public sealed class GitHubReleaseVersionServiceTests
             BaseAddress = new Uri ( "https://api.github.com/" )
         } ;
         var updateAvailableState = Substitute.For < IUpdateAvailableState > ( ) ;
+        var firstCheckCompleted = new TaskCompletionSource ( TaskCreationOptions.RunContinuationsAsynchronously ) ;
+        var secondCheckCompleted = new TaskCompletionSource ( TaskCreationOptions.RunContinuationsAsynchronously ) ;
+        var completedCheckCount = 0 ;
+        updateAvailableState.When ( state => state.SetUpdateAvailable ( false ) )
+                            .Do ( _ =>
+                            {
+                                var count = Interlocked.Increment ( ref completedCheckCount ) ;
+
+                                if ( count == 1 )
+                                    firstCheckCompleted.TrySetResult ( ) ;
+                                else if ( count == 2 )
+                                    secondCheckCompleted.TrySetResult ( ) ;
+                            } ) ;
         var timeProvider = new ManualTimeProvider ( ) ;
         using var sut = new GitHubReleaseVersionService ( httpClient ,
                                                           logger ,
@@ -174,18 +187,18 @@ public sealed class GitHubReleaseVersionServiceTests
         // Act
         var testCancellationToken = TestContext.Current.CancellationToken ;
         await sut.StartAsync ( testCancellationToken ) ;
-        await handler.FirstRequest.WaitAsync ( TimeSpan.FromSeconds ( 5 ) ,
-                                               testCancellationToken ) ;
+        await firstCheckCompleted.Task.WaitAsync ( TimeSpan.FromSeconds ( 5 ) ,
+                                                   testCancellationToken ) ;
         timeProvider.Timer.DueTime.Should ( ).Be ( TimeSpan.FromDays ( 1 ) ) ;
         timeProvider.Advance ( TimeSpan.FromDays ( 1 ) ) ;
         timeProvider.Timer.Fire ( ) ;
-        await handler.SecondRequest.WaitAsync ( TimeSpan.FromSeconds ( 5 ) ,
-                                                testCancellationToken ) ;
+        await secondCheckCompleted.Task.WaitAsync ( TimeSpan.FromSeconds ( 5 ) ,
+                                                    testCancellationToken ) ;
         await sut.StopAsync ( testCancellationToken ) ;
 
         // Assert
         handler.RequestCount.Should ( ).Be ( 2 ) ;
-        updateAvailableState.Received ( 2 ).SetUpdateAvailable ( false ) ;
+        completedCheckCount.Should ( ).Be ( 2 ) ;
     }
 
     private sealed class StubHttpMessageHandler ( HttpResponseMessage response ) : HttpMessageHandler
@@ -202,24 +215,12 @@ public sealed class GitHubReleaseVersionServiceTests
 
     private sealed class CountingStubHttpMessageHandler : HttpMessageHandler
     {
-        private readonly TaskCompletionSource _firstRequest = new ( TaskCreationOptions.RunContinuationsAsynchronously ) ;
-        private readonly TaskCompletionSource _secondRequest = new ( TaskCreationOptions.RunContinuationsAsynchronously ) ;
-
         public int RequestCount { get ; private set ; }
-
-        public Task FirstRequest => _firstRequest.Task ;
-
-        public Task SecondRequest => _secondRequest.Task ;
 
         protected override Task < HttpResponseMessage > SendAsync ( HttpRequestMessage request ,
                                                                     CancellationToken cancellationToken )
         {
             RequestCount ++ ;
-
-            if ( RequestCount == 1 )
-                _firstRequest.TrySetResult ( ) ;
-            else if ( RequestCount == 2 )
-                _secondRequest.TrySetResult ( ) ;
 
             return Task.FromResult ( new HttpResponseMessage ( HttpStatusCode.OK )
             {
