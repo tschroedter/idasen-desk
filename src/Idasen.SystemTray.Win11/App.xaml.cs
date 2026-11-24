@@ -310,11 +310,12 @@ public partial class App
                                                                            services
                                                                               .AddSingleton < IAvailableKeysProvider ,
                                                                                    AvailableKeysProvider > ( ) ;
-                                                                       } ).Build ( ) ;
+                                                                                                                                           } ).Build ( ) ;
 
-    private static Mutex ? _singleInstanceMutex ;
+                                                                       private static Mutex ? _singleInstanceMutex ;
+                                                                       private static bool      _ownsSingleInstanceMutex ;
 
-    private readonly ILogger _logger = LoggerProvider.CreateLogger ( AppContext.BaseDirectory ) ;
+                                                                       private readonly ILogger _logger = LoggerProvider.CreateLogger ( AppContext.BaseDirectory ) ;
 
     static App ( )
     {
@@ -462,6 +463,7 @@ public partial class App
         _singleInstanceMutex = new Mutex ( true ,
                                            mutexName ,
                                            out var createdNew ) ;
+        _ownsSingleInstanceMutex = createdNew ;
 
         return createdNew ;
     }
@@ -488,6 +490,9 @@ public partial class App
         {
             _logger.Information ( "##### Exiting..." ) ;
 
+            // Mutex ownership is thread-affine, so release it before the shutdown await.
+            ReleaseSingleInstanceMutex ( ) ;
+
             await Host.StopAsync ( ) ;
 
             _logger.Information ( "##### Stopped." ) ;
@@ -496,10 +501,6 @@ public partial class App
         {
             _logger.Error ( ex ,
                             "Failed to stop application" ) ;
-        }
-        finally
-        {
-            ReleaseSingleInstanceMutex ( ) ;
         }
     }
 
@@ -522,14 +523,19 @@ public partial class App
     {
         try
         {
-            _singleInstanceMutex?.ReleaseMutex ( ) ;
-            _singleInstanceMutex?.Dispose ( ) ;
-            _singleInstanceMutex = null ;
+            if ( _ownsSingleInstanceMutex )
+                _singleInstanceMutex?.ReleaseMutex ( ) ;
         }
         catch ( Exception ex )
         {
             Log.Warning ( ex ,
-                          "Failed to release or dispose single instance mutex" ) ;
+                          "Failed to release single instance mutex" ) ;
+        }
+        finally
+        {
+            _singleInstanceMutex?.Dispose ( ) ;
+            _singleInstanceMutex = null ;
+            _ownsSingleInstanceMutex = false ;
         }
     }
 }
