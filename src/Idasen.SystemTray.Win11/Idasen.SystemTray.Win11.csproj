@@ -61,7 +61,7 @@
         <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
         <PackageReference Include="System.Drawing.Common" Version="11.0.0" />
         <PackageReference Include="System.IO.Abstractions" Version="23.0.1" />
-        <PackageReference Include="Testably.Abstractions.FileSystem.Interface" Version="11.0.0" />
+        <PackageReference Include="Testably.Abstractions.FileSystem.Interface" Version="11.1.0" />
         <PackageReference Include="WPF-UI" Version="4.3.0" />
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="11.0.0" />
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
