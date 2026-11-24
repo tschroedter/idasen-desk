@@ -15,7 +15,8 @@ public sealed class GitHubReleaseVersionService (
     ILogger logger ,
     IVersionProvider versionProvider ,
     INotifications notifications ,
-    IUpdateAvailableState updateAvailableState )
+    IUpdateAvailableState updateAvailableState ,
+    TimeProvider ? timeProvider = null )
     : BackgroundService
 {
     private const string LatestReleaseEndpoint = "repos/tschroedter/idasen-desk/releases/latest" ;
@@ -101,9 +102,15 @@ public sealed class GitHubReleaseVersionService (
                                   out version ) ;
     }
 
-    protected override Task ExecuteAsync ( CancellationToken stoppingToken )
+    protected override async Task ExecuteAsync ( CancellationToken stoppingToken )
     {
-        return LogLatestReleaseVersionAsync ( stoppingToken ) ;
+        using var timer = new PeriodicTimer ( TimeSpan.FromDays ( 1 ) ,
+                                              timeProvider ?? TimeProvider.System ) ;
+
+        await LogLatestReleaseVersionAsync ( stoppingToken ).ConfigureAwait ( false ) ;
+
+        while ( await timer.WaitForNextTickAsync ( stoppingToken ).ConfigureAwait ( false ) )
+            await LogLatestReleaseVersionAsync ( stoppingToken ).ConfigureAwait ( false ) ;
     }
 
     private sealed record LatestReleaseResponse

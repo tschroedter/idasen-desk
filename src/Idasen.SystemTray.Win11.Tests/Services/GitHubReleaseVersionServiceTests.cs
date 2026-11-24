@@ -149,6 +149,58 @@ public sealed class GitHubReleaseVersionServiceTests
                                                           default ) ;
     }
 
+    [ Fact ]
+    public async Task ExecuteAsync_ChecksImmediatelyAndAgainAfterOneDay ( )
+    {
+        // Arrange
+        using var logger = new InMemoryLogger ( ) ;
+        var versionProvider = Substitute.For < IVersionProvider > ( ) ;
+        versionProvider.GetVersion ( ).Returns ( "v1.2.3" ) ;
+        var notifications = Substitute.For < INotifications > ( ) ;
+        var handler = new CountingStubHttpMessageHandler ( ) ;
+        using var httpClient = new HttpClient ( handler )
+        {
+            BaseAddress = new Uri ( "https://api.github.com/" )
+        } ;
+        var updateAvailableState = Substitute.For < IUpdateAvailableState > ( ) ;
+        var firstCheckCompleted = new TaskCompletionSource ( TaskCreationOptions.RunContinuationsAsynchronously ) ;
+        var secondCheckCompleted = new TaskCompletionSource ( TaskCreationOptions.RunContinuationsAsynchronously ) ;
+        var completedCheckCount = 0 ;
+        updateAvailableState.When ( state => state.SetUpdateAvailable ( false ) )
+                            .Do ( _ =>
+                            {
+                                var count = Interlocked.Increment ( ref completedCheckCount ) ;
+
+                                if ( count == 1 )
+                                    firstCheckCompleted.TrySetResult ( ) ;
+                                else if ( count == 2 )
+                                    secondCheckCompleted.TrySetResult ( ) ;
+                            } ) ;
+        var timeProvider = new ManualTimeProvider ( ) ;
+        using var sut = new GitHubReleaseVersionService ( httpClient ,
+                                                          logger ,
+                                                          versionProvider ,
+                                                          notifications ,
+                                                          updateAvailableState ,
+                                                          timeProvider ) ;
+
+        // Act
+        var testCancellationToken = TestContext.Current.CancellationToken ;
+        await sut.StartAsync ( testCancellationToken ) ;
+        await firstCheckCompleted.Task.WaitAsync ( TimeSpan.FromSeconds ( 5 ) ,
+                                                   testCancellationToken ) ;
+        timeProvider.Timer.DueTime.Should ( ).Be ( TimeSpan.FromDays ( 1 ) ) ;
+        timeProvider.Advance ( TimeSpan.FromDays ( 1 ) ) ;
+        timeProvider.Timer.Fire ( ) ;
+        await secondCheckCompleted.Task.WaitAsync ( TimeSpan.FromSeconds ( 5 ) ,
+                                                    testCancellationToken ) ;
+        await sut.StopAsync ( testCancellationToken ) ;
+
+        // Assert
+        handler.RequestCount.Should ( ).Be ( 2 ) ;
+        completedCheckCount.Should ( ).Be ( 2 ) ;
+    }
+
     private sealed class StubHttpMessageHandler ( HttpResponseMessage response ) : HttpMessageHandler
     {
         public Uri ? RequestUri { get ; private set ; }
@@ -158,6 +210,67 @@ public sealed class GitHubReleaseVersionServiceTests
         {
             RequestUri = request.RequestUri ;
             return Task.FromResult ( response ) ;
+        }
+    }
+
+    private sealed class CountingStubHttpMessageHandler : HttpMessageHandler
+    {
+        public int RequestCount { get ; private set ; }
+
+        protected override Task < HttpResponseMessage > SendAsync ( HttpRequestMessage request ,
+                                                                    CancellationToken cancellationToken )
+        {
+            RequestCount ++ ;
+
+            return Task.FromResult ( new HttpResponseMessage ( HttpStatusCode.OK )
+            {
+                Content = new StringContent ( "{\"tag_name\":\"v1.2.3\"}" )
+            } ) ;
+        }
+    }
+
+    private sealed class ManualTimeProvider : TimeProvider
+    {
+        private long _timestamp ;
+
+        public ManualTimer Timer { get ; private set ; } = null! ;
+
+        public override long TimestampFrequency => TimeSpan.TicksPerSecond ;
+
+        public override long GetTimestamp ( ) => _timestamp ;
+
+        public override ITimer CreateTimer ( TimerCallback callback ,
+                                             object ? state ,
+                                             TimeSpan dueTime ,
+                                             TimeSpan period )
+        {
+            Timer = new ManualTimer ( callback , state ) ;
+            Timer.Change ( dueTime , period ) ;
+            return Timer ;
+        }
+
+        public void Advance ( TimeSpan elapsed ) => _timestamp += elapsed.Ticks ;
+    }
+
+    private sealed class ManualTimer ( TimerCallback callback ,
+                                       object ? state ) : ITimer
+    {
+        public TimeSpan DueTime { get ; private set ; }
+
+        public bool Change ( TimeSpan dueTime , TimeSpan period )
+        {
+            DueTime = dueTime ;
+            return true ;
+        }
+
+        public void Fire ( ) => callback ( state ) ;
+
+        public void Dispose ( ) => DueTime = Timeout.InfiniteTimeSpan ;
+
+        public ValueTask DisposeAsync ( )
+        {
+            Dispose ( ) ;
+            return ValueTask.CompletedTask ;
         }
     }
 }
