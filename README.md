@@ -1,13 +1,12 @@
 # Ikea Idasen Desk - Windows Controller
 
 [![Build and Test (Draft Release)](https://github.com/tschroedter/idasen-desk/actions/workflows/dotnet-ci.yml/badge.svg)](https://github.com/tschroedter/idasen-desk/actions/workflows/dotnet-ci.yml)
-[![CodeQL](https://github.com/tschroedter/idasen-desk/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/tschroedter/idasen-desk/actions/workflows/github-code-scanning/codeql)
-[![Release Drafter](https://github.com/tschroedter/idasen-desk/actions/workflows/release-drafter.yml/badge.svg)](https://github.com/tschroedter/idasen-desk/actions/workflows/release-drafter.yml)
+[![CodeQL](https://github.com/tschroedter/idasen-desk/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/tschroedter/idasen-desk/actions/workflows/github-code-scanning/codeql/badge.svg)
 [![SonarCloud Analysis](https://github.com/tschroedter/idasen-desk/actions/workflows/sonarcloud.yml/badge.svg)](https://github.com/tschroedter/idasen-desk/actions/workflows/sonarcloud.yml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=tschroedter_idasen-desk&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=tschroedter_idasen-desk)
 [![Dependabot Status](https://img.shields.io/badge/Dependabot-enabled-success?logo=dependabot)](https://github.com/tschroedter/idasen-desk/network/updates)
 
-A Windows 10/11 desktop application for controlling [Ikea's Idasen standing desk](https://www.ikea.com/au/en/p/idasen-desk-sit-stand-black-dark-grey-s29280991/) via Bluetooth LE. While Ikea provides a mobile app, this application offers desktop integration with system tray controls, global hotkeys, and advanced configuration options.
+A Windows 10/11 desktop application for controlling [Ikea's Idasen standing desk](https://www.ikea.com/au/en/p/idasen-desk-sit-stand-black-dark-grey-s29280991/) via Bluetooth LE. The app runs unobtrusively in the Windows system tray.
 
 > 📚 **[Visit the Wiki](https://github.com/tschroedter/idasen-desk/wiki)** for comprehensive documentation, guides, and troubleshooting.
 
@@ -41,21 +40,13 @@ This project uses the [idasen-desk-core](https://github.com/tschroedter/idasen-d
 
 ## Thank You
 
-A special thank you to all the amazing people who test this application and provide valuable feedback! Your contributions help make this app better for everyone. Special recognition goes to **Glakshmips**, who has been incredibly supportive and helpful through all the years. 🚀
+A special thank you to all the amazing people who test this application and provide valuable feedback! Your contributions help make this app better for everyone.
 
 ## What's New
 
-### Main branch updates (latest)
-- ⚙️ Allow renaming of desk position preset
-- 📡 Improved Bluetooth reliability with stale connection detection and automatic reconnection.
-- 🛠️ Refactored desk orchestration into focused managers (`DeskConnectionManager`, `DeskMovementManager`, `DeskNotificationManager`, `DeskReadyManager`, `StatusBarManager`) with expanded test coverage.
-- 🔐 Updated CI workflow dependencies (`actions/checkout@v7`, `actions/cache@v6`) and release/changelog automation actions.
-
 ### Latest published release
-- **v0.1.504**: updated NuGet packages and removed the dependency on the Selkie package.
-- **v0.1.495**: fixes for missing icon height and connection notifications
-- **v0.1.492**: configurable desk position names
-- **v0.1.435**: configurable global hotkeys (UI-based), including enable/disable support.
+
+- **v0.1.540**: Added an update check at startup and every 24 hours. The app notifies users when a new version is available.
 - See [CHANGELOG.md](CHANGELOG.md) for complete release history and details.
 
 [View full changelog](CHANGELOG.md)
@@ -66,10 +57,10 @@ A special thank you to all the amazing people who test this application and prov
 
 - 🖥️ **System Tray Integration**: Unobtrusive control directly from your Windows taskbar
 - 🎯 **Preset Positions**: Four customizable height positions (Standing, Seating, Custom 1, Custom 2)
-- ⌨️ **Configurable Global Hotkeys**: Control your desk from any application using fully customizable hotkeys — change keys/modifiers or disable them entirely from the Settings UI
+- ⌨️ **Configurable Global Hotkeys**: Control your desk from any application using fully customizable hotkeys
 - 🔄 **Auto-Connect**: Automatically connects to your desk on startup
 - 📏 **Fine-Tuning**: Adjust positions using arrow keys during confirmation
-- 🔔 **Desktop Notifications**: Stay informed about connection status and desk movement
+- 🔔 **Desktop Notifications**: Stay informed about connection status, desk movement, and new application versions
 - 🎨 **Theme Support**: Multiple color themes to match your desktop
 - 🔒 **Parental Lock**: Lock the physical desk controller to prevent unwanted adjustments
 - ⚙️ **Per-User Settings**: Each Windows user can have their own desk configurations
@@ -100,7 +91,7 @@ Download the latest self-contained executable (no .NET runtime installation requ
 
 1. Download the executable from the link above
 2. Run the executable
-3. If Windows shows a security warning, click "More info" and then "Run anyway"
+3. If Windows shows a security warning, click **More info** and then **Run anyway**
 4. The application will start and appear in your system tray
 
 ### Scoop Package Manager
@@ -112,7 +103,8 @@ scoop bucket add tschroedter https://github.com/tschroedter/scoop-bucket
 scoop install tschroedter/idasen-systemtray
 ```
 
-And updating the app:
+To update the app:
+
 ```powershell
 scoop update tschroedter/idasen-systemtray
 ```
@@ -146,21 +138,11 @@ dotnet publish Idasen.SystemTray.Win11/Idasen.SystemTray.Win11.csproj \
 
 The application runs in your system tray and provides visual feedback about your desk's current state.
 
-**Unknown Height** - Displayed when the desk height hasn't been determined yet:
-
-![System Tray Icon - Unknown Height](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/V0.0.222/System_Tray_Icon_Unknow_Height.png)
-
-**Known Height** - Updated automatically when the desk moves:
-
-![System Tray Icon - Known Height](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/V0.0.222/System_Tray_Icon_Know_Height.png)
-
 **Tip**: Click the system tray icon to show/hide the settings window.
 
 ### Context Menu
 
 Right-click the system tray icon to access the context menu:
-
-![System Tray Context Menu](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/V0.1.77/System_Tray_Context_Menu.png)
 
 Available options:
 - **Show/Hide Settings** - Toggle the settings window
@@ -191,13 +173,15 @@ To execute an action:
 
 The application automatically connects to your Idasen desk on startup. Desktop notifications keep you informed:
 
-![Connection Notifications](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/V0.0.222/Notifications.png)
-
 - 🔄 Trying to connect...
 - ✅ Connected
 - ❌ Failed to connect
 
 If an existing Bluetooth session becomes stale, the app attempts to recover by reconnecting automatically.
+
+### Update Notifications
+
+The app checks for a new release at startup and every 24 hours. If an update is available, it notifies you so you can download the latest version.
 
 ## Settings
 
@@ -205,14 +189,12 @@ Access settings by clicking "Show Settings" from the context menu or clicking th
 
 ### General Settings
 
-![General Settings](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/V0.1.77/Settings_General.png)
-
 #### Desk Positions
 
 Configure up to four preset positions:
 
 - **Standing**: Your preferred standing height
-- **Seating**: Your preferred sitting height  
+- **Seating**: Your preferred sitting height
 - **Custom 1**: Additional custom position
 - **Custom 2**: Additional custom position
 
@@ -225,8 +207,6 @@ Each position includes:
 - **Stop**: Toggle visibility of the Stop command in the context menu
 
 ### Hot Keys
-
-![Hotkey Settings](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/V0.1.77/Settins_Hotkeys.png)
 
 Global hotkeys are fully configurable through the **Settings → Hot Keys** page. For each desk position you can:
 
@@ -245,15 +225,11 @@ For advanced configuration (e.g. editing `Settings.json` directly), see the **[H
 
 ### Appearance
 
-![Appearance Settings](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/V0.0.222/Settins_Appearance.png)
-
 #### Theme
 
 Choose from multiple color themes to match your desktop environment.
 
 ### Advanced Settings
-
-![Advanced Settings](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/V0.0.222/Settins_Advanced.png)
 
 #### Log Folder
 
@@ -291,44 +267,14 @@ _Note: The settings are stored per Windows user._
 
 Before using this application, you must pair your Idasen desk with Windows through Bluetooth settings.
 
-#### Solution 1: Enable Advanced Bluetooth Discovery (Windows 11)
+If Windows 11 cannot find the desk in pairing mode, enable advanced Bluetooth discovery under **Settings → Bluetooth & devices → Show all Bluetooth devices**.
 
-Some users have reported that Windows 11 doesn't detect the desk in pairing mode. The solution is to enable advanced Bluetooth device discovery:
-
-1. Open Windows Settings → Bluetooth & devices
-2. Enable "Show all Bluetooth devices"
-3. Put your desk in pairing mode
-4. The desk should now appear in the device list
-
-For more details, see this [Reddit discussion](https://www.reddit.com/r/cricut/comments/14h9sz8/windows_11_bluetooth_issues_fixed).
-
-#### Solution 2: Use Legacy Devices and Printers
-
-If Windows 11 still can't find your desk using the modern Bluetooth settings:
-
-1. **Open Bluetooth Settings**
-   - Go to Settings → Bluetooth & devices → Devices
-   
-   ![Windows 11 Devices](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/Win11_Devices.png)
-
-2. **Access Legacy Settings**
-   - Scroll down and click "More devices and printers settings"
-   - The "Devices and Printers" window opens
-   
-   ![Add a device](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/Win11_Add_Devices_Printers.png)
-
-3. **Add Device**
-   - Right-click in the window background (empty space)
-   - Select "Add a device"
-   - The "Choose a device or printer to add to this PC" window opens
-   
-   ![Choose a device](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/Win11_Choose_A_Device.png)
-
-4. **Pair the Desk**
-   - Put your Idasen desk into Bluetooth pairing mode
-   - The desk should appear in the window
-   - Select it and click "Next"
-   - Follow the on-screen instructions
+If Windows 11 still cannot find the desk using the modern Bluetooth settings:
+1. Open **Settings → Bluetooth & devices → Devices**
+2. Scroll down and open **More devices and printers settings**
+3. Right-click in the Devices and Printers window and select **Add a device**
+4. Put your desk into Bluetooth pairing mode
+5. Select the desk and follow the Windows pairing instructions
 
 ### Connection Issues
 
@@ -338,12 +284,10 @@ If Windows 11 still can't find your desk using the modern Bluetooth settings:
 
 To verify:
 1. Open Settings → Bluetooth & devices
-2. Check if "Desk" or your custom desk name is listed
+2. Check whether "Desk" or your custom desk name is listed
 3. The desk should show as "Connected" or "Paired"
 
-![Windows 10 Bluetooth Settings](https://github.com/tschroedter/idasen-desk/blob/main/docs/images/Windows%2010%20Bluetooth%20Settings.png)
-
-If the desk is paired but the application still can't connect:
+If the desk is paired but the application still cannot connect:
 - Try disconnecting and reconnecting the desk in Windows Bluetooth settings
 - Restart the application
 - Check the log files (location shown in Advanced Settings)
@@ -380,12 +324,7 @@ When submitting a pull request:
 
 ### Development Resources
 
-- **[GitHub Copilot Instructions](.github/copilot-instructions.md)** - Comprehensive development guide including:
-  - Building and testing instructions
-  - Code style and standards
-  - Pull request guidelines
-  - Common development tasks
-  
+- **[GitHub Copilot Instructions](.github/copilot-instructions.md)** - Comprehensive development guide
 - **[Changelog Automation Guide](docs/CHANGELOG_AUTOMATION.md)** - How our automated changelog works
 - **[Implementation Details](docs/IMPLEMENTATION_SUMMARY.md)** - Technical implementation overview
 - **[Workflow Diagrams](docs/WORKFLOW_DIAGRAM.md)** - Visual representation of CI/CD processes
@@ -438,28 +377,28 @@ dotnet test Idasen-Desk.sln --configuration Release
 Comprehensive documentation is available in the [**Wiki**](https://github.com/tschroedter/idasen-desk/wiki):
 
 **For Users:**
-- [Getting Started](https://github.com/tschroedter/idasen-desk/wiki/Getting-Started) - Installation and setup
-- [User Guide](https://github.com/tschroedter/idasen-desk/wiki/User-Guide) - Complete usage instructions
-- [Troubleshooting](https://github.com/tschroedter/idasen-desk/wiki/Troubleshooting) - Common issues and solutions
-- [FAQ](https://github.com/tschroedter/idasen-desk/wiki/FAQ) - Frequently asked questions
-- [Configuration](https://github.com/tschroedter/idasen-desk/wiki/Configuration) - Advanced configuration options
+- [Getting Started](https://github.com/tschroedter/idasen-desk/wiki/Getting-Started)
+- [User Guide](https://github.com/tschroedter/idasen-desk/wiki/User-Guide)
+- [Troubleshooting](https://github.com/tschroedter/idasen-desk/wiki/Troubleshooting)
+- [FAQ](https://github.com/tschroedter/idasen-desk/wiki/FAQ)
+- [Configuration](https://github.com/tschroedter/idasen-desk/wiki/Configuration)
 
 **For Developers:**
-- [Developer Guide](https://github.com/tschroedter/idasen-desk/wiki/Developer-Guide) - Contributing guidelines
-- [Build Instructions](https://github.com/tschroedter/idasen-desk/wiki/Build-Instructions) - How to build from source
-- [Architecture](https://github.com/tschroedter/idasen-desk/wiki/Architecture) - Technical architecture
+- [Developer Guide](https://github.com/tschroedter/idasen-desk/wiki/Developer-Guide)
+- [Build Instructions](https://github.com/tschroedter/idasen-desk/wiki/Build-Instructions)
+- [Architecture](https://github.com/tschroedter/idasen-desk/wiki/Architecture)
 
 ### 📖 Additional Resources
 
-- **[Hotkey Customization Guide](docs/HOTKEY_CUSTOMIZATION.md)** - How to customize or disable global hotkeys
-- **[Changelog Automation Guide](docs/CHANGELOG_AUTOMATION.md)** - How our automated changelog works
-- **[Implementation Details](docs/IMPLEMENTATION_SUMMARY.md)** - Technical implementation overview
-- **[Workflow Diagrams](docs/WORKFLOW_DIAGRAM.md)** - Visual representation of CI/CD processes
-- **[SonarCloud Setup](docs/SONARCLOUD_SETUP.md)** - Code quality analysis setup
+- **[Hotkey Customization Guide](docs/HOTKEY_CUSTOMIZATION.md)**
+- **[Changelog Automation Guide](docs/CHANGELOG_AUTOMATION.md)**
+- **[Implementation Details](docs/IMPLEMENTATION_SUMMARY.md)**
+- **[Workflow Diagrams](docs/WORKFLOW_DIAGRAM.md)**
+- **[SonarCloud Setup](docs/SONARCLOUD_SETUP.md)**
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) for details.
 
 ---
 
